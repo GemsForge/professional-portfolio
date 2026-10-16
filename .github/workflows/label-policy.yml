@@ -13,7 +13,7 @@ jobs:
   require-label:
     runs-on: ubuntu-latest
     steps:
-      - name: Require a change-type label
+      - name: Require a workflow label
         uses: actions/github-script@v7
         with:
           script: |
