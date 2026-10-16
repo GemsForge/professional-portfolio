@@ -1,27 +1,33 @@
 name: Commit policy
 
+# Policy: type(scope): #issue short imperative description.
+# The documented initial commit is grandfathered by scripts/commit-policy.json.
+# The PR title is validated because it becomes the proposed squash subject.
+
 on:
+  push:
+    branches: ["**"]
   pull_request:
+    types: [opened, reopened, synchronize, edited, ready_for_review]
 
 permissions:
   contents: read
-  pull-requests: read
 
 jobs:
-  conventional-commits:
-    runs-on: ubuntu-latest
+  commit-policy:
+    name: Commit policy
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Validate commit subjects
-        env:
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
-          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-        run: |
-          git log --format='%s' "$BASE_SHA..$HEAD_SHA" | while IFS= read -r subject; do
-            if ! printf '%s\n' "$subject" | grep -Eq '^(feat|fix|docs|refactor|test|chore|ci|build|perf|style)(\([a-z0-9._/-]+\))?!?: .+'; then
-              echo "Invalid commit subject: $subject"
-              exit 1
-            fi
-          done
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          package-manager-cache: false
+      - name: Test validator
+        run: node --test scripts/commit-policy.test.mjs
+      - name: Validate commits and proposed squash subject
+        run: node scripts/commit-policy.mjs github
