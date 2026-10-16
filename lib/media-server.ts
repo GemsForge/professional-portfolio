@@ -8,6 +8,22 @@ function owner(request:Request){return !!request.headers.get('oai-authenticated-
 function json(data:unknown,status=200){return Response.json(data,{status,headers:{'Cache-Control':'no-store'}});}
 function sameOrigin(request:Request){return request.headers.get('Origin')===new URL(request.url).origin;}
 export function isOwner(request:Request){return owner(request);}
+export function adminNavigationRequest(request:Request){
+ const headers={'Cache-Control':'private, no-store'};
+ if(request.method!=='GET')return new Response(null,{status:405,headers:{...headers,Allow:'GET'}});
+ if(!request.headers.get('oai-authenticated-user-id'))return new Response(null,{status:401,headers});
+ if(!isOwner(request))return new Response(null,{status:403,headers});
+ return new Response(null,{status:204,headers});
+}
+export function adminPageRequest(request:Request,manager:string){
+ const url=new URL(request.url);const headers={'Cache-Control':'private, no-store'};
+ if(!request.headers.get('oai-authenticated-user-id')){
+  const signIn=new URL('/signin-with-chatgpt',url);signIn.searchParams.set('return_to','/admin/');
+  return new Response(null,{status:302,headers:{...headers,Location:signIn.toString()}});
+ }
+ if(!isOwner(request))return new Response('This workspace is available only to the portfolio owner.',{status:403,headers});
+ return new Response(manager,{headers:{...headers,'Content-Type':'text/html; charset=utf-8','X-Robots-Tag':'noindex, nofollow'}});
+}
 async function records(bucket:R2Bucket,project?:string){const found:RecordData[]=[];let cursor:string|undefined;do{const page=await bucket.list({prefix:'portfolio/records/',cursor});const values=await Promise.all(page.objects.map(async o=>{const value=await bucket.get(o.key);return value?value.json<RecordData>():null;}));found.push(...values.filter((r):r is RecordData=>!!r&&(!project||r.project===project)));cursor=page.truncated?page.cursor:undefined;}while(cursor);return found.sort((a,b)=>b.createdAt.localeCompare(a.createdAt));}
 function detect(bytes:Uint8Array,requested:string):{kind:MediaKind;contentType:string}|null{
  if(bytes.length>8&&[137,80,78,71,13,10,26,10].every((v,i)=>bytes[i]===v))return {kind:'image',contentType:'image/png'};
