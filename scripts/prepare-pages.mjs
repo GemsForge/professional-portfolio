@@ -18,7 +18,7 @@ async function visit(directory){
     text=text.replace('<nav class="next-project"',`<section data-project-gallery="${slug}" hidden></section><nav class="next-project"`);
     text=text.replace('</body>','<script src="/assets/gallery.js" defer></script></body>');
    }
-   if(text.includes('<nav class="links" aria-label="Portfolio navigation">')){
+   if(text.includes('<nav aria-label="Footer navigation">')){
     text=text.replace('</body>','<script src="/assets/admin-navigation.js" defer></script></body>');
    }
    pages[route]=text;
