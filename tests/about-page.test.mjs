@@ -15,9 +15,8 @@ test("About page presents the optimized profile photo accessibly", async () => {
 
   assert.match(html, /<img[^>]*src="\/assets\/profile-photo\.jpg"[^>]*alt="Diamond Brown smiling at the camera\."/);
   assert.match(html, /width="1200"\s+height="1200"/);
-  assert.match(html, /<section id="about"[^]*?class="about-portrait about-biography-portrait" aria-hidden="true"><img src="\/assets\/profile-photo\.jpg" alt=""/);
+  assert.doesNotMatch(html, /<section id="about"[^]*?profile-photo\.jpg/);
   assert.match(css, /\.about-hero\s*\{[^}]*display:grid/);
-  assert.match(css, /\.about-biography-portrait\s*\{[^}]*max-width:340px/);
   assert.match(css, /@media\s*\(max-width:\s*650px\)\s*\{\.about-hero\s*\{[^}]*grid-template-columns:1fr/);
   const contactPage = await readFile(new URL("../static-source/contact/index.html", import.meta.url), "utf8");
   assert.doesNotMatch(contactPage, /profile-photo\.jpg/);
