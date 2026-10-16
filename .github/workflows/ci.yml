@@ -22,4 +22,5 @@ jobs:
       - run: npm run test:media
       - run: npm run test:contact
       - run: npm run test:portfolio
+      - run: npm run test:about
       - run: npm run build

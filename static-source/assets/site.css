@@ -55,3 +55,7 @@ header{position:sticky;top:0;z-index:20;background:var(--paper)}
 .footer nav{display:none}
 .table-scroll:focus-visible{outline:3px solid #90671d;outline-offset:3px}
 .sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+.about-hero{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr);align-items:center;gap:clamp(32px,7vw,96px)}
+.about-portrait{width:100%;max-width:420px;aspect-ratio:4/5;justify-self:end;margin:0;overflow:hidden;border:1px solid var(--line);border-radius:90px 4px 4px 4px;background:#e4e8db}
+.about-portrait img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 30%}
+@media(max-width:650px){.about-hero{grid-template-columns:1fr;gap:28px}.about-portrait{max-width:360px;justify-self:start}}

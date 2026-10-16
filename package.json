@@ -15,7 +15,8 @@
     "prebuild": "node scripts/prepare-pages.mjs",
     "test:media": "node --test tests/media.test.mjs",
     "test:contact": "node --test tests/contact-page.test.mjs",
-    "test:portfolio": "node --test tests/project-maps.test.mjs"
+    "test:portfolio": "node --test tests/project-maps.test.mjs",
+    "test:about": "node --test tests/about-page.test.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
