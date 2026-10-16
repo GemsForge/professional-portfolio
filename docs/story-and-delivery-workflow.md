@@ -36,6 +36,12 @@ As a [user], I want [capability] so that [benefit].
 - [ ] [Accessibility, responsive, or behavior requirement when relevant]
 - [ ] [Verification requirement]
 
+## Delivery checks
+- [ ] Branch follows `<type>/<issue-number>-<short-description>`.
+- [ ] Commits and PR title follow `type(scope): #issue-number short imperative description` with approved types and scopes.
+- [ ] PR body includes `Closes #issue-number` and the PR has an approved workflow label.
+- [ ] CI, commit policy, branch workflow policy, label policy, and metadata sync checks pass.
+
 ## Relationships
 - Parent: #[parent-issue-number] (omit when this is a top-level story)
 - Related: #[related-issue-number] (omit when there are no related stories)
