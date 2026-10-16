@@ -18,10 +18,11 @@ test("About page presents the optimized profile photo accessibly", async () => {
   assert.equal((html.match(/src="\/assets\/profile-photo\.jpg"/g) ?? []).length, 1, "About should show the portrait once");
   assert.match(html, /width="1200"\s+height="1200"/);
   const homeHtml = await readFile(homePage, "utf8");
-  assert.match(homeHtml, /<figure class="hero-art home-portrait"><img src="\/assets\/profile-photo\.jpg" alt="Diamond Brown smiling at the camera\."/);
-  assert.equal((homeHtml.match(/src="\/assets\/profile-photo\.jpg"/g) ?? []).length, 1, "Home should show the portrait once");
+  assert.match(homeHtml, /<div class="hero-art">[\s\S]*?role="img" aria-label="Abstract intersecting paths converge into a diamond, then emerge as aligned lines"/);
+  assert.equal((homeHtml.match(/src="\/assets\/profile-photo\.jpg"/g) ?? []).length, 1, "Home should show the portrait once in the About section");
+  assert.match(homeHtml, /<section id="about" class="dark"><div class="wrap about-grid"><div><img class="about-section-portrait" src="\/assets\/profile-photo\.jpg"/);
   assert.match(css, /\.about-hero\s*\{[^}]*display:grid/);
-  assert.match(css, /\.home-portrait\s*\{[^}]*aspect-ratio:4\/5/);
+  assert.match(css, /\.about-section-portrait\s*\{[^}]*aspect-ratio:4\/5/);
   assert.match(css, /@media\s*\(max-width:\s*650px\)\s*\{\.about-hero\s*\{[^}]*grid-template-columns:1fr/);
   const contactPage = await readFile(new URL("../static-source/contact/index.html", import.meta.url), "utf8");
   assert.doesNotMatch(contactPage, /profile-photo\.jpg/);
