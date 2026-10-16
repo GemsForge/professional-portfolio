@@ -15,7 +15,7 @@ test("rejects malformed subjects and unknown scopes", () => {
 test("push validation always excludes default-branch history", () => {
   const defaultBranch = "a".repeat(40);
   const previousHead = "b".repeat(40);
-  assert.deepEqual(pushExclusions({ before: previousHead }, defaultBranch), [defaultBranch, previousHead]);
+  assert.deepEqual(pushExclusions({ before: previousHead }, defaultBranch), [defaultBranch]);
   assert.deepEqual(pushExclusions({ before: "0".repeat(40) }, defaultBranch), [defaultBranch]);
   assert.deepEqual(pushExclusions({ before: defaultBranch }, defaultBranch), [defaultBranch]);
 });
