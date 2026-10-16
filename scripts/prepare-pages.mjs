@@ -38,6 +38,13 @@ async function visit(directory) {
       );
     }
 
+    if (text.includes('<nav class="links" aria-label="Portfolio navigation">')) {
+      text = text.replace(
+        "</body>",
+        '<script src="/assets/admin-navigation.js" defer></script></body>',
+      );
+    }
+
     pages[route] = text;
   }
 }
