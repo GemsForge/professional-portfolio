@@ -35,9 +35,13 @@ As a [user], I want [capability] so that [benefit].
 - [ ] [Observable requirement]
 - [ ] [Accessibility, responsive, or behavior requirement when relevant]
 - [ ] [Verification requirement]
+
+## Relationships
+- Parent: #[parent-issue-number] (omit when this is a top-level story)
+- Related: #[related-issue-number] (omit when there are no related stories)
 ```
 
-Apply the labels that best describe the work. Pull requests must have at least one workflow label from: `feature`, `bug`, `documentation`, `maintenance`, `dependencies`, `security`, `refactor`, `testing`, `ci`. The issue's labels, assignees, and milestone are synchronized to its PR by the metadata workflow.
+Link a parent story when the work belongs under a larger initiative, and link related stories when they share context or dependencies. Use GitHub issue references so the links stay navigable; do not invent a parent when none exists. Apply the labels that best describe the work. Pull requests must have at least one workflow label from: `feature`, `bug`, `documentation`, `maintenance`, `dependencies`, `security`, `refactor`, `testing`, `ci`. The issue's labels, assignees, and milestone are synchronized to its PR by the metadata workflow.
 
 ## Implement the story
 
