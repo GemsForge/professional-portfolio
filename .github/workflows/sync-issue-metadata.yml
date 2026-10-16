@@ -33,7 +33,11 @@ jobs:
               ? (await github.rest.pulls.get({ ...context.repo, pull_number: manual })).data
               : null);
             const branchIssue = (ref) => Number(ref?.match(/^(?:feat|fix|docs|refactor|test|chore|ci|build|perf|style)\/(\d+)(?:-|$)/i)?.[1]) || undefined;
-            const issueNumber = context.payload.issue?.number || branchIssue(pr?.head.ref);
+            const referencedIssue = (text) => Number(text?.match(/(?:^|\s)#(\d+)\b/)?.[1]) || undefined;
+            const issueNumber = context.payload.issue?.number
+              || branchIssue(pr?.head.ref)
+              || referencedIssue(pr?.title)
+              || referencedIssue(pr?.body);
             if (!issueNumber) throw new Error('No issue number found in the event or branch name.');
             const issue = (await github.rest.issues.get({ ...context.repo, issue_number: issueNumber })).data;
             if (issue.pull_request) throw new Error('The linked item must be an issue, not a pull request.');
