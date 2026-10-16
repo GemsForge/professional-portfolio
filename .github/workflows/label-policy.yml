@@ -21,7 +21,7 @@ jobs:
               ...context.repo, pull_number: context.payload.pull_request.number,
             });
             const labels = pullRequest.labels.map(({ name }) => name);
-            const allowed = ['feature', 'bug', 'documentation', 'maintenance', 'dependencies', 'security'];
+            const allowed = ['feature', 'bug', 'documentation', 'maintenance', 'dependencies', 'security', 'refactor', 'testing', 'ci'];
             if (!labels.some((label) => allowed.includes(label))) {
-              core.setFailed(`Add one change-type label: ${allowed.join(', ')}.`);
+              core.setFailed(`Add one workflow label: ${allowed.join(', ')}.`);
             }
