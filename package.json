@@ -13,7 +13,8 @@
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "drizzle-kit generate",
     "prebuild": "node scripts/prepare-pages.mjs",
-    "test:media": "node --test tests/media.test.mjs"
+    "test:media": "node --test tests/media.test.mjs",
+    "test:about": "node --test tests/about-page.test.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
