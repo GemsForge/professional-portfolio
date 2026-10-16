@@ -3,6 +3,7 @@ import { readFile, stat } from "node:fs/promises";
 import { test } from "node:test";
 
 const page = new URL("../static-source/about/index.html", import.meta.url);
+const homePage = new URL("../static-source/index.html", import.meta.url);
 const stylesheet = new URL("../static-source/assets/site.css", import.meta.url);
 const portrait = new URL("../static-source/assets/profile-photo.jpg", import.meta.url);
 
@@ -14,9 +15,13 @@ test("About page presents the optimized profile photo accessibly", async () => {
   ]);
 
   assert.match(html, /<img[^>]*src="\/assets\/profile-photo\.jpg"[^>]*alt="Diamond Brown smiling at the camera\."/);
+  assert.equal((html.match(/src="\/assets\/profile-photo\.jpg"/g) ?? []).length, 1, "About should show the portrait once");
   assert.match(html, /width="1200"\s+height="1200"/);
-  assert.doesNotMatch(html, /<section id="about"[^]*?profile-photo\.jpg/);
+  const homeHtml = await readFile(homePage, "utf8");
+  assert.match(homeHtml, /<figure class="hero-art home-portrait"><img src="\/assets\/profile-photo\.jpg" alt="Diamond Brown smiling at the camera\."/);
+  assert.equal((homeHtml.match(/src="\/assets\/profile-photo\.jpg"/g) ?? []).length, 1, "Home should show the portrait once");
   assert.match(css, /\.about-hero\s*\{[^}]*display:grid/);
+  assert.match(css, /\.home-portrait\s*\{[^}]*aspect-ratio:4\/5/);
   assert.match(css, /@media\s*\(max-width:\s*650px\)\s*\{\.about-hero\s*\{[^}]*grid-template-columns:1fr/);
   const contactPage = await readFile(new URL("../static-source/contact/index.html", import.meta.url), "utf8");
   assert.doesNotMatch(contactPage, /profile-photo\.jpg/);
