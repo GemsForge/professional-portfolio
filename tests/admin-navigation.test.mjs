@@ -61,12 +61,13 @@ test('footer navigation creates no Admin link unless the server approves it', as
   assert.doesNotMatch(home, /href="\/admin\/?"/);
 
   const ownerLinks = await renderNavigation(script, 204);
-  assert.equal(ownerLinks.length, 1);
-  assert.equal(ownerLinks[0].href, '/admin/');
-  assert.equal(ownerLinks[0].textContent, 'Admin');
-  assert.equal(ownerLinks[0].className, 'button secondary');
-  assert.equal((await renderNavigation(script, 401)).length, 0);
-  assert.equal((await renderNavigation(script, 403)).length, 0);
+  assert.equal(ownerLinks.footer.length, 1);
+  assert.equal(ownerLinks.footer[0].href, '/admin/');
+  assert.equal(ownerLinks.footer[0].textContent, 'Admin');
+  assert.equal(ownerLinks.footer[0].className, 'button secondary');
+  assert.equal(ownerLinks.header.length, 0);
+  assert.equal((await renderNavigation(script, 401)).footer.length, 0);
+  assert.equal((await renderNavigation(script, 403)).footer.length, 0);
 
   for (const page of Object.values(JSON.parse(generatedPages))) {
     if (page.includes('<nav aria-label="Footer navigation">')) {
@@ -81,13 +82,16 @@ function adminRequest(path, headers) {
 }
 
 async function renderNavigation(script, status) {
-  const links = [];
-  const navigation = { append: (link) => links.push(link) };
+  const footerLinks = [];
+  const headerLinks = [];
+  const footerNavigation = { append: (link) => footerLinks.push(link) };
+  const headerNavigation = { append: (link) => headerLinks.push(link) };
   const context = {
     document: {
       querySelector: (selector) => {
-        assert.equal(selector, 'footer.footer nav[aria-label="Footer navigation"]');
-        return navigation;
+        if (selector === 'footer.footer nav[aria-label="Footer navigation"]') return footerNavigation;
+        if (selector === 'nav.links[aria-label="Portfolio navigation"]') return headerNavigation;
+        assert.fail(`Unexpected navigation selector: ${selector}`);
       },
       createElement: (tagName) => ({ tagName, className: '', href: '', textContent: '' }),
     },
@@ -101,5 +105,5 @@ async function renderNavigation(script, status) {
 
   runInNewContext(script, context);
   await new Promise((resolve) => setImmediate(resolve));
-  return links;
+  return { footer: footerLinks, header: headerLinks };
 }
