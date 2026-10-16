@@ -24,15 +24,6 @@ Images and metadata are stored in the provisioned R2 `BUCKET`, independently of 
 
 ## Development and publishing
 
-### UI organization
-
-This is a React and TypeScript project. UI work follows the reusable,
-component-driven workflow documented in
-[`docs/ui-development-workflow.md`](docs/ui-development-workflow.md): route
-entry points live in `app/`, shared primitives in `components/ui/`, reusable
-application patterns in `components/`, stateful browser logic in `hooks/`, and
-data/integration code in `lib/`.
-
 This version adds a backend; the earlier Python static-server preview cannot run uploads or galleries.
 
 Use the current Sites skill for installation, build, preview, source synchronization, and publishing to the existing project. Node.js 22.13+ is required. `npm run build` prepares static content then builds the server through the retained Sites integration. `npm run test:media` checks core storage and authorization behavior.
