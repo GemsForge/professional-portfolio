@@ -49,7 +49,7 @@ test('direct Admin access remains protected and does not expose identity data', 
   assert.equal(await owner.text(), manager);
 });
 
-test('public navigation creates no Admin link unless the server approves it', async () => {
+test('footer navigation creates no Admin link unless the server approves it', async () => {
   const [script, home, generatedPages] = await Promise.all([
     readFile(new URL('../static-source/assets/admin-navigation.js', import.meta.url), 'utf8'),
     readFile(new URL('../static-source/index.html', import.meta.url), 'utf8'),
@@ -64,12 +64,12 @@ test('public navigation creates no Admin link unless the server approves it', as
   assert.equal(ownerLinks.length, 1);
   assert.equal(ownerLinks[0].href, '/admin/');
   assert.equal(ownerLinks[0].textContent, 'Admin');
-  assert.equal(ownerLinks[0].className, 'nav-contact');
+  assert.equal(ownerLinks[0].className, 'button secondary');
   assert.equal((await renderNavigation(script, 401)).length, 0);
   assert.equal((await renderNavigation(script, 403)).length, 0);
 
   for (const page of Object.values(JSON.parse(generatedPages))) {
-    if (page.includes('<nav class="links" aria-label="Portfolio navigation">')) {
+    if (page.includes('<nav aria-label="Footer navigation">')) {
       assert.match(page, /<script src="\/assets\/admin-navigation\.js" defer><\/script>/);
       assert.doesNotMatch(page, /href="\/admin\/?"/);
     }
@@ -85,7 +85,10 @@ async function renderNavigation(script, status) {
   const navigation = { append: (link) => links.push(link) };
   const context = {
     document: {
-      querySelector: () => navigation,
+      querySelector: (selector) => {
+        assert.equal(selector, 'footer.footer nav[aria-label="Footer navigation"]');
+        return navigation;
+      },
       createElement: (tagName) => ({ tagName, className: '', href: '', textContent: '' }),
     },
     fetch: async (path, options) => {
