@@ -1,0 +1,130 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1720 1000" role="img" aria-labelledby="title description">
+  <title id="title">AuraLogbook architecture: data sources to API to user interface</title>
+  <desc id="description">A left-to-right architecture map. JSON files and Weatherbit feed an ASP.NET Core API. Authentication, mood tracking, insights, and weather services connect through HTTP JSON to a React and TypeScript interface. Requests and writes travel back from the interface through the API.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth"><path d="M1 1 11 6 1 11Z" fill="#355a3a"/></marker>
+    <marker id="arrow-muted" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth"><path d="M1 1 11 6 1 11Z" fill="#718075"/></marker>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;fill:#1e2823}
+      .eyebrow{font-size:17px;font-weight:700;letter-spacing:2px;fill:#355a3a}
+      .title{font-size:29px;font-weight:700;letter-spacing:-.4px}
+      .sub{font-size:18px;fill:#536158}
+      .card-title{font-size:20px;font-weight:700}
+      .body{font-size:17px;fill:#536158}
+      .small{font-size:15px;fill:#536158}
+      .code{font-family:Menlo,Monaco,monospace;font-size:15px;fill:#294d38}
+      .white{fill:#fffdf7}
+      .api-sub{font-size:17px;fill:#e3eee1}
+      .white-text{fill:#fffdf7}
+      .green{fill:#355a3a}
+      .mint{fill:#e3eee1}
+      .line{stroke:#d3d7cb;stroke-width:2}
+    </style>
+  </defs>
+  <rect width="1720" height="1000" rx="22" fill="#f5f4eb"/>
+  <text x="58" y="54" class="eyebrow">AURALOGBOOK · SYSTEM ARCHITECTURE</text>
+  <text x="58" y="96" class="title">From a mood entry to a meaningful pattern</text>
+  <text x="58" y="127" class="sub">Read the system from left to right: persisted and external data → API responsibilities → the app experience.</text>
+
+  <text x="58" y="188" class="eyebrow">01 · DATA SOURCES</text>
+  <text x="520" y="188" class="eyebrow">02 · .NET API</text>
+  <text x="1250" y="188" class="eyebrow">03 · USER INTERFACE</text>
+
+  <!-- JSON-backed application data -->
+  <rect x="58" y="215" width="370" height="400" rx="16" fill="#fffdf7" stroke="#bdc8b8" stroke-width="2"/>
+  <rect x="58" y="215" width="370" height="78" rx="16" fill="#e3eee1"/>
+  <path d="M58 277h370" class="line"/>
+  <text x="84" y="252" class="card-title">File-backed JSON</text>
+  <text x="84" y="278" class="small">Current registered persistence</text>
+  <text x="84" y="335" class="code">users.json</text>
+  <text x="84" y="360" class="body">Accounts and profile attributes</text>
+  <path d="M84 382h318" class="line"/>
+  <text x="84" y="420" class="code">moods.json</text>
+  <text x="84" y="445" class="body">Mood entries associated with a user</text>
+  <path d="M84 467h318" class="line"/>
+  <text x="84" y="505" class="code">zodiacInsights.json</text>
+  <text x="84" y="530" class="body">Sign descriptions and insight content</text>
+  <rect x="84" y="558" width="220" height="34" rx="17" fill="#f1f3eb"/>
+  <text x="102" y="581" class="small">File repositories · JSON</text>
+
+  <!-- External provider -->
+  <rect x="58" y="650" width="370" height="170" rx="16" fill="#fffdf7" stroke="#bdc8b8" stroke-width="2"/>
+  <text x="84" y="690" class="eyebrow">EXTERNAL PROVIDER</text>
+  <text x="84" y="731" class="card-title">Weatherbit</text>
+  <text x="84" y="761" class="body">Current conditions by coordinates</text>
+  <text x="84" y="787" class="body">or city, state, and country</text>
+
+  <!-- API boundary -->
+  <rect x="520" y="215" width="620" height="605" rx="16" fill="#fffdf7" stroke="#91a78e" stroke-width="3"/>
+  <rect x="520" y="215" width="620" height="80" rx="16" fill="#294d38"/>
+  <path d="M520 279h620" stroke="#294d38" stroke-width="2"/>
+  <text x="548" y="251" class="title white">ASP.NET Core Web API</text>
+  <text x="548" y="279" class="api-sub">C# · .NET 9 · controllers · dependency injection</text>
+
+  <rect x="544" y="313" width="572" height="94" rx="10" fill="#f1f3eb"/>
+  <text x="566" y="344" class="card-title">Authentication · AuthController</text>
+  <text x="566" y="373" class="body">Register / login → JwtTokenService signs a JWT</text>
+  <text x="566" y="396" class="small">Bearer middleware validates protected requests</text>
+
+  <rect x="544" y="421" width="572" height="118" rx="10" fill="#f1f3eb"/>
+  <text x="566" y="453" class="card-title">Mood records · MoodController</text>
+  <text x="566" y="482" class="body">MoodService handles create, read, update, delete</text>
+  <text x="566" y="508" class="small">MoodStatsService computes streaks, summaries, and breakdowns</text>
+  <text x="566" y="531" class="small">User identity scopes mood operations to that account</text>
+
+  <rect x="544" y="553" width="572" height="91" rx="10" fill="#f1f3eb"/>
+  <text x="566" y="585" class="card-title">Personalized insights · InsightController</text>
+  <text x="566" y="614" class="body">Combines zodiac reference data with mood statistics</text>
+
+  <rect x="544" y="658" width="572" height="91" rx="10" fill="#f1f3eb"/>
+  <text x="566" y="690" class="card-title">Weather · WeatherController</text>
+  <text x="566" y="719" class="body">WeatherService + HttpClient calls Weatherbit</text>
+  <text x="566" y="741" class="small">Provider credentials stay on the server</text>
+
+  <rect x="544" y="765" width="572" height="38" rx="19" fill="#e3eee1"/>
+  <text x="563" y="790" class="small">HTTPS · CORS · JWT bearer · JSON responses</text>
+
+  <!-- UI boundary -->
+  <rect x="1250" y="215" width="412" height="605" rx="16" fill="#fffdf7" stroke="#bdc8b8" stroke-width="2"/>
+  <rect x="1250" y="215" width="412" height="80" rx="16" fill="#e3eee1"/>
+  <text x="1278" y="251" class="title">React application</text>
+  <text x="1278" y="279" class="sub">TypeScript · Vite</text>
+
+  <text x="1278" y="337" class="card-title">Screens and routes</text>
+  <text x="1278" y="371" class="body">Login · Register · Home</text>
+  <rect x="1278" y="390" width="356" height="146" rx="10" fill="#f1f3eb"/>
+  <text x="1300" y="423" class="card-title">ProtectedRoute</text>
+  <text x="1300" y="453" class="body">Dashboard · mood entry · history</text>
+  <text x="1300" y="481" class="small">Charts and breakdowns · profile · weather</text>
+  <text x="1300" y="513" class="small">Redirects signed-out users to login</text>
+
+  <text x="1278" y="577" class="card-title">Client state and requests</text>
+  <text x="1278" y="610" class="body">Redux Toolkit stores auth and UI state</text>
+  <text x="1278" y="638" class="body">Axios sends JSON and attaches Bearer JWT</text>
+  <text x="1278" y="666" class="small">401 / 403 clears session and returns to login</text>
+  <rect x="1278" y="700" width="356" height="84" rx="10" fill="#294d38"/>
+  <text x="1300" y="733" class="white-text" font-size="17" font-weight="700">Material UI · Recharts</text>
+  <text x="1300" y="760" class="white-text" font-size="15">Forms · dashboards · visual summaries</text>
+
+  <!-- Main left-to-right result flow -->
+  <path d="M430 445H508" stroke="#355a3a" stroke-width="5" marker-end="url(#arrow)"/>
+  <text x="435" y="426" class="small">read</text>
+  <path d="M508 474H430" stroke="#718075" stroke-width="3" stroke-dasharray="8 7" marker-end="url(#arrow-muted)"/>
+  <text x="438" y="500" class="small">write</text>
+
+  <path d="M1142 445H1238" stroke="#355a3a" stroke-width="5" marker-end="url(#arrow)"/>
+  <text x="1148" y="426" class="small">results</text>
+  <path d="M1238 474H1142" stroke="#718075" stroke-width="3" stroke-dasharray="8 7" marker-end="url(#arrow-muted)"/>
+  <text x="1172" y="500" class="small">requests</text>
+
+  <!-- Weather provider into API -->
+  <path d="M429 735C472 735 475 704 510 704" stroke="#648444" stroke-width="4" marker-end="url(#arrow)"/>
+
+  <rect x="58" y="862" width="1604" height="88" rx="14" fill="#e3eee1"/>
+  <text x="84" y="897" class="card-title">How to read the arrows</text>
+  <path d="M350 890h74" stroke="#355a3a" stroke-width="4" marker-end="url(#arrow)"/>
+  <text x="440" y="897" class="body">Data and responses move left → right</text>
+  <path d="M830 890h74" stroke="#718075" stroke-width="3" stroke-dasharray="8 7" marker-end="url(#arrow-muted)"/>
+  <text x="920" y="897" class="body">User queries and edits travel right → left</text>
+  <text x="84" y="930" class="small">Mood changes are sent UI → API → JSON files; dashboard and insight results return API → UI.</text>
+</svg>

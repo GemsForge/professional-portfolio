@@ -13,6 +13,19 @@ async function visit(directory){
    let route='/'+path.relative(source,directory).split(path.sep).filter(Boolean).join('/');
    route=route==='/'?route:route+'/';
    let text=await readFile(file,'utf8');
+   if(route==='/portfolio/projects/auralogbook/'){
+    const architecture=await readFile(path.join(source,'portfolio/projects/auralogbook/architecture.html'),'utf8');
+    text=text.replace('<a href="#implementation">Inside the implementation</a>','<a href="#implementation">Inside the implementation</a><a href="#architecture">Architecture diagram</a>');
+    text=text.replace('<section id="implementation"><h2>Inside the implementation</h2>',`<section id="implementation"><h2>Inside the implementation</h2>${architecture}`);
+   }
+   if(route==='/portfolio/projects/hair-log/'||route==='/portfolio/projects/75-hard-automation/'){
+    const slug=route.split('/').filter(Boolean).at(-1);
+    const responsibilities=await readFile(path.join(source,'portfolio/projects',slug,'responsibilities.html'),'utf8');
+    const sectionStart=text.indexOf('<section id="dependencies">');
+    const sectionEnd=text.indexOf('</section>',sectionStart);
+    if(sectionStart<0||sectionEnd<0)throw new Error(`Missing dependencies section in ${route}`);
+    text=text.slice(0,sectionStart)+responsibilities+text.slice(sectionEnd+'</section>'.length);
+   }
    if(route.startsWith('/portfolio/projects/')&&route!='/portfolio/projects/'){
     const slug=route.split('/').filter(Boolean).at(-1);
     text=text.replace('<nav class="next-project"',`<section data-project-gallery="${slug}" hidden></section><nav class="next-project"`);

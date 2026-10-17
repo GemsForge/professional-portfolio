@@ -1,0 +1,28 @@
+<div id="architecture" class="architecture-block">
+  <p class="architecture-intro">A source-based map of where the app’s data lives, how the API transforms it, and which frontend layers present it.</p>
+  <figure class="architecture-figure">
+    <div class="architecture-scroll" role="region" aria-label="AuraLogbook architecture diagram; scroll horizontally on small screens" tabindex="0">
+      <img
+        class="architecture-diagram"
+        src="/assets/auralogbook-architecture.svg"
+        alt="AuraLogbook architecture, read left to right: JSON files and Weatherbit connect to an ASP.NET Core API, then to a React user interface. Requests and writes return through the API."
+        width="1720"
+        height="1000"
+        loading="lazy"
+        decoding="async"
+      >
+    </div>
+    <figcaption>Read left to right for the main data path. The dashed return path shows user queries and edits going back through the API.</figcaption>
+  </figure>
+  <div class="architecture-dependencies" aria-label="Selected frontend dependencies">
+    <span class="architecture-dependency-label">Selected UI dependencies</span>
+    <span class="architecture-dependency"><img src="/assets/auralogbook-stack/react.png" alt="" width="32" height="32">React</span>
+    <span class="architecture-dependency"><img src="/assets/auralogbook-stack/typescript.png" alt="" width="32" height="32">TypeScript</span>
+    <span class="architecture-dependency"><img src="/assets/auralogbook-stack/redux.png" alt="" width="32" height="32">Redux Toolkit</span>
+    <span class="architecture-dependency"><img src="/assets/auralogbook-stack/axios.png" alt="" width="32" height="32">Axios</span>
+    <span class="architecture-dependency architecture-text-dependency">Material UI</span>
+    <span class="architecture-dependency architecture-text-dependency">React Router</span>
+    <span class="architecture-dependency architecture-text-dependency">Recharts</span>
+  </div>
+  <div class="note architecture-note"><p><strong>Persistence note:</strong> the inspected source registers JSON file repositories for users, moods, and zodiac insights. SQLite and Dapper packages are declared, but are not the active storage path shown by the current repository registrations.</p></div>
+</div>
