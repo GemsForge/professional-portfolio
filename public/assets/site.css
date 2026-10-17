@@ -34,6 +34,22 @@
 .about-section-portrait{display:block;width:100%;max-width:360px;height:450px;aspect-ratio:4/5;object-fit:cover;object-position:center 30%;margin:0 0 28px;border:1px solid var(--line);border-radius:90px 4px 4px 4px;background:#e4e8db}
 @media(max-width:650px){.about-hero{grid-template-columns:1fr;gap:28px}.about-portrait{max-width:360px;justify-self:start}.about-section-portrait{height:400px}}
 
+.architecture-block{margin:28px 0 34px}
+.architecture-intro{margin:0 0 18px}
+.architecture-figure{margin:0;padding:14px;background:#e9ede5;border:1px solid var(--line);border-radius:8px}
+.architecture-scroll{overflow-x:auto;overscroll-behavior-inline:contain}
+.architecture-scroll:focus-visible{outline:3px solid #648444;outline-offset:3px}
+.architecture-diagram{display:block;width:100%;height:auto;min-width:960px;border:0!important;border-radius:0!important}
+.architecture-figure figcaption{margin-top:12px;font-size:14px;color:var(--muted)}
+.architecture-dependencies{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-top:20px}
+.architecture-dependency-label{font-size:14px;font-weight:700;color:var(--forest);margin-right:4px}
+.architecture-dependency{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:5px 11px;border:1px solid #bdc8b8;border-radius:5px;background:#fffdf7;font-size:14px;font-weight:600;color:var(--ink)}
+.architecture-dependency img{width:30px;height:30px;object-fit:contain;border:0!important;border-radius:0!important}
+.architecture-text-dependency{padding-inline:13px}
+.architecture-note{margin-top:20px}
+.architecture-note p{font-size:15px}
+@media(max-width:650px){.architecture-figure{padding:8px}.architecture-diagram{min-width:880px}.architecture-dependencies{gap:8px}.architecture-dependency-label{width:100%}}
+
 /* Keep primary navigation available while scrolling; the footer remains brand-only. */
 header{position:sticky;top:0;z-index:20;background:var(--paper)}
 .footer nav{display:none}
