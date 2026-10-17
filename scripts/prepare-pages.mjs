@@ -26,6 +26,26 @@ async function visit(directory) {
       text = text.replace('<section id="implementation">', `${architecture}<section id="implementation">`);
     }
 
+    if (
+      route === "/portfolio/projects/hair-log/" ||
+      route === "/portfolio/projects/75-hard-automation/"
+    ) {
+      const slug = route.split("/").filter(Boolean).at(-1);
+      const responsibilities = await readFile(
+        path.join(source, "portfolio", "projects", slug, "responsibilities.html"),
+        "utf8",
+      );
+      const sectionStart = text.indexOf('<section id="dependencies">');
+      const sectionEnd = text.indexOf("</section>", sectionStart);
+      if (sectionStart < 0 || sectionEnd < 0) {
+        throw new Error(`Missing dependencies section in ${route}`);
+      }
+      text =
+        text.slice(0, sectionStart) +
+        responsibilities +
+        text.slice(sectionEnd + "</section>".length);
+    }
+
     if (route.startsWith("/portfolio/projects/") && route !== "/portfolio/projects/") {
       const slug = route.split("/").filter(Boolean).at(-1);
       text = text.replace(

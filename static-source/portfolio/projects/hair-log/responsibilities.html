@@ -1,0 +1,20 @@
+<section id="dependencies">
+  <h2>Application responsibilities</h2>
+  <p>The system is divided across the shortcut interface, reusable request helpers, Notion data, and date context.</p>
+  <div class="table-scroll" role="region" aria-label="Hair Care Log tool responsibility table" tabindex="0">
+    <table class="toolmap">
+      <caption>Hair Care Log system responsibilities</caption>
+      <thead><tr><th scope="col">Tool / component</th><th scope="col">Responsibility</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Apple Shortcuts</th><td>Runs the 18 workflows, prompts, routing, API requests, result parsing, and reusable property helpers.</td></tr>
+        <tr><th scope="row">Care Menu</th><td>Acts as the user-facing entry point and routes to logging, search, and supporting actions.</td></tr>
+        <tr><th scope="row">Log Hair Care / Log Hair Retie</th><td>Collect and submit the details for a care activity or retie event.</td></tr>
+        <tr><th scope="row">Hair Care HTTP Request</th><td>Centralizes Notion API request behavior so helper shortcuts use a consistent integration path.</td></tr>
+        <tr><th scope="row">Search Care Logs</th><td>Queries the Notion API, processes matching pages, and prepares recent entries for selection.</td></tr>
+        <tr><th scope="row">Notion API + hair-care database</th><td>Store the source-of-truth records and return page properties, dates, URLs, and related details.</td></tr>
+        <tr><th scope="row">Apple Calendar</th><td>Provides surrounding date context for care tracking and review; it is separate from the Notion record store.</td></tr>
+        <tr><th scope="row">Integration permissions + property schema</th><td>Allow the integration to access the database and keep the property helpers aligned with Notion field names and types.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
