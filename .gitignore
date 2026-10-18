@@ -54,3 +54,5 @@ next-env.d.ts
 /.codex/
 /outputs/
 /work/
+# Local writing drafts; these are not site source or release artifacts.
+/docs/drafts/
