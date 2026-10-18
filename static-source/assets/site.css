@@ -46,9 +46,8 @@
 .image-viewer .viewer-caption{max-width:80ch;font-size:16px}
 @media(max-width:450px){[data-project-gallery]{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.case-content [data-project-gallery] figure img{height:120px}.image-viewer{padding:15px}}
 
-/* Keep primary navigation available while scrolling; the footer remains brand-only. */
+/* Keep primary navigation available while scrolling. */
 header{position:sticky;top:0;z-index:20;background:var(--paper)}
-.footer nav{display:none}
 .table-scroll:focus-visible{outline:3px solid #90671d;outline-offset:3px}
 .sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
 .about-hero{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr);align-items:center;gap:clamp(32px,7vw,96px)}
