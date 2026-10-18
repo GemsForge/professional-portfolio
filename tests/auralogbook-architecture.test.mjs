@@ -5,7 +5,7 @@ import {
   AURALOGBOOK_DEPENDENCIES,
   AURALOGBOOK_DEPENDENCY_GROUPS,
   renderDependencyGroup,
-} from "../scripts/auralogbook-dependencies.mjs";
+} from "../scripts/auralogbook-dependencies.mts";
 
 const pages = JSON.parse(
   await readFile(new URL("../lib/static-pages.json", import.meta.url), "utf8"),
