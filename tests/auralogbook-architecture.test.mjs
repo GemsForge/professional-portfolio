@@ -16,6 +16,26 @@ const diagramUrl = "/assets/aura-logbook-architecture.svg";
 test("AuraLogbook page includes one accessible data-to-API-to-UI architecture diagram", async () => {
   assert.ok(page, "the generated AuraLogbook route exists");
   assert.match(page, /href="#architecture">Architecture diagram<\/a>/);
+  assert.match(page, /href="#journey">User journey<\/a>/);
+  assert.match(page, /id="journey" aria-labelledby="journey-heading"/);
+  assert.match(page, /A path from check-in to reflection/);
+  for (const stage of ["Register or sign in", "Log a check-in", "Review your history", "Explore patterns"]) {
+    assert.ok(page.includes(stage), `user journey includes ${stage}`);
+  }
+  assert.match(page, /not a claim that every path has passed end-to-end testing/);
+  assert.match(page, /Open-Meteo \(Atlanta is the configured location\)/);
+  assert.match(page, /not a field saved with a mood entry/);
+  assert.match(page, /Browse entries by date range, then edit or delete them/);
+  assert.match(page, /React 19\.1, TypeScript 5\.8, Material UI 7\.1, Joy UI 5 beta/);
+  assert.match(page, /targets \.NET 9/);
+  assert.match(page, /SQLite and Dapper appear in the project dependencies but are not wired into persistence/);
+  assert.match(page, /Frontend tests use Vitest and Testing Library; API tests use xUnit and Moq/);
+  assert.match(page, /AuraLogbook\.Api\.Tests\/MoodServiceTests\.cs/);
+  assert.match(page, /aura-ui\/src\/pages\/tests\/MoodHistory\.test\.tsx/);
+  assert.match(page, /Controllers\/AuthController\.cs/);
+  assert.match(page, /Repositories\/FileMoodRepository\.cs/);
+  assert.match(page, /not that all tests currently pass/);
+  assert.doesNotMatch(page, /only renders a test page|source inspection has not established.*tests/i);
   assert.match(page, /id="architecture"/);
   assert.match(page, new RegExp(`src="${diagramUrl}"`));
   assert.match(page, /aria-label="Click to zoom the Aura Logbook architecture diagram"/);
@@ -60,6 +80,13 @@ test("AuraLogbook page includes one accessible data-to-API-to-UI architecture di
   assert.doesNotMatch(diagram, /Weatherbit/);
 
   assert.doesNotMatch(page, /Selected UI dependencies|architecture-dependencies/);
+});
+
+test("AuraLogbook journey and resource layout stay responsive and readable", async () => {
+  const css = await readFile(new URL("../static-source/assets/site.css", import.meta.url), "utf8");
+  assert.match(css, /\.case-content \.mood-workflow\{[^}]*display:grid/);
+  assert.match(css, /@media\(max-width:450px\)\{\.case-content \.mood-workflow\{grid-template-columns:minmax\(0,1fr\)\}\}/);
+  assert.match(page, /<ol class="mood-workflow">[\s\S]*?<\/ol>/);
 });
 
 test("AuraLogbook dependency badges come from the typed registry with inline brand marks", () => {
