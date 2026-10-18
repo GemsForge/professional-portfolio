@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 const links = [
   ["/portfolio/projects/", "Projects"],
@@ -19,7 +20,7 @@ export function SiteHeader({ pathname }: { pathname: string }) {
       <header>
         <div className="wrap nav">
           <Link className="brand" href="/" aria-label="Diamond Brown portfolio home">
-            <img src="/assets/brandmark.png" alt="" width="66" height="66" />
+            <Image src="/assets/brandmark.png" alt="" width={66} height={66} />
             <span>Diamond Brown<small>Software Development &amp; Systems</small></span>
           </Link>
           <nav className="links" aria-label="Portfolio navigation">

@@ -1,11 +1,12 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export function SiteFooter() {
   return (
     <footer className="footer">
       <div className="wrap">
         <div className="footer-brand">
-          <img src="/assets/brandmark.png" alt="" width="45" height="45" />
+          <Image src="/assets/brandmark.png" alt="" width={45} height={45} />
           <span>© 2026 Diamond Brown · GemsForge</span>
         </div>
         <nav aria-label="Footer navigation">
