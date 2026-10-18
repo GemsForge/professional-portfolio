@@ -39,7 +39,8 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts",
-    "scripts/auralogbook-dependencies.mts"
+    "scripts/auralogbook-dependencies.mts",
+    "scripts/project-catalog.mts"
   ],
   "exclude": [
     "node_modules",
