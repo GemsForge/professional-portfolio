@@ -1,6 +1,6 @@
 import { cp, readFile, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { renderDependencyGroup } from "./auralogbook-dependencies.mjs";
+import { renderDependencyGroup } from "./auralogbook-dependencies.mts";
 
 const source = path.resolve("static-source");
 const pages = {};
