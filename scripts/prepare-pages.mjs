@@ -1,5 +1,6 @@
 import { cp, readFile, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { renderDependencyGroup } from "./auralogbook-dependencies.mjs";
 
 const source = path.resolve("static-source");
 const pages = {};
@@ -22,8 +23,21 @@ async function visit(directory) {
         path.join(directory, "architecture.html"),
         "utf8",
       );
-      text = text.replace('<a href="#implementation">', '<a href="#architecture">Architecture diagram</a><a href="#implementation">');
-      text = text.replace('<section id="implementation">', `${architecture}<section id="implementation">`);
+      const schemas = await readFile(
+        path.join(directory, "schemas.html"),
+        "utf8",
+      );
+      text = text.replace(
+        '<div id="auralogbook-architecture-slot"></div>',
+        `${architecture}${schemas}`,
+      );
+      text = text.replace(
+        /<div data-dependency-group="([a-zA-Z0-9-]+)"><\/div>/g,
+        (_match, groupId) => renderDependencyGroup(groupId),
+      );
+      if (text.includes("data-dependency-group=")) {
+        throw new Error("An AuraLogbook dependency group was not rendered.");
+      }
     }
 
     if (

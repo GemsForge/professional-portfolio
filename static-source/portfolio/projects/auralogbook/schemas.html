@@ -1,0 +1,52 @@
+<section id="data-sources" class="schema-section" aria-labelledby="schema-heading">
+  <h2 id="schema-heading">Data sources &amp; simplified schemas</h2>
+  <p>This map shows the records and request data at a glance—not a relational database schema. User, mood, and zodiac-insight records currently use JSON files; weather is requested from Open-Meteo and is not saved with journal entries.</p>
+
+  <div class="schema-map" aria-label="AuraLogbook data relationships">
+    <article class="schema-card schema-user">
+      <p class="schema-kicker">Profile record · JSON file</p>
+      <h3>User</h3>
+      <dl>
+        <div><dt>Identity</dt><dd>id · email · password hash</dd></div>
+        <div><dt>Profile</dt><dd>display name · avatar · motto</dd></div>
+        <div><dt>Reflection</dt><dd>selected pathway · zodiac sign</dd></div>
+      </dl>
+    </article>
+
+    <p class="schema-relationship" aria-label="One user can have many mood entries"><span>1 user</span><span aria-hidden="true">→</span><span>many entries</span></p>
+
+    <article class="schema-card schema-mood">
+      <p class="schema-kicker">Journal record · JSON file</p>
+      <h3>MoodEntry</h3>
+      <dl>
+        <div><dt>Keys</dt><dd>id · userId · date</dd></div>
+        <div><dt>Reflection</dt><dd>one or more mood types · optional comment</dd></div>
+        <div><dt>Created</dt><dd>timestamp</dd></div>
+      </dl>
+    </article>
+
+    <article class="schema-card schema-zodiac">
+      <p class="schema-kicker">Reference data · JSON file</p>
+      <h3>Zodiac insight templates</h3>
+      <dl>
+        <div><dt>Index</dt><dd>zodiac sign · element</dd></div>
+        <div><dt>Each insight</dt><dd>category · title · message</dd></div>
+      </dl>
+      <p class="schema-relationship">A profile’s zodiac sign selects matching insight templates; these are reference records, not a user-owned table.</p>
+    </article>
+
+    <article class="schema-card schema-weather">
+      <p class="schema-kicker">External request · Open-Meteo</p>
+      <h3>Weather context</h3>
+      <dl>
+        <div><dt>Request</dt><dd>city or coordinates</dd></div>
+        <div><dt>Response</dt><dd>temperature · conditions · icon code</dd></div>
+        <div><dt>Timestamp</dt><dd>not currently returned by the app API</dd></div>
+      </dl>
+      <p>Fetched for dashboard context; not persisted with a mood entry.</p>
+    </article>
+  </div>
+
+  <p class="schema-footnote">The API model stores an email (not a separate username). Password hashes are shown only to explain the schema: never expose credentials or real profile and mood data in portfolio examples.</p>
+  <p class="schema-sources"><strong>Source schemas:</strong> <a href="https://github.com/GemsForge/aura-logbook-api/blob/master/AuraLogbook.Api/Models/User.cs">User</a> · <a href="https://github.com/GemsForge/aura-logbook-api/blob/master/AuraLogbook.Api/Models/MoodEntry.cs">MoodEntry</a> · <a href="https://github.com/GemsForge/aura-logbook-api/blob/master/AuraLogbook.Api/Models/ZodiacSignInsights.cs">Zodiac insight templates</a> · <a href="https://github.com/GemsForge/aura-logbook-api/blob/master/AuraLogbook.Api/Models/Dto/WeatherDto.cs">Weather response DTO</a></p>
+</section>
