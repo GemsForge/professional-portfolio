@@ -23,7 +23,8 @@ function cleanPage(html: string) {
  */
 export function PortfolioPage({ pathname }: { pathname: string }) {
   const page = pages[pathname as keyof typeof pages] ?? pages["/"];
-  const hasProjectGrid = pathname === "/" || pathname === "/portfolio/" || pathname === "/portfolio/projects/";
+  const isHome = pathname === "/" || pathname === "/portfolio/";
+  const hasProjectGrid = isHome || pathname === "/portfolio/projects/";
   const content = cleanPage(page).replace(/<div class="projects">[\s\S]*?<\/div><\/div>/, hasProjectGrid ? projectGridMarker : "");
   const [beforeGrid, afterGrid] = content.split(projectGridMarker);
   return (
@@ -31,7 +32,14 @@ export function PortfolioPage({ pathname }: { pathname: string }) {
       <SiteHeader pathname={pathname} />
       <main id="main">
         <div dangerouslySetInnerHTML={{ __html: beforeGrid }} />
-        {hasProjectGrid && <ProjectCardGrid />}
+        {isHome ? (
+          <ProjectCardGrid
+            slugs={["auralogbook", "notion-api-shortcuts", "apple-ecosystem"]}
+            showMoreLink
+          />
+        ) : hasProjectGrid ? (
+          <ProjectCardGrid />
+        ) : null}
         <div dangerouslySetInnerHTML={{ __html: afterGrid ?? "" }} />
       </main>
       <SiteFooter />

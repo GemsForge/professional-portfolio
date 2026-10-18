@@ -56,6 +56,9 @@ test("project cards consume the shared catalog and are mounted on all project in
   assert.match(projectCard, /project\.slug/);
   assert.match(projectCard, /Object\.values\(PROJECTS\)/);
   assert.match(renderer, /ProjectCardGrid/);
+  assert.match(renderer, /auralogbook.*notion-api-shortcuts.*apple-ecosystem/);
+  assert.match(projectCard, /Explore more projects/);
+  assert.match(projectCard, /\/portfolio\/projects\//);
   assert.match(renderer, /pathname === "\/portfolio\/projects\/"/);
   assert.match(catalog, /applyProjectPageMetadata/);
   assert.match(catalog, /renderProjectCard/);

@@ -40,12 +40,25 @@ export function ProjectCard({ project }: { project: ProjectDefinition }) {
 }
 
 /** Renders the complete catalog as the shared project-card grid. */
-export function ProjectCardGrid() {
+export function ProjectCardGrid({ slugs, showMoreLink = false }: { slugs?: string[]; showMoreLink?: boolean }) {
+  const projects = slugs
+    ? slugs.map((slug) => PROJECTS[slug as keyof typeof PROJECTS]).filter(Boolean)
+    : Object.values(PROJECTS);
+
   return (
-    <div className="wrap projects">
-      {Object.values(PROJECTS).map((project) => (
+    <>
+      <div className="wrap projects">
+      {projects.map((project) => (
         <ProjectCard key={project.slug} project={project} />
       ))}
-    </div>
+      </div>
+      {showMoreLink && (
+        <div className="wrap project-grid-actions">
+          <Link className="button secondary" href="/portfolio/projects/">
+            Explore more projects ↗
+          </Link>
+        </div>
+      )}
+    </>
   );
 }
