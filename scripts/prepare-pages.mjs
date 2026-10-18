@@ -25,10 +25,12 @@ async function visit(directory) {
     if (project) text = applyProjectPageMetadata(text, project);
 
     if (route === "/" || route === "/portfolio/" || route === "/portfolio/projects/") {
-      text = text.replace(
-        /<article class="project"><a href="\/portfolio\/projects\/75-hard-automation\/[\s\S]*?<\/article>/,
-        renderProjectCard(PROJECTS["75-hard-automation"]),
-      );
+      for (const project of Object.values(PROJECTS)) {
+        text = text.replace(
+          new RegExp(`<article class="project"><a href="/portfolio/projects/${project.slug}/"[\\s\\S]*?<\\/article>`),
+          renderProjectCard(project),
+        );
+      }
     }
 
     // Keep the product name readable in user-facing portfolio copy while
