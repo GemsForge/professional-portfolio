@@ -39,6 +39,7 @@ export function ProjectCard({ project }: { project: ProjectDefinition }) {
   );
 }
 
+/** Renders the complete catalog as the shared project-card grid. */
 export function ProjectCardGrid() {
   return (
     <div className="wrap projects">

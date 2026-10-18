@@ -1,3 +1,7 @@
+/**
+ * User-facing project data shared by cards and detail-page preparation.
+ * Technical route identifiers remain separate from display names.
+ */
 export interface ProjectDefinition {
   slug: string;
   name: string;
@@ -79,10 +83,12 @@ export const PROJECTS = {
   },
 } satisfies Record<string, ProjectDefinition>;
 
+/** Renders the static fallback card used while preparing generated pages. */
 export function renderProjectCard(project: ProjectDefinition) {
   return `<article class="project"><a href="/portfolio/projects/${project.slug}/" class="project-visual" tabindex="-1" aria-hidden="true"><img src="${project.image}" alt="" loading="lazy"></a><div class="project-meta">${project.preTitle}</div><h3>${project.cardTitle}</h3><p>${project.description}</p><div class="tags">${project.primaryTools}</div><a class="worklink" href="/portfolio/projects/${project.slug}/">${project.cardLinkLabel}</a></article>`;
 }
 
+/** Applies the same catalog values to a generated project detail page. */
 export function applyProjectPageMetadata(html: string, project: ProjectDefinition) {
   return html
     .replace(/(<title>)[^<]+( · Diamond Brown<\/title>)/, `$1${project.name}$2`)
