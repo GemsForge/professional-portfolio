@@ -99,7 +99,10 @@ test("AuraLogbook dependency badges come from the typed registry with inline bra
   assert.match(heroBadges, /src="\/assets\/auralogbook-stack\/swagger\.png"/);
 
   const workflowTools = renderDependencyGroup("workflowTools");
-  for (const id of ["notion", "apple_shortcuts", "apple_numbers", "apple_notes"]) {
+  for (const id of ["notion", "apple_shortcuts", "apple_numbers", "apple_notes", "apple_freeform", "apple_reminders", "apple_calendar", "apple_siri", "apple_icloud"]) {
     assert.match(workflowTools, new RegExp(`data-dependency="${id}"`));
+  }
+  for (const id of ["apple_shortcuts", "apple_numbers", "apple_notes", "apple_freeform", "apple_reminders", "apple_calendar", "apple_siri", "apple_icloud"]) {
+    assert.match(workflowTools, new RegExp(`data-dependency="${id}"[^>]*><svg[^>]*data-logo-symbol="brand-apple"`));
   }
 });
