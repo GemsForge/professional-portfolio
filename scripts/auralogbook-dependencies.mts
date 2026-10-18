@@ -1,3 +1,10 @@
+/**
+ * Typed source of truth for the Aura Logbook dependency badges.
+ *
+ * The plain Node page-preparation script imports this module directly using
+ * Node's built-in TypeScript type stripping; keep this file free of JSX and
+ * runtime-only TypeScript features.
+ */
 export const DEPENDENCY_LOGO_KIND = Object.freeze({
   FILE: "file",
   SPRITE: "sprite",

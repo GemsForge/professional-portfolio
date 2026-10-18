@@ -1,5 +1,7 @@
 import { cp, readFile, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
+// Node 22.13+ strips the catalog's TypeScript types at import time; no runtime
+// transpiler or JSX dependency is needed for this build-time-only module.
 import { renderDependencyGroup } from "./auralogbook-dependencies.mts";
 
 const source = path.resolve("static-source");
