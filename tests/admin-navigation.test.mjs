@@ -33,12 +33,14 @@ test('direct Admin access remains protected and does not expose identity data', 
 });
 
 test('generated footer always exposes a plain Admin sign-in entry without client-side identity checks', async () => {
-  const [home, generatedPages] = await Promise.all([
+  const [home, generatedPages, stylesheet] = await Promise.all([
     readFile(new URL('../static-source/index.html', import.meta.url), 'utf8'),
     readFile(new URL('../lib/static-pages.json', import.meta.url), 'utf8'),
+    readFile(new URL('../static-source/assets/site.css', import.meta.url), 'utf8'),
   ]);
 
   assert.doesNotMatch(home, /href="\/admin\/?"/);
+  assert.doesNotMatch(stylesheet, /\.footer\s+nav\s*\{\s*display\s*:\s*none\s*;?\s*\}/);
 
   for (const page of Object.values(JSON.parse(generatedPages))) {
     if (page.includes('<nav aria-label="Footer navigation">')) {
