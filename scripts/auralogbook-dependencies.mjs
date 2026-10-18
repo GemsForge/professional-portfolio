@@ -7,7 +7,7 @@ export const DEPENDENCY_LOGO_KIND = Object.freeze({
 });
 
 /**
- * @typedef {"react"|"typescript"|"dotnet"|"mui"|"redux"|"react_router"|"axios"|"react_hook_form"|"yup"|"dayjs"|"dapper"|"sqlite"|"swagger"|"csharp"|"bcrypt"|"jwt_bearer"|"notion"|"apple_shortcuts"|"apple_numbers"|"apple_notes"|"apple_freeform"|"apple_reminders"|"apple_siri"|"apple_icloud"} DependencyId
+ * @typedef {"react"|"typescript"|"dotnet"|"mui"|"redux"|"react_router"|"axios"|"react_hook_form"|"yup"|"dayjs"|"dapper"|"sqlite"|"swagger"|"csharp"|"bcrypt"|"jwt_bearer"|"notion"|"apple_shortcuts"|"apple_numbers"|"apple_notes"|"apple_freeform"|"apple_reminders"|"apple_calendar"|"apple_siri"|"apple_icloud"} DependencyId
  * @typedef {"portfolioHighlights"|"workflowTools"} DependencyGroupId
  *
  * @typedef {Object} DependencyLogoFile
@@ -18,7 +18,7 @@ export const DEPENDENCY_LOGO_KIND = Object.freeze({
  *
  * @typedef {Object} DependencyLogoSprite
  * @property {typeof DEPENDENCY_LOGO_KIND.SPRITE} kind
- * @property {"brand-dotnet"|"brand-mui"} symbolId
+ * @property {"brand-dotnet"|"brand-mui"|"brand-apple"} symbolId
  * @property {string} description
  *
  * @typedef {Object} DependencyLogoGlyph
@@ -200,56 +200,64 @@ export const AURALOGBOOK_DEPENDENCIES = Object.freeze({
     label: "Apple Shortcuts",
     category: DEPENDENCY_CATEGORY.PRODUCTIVITY,
     status: DEPENDENCY_STATUS.ACTIVE,
-    logo: { kind: DEPENDENCY_LOGO_KIND.GLYPH, symbolId: "apple-shortcuts-glyph", text: "⌘", description: "Generic Apple glyph; Shortcuts app icon not yet added" },
-    sourceUrl: "https://support.apple.com/guide/shortcuts/welcome/ios",
+    logo: { kind: DEPENDENCY_LOGO_KIND.SPRITE, symbolId: "brand-apple", description: "Apple brand logo" },
+    sourceUrl: "https://developer.apple.com/",
   },
   apple_numbers: {
     id: "apple_numbers",
     label: "Apple Numbers",
     category: DEPENDENCY_CATEGORY.PRODUCTIVITY,
     status: DEPENDENCY_STATUS.ACTIVE,
-    logo: { kind: DEPENDENCY_LOGO_KIND.FILE, symbolId: "apple-numbers", description: "Apple Numbers logo", src: "/assets/auralogbook-stack/apple-numbers.png" },
-    sourceUrl: "https://www.apple.com/numbers/",
+    logo: { kind: DEPENDENCY_LOGO_KIND.SPRITE, symbolId: "brand-apple", description: "Apple brand logo" },
+    sourceUrl: "https://developer.apple.com/",
   },
   apple_notes: {
     id: "apple_notes",
     label: "Apple Notes",
     category: DEPENDENCY_CATEGORY.PRODUCTIVITY,
     status: DEPENDENCY_STATUS.ACTIVE,
-    logo: { kind: DEPENDENCY_LOGO_KIND.FILE, symbolId: "apple-notes", description: "Apple Notes logo", src: "/assets/auralogbook-stack/apple-notes.png" },
-    sourceUrl: "https://www.apple.com/notes/",
+    logo: { kind: DEPENDENCY_LOGO_KIND.SPRITE, symbolId: "brand-apple", description: "Apple brand logo" },
+    sourceUrl: "https://developer.apple.com/",
   },
   apple_freeform: {
     id: "apple_freeform",
     label: "Apple Freeform",
     category: DEPENDENCY_CATEGORY.PRODUCTIVITY,
     status: DEPENDENCY_STATUS.ACTIVE,
-    logo: { kind: DEPENDENCY_LOGO_KIND.FILE, symbolId: "apple-freeform", description: "Apple Freeform logo", src: "/assets/auralogbook-stack/apple-freeform.png" },
-    sourceUrl: "https://www.apple.com/freeform/",
+    logo: { kind: DEPENDENCY_LOGO_KIND.SPRITE, symbolId: "brand-apple", description: "Apple brand logo" },
+    sourceUrl: "https://developer.apple.com/",
   },
   apple_reminders: {
     id: "apple_reminders",
     label: "Apple Reminders",
     category: DEPENDENCY_CATEGORY.PRODUCTIVITY,
     status: DEPENDENCY_STATUS.ACTIVE,
-    logo: { kind: DEPENDENCY_LOGO_KIND.FILE, symbolId: "apple-reminders", description: "Apple Reminders logo", src: "/assets/auralogbook-stack/apple-reminders.png" },
-    sourceUrl: "https://www.apple.com/reminders/",
+    logo: { kind: DEPENDENCY_LOGO_KIND.SPRITE, symbolId: "brand-apple", description: "Apple brand logo" },
+    sourceUrl: "https://developer.apple.com/",
+  },
+  apple_calendar: {
+    id: "apple_calendar",
+    label: "Apple Calendar",
+    category: DEPENDENCY_CATEGORY.PRODUCTIVITY,
+    status: DEPENDENCY_STATUS.ACTIVE,
+    logo: { kind: DEPENDENCY_LOGO_KIND.SPRITE, symbolId: "brand-apple", description: "Apple brand logo" },
+    sourceUrl: "https://developer.apple.com/",
   },
   apple_siri: {
     id: "apple_siri",
     label: "Siri",
     category: DEPENDENCY_CATEGORY.PRODUCTIVITY,
     status: DEPENDENCY_STATUS.ACTIVE,
-    logo: { kind: DEPENDENCY_LOGO_KIND.FILE, symbolId: "apple-siri", description: "Siri logo", src: "/assets/auralogbook-stack/apple-siri.png" },
-    sourceUrl: "https://www.apple.com/siri/",
+    logo: { kind: DEPENDENCY_LOGO_KIND.SPRITE, symbolId: "brand-apple", description: "Apple brand logo" },
+    sourceUrl: "https://developer.apple.com/",
   },
   apple_icloud: {
     id: "apple_icloud",
     label: "iCloud",
     category: DEPENDENCY_CATEGORY.PRODUCTIVITY,
     status: DEPENDENCY_STATUS.ACTIVE,
-    logo: { kind: DEPENDENCY_LOGO_KIND.FILE, symbolId: "apple-icloud", description: "iCloud logo", src: "/assets/auralogbook-stack/apple-icloud.png" },
-    sourceUrl: "https://www.apple.com/icloud/",
+    logo: { kind: DEPENDENCY_LOGO_KIND.SPRITE, symbolId: "brand-apple", description: "Apple brand logo" },
+    sourceUrl: "https://developer.apple.com/",
   },
 });
 
@@ -261,7 +269,7 @@ export const AURALOGBOOK_DEPENDENCY_GROUPS = Object.freeze({
   },
   workflowTools: {
     label: "Workflow and Apple productivity tools",
-    ids: ["notion", "apple_shortcuts", "apple_numbers", "apple_notes", "apple_freeform", "apple_reminders", "apple_siri", "apple_icloud"],
+    ids: ["notion", "apple_shortcuts", "apple_numbers", "apple_notes", "apple_freeform", "apple_reminders", "apple_calendar", "apple_siri", "apple_icloud"],
   },
 });
 
