@@ -1,6 +1,6 @@
 import pages from "../lib/static-pages.json";
 import manager from "../lib/image-manager.html?raw";
-import {adminNavigationRequest,adminPageRequest,mediaRequest} from "../lib/media-server";
+import {adminPageRequest,mediaRequest} from "../lib/media-server";
 import handler from "vinext/server/fetch-handler";
 import { runWithConnectorBinding } from "../lib/connector-context";
 import type { ConnectorBinding } from "../lib/connector-contract.mjs";
@@ -8,7 +8,6 @@ import type { ConnectorBinding } from "../lib/connector-contract.mjs";
 export default {
   fetch(request: Request, env: Cloudflare.Env, ctx: ExecutionContext<{ CONNECTORS?: ConnectorBinding }>) {
     const url = new URL(request.url);
-    if(url.pathname === '/api/admin-navigation') return adminNavigationRequest(request);
     if(url.pathname === '/api/media' || url.pathname.startsWith('/api/media/')) {
       return mediaRequest(request,env).catch(()=>Response.json({error:'Unable to complete this action. Please try again.'},{status:500,headers:{'Cache-Control':'no-store'}}));
     }

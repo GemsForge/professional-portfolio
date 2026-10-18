@@ -60,8 +60,8 @@ async function visit(directory) {
 
     if (text.includes('<nav aria-label="Footer navigation">')) {
       text = text.replace(
-        "</body>",
-        '<script src="/assets/admin-navigation.js" defer></script></body>',
+        '<nav aria-label="Footer navigation">',
+        '<nav aria-label="Footer navigation"><a href="/admin/">Admin</a>',
       );
     }
 
