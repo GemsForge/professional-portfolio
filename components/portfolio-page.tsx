@@ -12,6 +12,12 @@ function cleanPage(html: string) {
     .trim();
 }
 
+/**
+ * Composes a generated static view with the reusable React shell.
+ *
+ * Static pages remain the source of page content, while their original
+ * document shell is removed so header and footer are rendered exactly once.
+ */
 export function PortfolioPage({ pathname }: { pathname: string }) {
   const page = pages[pathname as keyof typeof pages] ?? pages["/"];
   return (

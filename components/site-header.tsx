@@ -8,6 +8,12 @@ const links = [
   ["/contact/", "Contact"],
 ] as const;
 
+/**
+ * Renders the single site-wide header and primary navigation.
+ *
+ * The pathname is supplied by the catch-all route so nested project pages can
+ * keep Projects active without duplicating navigation markup in each view.
+ */
 export function SiteHeader({ pathname }: { pathname: string }) {
   const isActive = (href: string) =>
     href === "/portfolio/projects/"

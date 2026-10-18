@@ -1,6 +1,12 @@
 import Link from "next/link";
 import Image from "next/image";
 
+/**
+ * Renders the single site-wide footer navigation.
+ *
+ * Keeping this in the shared shell ensures every generated view exposes the
+ * same project, resume, contact, admin, and back-to-top links.
+ */
 export function SiteFooter() {
   return (
     <footer className="footer">
