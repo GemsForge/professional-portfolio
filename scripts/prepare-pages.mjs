@@ -1,6 +1,9 @@
 import { cp, readFile, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { renderDependencyGroup } from "./auralogbook-dependencies.mjs";
+// Node 22.13+ strips the catalog's TypeScript types at import time; no runtime
+// transpiler or JSX dependency is needed for this build-time-only module.
+import { renderDependencyGroup } from "./auralogbook-dependencies.mts";
+import { applyProjectPageMetadata, PROJECTS, renderProjectCard } from "./project-catalog.mts";
 
 const source = path.resolve("static-source");
 const pages = {};
@@ -17,6 +20,27 @@ async function visit(directory) {
     let route = `/${path.relative(source, directory).split(path.sep).filter(Boolean).join("/")}`;
     route = route === "/" ? route : `${route}/`;
     let text = await readFile(file, "utf8");
+
+    const project = PROJECTS[route.split("/").filter(Boolean).at(-1) ?? ""];
+    if (project) text = applyProjectPageMetadata(text, project);
+
+    if (route === "/" || route === "/portfolio/" || route === "/portfolio/projects/") {
+      for (const project of Object.values(PROJECTS)) {
+        text = text.replace(
+          new RegExp(`<article class="project"><a href="/portfolio/projects/${project.slug}/"[\\s\\S]*?<\\/article>`),
+          renderProjectCard(project),
+        );
+      }
+    }
+
+    // Keep the product name readable in user-facing portfolio copy while
+    // preserving AuraLogbook for technical identifiers and source links.
+    text = text
+      .replace(/>AuraLogbook</g, ">Aura Logbook<")
+      .replace(/Explore AuraLogbook/g, "Explore Aura Logbook")
+      .replace(/Next: AuraLogbook/g, "Next: Aura Logbook")
+      .replace(/AuraLogbook is/g, "Aura Logbook is")
+      .replace(/<title>AuraLogbook ·/g, "<title>Aura Logbook ·");
 
     if (route === "/portfolio/projects/auralogbook/") {
       const architecture = await readFile(
