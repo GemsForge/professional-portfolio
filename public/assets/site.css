@@ -55,3 +55,27 @@ header{position:sticky;top:0;z-index:20;background:var(--paper)}
 .about-portrait img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 30%}
 @media(max-width:650px){.about-hero{grid-template-columns:1fr;gap:28px}.about-portrait{max-width:360px;justify-self:start}.about-section-portrait{height:400px}}
 .about-section-portrait{display:block;width:100%;max-width:360px;height:450px;aspect-ratio:4/5;object-fit:cover;object-position:center 30%;margin:0 0 28px;border:1px solid var(--line);border-radius:90px 4px 4px 4px;background:#e4e8db}
+.dependency-chip-list{display:flex;flex-wrap:wrap;gap:10px;margin:0;padding:0;list-style:none}
+.dependency-chip{display:inline-flex;min-height:52px;align-items:center;gap:9px;padding:8px 12px;background:#f7f5eb;border:1px solid #c7d0c1;border-radius:4px;color:var(--ink);font-size:14px;font-weight:600;line-height:1.35}
+.dependency-chip-logo{display:block;width:26px;height:26px;flex:none;object-fit:contain}
+.dependency-chip-glyph{display:grid;place-items:center;border:1px solid currentColor;border-radius:5px;font-size:9px;font-weight:800;letter-spacing:-.04em}
+.dependency-chip-list svg.dependency-chip-logo{overflow:visible}
+.facts .dependency-chip-list{align-items:center}
+.facts .dependency-chip{min-height:42px;padding:5px 9px;font-size:13px}
+.facts .dependency-chip-logo{width:21px;height:21px}
+.facts .dependency-chip-label{border:0;padding:0;border-radius:0;font-size:inherit}
+.schema-section>p{margin-bottom:20px}
+.schema-map{display:grid;grid-template-columns:minmax(0,1fr) minmax(100px,.5fr) minmax(0,1fr);gap:16px;align-items:stretch;margin:24px 0}
+.schema-card{min-width:0;padding:20px;background:#f7f5eb;border:1px solid #bdc8b8;border-top:4px solid #49634b;border-radius:5px;box-shadow:0 5px 14px #1e28230c}
+.schema-user{grid-column:1}.schema-mood{grid-column:3}.schema-zodiac{grid-column:1 / span 1}.schema-weather{grid-column:3}
+.schema-kicker{margin:0 0 6px!important;color:#426148!important;font-size:11px!important;font-weight:700;letter-spacing:1px;text-transform:uppercase}
+.case-content .schema-card h3{margin:0 0 12px;font-size:20px}
+.schema-card dl{margin:0}.schema-card dl div{padding:8px 0;border-top:1px solid #d9ddcf}.schema-card dt{color:#426148;font-size:12px;font-weight:700}.schema-card dd{margin:2px 0 0;color:var(--ink);font-size:14px;line-height:1.55}
+.case-content .schema-relationship{align-self:center;margin:0!important;color:#426148!important;font-size:13px!important;font-weight:700;text-align:center}
+.schema-relationship span{display:block}.schema-relationship span:nth-child(2){font-size:24px;line-height:1.2}
+.schema-card .schema-relationship{margin-top:14px!important;padding-top:12px;border-top:1px solid #d9ddcf;text-align:left}
+.case-content .schema-card>p:not(.schema-kicker):not(.schema-relationship),.schema-footnote,.schema-sources{font-size:14px}
+.schema-footnote{padding:14px 16px;background:#e8ebdf;border-left:3px solid #49634b}
+.schema-sources{margin-top:16px}
+.development-callout{margin:22px 0}
+@media(max-width:700px){.schema-map{grid-template-columns:minmax(0,1fr)}.schema-user,.schema-mood,.schema-zodiac,.schema-weather{grid-column:1}.schema-relationship{padding:0 8px}.schema-relationship span{display:inline}.schema-relationship span:nth-child(2){padding:0 8px}}
