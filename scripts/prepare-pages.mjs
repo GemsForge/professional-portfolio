@@ -18,6 +18,15 @@ async function visit(directory) {
     route = route === "/" ? route : `${route}/`;
     let text = await readFile(file, "utf8");
 
+    // Keep the product name readable in user-facing portfolio copy while
+    // preserving AuraLogbook for technical identifiers and source links.
+    text = text
+      .replace(/>AuraLogbook</g, ">Aura Logbook<")
+      .replace(/Explore AuraLogbook/g, "Explore Aura Logbook")
+      .replace(/Next: AuraLogbook/g, "Next: Aura Logbook")
+      .replace(/AuraLogbook is/g, "Aura Logbook is")
+      .replace(/<title>AuraLogbook ·/g, "<title>Aura Logbook ·");
+
     if (route === "/portfolio/projects/auralogbook/") {
       const architecture = await readFile(
         path.join(directory, "architecture.html"),
