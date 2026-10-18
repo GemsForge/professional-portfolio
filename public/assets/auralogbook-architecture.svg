@@ -1,0 +1,150 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1200" role="img" aria-labelledby="title description">
+  <title id="title">Aura LogBook data, API, and user interface architecture</title>
+  <desc id="description">A three-column diagram. User-entered account, profile, mood, and location data plus JSON files and Weatherbit connect to an ASP.NET Core .NET 9 API. Authenticated API services return mood history, summaries, charts, zodiac insights, and weather to a React 19 and TypeScript interface.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M1 1 11 6 1 11Z" fill="#355a3a"/></marker>
+    <marker id="arrow-muted" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M1 1 11 6 1 11Z" fill="#728078"/></marker>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;fill:#1e2823}
+      .column{fill:#fffdf7;stroke:#c6cebf;stroke-width:2}
+      .column-head{fill:#e3eee1}
+      .api-head{fill:#294d38}
+      .api-head-text{fill:#fffdf7}
+      .eyebrow{font-size:19px;font-weight:700;letter-spacing:2px;fill:#355a3a}
+      .api-eyebrow{fill:#d6e8d4}
+      .heading{font-size:29px;font-weight:700}
+      .api-heading{fill:#fffdf7}
+      .item{fill:#f2f3eb;stroke:#e0e3d9;stroke-width:1}
+      .item-title{font-size:21px;font-weight:700}
+      .body{font-size:17px;fill:#536158}
+      .small{font-size:15px;fill:#536158}
+      .api-body{font-size:16px;fill:#e3eee1}
+      .chip{fill:#e3eee1}
+      .chip-text{font-size:15px;font-weight:700;fill:#294d38}
+      .flow{fill:none;stroke:#355a3a;stroke-width:4;marker-end:url(#arrow)}
+      .return{fill:none;stroke:#728078;stroke-width:3;stroke-dasharray:9 8;marker-end:url(#arrow-muted)}
+      .external{fill:#fffdf7;stroke:#91a78e;stroke-width:2}
+      .divider{stroke:#d5dacf;stroke-width:1}
+    </style>
+  </defs>
+  <rect width="1920" height="1200" rx="20" fill="#f5f4eb"/>
+
+  <!-- DATA SOURCES -->
+  <rect class="column" x="48" y="48" width="510" height="1104" rx="18"/>
+  <path class="column-head" d="M66 48h474a18 18 0 0 1 18 18v80H48V66a18 18 0 0 1 18-18Z"/>
+  <text class="eyebrow" x="78" y="91">01 · DATA SOURCES</text>
+
+  <rect class="item" x="78" y="170" width="450" height="180" rx="12"/>
+  <text class="item-title" x="102" y="208">User-provided data</text>
+  <text class="body" x="102" y="241">Account · profile · birth date · pathway</text>
+  <text class="body" x="102" y="271">Mood · date · notes · selected location</text>
+  <rect class="chip" x="102" y="294" width="175" height="34" rx="17"/>
+  <text class="chip-text" x="119" y="317">forms → API JSON</text>
+
+  <rect class="item" x="78" y="370" width="450" height="330" rx="12"/>
+  <text class="item-title" x="102" y="409">Registered JSON repositories</text>
+  <text class="small" x="102" y="435">Active persistence in the inspected API</text>
+  <line class="divider" x1="102" y1="454" x2="504" y2="454"/>
+  <text class="item-title" x="102" y="492">users.json</text>
+  <text class="body" x="102" y="520">Accounts and profile attributes</text>
+  <line class="divider" x1="102" y1="540" x2="504" y2="540"/>
+  <text class="item-title" x="102" y="578">moods.json</text>
+  <text class="body" x="102" y="606">User-scoped mood entries</text>
+  <line class="divider" x1="102" y1="626" x2="504" y2="626"/>
+  <text class="item-title" x="102" y="664">zodiacInsights.json</text>
+  <text class="small" x="102" y="687">Curated sign descriptions and insight content</text>
+
+  <rect class="external" x="78" y="720" width="450" height="150" rx="12"/>
+  <text class="eyebrow" x="102" y="758">EXTERNAL DATA PROVIDER</text>
+  <text class="item-title" x="102" y="798">Weatherbit</text>
+  <text class="body" x="102" y="828">Current weather for the requested location</text>
+  <text class="small" x="102" y="852">API key remains server-side</text>
+
+  <rect class="item" x="78" y="890" width="450" height="224" rx="12"/>
+  <text class="item-title" x="102" y="930">Declared, not active persistence</text>
+  <text class="body" x="102" y="962">SQLite + Dapper packages are present</text>
+  <text class="body" x="102" y="990">but current repositories use JSON files.</text>
+  <rect class="chip" x="102" y="1030" width="382" height="48" rx="10"/>
+  <text class="chip-text" x="120" y="1060">Do not imply database-backed storage</text>
+
+  <!-- API -->
+  <rect class="column" x="705" y="48" width="510" height="1104" rx="18"/>
+  <path class="api-head" d="M723 48h474a18 18 0 0 1 18 18v80H705V66a18 18 0 0 1 18-18Z"/>
+  <text class="eyebrow api-eyebrow" x="735" y="87">02 · APPLICATION API</text>
+  <text class="heading api-heading" x="735" y="121">ASP.NET Core · .NET 9</text>
+
+  <rect class="item" x="735" y="170" width="450" height="170" rx="12"/>
+  <text class="item-title" x="759" y="208">Authentication · AuthController</text>
+  <text class="body" x="759" y="240">Register / sign in · JWT bearer tokens</text>
+  <text class="body" x="759" y="270">BCrypt password hashing · protected routes</text>
+  <rect class="chip" x="759" y="291" width="178" height="32" rx="16"/>
+  <text class="chip-text" x="776" y="313">Identity-scoped access</text>
+
+  <rect class="item" x="735" y="360" width="450" height="220" rx="12"/>
+  <text class="item-title" x="759" y="399">Mood API · MoodController</text>
+  <text class="body" x="759" y="432">Create · read · update · delete entries</text>
+  <text class="body" x="759" y="462">Filter mood history by date range</text>
+  <text class="body" x="759" y="492">Summary · streaks · frequency · timeline</text>
+  <text class="small" x="759" y="533">MoodService + MoodStatsService</text>
+
+  <rect class="item" x="735" y="600" width="450" height="170" rx="12"/>
+  <text class="item-title" x="759" y="639">Insights · InsightController</text>
+  <text class="body" x="759" y="672">Combines zodiac reference data and</text>
+  <text class="body" x="759" y="702">the signed-in user’s mood statistics</text>
+  <text class="small" x="759" y="744">InsightTriggerService · JSON response</text>
+
+  <rect class="item" x="735" y="790" width="450" height="150" rx="12"/>
+  <text class="item-title" x="759" y="829">Weather · WeatherController</text>
+  <text class="body" x="759" y="862">WeatherService → HttpClient → Weatherbit</text>
+  <text class="small" x="759" y="906">Provider credentials never reach the browser</text>
+
+  <rect class="item" x="735" y="960" width="450" height="154" rx="12"/>
+  <text class="item-title" x="759" y="999">Transport · security · API docs</text>
+  <text class="body" x="759" y="1032">HTTPS · CORS · JSON · JWT validation</text>
+  <text class="small" x="759" y="1062">Swagger / Swashbuckle (development)</text>
+  <text class="small" x="759" y="1090">SQLite + Dapper are declared, not wired in</text>
+
+  <!-- UI -->
+  <rect class="column" x="1362" y="48" width="510" height="1104" rx="18"/>
+  <path class="column-head" d="M1380 48h474a18 18 0 0 1 18 18v80h-510V66a18 18 0 0 1 18-18Z"/>
+  <text class="eyebrow" x="1392" y="87">03 · USER INTERFACE</text>
+  <text class="heading" x="1392" y="121">React 19 · TypeScript</text>
+
+  <rect class="item" x="1392" y="170" width="450" height="146" rx="12"/>
+  <text class="item-title" x="1416" y="210">Sign in and onboarding</text>
+  <text class="body" x="1416" y="243">Register · login · profile · pathway</text>
+  <text class="small" x="1416" y="282">React Hook Form + Yup validation</text>
+
+  <rect class="item" x="1392" y="336" width="450" height="176" rx="12"/>
+  <text class="item-title" x="1416" y="376">Mood journal</text>
+  <text class="body" x="1416" y="409">Create · edit · delete · browse entries</text>
+  <text class="body" x="1416" y="439">Review history across date ranges</text>
+  <text class="small" x="1416" y="480">Protected pages · React Router</text>
+
+  <rect class="item" x="1392" y="532" width="450" height="228" rx="12"/>
+  <text class="item-title" x="1416" y="572">Personal dashboard</text>
+  <text class="body" x="1416" y="605">Entry totals · frequent mood · streak</text>
+  <text class="body" x="1416" y="635">Mood distribution · timeline charts</text>
+  <text class="body" x="1416" y="665">Zodiac insights · current weather</text>
+  <rect class="chip" x="1416" y="698" width="324" height="38" rx="19"/>
+  <text class="chip-text" x="1434" y="723">MUI · Recharts · responsive UI</text>
+
+  <rect class="item" x="1392" y="780" width="450" height="168" rx="12"/>
+  <text class="item-title" x="1416" y="820">Client state and API requests</text>
+  <text class="body" x="1416" y="853">Redux Toolkit + React Redux</text>
+  <text class="body" x="1416" y="883">Axios sends JSON + bearer token</text>
+  <text class="small" x="1416" y="916">Vite · build and development</text>
+
+  <rect class="item" x="1392" y="968" width="450" height="146" rx="12"/>
+  <text class="item-title" x="1416" y="1008">Automated quality checks</text>
+  <text class="body" x="1416" y="1041">API: xUnit + Moq</text>
+  <text class="body" x="1416" y="1071">UI: Vitest + Testing Library</text>
+
+  <!-- Request/response paths; diagonal paths indicate source/provider integrations. -->
+  <path class="flow" d="M558 405H692"/>
+  <path class="return" d="M692 436H558"/>
+  <path class="flow" d="M1215 405H1349"/>
+  <path class="return" d="M1349 436H1215"/>
+  <path class="flow" d="M558 788C620 788 640 710 692 710"/>
+  <path class="return" d="M692 742C640 742 620 820 558 820"/>
+</svg>

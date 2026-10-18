@@ -1,0 +1,29 @@
+<section id="architecture" class="architecture" aria-label="Aura Logbook architecture">
+  <figure class="architecture-figure">
+    <button class="architecture-open" type="button" aria-haspopup="dialog" aria-controls="architecture-dialog" aria-label="Open the architecture diagram larger">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.5"/><path d="m16 16 5 5M10.8 7.5v6.6M7.5 10.8h6.6"/></svg>
+      <span>Zoom</span>
+    </button>
+    <img class="architecture-image" src="/assets/aura-logbook-architecture.svg" alt="Aura Logbook architecture: React and TypeScript UI, .NET API, services, repositories, and active JSON file persistence; SQLite and Dapper are declared dependencies but are not wired to storage. Includes JWT authentication, Open-Meteo weather, and mood-entry, insight, and weather workflows." aria-describedby="architecture-tech-list" width="1800" height="1000" loading="lazy" role="button" tabindex="0" aria-haspopup="dialog" aria-label="Click to zoom the Aura Logbook architecture diagram">
+    <ul class="sr-only" id="architecture-tech-list" aria-label="Technology dependency labels">
+      <li>React and TypeScript frontend.</li>
+      <li>Material UI and Joy UI components, with React Router.</li>
+      <li>Redux Toolkit and RTK Query for state, with Axios for API requests.</li>
+      <li>.NET, JWT Bearer authentication, IdentityModel, and BCrypt.Net-Next.</li>
+      <li>Swashbuckle and System.Text.Json.</li>
+      <li>Active persistence is System.Text.Json files. SQLite and Dapper are declared packages but are not wired to storage.</li>
+      <li>Open-Meteo REST API for weather.</li>
+    </ul>
+    <figcaption><button class="architecture-text-open" type="button" aria-haspopup="dialog" aria-controls="architecture-dialog">Click to zoom</button><span> · Application flow, service boundaries, data sources, and dependencies.</span></figcaption>
+  </figure>
+  <dialog class="architecture-dialog" id="architecture-dialog" aria-label="Aura Logbook architecture diagram, enlarged">
+    <div class="architecture-dialog-bar">
+      <span>Architecture diagram</span>
+      <button class="architecture-close" type="button" aria-label="Close enlarged diagram">Close <kbd>Esc</kbd></button>
+    </div>
+    <div class="architecture-zoom-area" tabindex="0" aria-label="Move the pointer over the diagram to zoom the whole image around that point">
+      <img src="/assets/aura-logbook-architecture.svg" alt="Enlarged Aura Logbook architecture diagram" width="1800" height="1000">
+    </div>
+  </dialog>
+  <script src="/assets/aura-diagram.js" defer></script>
+</section>
