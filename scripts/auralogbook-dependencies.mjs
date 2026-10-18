@@ -7,7 +7,7 @@ export const DEPENDENCY_LOGO_KIND = Object.freeze({
 });
 
 /**
- * @typedef {"react"|"typescript"|"dotnet"|"mui"|"redux"|"react_router"|"dapper"|"sqlite"|"swagger"|"csharp"|"notion"|"apple_shortcuts"|"apple_numbers"|"apple_notes"} DependencyId
+ * @typedef {"react"|"typescript"|"dotnet"|"mui"|"redux"|"react_router"|"axios"|"react_hook_form"|"yup"|"dayjs"|"dapper"|"sqlite"|"swagger"|"csharp"|"bcrypt"|"jwt_bearer"|"notion"|"apple_shortcuts"|"apple_numbers"|"apple_notes"|"apple_freeform"|"apple_reminders"|"apple_siri"|"apple_icloud"} DependencyId
  * @typedef {"portfolioHighlights"|"workflowTools"} DependencyGroupId
  *
  * @typedef {Object} DependencyLogoFile
@@ -107,6 +107,38 @@ export const AURALOGBOOK_DEPENDENCIES = Object.freeze({
     logo: { kind: DEPENDENCY_LOGO_KIND.FILE, symbolId: "react-router", description: "React Router logo", src: "/assets/auralogbook-stack/react-router.png" },
     sourceUrl: "https://reactrouter.com/",
   },
+  axios: {
+    id: "axios",
+    label: "Axios",
+    category: DEPENDENCY_CATEGORY.FRONTEND,
+    status: DEPENDENCY_STATUS.ACTIVE,
+    logo: { kind: DEPENDENCY_LOGO_KIND.FILE, symbolId: "axios", description: "Axios logo", src: "/assets/auralogbook-stack/axios.png" },
+    sourceUrl: "https://axios-http.com/",
+  },
+  react_hook_form: {
+    id: "react_hook_form",
+    label: "React Hook Form",
+    category: DEPENDENCY_CATEGORY.FRONTEND,
+    status: DEPENDENCY_STATUS.ACTIVE,
+    logo: { kind: DEPENDENCY_LOGO_KIND.FILE, symbolId: "form-validation", description: "Generic form-validation mark; not an official React Hook Form logo", src: "/assets/auralogbook-stack/form-validation.png" },
+    sourceUrl: "https://react-hook-form.com/",
+  },
+  yup: {
+    id: "yup",
+    label: "Yup",
+    category: DEPENDENCY_CATEGORY.FRONTEND,
+    status: DEPENDENCY_STATUS.ACTIVE,
+    logo: { kind: DEPENDENCY_LOGO_KIND.FILE, symbolId: "form-validation", description: "Generic form-validation mark; not an official Yup logo", src: "/assets/auralogbook-stack/form-validation.png" },
+    sourceUrl: "https://github.com/jquense/yup",
+  },
+  dayjs: {
+    id: "dayjs",
+    label: "Day.js",
+    category: DEPENDENCY_CATEGORY.FRONTEND,
+    status: DEPENDENCY_STATUS.ACTIVE,
+    logo: { kind: DEPENDENCY_LOGO_KIND.FILE, symbolId: "dayjs", description: "Day.js logo", src: "/assets/auralogbook-stack/dayjs.png" },
+    sourceUrl: "https://day.js.org/",
+  },
   dapper: {
     id: "dapper",
     label: "Dapper · declared, not wired",
@@ -138,6 +170,22 @@ export const AURALOGBOOK_DEPENDENCIES = Object.freeze({
     status: DEPENDENCY_STATUS.ACTIVE,
     logo: { kind: DEPENDENCY_LOGO_KIND.FILE, symbolId: "csharp", description: "C# logo", src: "/assets/auralogbook-stack/csharp.png" },
     sourceUrl: "https://learn.microsoft.com/dotnet/csharp/",
+  },
+  bcrypt: {
+    id: "bcrypt",
+    label: "BCrypt.Net-Next",
+    category: DEPENDENCY_CATEGORY.BACKEND,
+    status: DEPENDENCY_STATUS.ACTIVE,
+    logo: { kind: DEPENDENCY_LOGO_KIND.FILE, symbolId: "bcrypt", description: "BCrypt.Net-Next logo", src: "/assets/auralogbook-stack/bcrypt.png" },
+    sourceUrl: "https://github.com/BcryptNet/bcrypt.net",
+  },
+  jwt_bearer: {
+    id: "jwt_bearer",
+    label: "JWT Bearer",
+    category: DEPENDENCY_CATEGORY.BACKEND,
+    status: DEPENDENCY_STATUS.ACTIVE,
+    logo: { kind: DEPENDENCY_LOGO_KIND.FILE, symbolId: "jwt-bearer", description: "JWT Bearer logo", src: "/assets/auralogbook-stack/jwt-bearer.png" },
+    sourceUrl: "https://learn.microsoft.com/aspnet/core/security/authentication/configure-jwt-bearer-authentication",
   },
   notion: {
     id: "notion",
@@ -171,17 +219,49 @@ export const AURALOGBOOK_DEPENDENCIES = Object.freeze({
     logo: { kind: DEPENDENCY_LOGO_KIND.FILE, symbolId: "apple-notes", description: "Apple Notes logo", src: "/assets/auralogbook-stack/apple-notes.png" },
     sourceUrl: "https://www.apple.com/notes/",
   },
+  apple_freeform: {
+    id: "apple_freeform",
+    label: "Apple Freeform",
+    category: DEPENDENCY_CATEGORY.PRODUCTIVITY,
+    status: DEPENDENCY_STATUS.ACTIVE,
+    logo: { kind: DEPENDENCY_LOGO_KIND.FILE, symbolId: "apple-freeform", description: "Apple Freeform logo", src: "/assets/auralogbook-stack/apple-freeform.png" },
+    sourceUrl: "https://www.apple.com/freeform/",
+  },
+  apple_reminders: {
+    id: "apple_reminders",
+    label: "Apple Reminders",
+    category: DEPENDENCY_CATEGORY.PRODUCTIVITY,
+    status: DEPENDENCY_STATUS.ACTIVE,
+    logo: { kind: DEPENDENCY_LOGO_KIND.FILE, symbolId: "apple-reminders", description: "Apple Reminders logo", src: "/assets/auralogbook-stack/apple-reminders.png" },
+    sourceUrl: "https://www.apple.com/reminders/",
+  },
+  apple_siri: {
+    id: "apple_siri",
+    label: "Siri",
+    category: DEPENDENCY_CATEGORY.PRODUCTIVITY,
+    status: DEPENDENCY_STATUS.ACTIVE,
+    logo: { kind: DEPENDENCY_LOGO_KIND.FILE, symbolId: "apple-siri", description: "Siri logo", src: "/assets/auralogbook-stack/apple-siri.png" },
+    sourceUrl: "https://www.apple.com/siri/",
+  },
+  apple_icloud: {
+    id: "apple_icloud",
+    label: "iCloud",
+    category: DEPENDENCY_CATEGORY.PRODUCTIVITY,
+    status: DEPENDENCY_STATUS.ACTIVE,
+    logo: { kind: DEPENDENCY_LOGO_KIND.FILE, symbolId: "apple-icloud", description: "iCloud logo", src: "/assets/auralogbook-stack/apple-icloud.png" },
+    sourceUrl: "https://www.apple.com/icloud/",
+  },
 });
 
 /** @type {Readonly<Record<DependencyGroupId, { label: string, ids: DependencyId[] }>>} */
 export const AURALOGBOOK_DEPENDENCY_GROUPS = Object.freeze({
   portfolioHighlights: {
     label: "AuraLogbook technology highlights",
-    ids: ["react", "typescript", "csharp", "dotnet", "mui", "redux", "react_router", "dapper", "sqlite", "swagger"],
+    ids: ["react", "typescript", "csharp", "dotnet", "mui", "redux", "react_router", "axios", "react_hook_form", "yup", "dayjs", "bcrypt", "jwt_bearer", "dapper", "sqlite", "swagger"],
   },
   workflowTools: {
     label: "Workflow and Apple productivity tools",
-    ids: ["notion", "apple_shortcuts", "apple_numbers", "apple_notes"],
+    ids: ["notion", "apple_shortcuts", "apple_numbers", "apple_notes", "apple_freeform", "apple_reminders", "apple_siri", "apple_icloud"],
   },
 });
 
