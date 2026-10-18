@@ -1,45 +1,57 @@
-// @ts-check
-
+/**
+ * Typed source of truth for the Aura Logbook dependency badges.
+ *
+ * The plain Node page-preparation script imports this module directly using
+ * Node's built-in TypeScript type stripping; keep this file free of JSX and
+ * runtime-only TypeScript features.
+ */
 export const DEPENDENCY_LOGO_KIND = Object.freeze({
   FILE: "file",
   SPRITE: "sprite",
   GLYPH: "glyph",
 });
 
-/**
- * @typedef {"react"|"typescript"|"vite"|"dotnet"|"mui"|"redux"|"react_router"|"axios"|"react_hook_form"|"yup"|"dayjs"|"dapper"|"sqlite"|"swagger"|"csharp"|"bcrypt"|"jwt_bearer"|"notion"|"apple_shortcuts"|"apple_numbers"|"apple_notes"|"apple_freeform"|"apple_reminders"|"apple_calendar"|"apple_siri"|"apple_icloud"} DependencyId
- * @typedef {"portfolioHighlights"|"workflowTools"} DependencyGroupId
- *
- * @typedef {Object} DependencyLogoFile
- * @property {typeof DEPENDENCY_LOGO_KIND.FILE} kind
- * @property {string} symbolId
- * @property {string} description
- * @property {string} src
- *
- * @typedef {Object} DependencyLogoSprite
- * @property {typeof DEPENDENCY_LOGO_KIND.SPRITE} kind
- * @property {"brand-dotnet"|"brand-mui"|"brand-apple"|"brand-vite"} symbolId
- * @property {string} description
- *
- * @typedef {Object} DependencyLogoGlyph
- * @property {typeof DEPENDENCY_LOGO_KIND.GLYPH} kind
- * @property {string} symbolId
- * @property {string} description
- * @property {string} text
- *
- * @typedef {DependencyLogoFile|DependencyLogoSprite|DependencyLogoGlyph} DependencyLogo
- *
- * @typedef {Object} Dependency
- * @property {DependencyId} id
- * @property {string} label
- * @property {DependencyCategory} category
- * @property {DependencyStatus} status
- * @property {DependencyLogo} logo
- * @property {string} sourceUrl Official documentation or project page for this dependency
- *
- * The static page builder is JavaScript, so this JSDoc contract keeps the
- * portfolio-wide source-of-truth catalog typed without a separate TS runtime.
- */
+export type DependencyId =
+  | "react" | "typescript" | "vite" | "dotnet" | "mui" | "redux"
+  | "react_router" | "axios" | "react_hook_form" | "yup" | "dayjs"
+  | "dapper" | "sqlite" | "swagger" | "csharp" | "bcrypt" | "jwt_bearer"
+  | "notion" | "apple_shortcuts" | "apple_numbers" | "apple_notes"
+  | "apple_freeform" | "apple_reminders" | "apple_calendar" | "apple_siri"
+  | "apple_icloud";
+export type DependencyGroupId = "portfolioHighlights" | "workflowTools";
+export type DependencyCategory = "frontend" | "backend" | "language" | "productivity";
+export type DependencyStatus = "active" | "declared-not-wired";
+
+export interface DependencyLogoFile {
+  kind: typeof DEPENDENCY_LOGO_KIND.FILE;
+  symbolId: string;
+  description: string;
+  src: string;
+}
+export interface DependencyLogoSprite {
+  kind: typeof DEPENDENCY_LOGO_KIND.SPRITE;
+  symbolId: "brand-dotnet" | "brand-mui" | "brand-apple" | "brand-vite";
+  description: string;
+}
+export interface DependencyLogoGlyph {
+  kind: typeof DEPENDENCY_LOGO_KIND.GLYPH;
+  symbolId: string;
+  description: string;
+  text: string;
+}
+export type DependencyLogo = DependencyLogoFile | DependencyLogoSprite | DependencyLogoGlyph;
+export interface Dependency {
+  id: DependencyId;
+  label: string;
+  category: DependencyCategory;
+  status: DependencyStatus;
+  logo: DependencyLogo;
+  sourceUrl: string;
+}
+export interface DependencyGroup {
+  label: string;
+  ids: DependencyId[];
+}
 
 export const DEPENDENCY_CATEGORY = Object.freeze({
   FRONTEND: "frontend",
@@ -48,16 +60,13 @@ export const DEPENDENCY_CATEGORY = Object.freeze({
   PRODUCTIVITY: "productivity",
 });
 
-/** @typedef {typeof DEPENDENCY_CATEGORY[keyof typeof DEPENDENCY_CATEGORY]} DependencyCategory */
 
 export const DEPENDENCY_STATUS = Object.freeze({
   ACTIVE: "active",
   DECLARED_NOT_WIRED: "declared-not-wired",
 });
 
-/** @typedef {typeof DEPENDENCY_STATUS[keyof typeof DEPENDENCY_STATUS]} DependencyStatus */
 
-/** @type {Readonly<Record<DependencyId, Dependency>>} */
 export const AURALOGBOOK_DEPENDENCIES = Object.freeze({
   react: {
     id: "react",
@@ -267,9 +276,8 @@ export const AURALOGBOOK_DEPENDENCIES = Object.freeze({
     logo: { kind: DEPENDENCY_LOGO_KIND.SPRITE, symbolId: "brand-apple", description: "Apple brand logo" },
     sourceUrl: "https://developer.apple.com/",
   },
-});
+}) satisfies Readonly<Record<DependencyId, Dependency>>;
 
-/** @type {Readonly<Record<DependencyGroupId, { label: string, ids: DependencyId[] }>>} */
 export const AURALOGBOOK_DEPENDENCY_GROUPS = Object.freeze({
   portfolioHighlights: {
     label: "AuraLogbook technology highlights",
@@ -279,10 +287,9 @@ export const AURALOGBOOK_DEPENDENCY_GROUPS = Object.freeze({
     label: "Workflow and Apple productivity tools",
     ids: ["notion", "apple_shortcuts", "apple_numbers", "apple_notes", "apple_freeform", "apple_reminders", "apple_calendar", "apple_siri", "apple_icloud"],
   },
-});
+}) satisfies Readonly<Record<DependencyGroupId, DependencyGroup>>;
 
-/** @param {string} value */
-function escapeHtml(value) {
+function escapeHtml(value: string) {
   return String(value).replace(/[&<>"']/g, (character) => ({
     "&": "&amp;",
     "<": "&lt;",
@@ -292,8 +299,7 @@ function escapeHtml(value) {
   })[character] ?? character);
 }
 
-/** @param {DependencyLogo} logo */
-function renderLogo(logo) {
+function renderLogo(logo: DependencyLogo) {
   if (logo.kind === DEPENDENCY_LOGO_KIND.FILE) {
     return `<img class="dependency-chip-logo" src="${escapeHtml(logo.src)}" alt="" title="${escapeHtml(logo.description)}" data-logo-symbol="${escapeHtml(logo.symbolId)}" aria-hidden="true" loading="lazy" decoding="async">`;
   }
@@ -305,12 +311,11 @@ function renderLogo(logo) {
   return `<span class="dependency-chip-logo dependency-chip-glyph" title="${escapeHtml(logo.description)}" data-logo-symbol="${escapeHtml(logo.symbolId)}" aria-hidden="true">${escapeHtml(logo.text)}</span>`;
 }
 
-/** @param {DependencyGroupId} groupId */
-export function renderDependencyGroup(groupId) {
+export function renderDependencyGroup(groupId: DependencyGroupId) {
   const group = AURALOGBOOK_DEPENDENCY_GROUPS[groupId];
   if (!group) throw new Error(`Unknown AuraLogbook dependency group: ${groupId}`);
 
-  const items = group.ids.map((dependencyId) => {
+  const items = group.ids.map((dependencyId: DependencyId) => {
     const dependency = AURALOGBOOK_DEPENDENCIES[dependencyId];
     if (!dependency) throw new Error(`Unknown AuraLogbook dependency: ${dependencyId}`);
     return `<li class="dependency-chip" data-dependency="${escapeHtml(dependency.id)}" data-category="${dependency.category}" data-status="${dependency.status}">${renderLogo(dependency.logo)}<span class="dependency-chip-label">${escapeHtml(dependency.label)}</span></li>`;
