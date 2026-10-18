@@ -79,3 +79,10 @@ header{position:sticky;top:0;z-index:20;background:var(--paper)}
 .schema-sources{margin-top:16px}
 .development-callout{margin:22px 0}
 @media(max-width:700px){.schema-map{grid-template-columns:minmax(0,1fr)}.schema-user,.schema-mood,.schema-zodiac,.schema-weather{grid-column:1}.schema-relationship{padding:0 8px}.schema-relationship span{display:inline}.schema-relationship span:nth-child(2){padding:0 8px}}
+.case-content .mood-workflow{list-style:none;padding:0;margin:22px 0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.case-content .mood-workflow li{min-width:0;padding:18px;background:#e8ebdf;border:1px solid #bdc8b8;border-radius:5px}
+.workflow-step{display:block;color:#426148;font-size:12px;font-weight:700;letter-spacing:1px}
+.case-content .mood-workflow h3{margin:4px 0 6px;font-size:18px}
+.case-content .mood-workflow p{margin:0;font-size:15px;line-height:1.55}
+.case-content .workflow-context{font-size:15px}
+@media(max-width:450px){.case-content .mood-workflow{grid-template-columns:minmax(0,1fr)}}

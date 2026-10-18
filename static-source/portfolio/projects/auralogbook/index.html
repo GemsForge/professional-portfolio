@@ -52,6 +52,7 @@
             <nav aria-label="On this project page">
               <p>On this page</p>
               <a href="#problem">The project</a>
+              <a href="#journey">User journey</a>
               <a href="#architecture">Architecture diagram</a>
               <a href="#data-sources">Data sources &amp; schemas</a>
               <a href="#implementation">Inside the implementation</a>
@@ -66,19 +67,31 @@
               <p><strong>My focus:</strong> connecting a typed frontend to a .NET API, organizing application responsibilities, and handling authenticated workflows.</p>
             </section>
 
+            <section id="journey" aria-labelledby="journey-heading">
+              <h2 id="journey-heading">A path from check-in to reflection</h2>
+              <p>The reviewed source supports these stages across the UI and API. This describes implemented routes and operations; it is not a claim that every path has passed end-to-end testing.</p>
+              <ol class="mood-workflow">
+                <li><span class="workflow-step">01</span><h3>Register or sign in</h3><p>Use an account to enter the authenticated application.</p></li>
+                <li><span class="workflow-step">02</span><h3>Log a check-in</h3><p>Record a date, one or more moods, and an optional comment.</p></li>
+                <li><span class="workflow-step">03</span><h3>Review your history</h3><p>Browse entries by date range, then edit or delete them.</p></li>
+                <li><span class="workflow-step">04</span><h3>Explore patterns</h3><p>Use dashboard summaries and charts alongside profile pathway and zodiac reflections.</p></li>
+              </ol>
+              <p class="workflow-context">The dashboard also requests current weather from Open-Meteo (Atlanta is the configured location). Weather is contextual information—not a field saved with a mood entry.</p>
+            </section>
+
             <!-- Architecture diagram and schema section are injected from adjacent source fragments. -->
             <div id="auralogbook-architecture-slot"></div>
 
             <section id="implementation">
               <h2>Inside the implementation</h2>
               <h3>Frontend foundation</h3>
-              <p>A typed client interface with shared state and API-query handling, responsive UI components, client-side routing, and dashboard visualizations. The reviewed app includes session restoration, loading feedback, and expired-session notifications.</p>
+              <p>The manifest specifies React 19.1, TypeScript 5.8, Material UI 7.1, Joy UI 5 beta, Redux Toolkit 2.8 with RTK Query, React Router 7.6, Axios 1.10, and Recharts 2.15. The app includes session restoration, loading feedback, and expired-session notifications.</p>
 
               <h3>Backend responsibilities</h3>
-              <p>The mood controller delegates work to injected mood and statistics services. Authorized actions cover mood-entry creation, retrieval, editing, deletion, and dashboard queries.</p>
+              <p>The API targets .NET 9. Its mood controller delegates work to injected mood and statistics services; authorized actions cover mood-entry creation, retrieval, editing, deletion, and dashboard queries. JSON file repositories are active. SQLite and Dapper appear in the project dependencies but are not wired into persistence.</p>
 
               <h3>Development support</h3>
-              <p>A debug-only endpoint generates sample entries to support development. Setup and environment configuration are documented in the repository.</p>
+              <p>A debug-only endpoint generates sample entries to support development. Frontend tests use Vitest and Testing Library; API tests use xUnit and Moq. Their presence shows test coverage exists, not that the suites have been run or passed for this portfolio update. Setup and environment configuration are documented in the repository.</p>
 
               <h3>What this demonstrates</h3>
               <p>This project demonstrates full-stack product development across authenticated user workflows, API design, layered backend architecture, frontend state management, external API integration, data visualization, and automated testing.</p>
@@ -86,11 +99,15 @@
 
             <section id="evidence">
               <h2>Read the source</h2>
-              <p>These links open the implementation reviewed for this portfolio. They provide code evidence rather than a simulated product screenshot.</p>
+              <p>These links open the implementation reviewed for this portfolio. They provide code evidence rather than a simulated product screenshot; test files show coverage exists, not that all tests currently pass.</p>
               <ul>
                 <li><a href="https://github.com/GemsForge/aura-logbook-api/blob/master/AuraLogbook.Api/Controllers/MoodController.cs">Mood controller: endpoints and service boundaries</a></li>
+                <li><a href="https://github.com/GemsForge/aura-logbook-api/blob/master/AuraLogbook.Api/Controllers/AuthController.cs">Authentication endpoints</a> · <a href="https://github.com/GemsForge/aura-logbook-api/blob/master/AuraLogbook.Api/Repositories/FileMoodRepository.cs">JSON mood repository</a> · <a href="https://github.com/GemsForge/aura-logbook-api/blob/master/AuraLogbook.Api/Repositories/FileUserRepository.cs">JSON user repository</a></li>
                 <li><a href="https://github.com/GemsForge/aura-logbook-api/blob/master/aura-ui/src/App.tsx">App entry: session restoration and routing</a></li>
                 <li><a href="https://github.com/GemsForge/aura-logbook-api/blob/master/aura-ui/package.json">Frontend dependencies and scripts</a></li>
+                <li><a href="https://github.com/GemsForge/aura-logbook-api/blob/master/AuraLogbook.Api/AuraLogbook.Api.csproj">API target framework and package references</a></li>
+                <li><a href="https://github.com/GemsForge/aura-logbook-api/blob/master/AuraLogbook.Api.Tests/MoodServiceTests.cs">API mood-service tests</a> · <a href="https://github.com/GemsForge/aura-logbook-api/blob/master/AuraLogbook.Api.Tests/UserServiceTests.cs">user-service tests</a></li>
+                <li><a href="https://github.com/GemsForge/aura-logbook-api/blob/master/aura-ui/src/pages/tests/MoodEntryForm.test.tsx">Frontend mood-entry test</a> · <a href="https://github.com/GemsForge/aura-logbook-api/blob/master/aura-ui/src/pages/tests/MoodHistory.test.tsx">history test</a> · <a href="https://github.com/GemsForge/aura-logbook-api/blob/master/aura-ui/src/pages/tests/Dashboard.test.tsx">dashboard test</a></li>
                 <li><a href="https://github.com/GemsForge/aura-logbook-api">Repository and setup guide ↗</a></li>
               </ul>
             </section>
@@ -100,7 +117,7 @@
               <div class="note development-callout">
                 <p><strong>In development.</strong> The inspected source currently stores user, mood, and zodiac-insight data in JSON files. As the project expands, I plan to move application data to a small database such as SQLite. SQLite and Dapper are declared dependencies, but the migration is future work—the app does not currently persist records in SQLite.</p>
               </div>
-              <p>Next: complete and verify a user-facing flow, add screenshots using fictional data, and document the decisions behind the UI and API integration.</p>
+              <p>The next step is to complete end-to-end verification of the sign-in, journaling, history, and dashboard paths, then document the UI/API integration with fictional demo data.</p>
             </section>
 
             <nav class="next-project" aria-label="Project navigation">
