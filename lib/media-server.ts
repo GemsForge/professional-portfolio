@@ -8,13 +8,6 @@ function owner(request:Request){return !!request.headers.get('oai-authenticated-
 function json(data:unknown,status=200){return Response.json(data,{status,headers:{'Cache-Control':'no-store'}});}
 function sameOrigin(request:Request){return request.headers.get('Origin')===new URL(request.url).origin;}
 export function isOwner(request:Request){return owner(request);}
-export function adminNavigationRequest(request:Request){
- const headers={'Cache-Control':'private, no-store'};
- if(request.method!=='GET')return new Response(null,{status:405,headers:{...headers,Allow:'GET'}});
- if(!request.headers.get('oai-authenticated-user-id'))return new Response(null,{status:401,headers});
- if(!isOwner(request))return new Response(null,{status:403,headers});
- return new Response(null,{status:204,headers});
-}
 export function adminPageRequest(request:Request,manager:string){
  const url=new URL(request.url);const headers={'Cache-Control':'private, no-store'};
  if(!request.headers.get('oai-authenticated-user-id')){

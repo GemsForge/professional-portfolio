@@ -39,6 +39,11 @@ PR linking, labels, and checks.
 
 This version adds a backend; the earlier Python static-server preview cannot run uploads or galleries.
 
+For local owner-workflow testing, set `SITES_LOCAL_AUTH_EMAIL` to the owner
+email configured by the server before running `npm run dev`. The local mock
+sign-in is loopback-only; production authorization continues to use the
+identity supplied by Sites.
+
 Use the current Sites skill for installation, build, preview, source synchronization, and publishing to the existing project. Node.js 22.13+ is required. `npm run build` prepares static content then builds the server through the retained Sites integration. `npm run test:media` checks core storage and authorization behavior.
 
 No application credentials belong in source. Hosted sign-in and identity headers are provided by Sites. Only the owner workspace requires sign-in. Browser-level visual/accessibility and hosted owner-login walkthroughs remain to be verified.
