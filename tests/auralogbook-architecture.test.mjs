@@ -87,6 +87,8 @@ test("AuraLogbook dependency badges come from the typed registry with inline bra
   assert.match(heroBadges, /#brand-dotnet/);
   assert.match(heroBadges, /data-dependency="mui"/);
   assert.match(heroBadges, /#brand-mui/);
+  assert.match(heroBadges, /data-dependency="vite"/);
+  assert.match(heroBadges, /#brand-vite/);
   assert.match(heroBadges, /data-dependency="redux"[^>]*>/);
   assert.match(heroBadges, /src="\/assets\/auralogbook-stack\/redux\.png"/);
   assert.match(heroBadges, /data-dependency="react_router"[^>]*>/);

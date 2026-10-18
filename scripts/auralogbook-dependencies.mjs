@@ -7,7 +7,7 @@ export const DEPENDENCY_LOGO_KIND = Object.freeze({
 });
 
 /**
- * @typedef {"react"|"typescript"|"dotnet"|"mui"|"redux"|"react_router"|"axios"|"react_hook_form"|"yup"|"dayjs"|"dapper"|"sqlite"|"swagger"|"csharp"|"bcrypt"|"jwt_bearer"|"notion"|"apple_shortcuts"|"apple_numbers"|"apple_notes"|"apple_freeform"|"apple_reminders"|"apple_calendar"|"apple_siri"|"apple_icloud"} DependencyId
+ * @typedef {"react"|"typescript"|"vite"|"dotnet"|"mui"|"redux"|"react_router"|"axios"|"react_hook_form"|"yup"|"dayjs"|"dapper"|"sqlite"|"swagger"|"csharp"|"bcrypt"|"jwt_bearer"|"notion"|"apple_shortcuts"|"apple_numbers"|"apple_notes"|"apple_freeform"|"apple_reminders"|"apple_calendar"|"apple_siri"|"apple_icloud"} DependencyId
  * @typedef {"portfolioHighlights"|"workflowTools"} DependencyGroupId
  *
  * @typedef {Object} DependencyLogoFile
@@ -18,7 +18,7 @@ export const DEPENDENCY_LOGO_KIND = Object.freeze({
  *
  * @typedef {Object} DependencyLogoSprite
  * @property {typeof DEPENDENCY_LOGO_KIND.SPRITE} kind
- * @property {"brand-dotnet"|"brand-mui"|"brand-apple"} symbolId
+ * @property {"brand-dotnet"|"brand-mui"|"brand-apple"|"brand-vite"} symbolId
  * @property {string} description
  *
  * @typedef {Object} DependencyLogoGlyph
@@ -74,6 +74,14 @@ export const AURALOGBOOK_DEPENDENCIES = Object.freeze({
     status: DEPENDENCY_STATUS.ACTIVE,
     logo: { kind: DEPENDENCY_LOGO_KIND.FILE, symbolId: "typescript", description: "TypeScript logo", src: "/assets/auralogbook-stack/typescript.png" },
     sourceUrl: "https://www.typescriptlang.org/",
+  },
+  vite: {
+    id: "vite",
+    label: "Vite",
+    category: DEPENDENCY_CATEGORY.FRONTEND,
+    status: DEPENDENCY_STATUS.ACTIVE,
+    logo: { kind: DEPENDENCY_LOGO_KIND.SPRITE, symbolId: "brand-vite", description: "Vite logo" },
+    sourceUrl: "https://vite.dev/",
   },
   dotnet: {
     id: "dotnet",
@@ -265,7 +273,7 @@ export const AURALOGBOOK_DEPENDENCIES = Object.freeze({
 export const AURALOGBOOK_DEPENDENCY_GROUPS = Object.freeze({
   portfolioHighlights: {
     label: "AuraLogbook technology highlights",
-    ids: ["react", "typescript", "csharp", "dotnet", "mui", "redux", "react_router", "axios", "react_hook_form", "yup", "dayjs", "bcrypt", "jwt_bearer", "dapper", "sqlite", "swagger"],
+    ids: ["react", "typescript", "vite", "csharp", "dotnet", "mui", "redux", "react_router", "axios", "react_hook_form", "yup", "dayjs", "bcrypt", "jwt_bearer", "dapper", "sqlite", "swagger"],
   },
   workflowTools: {
     label: "Workflow and Apple productivity tools",
