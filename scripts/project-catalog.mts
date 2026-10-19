@@ -103,7 +103,9 @@ export function applyProjectPageMetadata(html: string, project: ProjectDefinitio
     .replace(/(<div class="eyebrow">)[^<]+(<\/div>)/, `$1${project.preTitle}$2`)
     .replace(/(<h1>)[^<]+(<\/h1>)/, `$1${project.name}$2`)
     .replace(/(<p class="lead">)[^<]+(<\/p>)/, `$1${project.description}$2`)
-    .replace(/<span>[^<]*Apple Shortcuts[^<]*<\/span>/, `<span>${project.primaryTools}</span>`)
+    .replace(/<span>[^<]*Apple Shortcuts[^<]*<\/span>/, project.slug === "75-hard-automation"
+      ? `<div data-dependency-group="disciplineHighlights"></div>`
+      : `<span>${project.primaryTools}</span>`)
     .replace(/<div class="case-banner-media">[\s\S]*?<\/div>/, `<div class="case-banner-media"><img src="${project.image}" alt="${project.imageAlt}" width="330" height="330"></div>`)
     .replace(/(<div class="case-banner">[\s\S]*?)<img src="[^"]+"[^>]*>(<\/div>)/, `$1<img src="${project.image}" alt="${project.imageAlt}" width="330" height="330">$2`);
 }

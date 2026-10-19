@@ -75,6 +75,13 @@ async function visit(directory) {
       }
     }
 
+    if (route === "/portfolio/projects/75-hard-automation/") {
+      text = text.replace(
+        /<div data-dependency-group="([a-zA-Z0-9-]+)"><\/div>/g,
+        (_match, groupId) => renderDependencyGroup(groupId),
+      );
+    }
+
     if (
       route === "/portfolio/projects/hair-log/" ||
       route === "/portfolio/projects/75-hard-automation/"
