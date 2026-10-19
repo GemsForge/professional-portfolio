@@ -15,7 +15,7 @@ const cases = [
   },
   {
     route: '/portfolio/projects/75-hard-automation/',
-    caption: '75 Hard automation system responsibilities',
+    caption: '75 Days of Discipline system responsibilities',
     components: [
       'Log Discipline', 'Response helper shortcuts', 'Discipline Http Request',
       'Notion API', 'Discipline database + Goal Tracker relation', 'Finch companion workflow',
