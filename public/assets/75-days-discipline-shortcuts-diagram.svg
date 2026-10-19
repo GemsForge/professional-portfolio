@@ -24,8 +24,16 @@
   <text class="layerhead" x="50" y="750">Runtime workflow</text>
 </g>
 <g class="connections">
-  <path class="arrow" d="M370 150H438"/><path class="arrow" d="M370 224H438"/><path class="arrow" d="M370 298H438"/><path class="arrow" d="M370 372H438"/><path class="arrow" d="M370 446H438"/><path class="arrow" d="M370 520H438"/><path class="arrow" d="M370 594H438"/>
-  <path class="arrow" d="M812 322H886"/><path class="arrow" d="M1250 322H1324"/>
+  <!-- Inputs converge on one clear stage boundary. -->
+  <path class="arrow" d="M370 147H400V280H438"/><path class="arrow" d="M370 221H400"/><path class="arrow" d="M370 295H400"/><path class="arrow" d="M370 369H400"/><path class="arrow" d="M370 443H400"/><path class="arrow" d="M370 517H400"/><path class="arrow" d="M370 591H400"/>
+  <!-- The main left-to-right architecture flow. -->
+  <path class="arrow" d="M812 280H842V176H886"/><path class="arrow" d="M1260 280H1290V176H1324"/>
+  <!-- Internal sequence inside the logging layer. -->
+  <path class="arrow" d="M625 214V242"/><path class="arrow" d="M625 318V346"/><path class="arrow" d="M625 422V450"/>
+  <!-- Internal sequence inside the API boundary. -->
+  <path class="arrow" d="M1073 214V242"/><path class="arrow" d="M1073 318V346"/>
+  <!-- Internal sequence inside the Notion data and review layer. -->
+  <path class="arrow" d="M1537 214V242"/><path class="arrow" d="M1537 318V346"/><path class="arrow" d="M1537 422V450"/><path class="arrow" d="M1537 526V554"/>
 </g>
 <g filter="url(#shadow)">
   <rect class="carddark" x="52" y="120" width="318" height="54" rx="9"/><rect class="carddark" x="52" y="194" width="318" height="54" rx="9"/><rect class="carddark" x="52" y="268" width="318" height="54" rx="9"/><rect class="carddark" x="52" y="342" width="318" height="54" rx="9"/><rect class="carddark" x="52" y="416" width="318" height="54" rx="9"/><rect class="carddark" x="52" y="490" width="318" height="54" rx="9"/><rect class="carddark" x="52" y="564" width="318" height="54" rx="9"/>
