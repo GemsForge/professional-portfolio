@@ -1,5 +1,7 @@
 /** Owner-authorized portfolio attachment storage. */
-export const PROJECTS = ['auralogbook','apple-ecosystem','dynamic-folder-structures','notion-api-shortcuts'] as const;
+import { PROJECTS } from "./project-registry.ts";
+
+export { PROJECTS } from "./project-registry.ts";
 const OWNER_EMAIL = 'diamondbrown79@gmail.com';
 const MAX_BYTES = 50 * 1024 * 1024;
 type MediaKind = 'image'|'video'|'document';

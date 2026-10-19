@@ -271,6 +271,10 @@ export const AURALOGBOOK_DEPENDENCY_GROUPS = Object.freeze({
     label: "Workflow and Apple productivity tools",
     ids: ["notion", "apple_shortcuts", "apple_numbers", "apple_notes", "apple_freeform", "apple_reminders", "apple_calendar", "apple_siri", "apple_icloud"],
   },
+  disciplineHighlights: {
+    label: "75 Days of Discipline technology highlights",
+    ids: ["notion", "apple_shortcuts"],
+  },
 });
 
 /** @param {string} value */

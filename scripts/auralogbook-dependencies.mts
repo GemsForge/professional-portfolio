@@ -18,7 +18,7 @@ export type DependencyId =
   | "notion" | "apple_shortcuts" | "apple_numbers" | "apple_notes"
   | "apple_freeform" | "apple_reminders" | "apple_calendar" | "apple_siri"
   | "apple_icloud";
-export type DependencyGroupId = "portfolioHighlights" | "workflowTools";
+export type DependencyGroupId = "portfolioHighlights" | "workflowTools" | "disciplineHighlights";
 export type DependencyCategory = "frontend" | "backend" | "language" | "productivity";
 export type DependencyStatus = "active" | "declared-not-wired";
 
@@ -286,6 +286,10 @@ export const AURALOGBOOK_DEPENDENCY_GROUPS = Object.freeze({
   workflowTools: {
     label: "Workflow and Apple productivity tools",
     ids: ["notion", "apple_shortcuts", "apple_numbers", "apple_notes", "apple_freeform", "apple_reminders", "apple_calendar", "apple_siri", "apple_icloud"],
+  },
+  disciplineHighlights: {
+    label: "75 Days of Discipline technology highlights",
+    ids: ["notion", "apple_shortcuts"],
   },
 }) satisfies Readonly<Record<DependencyGroupId, DependencyGroup>>;
 

@@ -28,14 +28,14 @@ export const PROJECTS = {
   },
   "75-hard-automation": {
     slug: "75-hard-automation",
-    name: "75 Hard automation",
-    description: "A daily discipline workflow that gathers completion signals, reflections, exercise, water, faith, and date context, then records the structured result in Notion.",
-    preTitle: "Personal accountability automation · 13-Shortcut system",
+    name: "75 Days of Discipline",
+    description: "A practical accountability system I built to help me show up every day, track the work, and see whether my consistency was actually adding up.",
+    preTitle: "Personal accountability system · 75 Soft challenge",
     primaryTools: "Apple Shortcuts · Notion API · Daily accountability",
     image: "/assets/75-hard-calendar.png",
     imageAlt: "Illustration of a calendar with daily completion check marks and progress markers",
-    cardTitle: "Make a demanding daily checklist visible.",
-    cardLinkLabel: "Explore 75 Hard automation ↗",
+    cardTitle: "Practice discipline one day at a time.",
+    cardLinkLabel: "Explore 75 Days of Discipline ↗",
   },
   auralogbook: {
     slug: "auralogbook",
@@ -103,7 +103,10 @@ export function applyProjectPageMetadata(html: string, project: ProjectDefinitio
     .replace(/(<div class="eyebrow">)[^<]+(<\/div>)/, `$1${project.preTitle}$2`)
     .replace(/(<h1>)[^<]+(<\/h1>)/, `$1${project.name}$2`)
     .replace(/(<p class="lead">)[^<]+(<\/p>)/, `$1${project.description}$2`)
-    .replace(/<span>[^<]*Apple Shortcuts[^<]*<\/span>/, `<span>${project.primaryTools}</span>`)
+    .replace(/<span>Independent work<\/span>/, project.slug === "75-hard-automation" ? "<span>Independent project</span>" : "<span>Independent work</span>")
+    .replace(/<span>[^<]*Apple Shortcuts[^<]*<\/span>/, project.slug === "75-hard-automation"
+      ? `<div data-dependency-group="disciplineHighlights"></div>`
+      : `<span>${project.primaryTools}</span>`)
     .replace(/<div class="case-banner-media">[\s\S]*?<\/div>/, `<div class="case-banner-media"><img src="${project.image}" alt="${project.imageAlt}" width="330" height="330"></div>`)
     .replace(/(<div class="case-banner">[\s\S]*?)<img src="[^"]+"[^>]*>(<\/div>)/, `$1<img src="${project.image}" alt="${project.imageAlt}" width="330" height="330">$2`);
 }
