@@ -1,35 +1,37 @@
-const dialog = document.querySelector("#architecture-dialog");
-const openButton = document.querySelector(".architecture-open");
-const image = document.querySelector(".architecture-image");
-const textOpenButton = document.querySelector(".architecture-text-open");
-const closeButton = document.querySelector(".architecture-close");
-const zoomArea = document.querySelector(".architecture-zoom-area");
-const zoomImage = zoomArea?.querySelector("img");
-let lastTrigger;
+const createArchitectureDiagram = (root) => {
+  const dialog = root.querySelector(".architecture-dialog");
+  const openButton = root.querySelector(".architecture-open");
+  const image = root.querySelector(".architecture-image");
+  const textOpenButton = root.querySelector(".architecture-text-open");
+  const closeButton = root.querySelector(".architecture-close");
+  const zoomArea = root.querySelector(".architecture-zoom-area");
+  const zoomImage = zoomArea?.querySelector("img");
+  let lastTrigger;
 
-if (dialog && closeButton) {
-  const open = (trigger) => {
-    lastTrigger = trigger;
-    dialog.showModal();
-  };
+  if (dialog && closeButton) {
+    const open = (trigger) => {
+      lastTrigger = trigger;
+      dialog.showModal();
+    };
 
-  openButton?.addEventListener("click", () => open(openButton));
-  textOpenButton?.addEventListener("click", () => open(textOpenButton));
-  image?.addEventListener("click", () => open(image));
-  image?.addEventListener("keydown", (event) => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      open(image);
-    }
-  });
-  closeButton.addEventListener("click", () => dialog.close());
-  dialog.addEventListener("click", (event) => {
-    if (event.target === dialog) dialog.close();
-  });
-  dialog.addEventListener("close", () => lastTrigger?.focus());
-}
+    openButton?.addEventListener("click", () => open(openButton));
+    textOpenButton?.addEventListener("click", () => open(textOpenButton));
+    image?.addEventListener("click", () => open(image));
+    image?.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        open(image);
+      }
+    });
+    closeButton.addEventListener("click", () => dialog.close());
+    dialog.addEventListener("click", (event) => {
+      if (event.target === dialog) dialog.close();
+    });
+    dialog.addEventListener("close", () => lastTrigger?.focus());
+  }
 
-if (zoomArea && zoomImage) {
+  if (!zoomArea || !zoomImage) return;
+
   const magnification = 2.2;
   let originX = 0;
   let originY = 0;
@@ -66,4 +68,6 @@ if (zoomArea && zoomImage) {
   });
 
   zoomArea.addEventListener("pointerleave", resetZoom);
-}
+};
+
+document.querySelectorAll(".architecture-component").forEach(createArchitectureDiagram);
