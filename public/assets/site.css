@@ -96,3 +96,13 @@ header{position:sticky;top:0;z-index:20;background:var(--paper)}
 .case-banner-media img{width:100%;height:100%;object-fit:contain}
 @media(max-width:900px){.case-banner{grid-template-columns:1fr 220px}.case-banner-media{width:220px;height:220px}}
 @media(max-width:650px){.case-banner-media{width:180px;height:180px}}
+
+/* Give standalone responsibility tables a clear, readable heading. */
+.toolmap caption {
+  caption-side: top;
+  text-align: left;
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.25;
+  padding: 0 0 14px;
+}
