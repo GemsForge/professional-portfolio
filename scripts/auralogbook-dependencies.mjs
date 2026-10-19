@@ -301,7 +301,16 @@ function renderLogo(logo) {
   return `<span class="dependency-chip-logo dependency-chip-glyph" title="${escapeHtml(logo.description)}" data-logo-symbol="${escapeHtml(logo.symbolId)}" aria-hidden="true">${escapeHtml(logo.text)}</span>`;
 }
 
-/** @param {DependencyGroupId} groupId */
+/**
+ * Render a dependency group as navigable source links.
+ *
+ * Each chip remains a semantic anchor because its action is navigation, not an
+ * in-page state change. The registry's sourceUrl is the public documentation
+ * destination; target/rel keep the new tab safe, and the accessible name tells
+ * assistive technology where the link goes and that it opens a new tab.
+ *
+ * @param {DependencyGroupId} groupId
+ */
 export function renderDependencyGroup(groupId) {
   const group = AURALOGBOOK_DEPENDENCY_GROUPS[groupId];
   if (!group) throw new Error(`Unknown AuraLogbook dependency group: ${groupId}`);
