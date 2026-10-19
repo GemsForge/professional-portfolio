@@ -5,7 +5,10 @@ import { readFile } from "node:fs/promises";
 const header = await readFile("components/site-header.tsx", "utf8");
 const footer = await readFile("components/site-footer.tsx", "utf8");
 const renderer = await readFile("components/portfolio-page.tsx", "utf8");
-const route = await readFile("app/[[...slug]]/page.tsx", "utf8");
+const projectCard = await readFile("components/project-card.tsx", "utf8");
+const catalog = await readFile("scripts/project-catalog.mts", "utf8");
+const rootRoute = await readFile("app/page.tsx", "utf8");
+const route = await readFile("app/[...slug]/page.tsx", "utf8");
 
 test("the routed portfolio page owns the shared shell", () => {
   assert.match(renderer, /<SiteHeader pathname=\{pathname\} \/>/);
@@ -20,6 +23,8 @@ test("the routed portfolio page owns the shared shell", () => {
 test("the catch-all route delegates every view to the shared renderer", () => {
   assert.match(route, /PortfolioPage/);
   assert.match(route, /params/);
+  assert.match(rootRoute, /PortfolioPage/);
+  assert.match(rootRoute, /pathname="\/"/);
 });
 
 test("shared navigation exposes accessible active state for nested project routes", () => {
@@ -42,4 +47,25 @@ test("the generated page catalog includes the required public routes", async () 
   ]) {
     assert.ok(pages[pathname], `missing generated route ${pathname}`);
   }
+});
+
+test("project cards consume the shared catalog and are mounted on all project indexes", () => {
+  assert.match(projectCard, /ProjectDefinition/);
+  assert.match(projectCard, /project\.name|project\.cardTitle/);
+  assert.match(projectCard, /project\.description/);
+  assert.match(projectCard, /project\.preTitle/);
+  assert.match(projectCard, /project\.primaryTools/);
+  assert.match(projectCard, /project\.image/);
+  assert.match(projectCard, /project\.slug/);
+  assert.match(projectCard, /Object\.values\(PROJECTS\)/);
+  assert.match(renderer, /ProjectCardGrid/);
+  assert.match(renderer, /HOME_PROJECT_SLUGS/);
+  assert.match(catalog, /"auralogbook"/);
+  assert.match(catalog, /"75-hard-automation"/);
+  assert.match(catalog, /"apple-ecosystem"/);
+  assert.match(projectCard, /Explore more projects/);
+  assert.match(projectCard, /\/portfolio\/projects\//);
+  assert.match(renderer, /pathname === "\/portfolio\/projects\/"/);
+  assert.match(catalog, /applyProjectPageMetadata/);
+  assert.match(catalog, /renderProjectCard/);
 });
