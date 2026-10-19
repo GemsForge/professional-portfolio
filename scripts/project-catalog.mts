@@ -29,7 +29,7 @@ export const PROJECTS = {
   "75-hard-automation": {
     slug: "75-hard-automation",
     name: "75 Days of Discipline",
-    description: "A 13-Shortcut Apple and Notion system for practicing daily consistency through the 75 Soft Challenge and preparing for the Murph Challenge.",
+    description: "A 13-Shortcut Apple, Notion, and Habitica accountability system for tracking 30 minutes of movement, 40 fl oz of water, mindful content, and daily discipline through a 75 Soft-style challenge.",
     preTitle: "Personal accountability system · 75 Soft challenge",
     primaryTools: "Apple Shortcuts · Notion API · Daily accountability",
     image: "/assets/75-hard-calendar.png",
@@ -103,6 +103,7 @@ export function applyProjectPageMetadata(html: string, project: ProjectDefinitio
     .replace(/(<div class="eyebrow">)[^<]+(<\/div>)/, `$1${project.preTitle}$2`)
     .replace(/(<h1>)[^<]+(<\/h1>)/, `$1${project.name}$2`)
     .replace(/(<p class="lead">)[^<]+(<\/p>)/, `$1${project.description}$2`)
+    .replace(/<span>Independent work<\/span>/, project.slug === "75-hard-automation" ? "<span>Independent project</span>" : "<span>Independent work</span>")
     .replace(/<span>[^<]*Apple Shortcuts[^<]*<\/span>/, project.slug === "75-hard-automation"
       ? `<div data-dependency-group="disciplineHighlights"></div>`
       : `<span>${project.primaryTools}</span>`)
