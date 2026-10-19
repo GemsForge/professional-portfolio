@@ -4,7 +4,7 @@
 
 75 Days of Discipline is a 75 Soft-style accountability challenge focused on consistency over perfection. It is designed to build the habits and follow-through needed to prepare for the Murph Challenge. If I really wanted to hold myself accountable, I needed more than a good intention; I needed a visual record that showed me whether I was actually following through.
 
-Habitica provides the social accountability layer. Apple Shortcuts and Notion preserve the structured personal record.
+Finch provides a companion accountability layer: it is a habit-tracking game with adorable pet care blended into a journaling and habit-tracking experience. Apple Shortcuts and Notion preserve the structured personal record; Finch is not the system of record.
 
 I also did not want to pay for another specialized app and hope it had all the logging features I needed. Notion was the most practical logbook for me: flexible enough to capture the daily details, structured enough to show the metrics, and already part of my workflow.
 
