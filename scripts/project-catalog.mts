@@ -29,7 +29,7 @@ export const PROJECTS = {
   "75-hard-automation": {
     slug: "75-hard-automation",
     name: "75 Days of Discipline",
-    description: "A 13-Shortcut Apple, Notion, and Habitica accountability system for tracking 30 minutes of movement, 40 fl oz of water, mindful content, and daily discipline through a 75 Soft-style challenge.",
+    description: "A practical accountability system I built to help me show up every day, track the work, and see whether my consistency was actually adding up.",
     preTitle: "Personal accountability system · 75 Soft challenge",
     primaryTools: "Apple Shortcuts · Notion API · Daily accountability",
     image: "/assets/75-hard-calendar.png",
