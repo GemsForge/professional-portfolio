@@ -57,7 +57,9 @@ header{position:sticky;top:0;z-index:20;background:var(--paper)}
 @media(max-width:650px){.about-hero{grid-template-columns:1fr;gap:28px}.about-portrait{max-width:360px;justify-self:start}.about-section-portrait{height:400px}}
 .about-section-portrait{display:block;width:100%;max-width:360px;height:450px;aspect-ratio:4/5;object-fit:cover;object-position:center 30%;margin:0 0 28px;border:1px solid var(--line);border-radius:90px 4px 4px 4px;background:#e4e8db}
 .dependency-chip-list{display:flex;flex-wrap:wrap;gap:10px;margin:0;padding:0;list-style:none}
-.dependency-chip{display:inline-flex;min-height:52px;align-items:center;gap:9px;padding:8px 12px;background:#f7f5eb;border:1px solid #c7d0c1;border-radius:4px;color:var(--ink);font-size:14px;font-weight:600;line-height:1.35}
+.dependency-chip{display:inline-flex;min-height:52px;align-items:center;gap:9px;padding:8px 12px;background:#f7f5eb;border:1px solid #c7d0c1;border-radius:4px;color:var(--ink);font-size:14px;font-weight:600;line-height:1.35;text-decoration:none;transition:background-color .15s ease,border-color .15s ease,transform .15s ease}
+.dependency-chip:hover,.dependency-chip:focus-visible{background:#e8efe4;border-color:#829b84;transform:translateY(-1px)}
+.dependency-chip:focus-visible{outline:3px solid color-mix(in srgb,var(--accent) 45%,transparent);outline-offset:3px}
 .dependency-chip-logo{display:block;width:26px;height:26px;flex:none;object-fit:contain}
 .dependency-chip-glyph{display:grid;place-items:center;border:1px solid currentColor;border-radius:5px;font-size:9px;font-weight:800;letter-spacing:-.04em}
 .dependency-chip-list svg.dependency-chip-logo{overflow:visible}

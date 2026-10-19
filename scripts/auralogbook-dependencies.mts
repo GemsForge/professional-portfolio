@@ -322,7 +322,7 @@ export function renderDependencyGroup(groupId: DependencyGroupId) {
   const items = group.ids.map((dependencyId: DependencyId) => {
     const dependency = AURALOGBOOK_DEPENDENCIES[dependencyId];
     if (!dependency) throw new Error(`Unknown AuraLogbook dependency: ${dependencyId}`);
-    return `<li class="dependency-chip" data-dependency="${escapeHtml(dependency.id)}" data-category="${dependency.category}" data-status="${dependency.status}">${renderLogo(dependency.logo)}<span class="dependency-chip-label">${escapeHtml(dependency.label)}</span></li>`;
+    return `<li><a class="dependency-chip" data-dependency="${escapeHtml(dependency.id)}" data-category="${dependency.category}" data-status="${dependency.status}" href="${escapeHtml(dependency.sourceUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Open ${escapeHtml(dependency.label)} source in a new tab">${renderLogo(dependency.logo)}<span class="dependency-chip-label">${escapeHtml(dependency.label)}</span></a></li>`;
   }).join("");
 
   return `<ul class="dependency-chip-list" aria-label="${escapeHtml(group.label)}">${items}</ul>`;

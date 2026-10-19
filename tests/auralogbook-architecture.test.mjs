@@ -126,6 +126,8 @@ test("AuraLogbook dependency badges come from the typed registry with inline bra
   assert.match(heroBadges, /data-dependency="sqlite"[^>]*data-status="declared-not-wired"/);
   assert.match(heroBadges, /data-dependency="swagger"[^>]*data-status="active"/);
   assert.match(heroBadges, /src="\/assets\/auralogbook-stack\/swagger\.png"/);
+  assert.match(heroBadges, /href="https:\/\/react\.dev\/"[^>]*target="_blank"[^>]*rel="noopener noreferrer"/);
+  assert.match(heroBadges, /aria-label="Open React source in a new tab"/);
 
   const workflowTools = renderDependencyGroup("workflowTools");
   for (const id of ["notion", "apple_shortcuts", "apple_numbers", "apple_notes", "apple_freeform", "apple_reminders", "apple_calendar", "apple_siri", "apple_icloud"]) {
