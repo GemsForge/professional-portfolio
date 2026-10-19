@@ -12,6 +12,8 @@ The architecture diagram shows how the Shortcut prompts feed the logging layer, 
 
 The portfolio also includes a captured iPhone Shortcuts overview at `/assets/75-days-shortcuts-overview.png`. It shows the `Log Discipline Day` folder and the Shortcut entry points used by the workflow; it does not expose private records or credentials.
 
+A second capture preserves the lower portion of the live Shortcut folder, including the water, exercise, and Notion request entry points: `/assets/75-days-shortcuts-process.png`.
+
 ## Daily challenge rules
 
 - **Disciplined Day:** Make intentional choices and honor the day’s commitments.
