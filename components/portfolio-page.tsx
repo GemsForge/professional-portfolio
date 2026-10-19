@@ -2,6 +2,7 @@ import pages from "@/lib/static-pages.json";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { ProjectCardGrid } from "@/components/project-card";
+import { HOME_PROJECT_SLUGS } from "@/scripts/project-catalog.mts";
 
 const projectGridMarker = "<!--PROJECT_CARD_GRID-->";
 
@@ -45,10 +46,13 @@ export function PortfolioPage({ pathname }: { pathname: string }) {
                   <div className="eyebrow">01 / Selected projects</div>
                   <h2>Software meets real life.</h2>
                 </div>
-                <p>Three featured projects that connect application development, system design, and practical automation.</p>
+                <p>
+                  Three featured projects that connect application development,
+                  system design, and practical automation.
+                </p>
               </div>
               <ProjectCardGrid
-                slugs={["auralogbook", "notion-api-shortcuts", "apple-ecosystem"]}
+                slugs={[...HOME_PROJECT_SLUGS]}
                 showMoreLink
               />
             </div>

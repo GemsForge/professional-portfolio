@@ -83,6 +83,13 @@ export const PROJECTS = {
   },
 } satisfies Record<string, ProjectDefinition>;
 
+/** Ordered featured-project selection for the home page. */
+export const HOME_PROJECT_SLUGS = [
+  "auralogbook",
+  "75-hard-automation",
+  "apple-ecosystem",
+] as const;
+
 /** Renders the static fallback card used while preparing generated pages. */
 export function renderProjectCard(project: ProjectDefinition) {
   return `<article class="project"><a href="/portfolio/projects/${project.slug}/" class="project-visual" tabindex="-1" aria-hidden="true"><img src="${project.image}" alt="" loading="lazy"></a><div class="project-meta">${project.preTitle}</div><h3>${project.cardTitle}</h3><p>${project.description}</p><div class="tags">${project.primaryTools}</div><a class="worklink" href="/portfolio/projects/${project.slug}/">${project.cardLinkLabel}</a></article>`;

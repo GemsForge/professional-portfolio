@@ -3,7 +3,7 @@ import path from "node:path";
 // Node 22.13+ strips the catalog's TypeScript types at import time; no runtime
 // transpiler or JSX dependency is needed for this build-time-only module.
 import { renderDependencyGroup } from "./auralogbook-dependencies.mts";
-import { applyProjectPageMetadata, PROJECTS, renderProjectCard } from "./project-catalog.mts";
+import { applyProjectPageMetadata, HOME_PROJECT_SLUGS, PROJECTS, renderProjectCard } from "./project-catalog.mts";
 
 const source = path.resolve("static-source");
 const pages = {};
@@ -26,7 +26,7 @@ async function visit(directory) {
 
     if (route === "/" || route === "/portfolio/" || route === "/portfolio/projects/") {
       const projects = route === "/" || route === "/portfolio/"
-        ? [PROJECTS["auralogbook"], PROJECTS["notion-api-shortcuts"], PROJECTS["apple-ecosystem"]]
+        ? HOME_PROJECT_SLUGS.map((slug) => PROJECTS[slug])
         : Object.values(PROJECTS);
 
       if (route === "/" || route === "/portfolio/") {
