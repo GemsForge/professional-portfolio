@@ -2,7 +2,7 @@
 
 ## Purpose
 
-75 Days of Discipline is a 75 Soft-style accountability challenge focused on consistency over perfection. It is designed to build the habits and follow-through needed to prepare for the Murph Challenge.
+75 Days of Discipline is a 75 Soft-style accountability challenge focused on consistency over perfection. It is designed to build the habits and follow-through needed to prepare for the Murph Challenge. I knew that if I really wanted to hold myself accountable, I needed a visual metrics tracker that would make my consistency visible and keep me motivated.
 
 Habitica provides the social accountability layer. Apple Shortcuts and Notion preserve the structured personal record.
 
