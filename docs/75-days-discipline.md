@@ -6,6 +6,8 @@
 
 Habitica provides the social accountability layer. Apple Shortcuts and Notion preserve the structured personal record.
 
+I did not want to download another premium app that might or might not include all the logging features I needed. Notion was the most practical logbook for me: flexible enough to capture the daily details, structured enough to support metrics, and already part of my workflow.
+
 ## Daily challenge rules
 
 - **Disciplined Day:** Make intentional choices and honor the day’s commitments.
