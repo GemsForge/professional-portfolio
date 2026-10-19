@@ -7,7 +7,8 @@ const footer = await readFile("components/site-footer.tsx", "utf8");
 const renderer = await readFile("components/portfolio-page.tsx", "utf8");
 const projectCard = await readFile("components/project-card.tsx", "utf8");
 const catalog = await readFile("scripts/project-catalog.mts", "utf8");
-const route = await readFile("app/[[...slug]]/page.tsx", "utf8");
+const rootRoute = await readFile("app/page.tsx", "utf8");
+const route = await readFile("app/[...slug]/page.tsx", "utf8");
 
 test("the routed portfolio page owns the shared shell", () => {
   assert.match(renderer, /<SiteHeader pathname=\{pathname\} \/>/);
@@ -22,6 +23,8 @@ test("the routed portfolio page owns the shared shell", () => {
 test("the catch-all route delegates every view to the shared renderer", () => {
   assert.match(route, /PortfolioPage/);
   assert.match(route, /params/);
+  assert.match(rootRoute, /PortfolioPage/);
+  assert.match(rootRoute, /pathname="\/"/);
 });
 
 test("shared navigation exposes accessible active state for nested project routes", () => {

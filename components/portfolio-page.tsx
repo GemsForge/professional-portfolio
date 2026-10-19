@@ -23,7 +23,7 @@ function cleanPage(html: string) {
  */
 export function PortfolioPage({ pathname }: { pathname: string }) {
   const page = pages[pathname as keyof typeof pages] ?? pages["/"];
-  const isHome = pathname === "/" || pathname === "/portfolio/";
+  const isHome = pathname === "" || pathname === "/" || pathname === "/index.html" || pathname === "/portfolio/";
   const hasProjectGrid = isHome || pathname === "/portfolio/projects/";
   const content = isHome
     ? cleanPage(page).replace(/<section id="work">[\s\S]*?<\/section>/, projectGridMarker)

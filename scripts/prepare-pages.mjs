@@ -25,7 +25,18 @@ async function visit(directory) {
     if (project) text = applyProjectPageMetadata(text, project);
 
     if (route === "/" || route === "/portfolio/" || route === "/portfolio/projects/") {
-      for (const project of Object.values(PROJECTS)) {
+      const projects = route === "/" || route === "/portfolio/"
+        ? [PROJECTS["auralogbook"], PROJECTS["notion-api-shortcuts"], PROJECTS["apple-ecosystem"]]
+        : Object.values(PROJECTS);
+
+      if (route === "/" || route === "/portfolio/") {
+        text = text.replace(
+          /<div class="projects">[\s\S]*?<\/div>(?=<\/div><\/section>)/,
+          `<div class="projects">${projects.map((project) => renderProjectCard(project)).join("")}</div><div class="project-grid-actions"><a class="button secondary" href="/portfolio/projects/">Explore more projects ↗</a></div>`,
+        );
+      }
+
+      for (const project of projects) {
         text = text.replace(
           new RegExp(`<article class="project"><a href="/portfolio/projects/${project.slug}/"[\\s\\S]*?<\\/article>`),
           renderProjectCard(project),
