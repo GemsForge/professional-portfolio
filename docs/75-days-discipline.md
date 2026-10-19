@@ -11,7 +11,7 @@ Habitica provides the social accountability layer. Apple Shortcuts and Notion pr
 - **Disciplined Day:** Make intentional choices and honor the day’s commitments.
 - **Exercise:** Complete at least 30 minutes of purposeful movement.
 - **Hydration:** Choose one of the available markers: **0, 40, 60, 70, or 80 fl oz**.
-- **Mindful Content:** Read, listen, or learn through a book, ebook, article, audiobook, or other educational content.
+- **Mindful Content:** Choose from `Read 2 pages`, `Prayer ☀️`, `Prayer 🌙`, `Mindful content`, or `Did not make time 🚫`.
 
 Reflections, encouraging friends, and streak celebrations are optional but encouraged. Missing a day is a reason to reflect, reset, and continue—not a reason to abandon the challenge.
 
@@ -28,6 +28,18 @@ The `Get Water Intake` Shortcut presents five choices:
 | 0 fl oz | `0 fl oz` | Low water intake |
 
 The selected value is stored in the `Water Intake Response` variable. The Shortcut treats **80 fl oz** as the completion target. Any lower selection sets `Low Water Intake`, which is included in the reflection dictionary for the Notion record.
+
+## Mindful-content logging behavior
+
+The `Get Read Bible Prompt` Shortcut presents five markers:
+
+- `Read 2 pages`
+- `Prayer ☀️`
+- `Prayer 🌙`
+- `Mindful content`
+- `Did not make time 🚫`
+
+These values feed the faith/practice portion of the structured Notion record.
 
 ## Automation flow
 
