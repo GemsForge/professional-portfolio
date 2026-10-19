@@ -5,6 +5,7 @@ import { pushExclusions, validateSubject } from "./commit-policy.mjs";
 test("accepts issue-linked conventional subjects", () => {
   assert.deepEqual(validateSubject("feat(build): #3 add project board"), []);
   assert.deepEqual(validateSubject("chore(ci): #3 maintain portfolio commit policy"), []);
+  assert.deepEqual(validateSubject("docs(build): #3 document project workflow"), []);
 });
 
 test("rejects malformed subjects and unknown scopes", () => {

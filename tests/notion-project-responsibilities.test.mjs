@@ -32,6 +32,8 @@ for (const { route, caption, components } of cases) {
     assert.match(html, /<th scope="col">Tool \/ component<\/th>/);
     assert.ok(html.includes(caption), `missing table caption: ${caption}`);
     for (const component of components) assert.ok(html.includes(component), `missing ${component}`);
-    assert.doesNotMatch(html, /<section id="dependencies">[\s\S]*?<ul>/);
+    const dependencySection = html.match(/<section id="dependencies">[\s\S]*?<\/section>/)?.[0];
+    assert.ok(dependencySection, 'missing dependencies section');
+    assert.doesNotMatch(dependencySection, /<ul>/);
   });
 }

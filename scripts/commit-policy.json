@@ -1,7 +1,7 @@
 {
   "format": "type(scope): #issue short imperative description",
   "legacyBase": "30a1be5ee78af55938dac627c4492b1a6d533b7a",
-  "types": ["feat", "fix", "refactor", "test", "chore"],
+  "types": ["feat", "fix", "refactor", "test", "chore", "docs"],
   "scopes": ["docs", "ci", "deps", "build"],
   "example": "chore(ci): #3 maintain portfolio commit policy"
 }
