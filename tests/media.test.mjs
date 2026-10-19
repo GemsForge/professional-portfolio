@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {mediaRequest} from '../lib/media-server.ts';
+import {PROJECTS} from '../lib/project-registry.ts';
 import {MAX_ATTACHMENT_BYTES,createAttachmentPasteHandler} from '../public/assets/attachment-paste.js';
 class Bucket {
  data=new Map(); version=0;
@@ -10,6 +11,9 @@ class Bucket {
  async delete(keys){for(const k of Array.isArray(keys)?keys:[keys])this.data.delete(k);}
 }
 const site='https://www.gemsforge.com';
+test('attachment project registry keeps the full project list independent of profile cards',()=>{
+ assert.deepEqual(PROJECTS,['hair-log','75-hard-automation','auralogbook','apple-ecosystem','dynamic-folder-structures','notion-api-shortcuts']);
+});
 const headers={'oai-authenticated-user-id':'owner-site-id','oai-authenticated-user-email':'diamondbrown79@gmail.com',Origin:site};
 function req(path,method='GET',body,extra=headers){return new Request(site+path,{method,headers:extra,...(body?{body}:{})});}
 function upload(alt='Screenshot showing the folder loop'){const f=new FormData();f.set('project','dynamic-folder-structures');f.set('alt',alt);f.set('caption','Sample project');f.set('image',new File([new Uint8Array([137,80,78,71,13,10,26,10,0])],'test.png',{type:'image/png'}));return f;}
