@@ -9,7 +9,7 @@ Habitica provides the social accountability layer. Apple Shortcuts and Notion pr
 ## Daily challenge rules
 
 - **Disciplined Day:** Make intentional choices and honor the day’s commitments.
-- **Exercise:** Complete at least 30 minutes of purposeful movement.
+- **Exercise:** Choose `Yes` or `No`; a `No` response records one reason: `Pain 🤕`, `Almost! 20 mins minimum.`, or `Not in the mood… 😓`.
 - **Hydration:** Choose one of the available markers: **0, 40, 60, 70, or 80 fl oz**.
 - **Mindful Content:** Choose from `Read 2 pages`, `Prayer ☀️`, `Prayer 🌙`, `Mindful content`, or `Did not make time 🚫`.
 
@@ -40,6 +40,22 @@ The `Get Read Bible Prompt` Shortcut presents five markers:
 - `Did not make time 🚫`
 
 These values feed the faith/practice portion of the structured Notion record.
+
+## Shortcut log markers
+
+The helper Shortcuts use the following exact markers and conditional follow-ups:
+
+### Discipline
+
+`Get Discipline Response` records `Yes` or `No` in `Disciplined Response`. When the response is `No`, it also records one or more reasons from `Distracted`, `Half-Committed`, or `Discouraged`, joined with `, ` in the disciplined response dictionary value.
+
+### Exercise
+
+`Get Exercise Response` records `Yes` or `No` under the `Exercise` dictionary key. When the response is `No`, it records one reason from `Pain 🤕`, `Almost! 20 mins minimum.`, or `Not in the mood… 😓`.
+
+### Reflections
+
+`Get Reflections Response` records `Yes` or `No`. A `Yes` response opens a free-text input for the reflection; a `No` response leaves the reflection text empty.
 
 ## Automation flow
 
