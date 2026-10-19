@@ -10,6 +10,8 @@ I also did not want to pay for another specialized app and hope it had all the l
 
 The architecture diagram shows how the Shortcut prompts feed the logging layer, structured response dictionary, Notion API request, daily discipline database, Goal Tracker relation, and progress review.
 
+The portfolio also includes a captured iPhone Shortcuts overview at `/assets/75-days-shortcuts-overview.png`. It shows the `Log Discipline Day` folder and the Shortcut entry points used by the workflow; it does not expose private records or credentials.
+
 ## Daily challenge rules
 
 - **Disciplined Day:** Make intentional choices and honor the day’s commitments.
