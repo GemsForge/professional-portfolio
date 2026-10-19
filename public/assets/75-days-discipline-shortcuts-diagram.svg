@@ -19,8 +19,8 @@
 <g>
   <text class="layerhead" x="50" y="94">Shortcut inputs</text>
   <text class="layerhead" x="438" y="94">Logging layer</text>
-  <text class="layerhead" x="886" y="94">Notion integration</text>
-  <text class="layerhead" x="1324" y="94">Progress review</text>
+  <text class="layerhead" x="886" y="94">Request / API boundary</text>
+  <text class="layerhead" x="1324" y="94">Notion data + review</text>
   <text class="layerhead" x="50" y="750">Runtime workflow</text>
 </g>
 <g class="connections">
@@ -36,8 +36,8 @@
 <g text-anchor="middle">
   <text class="head light" x="211" y="153">Combat Ready - Last 20 Lbs</text><text class="head light" x="211" y="227">Open Finch All</text><text class="head light" x="211" y="301">Get Milestone Message</text><text class="head light" x="211" y="375">Get Morning Message</text><text class="head light" x="211" y="449">Get Read Bible Prompt</text><text class="head light" x="211" y="523">Get Water Intake</text><text class="head light" x="211" y="597">Get Exercise Response</text>
   <text class="head" x="625" y="170">Get Discipline Response</text><text class="sub" x="625" y="191">and daily response helpers</text><text class="head" x="625" y="274">Log Discipline</text><text class="sub" x="625" y="295">log date + daily responses</text><text class="head" x="625" y="378">Structured response dictionary</text><text class="sub" x="625" y="399">disciplined · exercise · water · faith · reflection</text><text class="head" x="625" y="482">Discipline Http Request</text><text class="sub" x="625" y="503">consistent Notion page request</text><text class="head" x="625" y="586">Log Discipline Day V1</text><text class="sub" x="625" y="607">retained earlier workflow</text>
-  <text class="head" x="1073" y="170">Notion API</text><text class="sub" x="1073" y="191">receives the structured request</text><text class="head" x="1073" y="274">Discipline database</text><text class="sub" x="1073" y="295">stores the daily record</text><text class="head" x="1073" y="378">Goal Tracker relation</text><text class="sub" x="1073" y="399">preserves goal context</text>
-  <text class="head" x="1537" y="274">Notion Chart</text><text class="sub" x="1537" y="295">visual metrics over time</text><text class="head" x="1537" y="378">Review consistency and progress</text><text class="sub" x="1537" y="399">see what is working and what needs to change</text><text class="head" x="1537" y="482">Apple Calendar / date context</text><text class="sub" x="1537" y="503">supports daily scheduling and accountability</text>
+  <text class="head" x="1073" y="170">Discipline Http Request</text><text class="sub" x="1073" y="191">builds the structured API payload</text><text class="head" x="1073" y="274">Notion API</text><text class="sub" x="1073" y="295">external service boundary</text><text class="head" x="1073" y="378">HTTP / JSON request</text><text class="sub" x="1073" y="399">Shortcut → Notion API</text>
+  <text class="head" x="1537" y="170">Discipline database</text><text class="sub" x="1537" y="191">stores the daily record</text><text class="head" x="1537" y="274">Goal Tracker relation</text><text class="sub" x="1537" y="295">preserves goal context</text><text class="head" x="1537" y="378">Notion Chart</text><text class="sub" x="1537" y="399">visual metrics over time</text><text class="head" x="1537" y="482">Review consistency and progress</text><text class="sub" x="1537" y="503">see what is working and what needs to change</text><text class="head" x="1537" y="586">Apple Calendar / date context</text><text class="sub" x="1537" y="607">supports daily scheduling and accountability</text>
 </g>
 <g>
   <rect x="50" y="783" width="1698" height="132" rx="10" fill="#fffef8" stroke="#b7c5b4" stroke-width="1.5"/>
