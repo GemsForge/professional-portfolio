@@ -71,4 +71,27 @@ The helper Shortcuts use the following exact markers and conditional follow-ups:
 6. Notion stores the daily record and its Goal Tracker relation.
 7. A Notion Chart makes consistency and progress visible over time.
 
+## Example Notion request
+
+The live `Discipline Http Request` Shortcut extracts `Disciplined`, `Exercise`, `Water`, `Faith`, `Reflection`, and `Date` from the response dictionary. This redacted example mirrors the request shape with synthetic values:
+
+```json
+{
+  "parent": { "database_id": "DATABASE_ID_REDACTED" },
+  "icon": { "type": "emoji", "emoji": "⭐" },
+  "properties": {
+    "Log": { "title": [{ "text": { "content": "Log 2026-10-19" } }] },
+    "Date": { "date": { "start": "2026-10-19" } },
+    "Goal Tracker": { "relation": [{ "id": "GOAL_TRACKER_RELATION_ID_REDACTED" }] },
+    "Disciplined": { "select": { "name": "Yes" } },
+    "Exercise Completed": { "select": { "name": "Yes" } },
+    "Water Intake": { "select": { "name": "80 fl oz" } },
+    "Faith": { "multi_select": [{ "name": "Read 2 pages" }] },
+    "Reflection": { "rich_text": [{ "text": { "content": "Completed the daily check-in and stayed consistent." } }] }
+  }
+}
+```
+
+The database ID, relation ID, API secret, and personal reflections remain private.
+
 Private database IDs, relation IDs, API secrets, and personal reflections are not published.
