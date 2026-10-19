@@ -2,11 +2,11 @@
 
 ## Purpose
 
-75 Days of Discipline is a 75 Soft-style accountability challenge focused on consistency over perfection. It is designed to build the habits and follow-through needed to prepare for the Murph Challenge. I knew that if I wanted to hold myself accountable, I needed a visual metrics tracker that would make my consistency visible and keep me motivated.
+75 Days of Discipline is a 75 Soft-style accountability challenge focused on consistency over perfection. It is designed to build the habits and follow-through needed to prepare for the Murph Challenge. If I really wanted to hold myself accountable, I needed more than a good intention; I needed a visual record that showed me whether I was actually following through.
 
 Habitica provides the social accountability layer. Apple Shortcuts and Notion preserve the structured personal record.
 
-I did not want to pay for another specialized app without knowing whether it would support the logging details I actually needed. Notion was the most practical logbook for me: flexible enough to capture daily details, structured enough to support metrics, and already part of my workflow.
+I also did not want to pay for another specialized app and hope it had all the logging features I needed. Notion was the most practical logbook for me: flexible enough to capture the daily details, structured enough to show the metrics, and already part of my workflow.
 
 ## Daily challenge rules
 
