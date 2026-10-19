@@ -315,6 +315,14 @@ function renderLogo(logo: DependencyLogo) {
   return `<span class="dependency-chip-logo dependency-chip-glyph" title="${escapeHtml(logo.description)}" data-logo-symbol="${escapeHtml(logo.symbolId)}" aria-hidden="true">${escapeHtml(logo.text)}</span>`;
 }
 
+/**
+ * Render a dependency group as navigable source links.
+ *
+ * Each chip remains a semantic anchor because its action is navigation, not an
+ * in-page state change. The registry's sourceUrl is the public documentation
+ * destination; target/rel keep the new tab safe, and the accessible name tells
+ * assistive technology where the link goes and that it opens a new tab.
+ */
 export function renderDependencyGroup(groupId: DependencyGroupId) {
   const group = AURALOGBOOK_DEPENDENCY_GROUPS[groupId];
   if (!group) throw new Error(`Unknown AuraLogbook dependency group: ${groupId}`);
@@ -322,7 +330,7 @@ export function renderDependencyGroup(groupId: DependencyGroupId) {
   const items = group.ids.map((dependencyId: DependencyId) => {
     const dependency = AURALOGBOOK_DEPENDENCIES[dependencyId];
     if (!dependency) throw new Error(`Unknown AuraLogbook dependency: ${dependencyId}`);
-    return `<li class="dependency-chip" data-dependency="${escapeHtml(dependency.id)}" data-category="${dependency.category}" data-status="${dependency.status}">${renderLogo(dependency.logo)}<span class="dependency-chip-label">${escapeHtml(dependency.label)}</span></li>`;
+    return `<li><a class="dependency-chip" data-dependency="${escapeHtml(dependency.id)}" data-category="${dependency.category}" data-status="${dependency.status}" href="${escapeHtml(dependency.sourceUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Open ${escapeHtml(dependency.label)} source in a new tab">${renderLogo(dependency.logo)}<span class="dependency-chip-label">${escapeHtml(dependency.label)}</span></a></li>`;
   }).join("");
 
   return `<ul class="dependency-chip-list" aria-label="${escapeHtml(group.label)}">${items}</ul>`;

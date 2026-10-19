@@ -11,6 +11,7 @@ const pages = JSON.parse(
   await readFile(new URL("../lib/static-pages.json", import.meta.url), "utf8"),
 );
 const page = pages["/portfolio/projects/auralogbook/"];
+const disciplinePage = pages["/portfolio/projects/75-hard-automation/"];
 const diagramUrl = "/assets/aura-logbook-architecture.svg";
 
 test("AuraLogbook page includes one accessible data-to-API-to-UI architecture diagram", async () => {
@@ -126,6 +127,8 @@ test("AuraLogbook dependency badges come from the typed registry with inline bra
   assert.match(heroBadges, /data-dependency="sqlite"[^>]*data-status="declared-not-wired"/);
   assert.match(heroBadges, /data-dependency="swagger"[^>]*data-status="active"/);
   assert.match(heroBadges, /src="\/assets\/auralogbook-stack\/swagger\.png"/);
+  assert.match(heroBadges, /href="https:\/\/react\.dev\/"[^>]*target="_blank"[^>]*rel="noopener noreferrer"/);
+  assert.match(heroBadges, /aria-label="Open React source in a new tab"/);
 
   const workflowTools = renderDependencyGroup("workflowTools");
   for (const id of ["notion", "apple_shortcuts", "apple_numbers", "apple_notes", "apple_freeform", "apple_reminders", "apple_calendar", "apple_siri", "apple_icloud"]) {
@@ -134,4 +137,13 @@ test("AuraLogbook dependency badges come from the typed registry with inline bra
   for (const id of ["apple_shortcuts", "apple_numbers", "apple_notes", "apple_freeform", "apple_reminders", "apple_calendar", "apple_siri", "apple_icloud"]) {
     assert.match(workflowTools, new RegExp(`data-dependency="${id}"[^>]*><svg[^>]*data-logo-symbol="brand-apple"`));
   }
+
+  const disciplineTools = renderDependencyGroup("disciplineHighlights");
+  assert.ok(disciplinePage, "the generated 75 Days of Discipline route exists");
+  for (const dependency of Object.values(AURALOGBOOK_DEPENDENCIES).filter(({ id }) => ["notion", "apple_shortcuts"].includes(id))) {
+    assert.match(disciplineTools, new RegExp(`data-dependency="${dependency.id}"[^>]*href="${dependency.sourceUrl.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}"`));
+    assert.match(disciplineTools, new RegExp(`aria-label="Open ${dependency.label} source in a new tab"`));
+  }
+  assert.match(disciplinePage, /data-dependency="notion"[^>]*href="https:\/\/www\.notion\.so\//);
+  assert.match(disciplinePage, /data-dependency="apple_shortcuts"[^>]*href="https:\/\/developer\.apple\.com\//);
 });
