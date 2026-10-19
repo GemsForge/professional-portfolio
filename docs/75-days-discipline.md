@@ -71,7 +71,7 @@ The helper Shortcuts use the following exact markers and conditional follow-ups:
 6. Notion stores the daily record and its Goal Tracker relation.
 7. A Notion Chart makes consistency and progress visible over time.
 
-## Example Notion request
+## Code view: example Notion request
 
 The live `Discipline Http Request` Shortcut extracts `Disciplined`, `Exercise`, `Water`, `Faith`, `Reflection`, and `Date` from the response dictionary. This redacted example mirrors the request shape with synthetic values:
 
