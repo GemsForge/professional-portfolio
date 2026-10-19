@@ -25,7 +25,12 @@ export function PortfolioPage({ pathname }: { pathname: string }) {
   const page = pages[pathname as keyof typeof pages] ?? pages["/"];
   const isHome = pathname === "/" || pathname === "/portfolio/";
   const hasProjectGrid = isHome || pathname === "/portfolio/projects/";
-  const content = cleanPage(page).replace(/<div class="projects">[\s\S]*?<\/div><\/div>/, hasProjectGrid ? projectGridMarker : "");
+  const content = isHome
+    ? cleanPage(page).replace(/<section id="work">[\s\S]*?<\/section>/, projectGridMarker)
+    : cleanPage(page).replace(
+        /<div class="projects">[\s\S]*?<\/div>(?=<\/div><\/section>)/,
+        hasProjectGrid ? projectGridMarker : "",
+      );
   const [beforeGrid, afterGrid] = content.split(projectGridMarker);
   return (
     <>
@@ -33,10 +38,21 @@ export function PortfolioPage({ pathname }: { pathname: string }) {
       <main id="main">
         <div dangerouslySetInnerHTML={{ __html: beforeGrid }} />
         {isHome ? (
-          <ProjectCardGrid
-            slugs={["auralogbook", "notion-api-shortcuts", "apple-ecosystem"]}
-            showMoreLink
-          />
+          <section id="work">
+            <div className="wrap">
+              <div className="sectionhead">
+                <div>
+                  <div className="eyebrow">01 / Selected projects</div>
+                  <h2>Software meets real life.</h2>
+                </div>
+                <p>Three featured projects that connect application development, system design, and practical automation.</p>
+              </div>
+              <ProjectCardGrid
+                slugs={["auralogbook", "notion-api-shortcuts", "apple-ecosystem"]}
+                showMoreLink
+              />
+            </div>
+          </section>
         ) : hasProjectGrid ? (
           <ProjectCardGrid />
         ) : null}
