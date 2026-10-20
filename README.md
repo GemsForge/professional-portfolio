@@ -44,6 +44,12 @@ Local mock sign-in defaults to the portfolio owner email. Set
 The mock sign-in is loopback-only; production authorization continues to use
 the identity supplied by Sites.
 
+Local development uses port `5173` by default. Both `npm run dev` and the local
+worker preview started by `npm run start` read the same override: set `PORT` (or
+`VITE_PORT` when `PORT` is not set) to a value from `1` through `65535`.
+For example, `PORT=5199 npm run dev` serves the app at
+`http://127.0.0.1:5199`. Hosted deployments retain their platform-assigned port.
+
 Use the current Sites skill for installation, build, preview, source synchronization, and publishing to the existing project. Node.js 22.13+ is required. `npm run build` prepares static content then builds the server through the retained Sites integration. `npm run test:media` checks core storage and authorization behavior.
 
 No application credentials belong in source. Hosted sign-in and identity headers are provided by Sites. Only the owner workspace requires sign-in. Browser-level visual/accessibility and hosted owner-login walkthroughs remain to be verified.
