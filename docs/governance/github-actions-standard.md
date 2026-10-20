@@ -24,3 +24,10 @@ This repository participates in the GemsForge shared Actions standard. The stand
 ## Change process
 
 Actions changes follow the normal issue → branch → commit → pull request → checks → review flow. Each Actions PR must state which shared contract item it implements, which local checks it touches, and how security was verified.
+
+
+## Project synchronization
+
+This repository does not introduce a shared Project synchronization workflow. Preserve its existing repository workflow, hosting, and metadata conventions without copying Project identifiers from another repository.
+
+Project changes remain repository-specific and require the existing approval and secret boundaries.
