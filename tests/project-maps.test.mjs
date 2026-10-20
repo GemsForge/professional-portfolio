@@ -35,3 +35,14 @@ for (const [name, path, labels] of [
     for (const label of labels) assert.ok(html.includes(label), `missing table content: ${label}`);
   });
 }
+
+test("Aura Logbook card and detail page share the catalog image", async () => {
+  const catalog = await read("../scripts/project-catalog.mts");
+  const home = await read("../static-source/index.html");
+  const projects = await read("../static-source/portfolio/projects/index.html");
+  const detail = await read("../static-source/portfolio/projects/auralogbook/index.html");
+  assert.match(catalog, /auralogbook[\s\S]*?image: "\/assets\/aura-logbook\.png"/);
+  assert.match(home, /auralogbook\/[\s\S]*?src="\/assets\/aura-logbook\.png"/);
+  assert.match(projects, /auralogbook\/[\s\S]*?src="\/assets\/aura-logbook\.png"/);
+  assert.match(detail, /src="\/assets\/aura-logbook\.png"/);
+});
