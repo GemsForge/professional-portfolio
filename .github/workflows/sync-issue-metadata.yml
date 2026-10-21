@@ -344,9 +344,10 @@ jobs:
               login: "GemsForge",
             });
             const visibleProjects = projectData.user?.projectsV2?.nodes ?? [];
+            // Project numbers are stable; titles may carry a version suffix
+            // such as the current "Professional Portfolio v1".
             const project = visibleProjects.find(
-              (candidate) =>
-                candidate.number === 11 && candidate.title?.trim() === "Professional Portfolio",
+              (candidate) => candidate.number === 11,
             );
 
             if (!project) {
