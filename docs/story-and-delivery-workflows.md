@@ -76,6 +76,8 @@ The commit-policy workflow also runs `node --test scripts/commit-policy.test.mjs
 
    Keep both type and scope within the approved lists above. Standard Git-generated merge commits are exempt from this check.
 
+   After modifying code, run the narrowest relevant verification, create a focused commit, and push it to the remote issue branch. Before reporting success, verify the remote branch head and confirm the associated PR is open and points to that commit.
+
 5. Open a PR only when authorized. Its title must use the commit-policy format; add a workflow label and include `Closes #issue-number` in the PR body. The branch name must contain that same issue number.
 6. Run the exact checks in the story's Verification section and review all PR Actions. Fix failures at their source. Required Actions include CI, commit policy, branch and issue link policy, label policy, and issue/PR metadata sync.
 7. Do not close the issue, change its milestone/status, or start another issue unless that action is authorized. Never merge unless the user explicitly instructs you to merge. If asked to merge when checks pass, monitor them and merge when they are green.
