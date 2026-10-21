@@ -14,6 +14,8 @@ Exact developer references: `README.md`; `docs/ui-development-workflow.md`; `doc
 
 Developer handoff rule: after modifying code, run the narrowest relevant verification, create one focused policy-compliant commit, and push it to the remote issue branch before reporting the work complete. Do not leave completed implementation only in the local working tree.
 
+Before reporting the push, verify the remote branch head and the associated PR state. Confirm the pushed commit is the PR head and that the PR is still open; a commit pushed after merge, to another branch, or to a closed PR is not a completed handoff and must be reported as a blocker.
+
 ## Technology guidance
 
 Use `docs/ui-development-workflow.md`, the README, and the relevant application, component, hook, library, test, and worker files for this repository's React/TypeScript UI and hosted-worker/storage boundaries. Keep temporary UI state, reusable hooks, server data, accessibility, responsive behavior, and tests in their documented layers. This repository does not use Aura's C#/.NET/Redux conventions or GemsForgeAPI's Swift/Vapor conventions; do not import those patterns without an explicit architectural decision.
