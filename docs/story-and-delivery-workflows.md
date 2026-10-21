@@ -76,6 +76,8 @@ The commit-policy workflow also runs `node --test scripts/commit-policy.test.mjs
 
    Keep both type and scope within the approved lists above. Standard Git-generated merge commits are exempt from this check.
 
+   After modifying code, run the narrowest relevant verification, create a focused commit, and push it to the remote issue branch. Before reporting success, verify the remote branch head and confirm the associated PR is open and points to that commit. A push after a PR has merged, or to the wrong branch, does not complete the handoff.
+
    After modifying code, run the narrowest relevant verification, create a focused commit, and push it to the remote issue branch. Before reporting success, verify the remote branch head and confirm the associated PR is open and points to that commit.
 
 5. Open a PR only when authorized. Its title must use the commit-policy format; add a workflow label and include `Closes #issue-number` in the PR body. The branch name must contain that same issue number.
