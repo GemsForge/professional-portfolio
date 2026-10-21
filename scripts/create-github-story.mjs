@@ -45,6 +45,7 @@ const parseArgs = (args) => {
     else options.repo = value;
   }
   if (!options.title) throw new Error("--title is required.");
+  if (!options.milestone) throw new Error("--milestone is required; select a milestone from the target repository.");
   options.repo ||= process.env.GITHUB_REPOSITORY;
   if (!options.repo || !/^[^/]+\/[^/]+$/.test(options.repo)) throw new Error("Set GITHUB_REPOSITORY or supply --repo OWNER/REPOSITORY.");
   return options;
