@@ -27,5 +27,5 @@ jobs:
             const issue = pr.head.ref.match(/^[^/]+\/(\d+)-/)[1];
             const body = pr.body || '';
             if (!new RegExp(`(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?):?\\s+#${issue}\\b`, 'i').test(body)) {
-              core.setFailed(`PR body must include Closes #${issue} (or equivalent).`);
+              core.setFailed(`PR body must include Closes #${issue} (or equivalent); merging closes the linked story.`);
             }

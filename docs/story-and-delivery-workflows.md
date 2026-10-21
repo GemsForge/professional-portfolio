@@ -43,7 +43,7 @@ As a [user], I want [capability] so that [benefit].
 ## Delivery checks
 - [ ] Branch follows `<type>/<issue-number>-<short-description>`.
 - [ ] Commits and PR title follow `type(scope): #issue-number short imperative description` with approved types and scopes.
-- [ ] PR body includes `Closes #issue-number` and the PR has an approved workflow label.
+- [ ] PR body includes `Closes #issue-number`, and the PR has an approved workflow label.
 - [ ] CI, commit policy, branch workflow policy, label policy, and metadata sync checks pass.
 
 ## Relationships
@@ -76,9 +76,13 @@ The commit-policy workflow also runs `node --test scripts/commit-policy.test.mjs
 
    Keep both type and scope within the approved lists above. Standard Git-generated merge commits are exempt from this check.
 
-5. Open a PR only when authorized. Its title must use the commit-policy format; add a workflow label and include `Closes #issue-number` in the PR body. The branch name must contain that same issue number.
+   After modifying code, run the narrowest relevant verification, create a focused commit, and push it to the remote issue branch. A developer handoff is incomplete while implementation remains only in the local working tree.
+
+   Before reporting success, verify the remote branch head and confirm the associated PR is open and points to that commit. A push after a PR has merged, or a push to the wrong branch, does not complete the handoff.
+
+5. Open a PR only when authorized. Its title must use the commit-policy format; add a workflow label and use `Closes #issue-number` in the PR body. The branch name must contain that same issue number.
 6. Run the exact checks in the story's Verification section and review all PR Actions. Fix failures at their source. Required Actions include CI, commit policy, branch and issue link policy, label policy, and issue/PR metadata sync.
-7. Do not close the issue, change its milestone/status, or start another issue unless that action is authorized. Never merge unless the user explicitly instructs you to merge. If asked to merge when checks pass, monitor them and merge when they are green.
+7. Do not manually close the issue or change its milestone/status unless that action is authorized. A human-approved merge closes the linked story and moves it to `Done`. Never merge unless the user explicitly instructs you to merge. If asked to merge when checks pass, monitor them and merge when they are green.
 
 ## Quick reference
 

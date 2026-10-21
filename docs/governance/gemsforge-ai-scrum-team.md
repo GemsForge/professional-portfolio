@@ -28,7 +28,7 @@ These are responsibilities ChatGPT/Codex may perform, not separate accounts or p
 4. Implement on an issue-numbered branch using local branch and commit rules.
 5. Verify with named automated and manual checks.
 6. Open a linked PR only when authorized with evidence and remaining work.
-7. Stop at a delivery report. Merge, deploy, close, Project changes, secrets, and credentials are separate approvals.
+7. Stop at a delivery report. Merge, deploy, Project changes, secrets, and credentials are separate approvals. A merged PR closes its linked story; the closed story is then `Done`.
 
 ## Checkpoints
 
@@ -52,5 +52,9 @@ NUMBER`, then verify the issue's milestone, labels, assignees, relationships,
 and Project membership. The Scrum Master owns story points, priority,
 iteration, and status.
 
-QA may verify work and move Project status to `QA`; QA does not close stories.
-Issue closure, merge, and release remain separate human-approved actions.
+When a PR is opened, the linked issue and PR move to `QA` for internal Codex
+Review. An approved review moves them to `In review` for the human merge
+decision. Required corrections use `Changes requested`. After human approval,
+the merged PR moves the issue and PR to `Merged` and closes the linked story;
+the closed story becomes `Done`. QA performs the review and verification but
+does not merge or release.
