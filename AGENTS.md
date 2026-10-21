@@ -12,6 +12,8 @@ QA gate: PR checks validate the proposed change before merge. After merge to `ma
 
 Exact developer references: `README.md`; `docs/ui-development-workflow.md`; `docs/governance/`; `app/`; `components/`; `hooks/`; `lib/`; `tests/`; `scripts/`; `.github/workflows/`; and `.github/agents/`.
 
+Developer handoff rule: after modifying code, run the narrowest relevant verification, create one focused policy-compliant commit, and push it to the remote issue branch before reporting the work complete. Do not leave completed implementation only in the local working tree.
+
 ## Technology guidance
 
 Use `docs/ui-development-workflow.md`, the README, and the relevant application, component, hook, library, test, and worker files for this repository's React/TypeScript UI and hosted-worker/storage boundaries. Keep temporary UI state, reusable hooks, server data, accessibility, responsive behavior, and tests in their documented layers. This repository does not use Aura's C#/.NET/Redux conventions or GemsForgeAPI's Swift/Vapor conventions; do not import those patterns without an explicit architectural decision.
