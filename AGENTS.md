@@ -1,5 +1,7 @@
 # Repository agent guidance
 
+Implementation feedback rule: when the user suggests or corrects a code, workflow, documentation, test, or policy behavior, treat it as an implementation request for the owning developer agent. Inspect the relevant files, prepare the smallest complete change, run focused verification, create a policy-compliant commit, and push it to the story branch. Do not respond with an explanation only when a repository change is expected.
+
 Read the repository README and local policy documents before making changes. The GemsForge AI Scrum Team guidance in docs/governance/gemsforge-ai-scrum-team.md is additive; local architecture, workflow, security, hosting, Actions, Projects, and commit conventions remain authoritative.
 
 Work from an issue-numbered branch when required. Preserve unrelated work. Never claim checks or deployment are complete without evidence. Stop after implementation and verification with a delivery report. Merge, deploy, close, Project mutation, secrets, credentials, and destructive cleanup require explicit approval.
