@@ -43,7 +43,7 @@ As a [user], I want [capability] so that [benefit].
 ## Delivery checks
 - [ ] Branch follows `<type>/<issue-number>-<short-description>`.
 - [ ] Commits and PR title follow `type(scope): #issue-number short imperative description` with approved types and scopes.
-- [ ] PR body includes `Closes #issue-number` and the PR has an approved workflow label.
+- [ ] PR body references `#issue-number` without a closing keyword, and the PR has an approved workflow label.
 - [ ] CI, commit policy, branch workflow policy, label policy, and metadata sync checks pass.
 
 ## Relationships
@@ -76,7 +76,7 @@ The commit-policy workflow also runs `node --test scripts/commit-policy.test.mjs
 
    Keep both type and scope within the approved lists above. Standard Git-generated merge commits are exempt from this check.
 
-5. Open a PR only when authorized. Its title must use the commit-policy format; add a workflow label and include `Closes #issue-number` in the PR body. The branch name must contain that same issue number.
+5. Open a PR only when authorized. Its title must use the commit-policy format; add a workflow label and reference `#issue-number` in the PR body without a closing keyword. The branch name must contain that same issue number.
 6. Run the exact checks in the story's Verification section and review all PR Actions. Fix failures at their source. Required Actions include CI, commit policy, branch and issue link policy, label policy, and issue/PR metadata sync.
 7. Do not close the issue, change its milestone/status, or start another issue unless that action is authorized. Never merge unless the user explicitly instructs you to merge. If asked to merge when checks pass, monitor them and merge when they are green.
 
@@ -85,7 +85,7 @@ The commit-policy workflow also runs `node --test scripts/commit-policy.test.mjs
 ```text
 Issue/PR/commit: feat(build): #14 add Hair Log and 75 Hard project cards
 Branch:          feat/14-project-cards
-PR body:         Closes #14
+PR body:         Implements #14; QA follows after merge
 ```
 
 The branch type vocabulary is broader than the commit type vocabulary; commit and PR titles must use the approved commit types and scopes. Work through the authorized story without asking for permission again at every small step. Finish with a concise handoff covering the issue, branch, changed files, checks and results, commit IDs, push/PR state, remaining criteria or blockers, and unrelated working-tree changes. Do not call the story complete while required work remains.

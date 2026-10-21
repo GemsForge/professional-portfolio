@@ -10,6 +10,8 @@ Preserve this repository's existing stack, workflows, scripts, labels, and docum
 
 QA gate: PR checks validate the proposed change before merge. After merge to `main`, QA validates the merged development branch against the story's acceptance criteria, regression, accessibility, responsive behavior, security/privacy expectations, and required evidence. QA may set Project status to `QA` and recommend release or corrective work; QA does not merge, release, or close the story.
 
+Exact developer references: `README.md`; `docs/ui-development-workflow.md`; `docs/governance/`; `app/`; `components/`; `hooks/`; `lib/`; `tests/`; `scripts/`; `.github/workflows/`; and `.github/agents/`.
+
 ## Technology guidance
 
 Use `docs/ui-development-workflow.md`, the README, and the relevant application, component, hook, library, test, and worker files for this repository's React/TypeScript UI and hosted-worker/storage boundaries. Keep temporary UI state, reusable hooks, server data, accessibility, responsive behavior, and tests in their documented layers. This repository does not use Aura's C#/.NET/Redux conventions or GemsForgeAPI's Swift/Vapor conventions; do not import those patterns without an explicit architectural decision.
