@@ -14,7 +14,7 @@ export function validateSubject(subject, rules = policy) {
   if (!match) return [`Expected ${rules.format}; use a positive issue number.`];
   const errors = [];
   if (!rules.types.includes(match[1])) errors.push(`Unapproved type '${match[1]}'.`);
-  if (!rules.scopes.includes(match[2])) errors.push(`Unknown scope '${match[2]}'. Allowed: ${rules.scopes.join(", ")}.`);
+  if (match[1] !== "docs" && !rules.scopes.includes(match[2])) errors.push(`Unknown scope '${match[2]}'. Allowed: ${rules.scopes.join(", ")}.`);
   const description = match[4];
   if (description.trim() !== description || !/^[a-z][a-z0-9-]*(?:\s+\S.*)?$/.test(description) || /[\x00-\x1f\x7f]/.test(description)) errors.push("Description must start with a lowercase word and contain no surrounding whitespace or control characters.");
   return errors;

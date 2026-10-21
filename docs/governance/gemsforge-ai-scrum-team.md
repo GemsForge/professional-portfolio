@@ -42,3 +42,15 @@ These are responsibilities ChatGPT/Codex may perform, not separate accounts or p
 Require explicit approval for merge, deployment/publishing, issue closure, Project status or milestone changes, branch protection, Actions secrets/variables, credentials, destructive cleanup, or material new dependencies.
 
 Use the reusable templates in docs/governance/templates/.
+
+## Story metadata contract
+
+The PO must inspect the portfolio repository's current GitHub milestones and
+configured Project before creating a story. The PO must pass the selected
+repository-local milestone with `scripts/create-github-story.mjs --milestone
+NUMBER`, then verify the issue's milestone, labels, assignees, relationships,
+and Project membership. The Scrum Master owns story points, priority,
+iteration, and status.
+
+QA may verify work and move Project status to `QA`; QA does not close stories.
+Issue closure, merge, and release remain separate human-approved actions.

@@ -46,6 +46,7 @@ jobs:
             };
             const projectNumber = projectNumbers[fullName];
             if (!projectNumber) throw new Error("No Project mapping configured for " + fullName);
+            const projectOwner = owner;
             const issueFromRef = (ref) => Number((ref || "").match(
               /^(?:feat|fix|docs|refactor|test|chore|ci|build|perf|style)\/(\d+)(?:-|$)/i
             )?.[1]) || undefined;
@@ -62,15 +63,6 @@ jobs:
             })).data;
             const reviewState = context.eventName === "pull_request_review"
               ? (context.payload.review?.state || "").toLowerCase() : "";
-            if (process.env.QA_ACCEPTANCE === "true") {
-              if (context.actor !== "GemsForge") {
-                throw new Error("Only the GemsForge account may authorize QA acceptance.");
-              }
-              await github.rest.issues.update({
-                ...context.repo, issue_number: issueNumber,
-                state: "closed", state_reason: "completed"
-              });
-            }
             const token = process.env.PROJECTS_TOKEN;
             if (!token) throw new Error("PROJECTS_TOKEN is required.");
             const gql = async (query, variables) => {
@@ -91,11 +83,14 @@ jobs:
               return body.data;
             };
             const projectData = await gql(
-              "query($login:String!){organization(login:$login){projectsV2(first:100){nodes{id number title}}}}",
-              { login: "GemsForge-LLC" }
+              "query($login:String!){organization(login:$login){projectsV2(first:100){nodes{id number title}}} user(login:$login){projectsV2(first:100){nodes{id number title}}}}",
+              { login: projectOwner }
             );
-            const project = (projectData.organization?.projectsV2?.nodes || [])
-              .find((p) => p.number === projectNumber);
+            const visibleProjects = [
+              ...(projectData.organization?.projectsV2?.nodes || []),
+              ...(projectData.user?.projectsV2?.nodes || []),
+            ];
+            const project = visibleProjects.find((p) => p.number === projectNumber);
             if (!project) throw new Error("GemsForge Project #" + projectNumber + " was not found.");
             const fieldsData = await gql(
               "query($id:ID!){node(id:$id){... on ProjectV2{fields(first:100){nodes{... on ProjectV2SingleSelectField{id name options{id name}}}}}}}",
@@ -135,7 +130,7 @@ jobs:
             };
             let desired = "Backlog";
             if (issue.state === "closed") desired = "Done";
-            else if (pr?.merged) desired = "QA";
+            else if (pr?.merged || process.env.QA_ACCEPTANCE === "true") desired = "QA";
             else if (reviewState === "changes_requested") desired = "Changes requested";
             else if (pr?.draft) desired = "In progress";
             else if (pr || context.eventName === "pull_request_review") desired = "In review";

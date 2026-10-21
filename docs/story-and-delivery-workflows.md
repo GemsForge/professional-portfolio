@@ -12,9 +12,9 @@ type(scope): #issue-number short imperative description
 
 Approved types: `feat`, `fix`, `refactor`, `test`, `chore`.
 
-Approved scopes: `docs`, `ci`, `deps`, `build`.
+Approved scopes for non-documentation commits: `ci`, `deps`, `build`. Documentation commits may use any lowercase, hyphenated scope that accurately identifies the documentation area.
 
-Choose the type and scope that best describe the work. GitHub assigns the issue number when the issue is created, so set or correct the title once that number is known. For example:
+Choose the type and scope that best describe the work. `docs` is a commit type, not a scope. GitHub assigns the issue number when the issue is created, so set or correct the title once that number is known. For example:
 
 ```text
 feat(build): #14 add Hair Log and 75 Hard project cards

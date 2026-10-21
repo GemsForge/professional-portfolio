@@ -13,6 +13,11 @@ test("rejects malformed subjects and unknown scopes", () => {
   assert.match(validateSubject("feat(ui): #3 add support").join(" "), /Unknown scope/);
 });
 
+test("allows any valid scope for documentation commits", () => {
+  assert.deepEqual(validateSubject("docs(agents): #79 update agent guidance"), []);
+  assert.deepEqual(validateSubject("docs(governance): #79 update workflow policy"), []);
+});
+
 test("push validation always excludes default-branch history", () => {
   const defaultBranch = "a".repeat(40);
   const previousHead = "b".repeat(40);
