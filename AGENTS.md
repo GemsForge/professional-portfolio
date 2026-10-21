@@ -23,7 +23,7 @@ This repository is the source of truth for the GemsForge project portfolio. Use 
 
 Preserve this repository's existing stack, workflows, scripts, labels, and documentation. Before proposing work, read the relevant README and project documentation, then inspect `.github/workflows/` and `scripts/`. For issue creation, use `scripts/create-github-story.mjs` and its tests with the repository's `sync-issue-metadata.yml` workflow.
 
-QA gate: PR checks validate the proposed change before merge. After merge to `main`, QA validates the merged development branch against the story's acceptance criteria, regression, accessibility, responsive behavior, security/privacy expectations, and required evidence. QA may set Project status to `QA` and recommend release or corrective work; QA does not merge, release, or close the story.
+Lifecycle gate: when a PR is created, the linked issue and PR move to `QA` for internal Codex Review. An approved Codex Review moves them to `In review` for the human PR decision. A merged PR moves them to `Merged` and closes the linked story; the resulting closed story becomes `Done`. Required corrections use `Changes requested`; QA does not merge or release.
 
 Exact developer references: `README.md`; `docs/ui-development-workflow.md`; `docs/governance/`; `app/`; `components/`; `hooks/`; `lib/`; `tests/`; `scripts/`; `.github/workflows/`; and `.github/agents/`.
 
@@ -34,3 +34,32 @@ Before reporting the push, verify the remote branch head and the associated PR s
 ## Technology guidance
 
 Use `docs/ui-development-workflow.md`, the README, and the relevant application, component, hook, library, test, and worker files for this repository's React/TypeScript UI and hosted-worker/storage boundaries. Keep temporary UI state, reusable hooks, server data, accessibility, responsive behavior, and tests in their documented layers. This repository does not use Aura's C#/.NET/Redux conventions or GemsForgeAPI's Swift/Vapor conventions; do not import those patterns without an explicit architectural decision.
+
+## Shared agent target contract
+
+All three project teams use the same agent-facing file contract. Target the
+repository-local copies of these files when the request is shared policy or
+workflow work:
+
+- `AGENTS.md` for routing, handoff, commit/push, rebase, and QA rules.
+- `Scripts/create-github-story.mjs` and `Scripts/create-github-story.test.mjs`
+  for issue/story creation.
+- `Scripts/commit-policy.mjs`, `Scripts/commit-policy.json`, and their tests
+  for focused commit subjects.
+- `.github/workflows/branch-policy.yml` for branch and base-branch policy.
+- `.github/workflows/commit-policy.yml` for commit and PR-title policy.
+- `.github/workflows/label-policy.yml` for required labels.
+- `.github/workflows/sync-issue-metadata.yml` for issue metadata and Project
+  synchronization.
+- `.github/workflows/sync-pr-metadata.yml` for PR metadata synchronization.
+- `.github/agents/*.agent.md` for the PO, developer, Scrum Master, and QA
+  operating instructions.
+- `docs/governance/gemsforge-ai-scrum-team.md`,
+  `docs/governance/github-actions-standard.md`, and the technology,
+  accessibility, definition-of-done, and workflow documents for the shared
+  process contract.
+
+Preserve this repository's `Scripts/` casing and repository-specific project,
+milestone, label, base-branch, and technology values. A cross-repository
+request updates the equivalent file in each repository; a project-local
+request updates only this repository.
