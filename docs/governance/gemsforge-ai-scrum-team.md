@@ -54,3 +54,14 @@ iteration, and status.
 
 QA may verify work and move Project status to `QA`; QA does not close stories.
 Issue closure, merge, and release remain separate human-approved actions.
+
+## Post-merge QA gate
+
+PR checks validate the proposed change before merge. After the PR is merged
+into the development branch (`main` here, or `master` where that is the
+repository default), QA validates the merged branch against the story's
+acceptance criteria, regression risk, accessibility, responsive behavior,
+security/privacy expectations, and evidence from the merged branch.
+
+QA may set Project status to `QA` and recommend release or corrective work.
+QA does not merge PRs, release deployments, or close stories.
