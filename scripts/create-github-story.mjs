@@ -66,9 +66,13 @@ export function createStory(options, run = runGh) {
   const issue = run(issueArgs);
   const numberedTitle = options.title.replace(/^([^:]+):\s+/, `$1: #${issue.number} `);
   run(["api", `repos/${options.repo}/issues/${issue.number}`, "--method", "PATCH", "-f", `title=${numberedTitle}`]);
-  // No manual dispatch: the workflow's `issues: opened` trigger syncs metadata
-  // automatically, and its workflow_dispatch only accepts a PR number.
   const metadataWorkflow = options.metadataWorkflow || process.env.GITHUB_METADATA_WORKFLOW || "sync-issue-metadata.yml";
+  const defaultBranch = process.env.GITHUB_DEFAULT_BRANCH || run(["repo", "view", options.repo, "--json", "defaultBranchRef"]).defaultBranchRef?.name || "main";
+  const workflowArgs = ["workflow", "run", metadataWorkflow, "--repo", options.repo, "--ref", defaultBranch, "-f", `issue_number=${issue.number}`];
+  if (options.parentIssue) workflowArgs.push("-f", `parent_issue=${options.parentIssue}`);
+  if (options.blockedBy.length) workflowArgs.push("-f", `blocked_by=${options.blockedBy.join(",")}`);
+  if (options.blocking.length) workflowArgs.push("-f", `blocking=${options.blocking.join(",")}`);
+  run(workflowArgs);
   return { issueNumber: issue.number, issueURL: issue.html_url, workflow: metadataWorkflow };
 }
 if (process.argv[1]?.endsWith("create-github-story.mjs")) {
