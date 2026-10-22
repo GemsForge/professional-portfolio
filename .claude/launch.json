@@ -1,0 +1,26 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
+      "port": 3000
+    },
+    {
+      "name": "preview108",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "4108",
+        "--directory",
+        "/private/tmp/claude-501/-Users-gemsforge-GitRepositories-professional-portfolio/6a4b5687-4ad1-423b-a55c-aae8ebba0522/scratchpad/preview108"
+      ],
+      "port": 4108
+    }
+  ]
+}
