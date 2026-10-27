@@ -157,7 +157,10 @@ export async function knowledgeRequest(request: Request, env: Cloudflare.Env): P
     if (url.searchParams.get('format') === 'html' && record.contentType === 'text/markdown') {
       const source = await file.text();
       const filename = `${record.filename.replace(/\.(md|markdown)$/i, '')}.html`;
-      return new Response(buildKnowledgeBooklet(source, record.title, record.filename, record.tags), {
+      return new Response(buildKnowledgeBooklet(source, record.title, record.filename, record.tags, {
+        logoUrl: `${url.origin}/assets/gemsforge-logo.png`,
+        backHref: `${url.origin}/admin/knowledge/read?id=${encodeURIComponent(record.id)}`,
+      }), {
         headers: {
           'Content-Type': 'text/html; charset=utf-8',
           'Content-Disposition': contentDisposition(filename),
