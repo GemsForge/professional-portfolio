@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import type { KeyboardEvent } from "react";
 import Link from "next/link";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
@@ -18,6 +19,7 @@ export function KnowledgeReader({ id }: { /** Stable library resource identifier
   const [readerHeadingCollapsed, setReaderHeadingCollapsed] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeContentsTitle, setActiveContentsTitle] = useState("");
+  const pageTabRefs = useRef<Array<HTMLButtonElement | null>>([]);
 
   useEffect(() => {
     let active = true;
@@ -120,6 +122,19 @@ export function KnowledgeReader({ id }: { /** Stable library resource identifier
   const navigateToPage = (nextPage: number) => {
     setPage(nextPage);
   };
+  /** Moves focus and selection through the handbook's tabs using the ARIA tab pattern. */
+  const handlePageTabKeyDown = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
+    const lastIndex = pageTabs.length - 1;
+    const nextIndex = event.key === "ArrowRight" ? Math.min(lastIndex, index + 1)
+      : event.key === "ArrowLeft" ? Math.max(0, index - 1)
+        : event.key === "Home" ? 0
+          : event.key === "End" ? lastIndex
+            : null;
+    if (nextIndex === null) return;
+    event.preventDefault();
+    navigateToPage(nextIndex);
+    pageTabRefs.current[nextIndex]?.focus();
+  };
   useEffect(() => {
     if (!resource || view !== "rendered") return;
     const timer = window.setTimeout(() => {
@@ -186,10 +201,22 @@ export function KnowledgeReader({ id }: { /** Stable library resource identifier
           <section className="knowledge-reader-main">
             <nav className="knowledge-page-tabs-header" aria-label={`${currentChapter.title} pages`}>
               <div role="tablist" aria-label="Handbook pages">
-                {pageTabs.map((tab) => <button className={tab.index === page ? "is-active" : ""} key={tab.index} onClick={() => navigateToPage(tab.index)} role="tab" aria-selected={tab.index === page} type="button">{tab.index + 1}. {tab.title}</button>)}
+                {pageTabs.map((tab) => <button
+                  aria-controls="knowledge-page-panel"
+                  aria-selected={tab.index === page}
+                  className={tab.index === page ? "is-active" : ""}
+                  id={`knowledge-page-tab-${tab.index}`}
+                  key={tab.index}
+                  onClick={() => navigateToPage(tab.index)}
+                  onKeyDown={(event) => handlePageTabKeyDown(event, tab.index)}
+                  ref={(element) => { pageTabRefs.current[tab.index] = element; }}
+                  role="tab"
+                  tabIndex={tab.index === page ? 0 : -1}
+                  type="button"
+                >{tab.index + 1}. {tab.title}</button>)}
               </div>
             </nav>
-            <article className="knowledge-reader-content"><KnowledgeMarkdown source={pageSource} /></article>
+            <article aria-labelledby={`knowledge-page-tab-${page}`} className="knowledge-reader-content" id="knowledge-page-panel" role="tabpanel" tabIndex={0}><KnowledgeMarkdown source={pageSource} /></article>
             <nav className="knowledge-pagination" aria-label={`${currentChapter.title} pages`}><button className="button secondary" type="button" onClick={() => navigateToPage(Math.max(0, page - 1))} disabled={page === 0}>Previous</button><span>{currentChapter.title} · Page {page + 1} of {Math.max(1, pages.length)}</span><button className="button secondary" type="button" onClick={() => navigateToPage(Math.min(pages.length - 1, page + 1))} disabled={page >= pages.length - 1}>Next</button></nav>
           </section>
         </div>
