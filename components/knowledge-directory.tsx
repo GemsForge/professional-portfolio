@@ -335,6 +335,28 @@ export function KnowledgeDirectory({ initialModule, initialFolder }: {
     }
   }
 
+  /** Removes one owner-selected reference from the private library and refreshes its listing. */
+  async function deleteReference(resource: KnowledgeResource) {
+    setIsSubmitting(true);
+    setIsError(false);
+    setMessage(`Removing ${resource.filename}…`);
+    try {
+      const response = await fetch(`/api/knowledge/${encodeURIComponent(resource.id)}`, {
+        method: "DELETE",
+        cache: "no-store",
+      });
+      const data = (await response.json()) as { error?: string };
+      if (!response.ok) throw new Error(data.error || "Could not remove this reference.");
+      await loadResources();
+      setMessage(`${resource.filename} removed from your library.`);
+    } catch (error) {
+      setIsError(true);
+      setMessage(error instanceof Error ? error.message : "Could not remove this reference.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
   return (
     <>
       <SiteHeader pathname="/admin/knowledge/" />
@@ -495,6 +517,7 @@ export function KnowledgeDirectory({ initialModule, initialFolder }: {
                 <td className="knowledge-table-actions">
                   {(resource.contentType === "text/html" || resource.contentType === "text/markdown") && <Link href={readerHref(resource.id)}>View</Link>}
                   <Link href={`/api/knowledge/${encodeURIComponent(resource.id)}`}>Download</Link>
+                  <button className="link-button" type="button" onClick={() => void deleteReference(resource)}>Remove</button>
                 </td>
               </tr>;
             })}</tbody>

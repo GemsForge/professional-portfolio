@@ -18,7 +18,7 @@ class Bucket {
     return { objects: [...this.data.keys()].filter((key) => key.startsWith(prefix)).map((key) => ({ key })), truncated: false };
   }
   async delete(key) {
-    this.data.delete(key);
+    for (const entry of Array.isArray(key) ? key : [key]) this.data.delete(entry);
   }
 }
 
@@ -81,6 +81,11 @@ test('owner can upload, list, and download a private reference', async () => {
   assert.match(download.headers.get('content-disposition'), /attachment; filename="guide.pdf"/);
   assert.equal(download.headers.get('cache-control'), 'private, no-store');
   assert.equal(await download.text(), '%PDF-1.7 sample');
+
+  const deleted = await knowledgeRequest(request(`/api/knowledge/${resource.id}`, 'DELETE'), env);
+  assert.equal(deleted.status, 200);
+  assert.deepEqual([...env.BUCKET.data.keys()], []);
+  assert.equal((await knowledgeRequest(request(`/api/knowledge/${resource.id}`), env)).status, 404);
 });
 
 test('uploads reject cross-origin and unsupported or invalid files', async () => {

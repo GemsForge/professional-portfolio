@@ -192,6 +192,13 @@ export async function knowledgeRequest(request: Request, env: Cloudflare.Env): P
     });
   }
 
+  /** Deletes one private reference and its stored file after the owner confirms the request. */
+  if (request.method === 'DELETE' && id) {
+    if (!sameOrigin(request)) return json({ error: 'Please submit from this website.' }, 403);
+    await bucket.delete([`${RECORD_PREFIX}${id}.json`, `${FILE_PREFIX}${id}`]);
+    return json({ deleted: true });
+  }
+
   if (request.method === 'POST' && !id) {
     if (!sameOrigin(request)) return json({ error: 'Please submit from this website.' }, 403);
     if (Number(request.headers.get('Content-Length')) > MAX_FILE_BYTES + 65536) {
