@@ -32,8 +32,8 @@ type Handbook = {
   description: string;
   tags: string[];
   searchText: string;
-  html: HandbookReference;
-  markdown: HandbookReference;
+  html?: HandbookReference;
+  markdown?: HandbookReference;
 };
 
 /** Uses saved library logos first, then bundled Simple Icons when available. */
@@ -167,6 +167,9 @@ const handbooks: Handbook[] = [
   },
 ];
 
+/** Keeps the original catalog available for comparison while testing generated Markdown cards. */
+const showSeededHandbooks = false;
+
 const shelfReferences: {
   id: "governance" | "delivery";
   title: string;
@@ -269,16 +272,37 @@ export function KnowledgeDirectory({ initialModule, initialFolder }: {
     );
   }, [folderResources, search]);
   /** Applies the landing-page category and text filters without altering the source list. */
+  const libraryHandbooks = useMemo(() => {
+    const seededHandbooks = showSeededHandbooks ? handbooks : [];
+    const knownMarkdown = new Set(seededHandbooks.flatMap((handbook) => handbook.markdown ? [`${handbook.markdown.folder}/${handbook.markdown.filename}`] : []));
+    const uploaded = resources
+      .filter((resource) => resource.contentType === "text/markdown" && resource.folder.startsWith("handbooks/") && !knownMarkdown.has(`${resource.folder}/${resource.filename}`))
+      .map((resource): Handbook => {
+        const category = resource.folder.split("/")[1] as HandbookCategory;
+        const categoryLabel = handbookCategories.find((entry) => entry.id === category)?.label ?? "Handbook";
+        return {
+          title: resource.title,
+          category,
+          categoryLabel,
+          description: resource.description ?? "Private Markdown handbook added to the developer library.",
+          tags: resource.tags ?? [],
+          searchText: resource.searchText ?? `${resource.title} ${resource.filename} ${resource.folder}`,
+          markdown: { folder: resource.folder, filename: resource.filename },
+        };
+      });
+    return [...seededHandbooks, ...uploaded];
+  }, [resources]);
   const visibleHandbooks = useMemo(() => {
     const query = handbookSearch.trim().toLocaleLowerCase();
-    return handbooks.filter((handbook) =>
+    return libraryHandbooks.filter((handbook) =>
       (activeHandbookCategory === "all" || handbook.category === activeHandbookCategory) &&
       (!query || `${handbook.title} ${handbook.description} ${handbook.searchText} ${handbook.tags.join(" ")}`.toLocaleLowerCase().includes(query)),
     );
-  }, [activeHandbookCategory, handbookSearch]);
+  }, [activeHandbookCategory, handbookSearch, libraryHandbooks]);
 
   /** Finds an uploaded handbook edition by its module folder and original filename. */
-  function findHandbookReference(reference: HandbookReference) {
+  function findHandbookReference(reference?: HandbookReference) {
+    if (!reference) return undefined;
     return resources.find((resource) => resource.folder === reference.folder && resource.filename === reference.filename);
   }
 
@@ -294,10 +318,14 @@ export function KnowledgeDirectory({ initialModule, initialFolder }: {
         body: new FormData(form),
         cache: "no-store",
       });
-      const data = (await response.json()) as { error?: string };
+      const data = (await response.json()) as { error?: string; resource?: KnowledgeResource };
       if (!response.ok) throw new Error(data.error || "Could not save this reference.");
       form.reset();
       await loadResources();
+      if (data.resource?.contentType === "text/markdown") {
+        window.location.assign(readerHref(data.resource.id));
+        return;
+      }
       setMessage("Reference added to your library.");
     } catch (error) {
       setIsError(true);
@@ -365,8 +393,17 @@ export function KnowledgeDirectory({ initialModule, initialFolder }: {
                 {visibleHandbooks.map((handbook) => {
                   const htmlReference = findHandbookReference(handbook.html);
                   const markdownReference = findHandbookReference(handbook.markdown);
+                  const cardHref = markdownReference ? readerHref(markdownReference.id) : htmlReference ? readerHref(htmlReference.id) : undefined;
+                  const openCard = () => { if (cardHref) window.location.assign(cardHref); };
                   return (
-                    <article className="handbook-card" key={handbook.title}>
+                    <article
+                      className={cardHref ? "handbook-card handbook-card-link" : "handbook-card"}
+                      key={handbook.title}
+                      onClick={(event) => { if (cardHref && !(event.target as HTMLElement).closest("a,button")) openCard(); }}
+                      onKeyDown={(event) => { if (cardHref && (event.key === "Enter" || event.key === " ")) { event.preventDefault(); openCard(); } }}
+                      role={cardHref ? "link" : undefined}
+                      tabIndex={cardHref ? 0 : undefined}
+                    >
                       <div className="handbook-kicker">{handbook.categoryLabel}</div>
                       <h3>{handbook.title}</h3>
                       <p>{handbook.description}</p>
@@ -381,7 +418,7 @@ export function KnowledgeDirectory({ initialModule, initialFolder }: {
                         ))}
                       </ul>
                       <div className="handbook-actions">
-                        {isLoading ? <span>Loading HTML edition…</span> : htmlReference ? <><Link href={readerHref(htmlReference.id)}>Read HTML edition</Link><Link href={`/api/knowledge/${encodeURIComponent(htmlReference.id)}`}>Download HTML ↗</Link></> : <span>HTML edition not added</span>}
+                        {isLoading ? <span>Loading HTML edition…</span> : htmlReference ? <><Link href={readerHref(htmlReference.id)}>Read HTML edition</Link><Link href={`/api/knowledge/${encodeURIComponent(htmlReference.id)}`}>Download HTML ↗</Link></> : markdownReference ? <Link href={`/api/knowledge/${encodeURIComponent(markdownReference.id)}?format=html`}>Download HTML ↗</Link> : <span>HTML edition not added</span>}
                         {isLoading ? <span>Loading Markdown source…</span> : markdownReference ? <><Link href={readerHref(markdownReference.id)}>Read Markdown</Link><Link href={`/api/knowledge/${encodeURIComponent(markdownReference.id)}`}>Download Markdown ↗</Link></> : <span>Markdown source not added</span>}
                       </div>
                     </article>

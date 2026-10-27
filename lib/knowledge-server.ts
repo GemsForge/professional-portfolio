@@ -29,6 +29,9 @@ type KnowledgeRecord = {
   contentType: KnowledgeFileType;
   size: number;
   createdAt: string;
+  description?: string;
+  tags?: string[];
+  searchText?: string;
 };
 
 function json(data: unknown, status = 200) {
@@ -91,6 +94,18 @@ function fileType(filename: string, bytes: Uint8Array): KnowledgeFileType | null
   return null;
 }
 
+/** Derives searchable handbook metadata from Markdown without requiring a second metadata file. */
+function inferMarkdownMetadata(source: string, title: string) {
+  const lines = source.replace(/\r\n?/g, '\n').split('\n');
+  const headings = lines.filter((line) => /^\s*#{1,6}\s+/.test(line)).map((line) => line.replace(/^\s*#{1,6}\s+/, '').replace(/\s+#*$/, '').trim());
+  const description = lines.map((line) => line.trim()).find((line) => line && !/^#/.test(line) && !/^[-*`>]/.test(line)) ?? `Reference material for ${title}.`;
+  const knownTags = ['ASP.NET Core', 'ChatGPT', 'Codex', 'ERD', 'GitHub', 'Migrations', 'OpenAPI', 'PostgreSQL', 'Playwright', 'React', 'SQLite', 'Scrum', 'TanStack Query', 'Testing', 'TypeScript', 'Vapor'];
+  const haystack = source.toLocaleLowerCase();
+  const tags = knownTags.filter((tag) => haystack.includes(tag.toLocaleLowerCase()));
+  const searchText = `${title} ${description} ${headings.join(' ')} ${source.replace(/[`*_>#\[\]()]/g, ' ')}`.replace(/\s+/g, ' ').trim();
+  return { description, tags, searchText };
+}
+
 async function listRecords(bucket: R2Bucket) {
   const found: KnowledgeRecord[] = [];
   let cursor: string | undefined;
@@ -110,6 +125,18 @@ function contentDisposition(filename: string) {
   const ascii = filename.replace(/[^\x20-\x7e]/g, '_').replace(/["\\]/g, '_');
   const encoded = encodeURIComponent(filename).replace(/[!'()*]/g, (character) => `%${character.charCodeAt(0).toString(16).toUpperCase()}`);
   return `attachment; filename="${ascii}"; filename*=UTF-8''${encoded}`;
+}
+
+/** Converts the private Markdown subset into a downloadable, self-contained handbook page. */
+function markdownToHtml(source: string, title: string) {
+  const escape = (value: string) => value.replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character] ?? character);
+  const body = source.split(/\r?\n/).map((line) => {
+    const heading = line.match(/^(#{1,6})\s+(.+)$/);
+    if (heading) return `<h${heading[1].length}>${escape(heading[2])}</h${heading[1].length}>`;
+    if (!line.trim()) return "";
+    return `<p>${escape(line)}</p>`;
+  }).join("\n");
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escape(title)}</title><style>body{max-width:900px;margin:0 auto;padding:48px 24px;color:#1e2823;font:16px/1.7 Arial,sans-serif}h1,h2,h3,h4,h5,h6{line-height:1.2}p{color:#536158}</style></head><body>${body}</body></html>`;
 }
 
 /** Serves private directory metadata and files only after server-side owner checks. */
@@ -138,6 +165,19 @@ export async function knowledgeRequest(request: Request, env: Cloudflare.Env): P
     }
     const file = await bucket.get(`${FILE_PREFIX}${id}`);
     if (!file) return json({ error: 'Resource not found.' }, 404);
+    if (url.searchParams.get('format') === 'html' && record.contentType === 'text/markdown') {
+      const source = await file.text();
+      const filename = `${record.filename.replace(/\.(md|markdown)$/i, '')}.html`;
+      return new Response(markdownToHtml(source, record.title), {
+        headers: {
+          'Content-Type': 'text/html; charset=utf-8',
+          'Content-Disposition': contentDisposition(filename),
+          'Cache-Control': 'private, no-store',
+          'X-Robots-Tag': 'noindex, nofollow',
+          'X-Content-Type-Options': 'nosniff',
+        },
+      });
+    }
     return new Response(file.body, {
       headers: {
         'Content-Type': record.contentType,
@@ -179,6 +219,7 @@ export async function knowledgeRequest(request: Request, env: Cloudflare.Env): P
       contentType,
       size: file.size,
       createdAt: new Date().toISOString(),
+      ...(contentType === 'text/markdown' ? inferMarkdownMetadata(new TextDecoder().decode(bytes), title) : {}),
     };
     await bucket.put(`${FILE_PREFIX}${id}`, bytes, { httpMetadata: { contentType } });
     try {

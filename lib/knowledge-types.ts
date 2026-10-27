@@ -19,4 +19,7 @@ export type KnowledgeResource = {
   contentType: KnowledgeContentType;
   size: number;
   createdAt: string;
+  description?: string;
+  tags?: string[];
+  searchText?: string;
 };
