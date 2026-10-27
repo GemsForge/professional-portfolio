@@ -143,6 +143,11 @@ export function KnowledgeReader({ id }: { /** Stable library resource identifier
           <h1>{resource?.title ?? (loading ? "Opening reference…" : "Reference unavailable")}</h1>
           {resource && <p>{resource.filename}</p>}
         </div>
+        <nav className="reader-collapsed-breadcrumb" aria-label="Collapsed breadcrumb">
+          <Link href="/admin/knowledge/">Developer library</Link>
+          <span aria-hidden="true">/</span>
+          <span>{resource?.title ?? "Reference"}</span>
+        </nav>
         {resource && <details className="reader-view-menu" onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) event.currentTarget.open = false; }}>
           <summary className="button secondary">View options</summary>
           <div className="reader-view-options" role="group" aria-label="Reference view options">
