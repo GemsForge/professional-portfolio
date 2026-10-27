@@ -417,10 +417,6 @@ export function KnowledgeDirectory({ initialModule, initialFolder }: {
                           </li>
                         ))}
                       </ul>
-                      <div className="handbook-actions">
-                        {isLoading ? <span>Loading HTML edition…</span> : htmlReference ? <><Link href={readerHref(htmlReference.id)}>Read HTML edition</Link><Link href={`/api/knowledge/${encodeURIComponent(htmlReference.id)}`}>Download HTML ↗</Link></> : markdownReference ? <Link href={`/api/knowledge/${encodeURIComponent(markdownReference.id)}?format=html`}>Download HTML ↗</Link> : <span>HTML edition not added</span>}
-                        {isLoading ? <span>Loading Markdown source…</span> : markdownReference ? <><Link href={readerHref(markdownReference.id)}>Read Markdown</Link><Link href={`/api/knowledge/${encodeURIComponent(markdownReference.id)}`}>Download Markdown ↗</Link></> : <span>Markdown source not added</span>}
-                      </div>
                     </article>
                   );
                 })}
