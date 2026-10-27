@@ -10,13 +10,21 @@ function owner(request:Request){return !!request.headers.get('oai-authenticated-
 function json(data:unknown,status=200){return Response.json(data,{status,headers:{'Cache-Control':'no-store'}});}
 function sameOrigin(request:Request){return request.headers.get('Origin')===new URL(request.url).origin;}
 export function isOwner(request:Request){return owner(request);}
-export function adminPageRequest(request:Request,manager:string){
+/** Returns a redirect or denial response when an owner-only route cannot be shown. */
+export function ownerPageGate(request: Request, returnTo = '/admin/'): Response | null {
  const url=new URL(request.url);const headers={'Cache-Control':'private, no-store'};
  if(!request.headers.get('oai-authenticated-user-id')){
-  const signIn=new URL('/signin-with-chatgpt',url);signIn.searchParams.set('return_to','/admin/');
+  const signIn=new URL('/signin-with-chatgpt',url);signIn.searchParams.set('return_to',returnTo);
   return new Response(null,{status:302,headers:{...headers,Location:signIn.toString()}});
  }
  if(!isOwner(request))return new Response('This workspace is available only to the portfolio owner.',{status:403,headers});
+ return null;
+}
+/** Guards the static owner manager and sends sign-in callbacks back to its workspace. */
+export function adminPageRequest(request:Request,manager:string,returnTo='/admin/'){
+ const gate = ownerPageGate(request, returnTo);
+ if (gate) return gate;
+ const headers={'Cache-Control':'private, no-store'};
  return new Response(manager,{headers:{...headers,'Content-Type':'text/html; charset=utf-8','X-Robots-Tag':'noindex, nofollow'}});
 }
 async function records(bucket:R2Bucket,project?:string){const found:RecordData[]=[];let cursor:string|undefined;do{const page=await bucket.list({prefix:'portfolio/records/',cursor});const values=await Promise.all(page.objects.map(async o=>{const value=await bucket.get(o.key);return value?value.json<RecordData>():null;}));found.push(...values.filter((r):r is RecordData=>!!r&&(!project||r.project===project)));cursor=page.truncated?page.cursor:undefined;}while(cursor);return found.sort((a,b)=>b.createdAt.localeCompare(a.createdAt));}

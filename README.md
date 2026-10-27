@@ -10,6 +10,8 @@ Owner image manager: https://www.gemsforge.com/admin/
 - `build/sites-worker.ts`: preserves Sites/Vinext hosting integration and serves the portfolio and owner workspace.
 - `lib/media-server.ts`: server-side owner authorization and persistent image APIs.
 - `lib/image-manager.html`: owner upload/edit interface.
+- `app/admin/knowledge/page.tsx` and `components/knowledge-directory.tsx`: React/TypeScript owner-only library homepage and reference controls.
+- `lib/knowledge-server.ts`: private R2 storage API for the owner library.
 - `public/assets/image-manager.js`: owner image actions.
 - `public/assets/gallery.js`: public project galleries.
 - `tests/media.test.mjs`: authorization and draft/publish lifecycle tests.
@@ -21,6 +23,10 @@ Visit `/admin/` and sign in with the ChatGPT account that owns this Site. Server
 Choose a project, upload a PNG/JPEG/WebP image (10 MB maximum), and add alt text and an optional caption. Uploads start as drafts. Review and select **Publish image** to make them visible in the project's gallery. **Unpublish** removes them from the gallery; previously cached image responses may remain available for up to 60 seconds. **Delete image** permanently deletes its stored data.
 
 Images and metadata are stored in the provisioned R2 `BUCKET`, independently of code deployments. Do not change binding names or remove storage configuration during ordinary edits. Image bytes are not part of this source export. The code export is not a backup of uploaded images.
+
+## Knowledge directory
+
+Visit `/admin/knowledge/` from the owner workspace for the private React library homepage. It links to separate Handbooks, Governance, Delivery, and Assets module pages. Each module organizes its folders and saved references, with controls to add and search PDF, DOCX, Markdown, HTML, UTF-8 text, and common image references. HTML and Markdown files have a reusable reading view: HTML is served only to an isolated, restrictive preview frame, while Markdown is rendered as text without executing embedded HTML. Original files remain downloadable. Files and titles are stored under a separate `owner-knowledge/` prefix in the existing R2 `BUCKET`; every page and API request requires the portfolio owner's authenticated identity. Uploaded knowledge files are not part of this source export.
 
 ## Development and publishing
 

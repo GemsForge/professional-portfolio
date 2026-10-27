@@ -1,6 +1,7 @@
 import pages from "../lib/static-pages.json";
 import manager from "../lib/image-manager.html?raw";
-import {adminPageRequest,mediaRequest} from "../lib/media-server";
+import {adminPageRequest,mediaRequest,ownerPageGate} from "../lib/media-server";
+import {knowledgeRequest} from "../lib/knowledge-server";
 import {PROJECT_OPTIONS_HTML} from "../lib/project-registry.ts";
 import handler from "vinext/server/fetch-handler";
 import { runWithConnectorBinding } from "../lib/connector-context";
@@ -11,11 +12,44 @@ const managerPage = manager.replace("<!--PROJECT_OPTIONS-->", PROJECT_OPTIONS_HT
 export default {
   fetch(request: Request, env: Cloudflare.Env, ctx: ExecutionContext<{ CONNECTORS?: ConnectorBinding }>) {
     const url = new URL(request.url);
+    // Keep the knowledge API out of static routes so authorization runs on every request.
+    if(url.pathname === '/api/knowledge' || url.pathname.startsWith('/api/knowledge/')) {
+      return knowledgeRequest(request,env).catch(()=>Response.json({error:'Unable to complete this action. Please try again.'},{status:500,headers:{'Cache-Control':'no-store','X-Robots-Tag':'noindex, nofollow'}}));
+    }
     if(url.pathname === '/api/media' || url.pathname.startsWith('/api/media/')) {
       return mediaRequest(request,env).catch(()=>Response.json({error:'Unable to complete this action. Please try again.'},{status:500,headers:{'Cache-Control':'no-store'}}));
     }
     if(url.pathname === '/admin' || url.pathname === '/admin/') {
       return adminPageRequest(request,managerPage);
+    }
+    if(url.pathname === '/admin/knowledge' || url.pathname === '/admin/knowledge/') {
+      if (url.pathname === '/admin/knowledge/') {
+        url.pathname = '/admin/knowledge';
+        return Response.redirect(url.toString(), 308);
+      }
+      const gate = ownerPageGate(request, '/admin/knowledge');
+      if (gate) return gate;
+      return handler.fetch(request, env, ctx).then((response: Response) => {
+        const headers = new Headers(response.headers);
+        headers.set('Cache-Control', 'private, no-store');
+        headers.set('X-Robots-Tag', 'noindex, nofollow');
+        return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
+      });
+    }
+    // Apply the same owner-only cache and identity gate to each module route.
+    if (url.pathname.startsWith('/admin/knowledge/')) {
+      if (url.pathname.endsWith('/')) {
+        url.pathname = url.pathname.slice(0, -1);
+        return Response.redirect(url.toString(), 308);
+      }
+      const gate = ownerPageGate(request, url.pathname);
+      if (gate) return gate;
+      return handler.fetch(request, env, ctx).then((response: Response) => {
+        const headers = new Headers(response.headers);
+        headers.set('Cache-Control', 'private, no-store');
+        headers.set('X-Robots-Tag', 'noindex, nofollow');
+        return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
+      });
     }
     const route = url.pathname.endsWith('/') ? url.pathname : url.pathname + '/';
     const page = (pages as Record<string,string>)[route];
