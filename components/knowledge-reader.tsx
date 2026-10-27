@@ -138,10 +138,12 @@ export function KnowledgeReader({ id }: { /** Stable library resource identifier
         <span aria-current="page">{resource?.title ?? "Reference"}</span>
       </nav>
       <header className={`reader-heading${readerHeadingCollapsed ? " is-collapsed" : ""}`}>
-        <p className="eyebrow">Private library · {resource?.contentType === "text/html" ? "HTML document" : "Markdown document"}</p>
-        <h1>{resource?.title ?? (loading ? "Opening reference…" : "Reference unavailable")}</h1>
-        {resource && <p>{resource.filename}</p>}
-        {resource && <details className="reader-view-menu">
+        <div className="reader-heading-copy">
+          <p className="eyebrow">Private library · {resource?.contentType === "text/html" ? "HTML document" : "Markdown document"}</p>
+          <h1>{resource?.title ?? (loading ? "Opening reference…" : "Reference unavailable")}</h1>
+          {resource && <p>{resource.filename}</p>}
+        </div>
+        {resource && <details className="reader-view-menu" onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) event.currentTarget.open = false; }}>
           <summary className="button secondary">View options</summary>
           <div className="reader-view-options" role="group" aria-label="Reference view options">
             {resource.contentType === "text/markdown" && <>
