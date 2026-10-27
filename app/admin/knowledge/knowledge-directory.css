@@ -92,12 +92,15 @@
 .knowledge-markdown ul,.knowledge-markdown ol{padding-left:1.6em}
 .knowledge-markdown li+li{margin-top:.35em}
 .knowledge-markdown blockquote{padding:4px 18px;border-left:4px solid var(--green);color:var(--muted)}
+.knowledge-markdown mark{padding:.08em .2em;background:#f5d98b;color:inherit;border-radius:3px}
 .knowledge-markdown pre{max-width:100%;overflow:auto;padding:18px;border-radius:4px;background:#202a25;color:#f5f4ec;font-size:.88em;line-height:1.55}
+.knowledge-markdown .mermaid{display:flex;justify-content:center;max-width:100%;overflow:auto;padding:18px;border-radius:4px;background:#202a25;color:#f5f4ec;line-height:1.35}
+.knowledge-markdown .mermaid svg{max-width:100%;height:auto}
 .knowledge-markdown code{padding:.1em .28em;border-radius:3px;background:#e8ebdf;font-size:.9em}
 .knowledge-markdown pre code{padding:0;background:transparent;color:inherit}
 .knowledge-markdown table{width:100%;border-collapse:collapse;font-size:.9em}
 .knowledge-markdown th,.knowledge-markdown td{padding:9px 12px;border:1px solid var(--line);text-align:left;vertical-align:top}
-.knowledge-markdown th{background:#e8ebdf}
+.knowledge-markdown th{background:#dce8d7;font-weight:800;color:var(--ink)}
 .knowledge-table-scroll{max-width:100%;overflow:auto;margin:22px 0}
 .knowledge-table-scroll:focus-visible{outline:3px solid #90671d;outline-offset:3px}
 .knowledge-resource-table{width:100%;min-width:680px;border-collapse:collapse;text-align:left}

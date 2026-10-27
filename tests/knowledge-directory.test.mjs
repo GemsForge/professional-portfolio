@@ -12,7 +12,7 @@ class Bucket {
   }
   async get(key) {
     const bytes = this.data.get(key);
-    return bytes ? { body: bytes, json: async () => JSON.parse(new TextDecoder().decode(bytes)) } : null;
+    return bytes ? { body: bytes, text: async () => new TextDecoder().decode(bytes), json: async () => JSON.parse(new TextDecoder().decode(bytes)) } : null;
   }
   async list({ prefix }) {
     return { objects: [...this.data.keys()].filter((key) => key.startsWith(prefix)).map((key) => ({ key })), truncated: false };
@@ -115,6 +115,29 @@ test('HTML reference files are stored for download rather than rendered inline',
   assert.equal(download.headers.get('content-type'), 'text/html');
   assert.match(download.headers.get('content-disposition'), /attachment/);
   assert.equal(await download.text(), '<h1>Private library</h1>');
+});
+
+test('Markdown HTML downloads use the warm booklet generator contract', async () => {
+  const env = { BUCKET: new Bucket() };
+  const form = new FormData();
+  form.set('title', 'Generated handbook');
+  form.set('folder', 'handbooks/backend');
+  form.set('file', new File(['# Purpose\n\nA practical guide with [reference links](https://example.com/docs).\n\n## Contracts\n\n| Rule | Example |\n| --- | --- |\n| Auth | Session |\n\n```mermaid\nflowchart TD\n  A[Request] --> B[Response]\n```'], 'guide.md', { type: 'text/markdown' }));
+  const created = await knowledgeRequest(request('/api/knowledge', 'POST', form), env);
+  const { resource } = await created.json();
+  const generated = await knowledgeRequest(request(`/api/knowledge/${resource.id}?format=html`), env);
+  const html = await generated.text();
+  assert.equal(generated.status, 200);
+  assert.match(html, /class="book"/);
+  assert.match(html, /id="navigator"/);
+  assert.match(html, /href="#section-1"/);
+  assert.match(html, /mermaid\.initialize/);
+  assert.match(html, /flowchart TD/);
+  assert.match(html, /class="table-scroll"/);
+  assert.match(html, /<th scope="col">Rule<\/th>/);
+  assert.match(html, /<td>Session<\/td>/);
+  assert.match(html, /<a href="https:\/\/example.com\/docs" target="_blank" rel="noreferrer">reference links<\/a>/);
+  assert.match(html, /Avenir Next/);
 });
 
 test('knowledge page gate redirects anonymous users and denies non-owners', async () => {

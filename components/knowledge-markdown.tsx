@@ -1,4 +1,36 @@
-import type { ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
+
+declare global {
+  interface Window { mermaid?: { initialize: (options: Record<string, unknown>) => void; run: (options: { nodes: HTMLElement[] }) => Promise<void>; }; }
+}
+
+/** Loads Mermaid once and renders one fenced diagram centered in the handbook reader. */
+function MermaidBlock({ source }: { source: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    let cancelled = false;
+    const render = async () => {
+      if (!window.mermaid) {
+        await new Promise<void>((resolve, reject) => {
+          const existing = document.querySelector<HTMLScriptElement>('script[data-mermaid-runtime="true"]');
+          if (existing) { existing.addEventListener("load", () => resolve(), { once: true }); existing.addEventListener("error", () => reject(new Error("Mermaid failed to load")), { once: true }); return; }
+          const script = document.createElement("script");
+          script.src = "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js";
+          script.dataset.mermaidRuntime = "true";
+          script.onload = () => resolve();
+          script.onerror = () => reject(new Error("Mermaid failed to load"));
+          document.head.appendChild(script);
+        });
+      }
+      if (cancelled || !ref.current || !window.mermaid) return;
+      window.mermaid.initialize({ startOnLoad: false, theme: "base" });
+      await window.mermaid.run({ nodes: [ref.current] });
+    };
+    void render().catch(() => undefined);
+    return () => { cancelled = true; };
+  }, [source]);
+  return <div ref={ref} className="mermaid" role="img" aria-label="Mermaid diagram">{source}</div>;
+}
 
 /** Renders the common handbook Markdown subset without interpreting embedded HTML. */
 export function KnowledgeMarkdown({ source }: { /** Markdown source text from the private library. */ source: string }) {
@@ -17,7 +49,9 @@ export function KnowledgeMarkdown({ source }: { /** Markdown source text from th
       index += 1;
       while (index < lines.length && !/^\s*```\s*$/.test(lines[index])) code.push(lines[index++]);
       if (index < lines.length) index += 1;
-      blocks.push(<pre key={key++}><code className={fence[1] ? `language-${fence[1].trim()}` : undefined}>{code.join("\n")}</code></pre>);
+      blocks.push(fence[1].trim().toLowerCase() === "mermaid"
+        ? <MermaidBlock key={key++} source={code.join("\n")} />
+        : <pre key={key++}><code className={fence[1] ? `language-${fence[1].trim()}` : undefined}>{code.join("\n")}</code></pre>);
       continue;
     }
 
@@ -82,9 +116,9 @@ export function KnowledgeMarkdown({ source }: { /** Markdown source text from th
   return <div className="knowledge-markdown">{blocks}</div>;
 }
 
-/** Converts a restrained set of inline Markdown marks into React text nodes. */
+/** Converts inline Markdown marks, including handbook highlights, into React text nodes. */
 function inline(text: string): ReactNode[] {
-  const pattern = /(\[([^\]]+)\]\(([^)\s]+)(?:\s+"([^"]*)")?\)|`([^`]+)`|\*\*([^*]+)\*\*|__([^_]+)__|\*([^*]+)\*|_([^_]+)_)/g;
+  const pattern = /(\[([^\]]+)\]\(([^)\s]+)(?:\s+"([^"]*)")?\)|`([^`]+)`|==([^=]+)==|\*\*([^*]+)\*\*|__([^_]+)__|\*([^*]+)\*|_([^_]+)_)/g;
   const result: ReactNode[] = [];
   let previous = 0;
   let match: RegExpExecArray | null;
@@ -98,8 +132,9 @@ function inline(text: string): ReactNode[] {
         ? <a key={key} href={match[3]} title={match[4]}>{match[2]}</a>
         : match[2]);
     } else if (match[5]) result.push(<code key={key}>{match[5]}</code>);
-    else if (match[6] || match[7]) result.push(<strong key={key}>{match[6] || match[7]}</strong>);
-    else result.push(<em key={key}>{match[8] || match[9]}</em>);
+    else if (match[6]) result.push(<mark key={key}>{match[6]}</mark>);
+    else if (match[7] || match[8]) result.push(<strong key={key}>{match[7] || match[8]}</strong>);
+    else result.push(<em key={key}>{match[9] || match[10]}</em>);
     previous = pattern.lastIndex;
   }
   if (previous < text.length) result.push(text.slice(previous));

@@ -1,5 +1,6 @@
 /** Private owner-only knowledge file storage, isolated from public portfolio media. */
 import { isOwner } from './media-server.ts';
+import { buildKnowledgeBooklet } from './knowledge-html.ts';
 
 const RECORD_PREFIX = 'owner-knowledge/records/';
 const FILE_PREFIX = 'owner-knowledge/files/';
@@ -127,18 +128,6 @@ function contentDisposition(filename: string) {
   return `attachment; filename="${ascii}"; filename*=UTF-8''${encoded}`;
 }
 
-/** Converts the private Markdown subset into a downloadable, self-contained handbook page. */
-function markdownToHtml(source: string, title: string) {
-  const escape = (value: string) => value.replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character] ?? character);
-  const body = source.split(/\r?\n/).map((line) => {
-    const heading = line.match(/^(#{1,6})\s+(.+)$/);
-    if (heading) return `<h${heading[1].length}>${escape(heading[2])}</h${heading[1].length}>`;
-    if (!line.trim()) return "";
-    return `<p>${escape(line)}</p>`;
-  }).join("\n");
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escape(title)}</title><style>body{max-width:900px;margin:0 auto;padding:48px 24px;color:#1e2823;font:16px/1.7 Arial,sans-serif}h1,h2,h3,h4,h5,h6{line-height:1.2}p{color:#536158}</style></head><body>${body}</body></html>`;
-}
-
 /** Serves private directory metadata and files only after server-side owner checks. */
 export async function knowledgeRequest(request: Request, env: Cloudflare.Env): Promise<Response> {
   if (!isOwner(request)) return denied(request);
@@ -168,7 +157,7 @@ export async function knowledgeRequest(request: Request, env: Cloudflare.Env): P
     if (url.searchParams.get('format') === 'html' && record.contentType === 'text/markdown') {
       const source = await file.text();
       const filename = `${record.filename.replace(/\.(md|markdown)$/i, '')}.html`;
-      return new Response(markdownToHtml(source, record.title), {
+      return new Response(buildKnowledgeBooklet(source, record.title, record.filename, record.tags), {
         headers: {
           'Content-Type': 'text/html; charset=utf-8',
           'Content-Disposition': contentDisposition(filename),
