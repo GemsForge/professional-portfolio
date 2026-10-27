@@ -1,6 +1,37 @@
 .knowledge-page .library-intro{padding-bottom:22px}
 .knowledge-page .library-intro h1{max-width:900px}
 .library-links{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}
+/* Keep the reference index's card-and-shelf rhythm inside the portfolio theme. */
+.section-heading{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:20px;margin-bottom:20px}
+.section-heading h2{margin:0 0 6px}
+.section-heading p{margin:0;color:var(--muted)}
+.section-heading>a{min-height:44px;display:inline-flex;align-items:center;white-space:nowrap}
+.handbook-controls{display:grid;gap:16px;margin:24px 0}
+.handbook-search{display:grid;gap:7px;max-width:560px;font-weight:600}
+.handbook-search input{width:100%;padding:12px 15px;border:1px solid #7a8a78;border-radius:4px;background:#fff;color:var(--ink);font:inherit}
+.handbook-filters{display:flex;gap:8px;flex-wrap:wrap}
+.handbook-filter{min-height:44px;padding:8px 12px;border:1px solid var(--line);border-radius:3px;background:transparent;color:var(--forest);font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+.handbook-filter:hover{background:#e8ebdf}
+.handbook-filter.is-active{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.handbook-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:18px}
+.handbook-card{display:flex;flex-direction:column;min-width:0;padding:22px;border:1px solid var(--line);border-top:4px solid var(--green);border-radius:4px;background:#fff;}
+.handbook-kicker{color:var(--green);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.handbook-card h3{font-size:21px;line-height:1.25;margin:9px 0}
+.handbook-card>p{color:var(--muted);font-size:15px;margin:0}
+.handbook-tags{display:flex;gap:7px;flex-wrap:wrap;list-style:none;margin:16px 0;padding:0}
+.handbook-tags li{padding:4px 9px;border:1px solid #aebbab;border-radius:3px;background:#e8ebdf;color:var(--ink);font-size:12px;font-weight:600}
+.handbook-actions{display:flex;gap:8px 18px;flex-wrap:wrap;margin-top:auto;padding-top:10px}
+.handbook-actions a,.shelf-module-link{min-height:44px;display:inline-flex;align-items:center;font-size:14px;font-weight:700}
+.handbook-actions span{align-self:center;color:var(--muted);font-size:13px}
+.handbook-empty,.handbook-status{padding:16px;color:var(--muted)}
+.reading-path{margin:28px 0 0}
+.library-shelves{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;padding:44px 0;border-top:1px solid var(--line)}
+.library-panel{min-width:0;padding:22px;border:1px solid var(--line);border-radius:4px;background:#e8ebdf;overflow-wrap:anywhere}
+.library-panel h2{font-size:25px;margin:0 0 8px}
+.library-panel>p{color:var(--muted);font-size:14px;margin:0 0 15px}
+.library-panel ul{padding-left:20px;margin:0 0 14px}
+.library-panel li{padding:3px 0;font-size:14px}
+.shelf-module-link{border-top:1px solid var(--line);width:100%;padding-top:8px}
 .library-section{padding:44px 0;border-top:1px solid var(--line)}
 .library-section h2{margin:0 0 20px}
 .library-section>p{color:var(--muted);max-width:760px}
@@ -32,5 +63,5 @@
 .library-management summary{cursor:pointer;font-weight:700;min-height:44px;padding:10px 0}
 .library-management summary:focus-visible{outline:3px solid #90671d;outline-offset:4px}
 @media(max-width:900px){.library-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:650px){.library-grid{grid-template-columns:1fr}.directory-toolbar{display:block}.library-section{padding:34px 0}.library-card{padding:17px}}
+@media(max-width:650px){.library-grid{grid-template-columns:1fr}.directory-toolbar{display:block}.library-section{padding:34px 0}.library-card{padding:17px}.section-heading{align-items:start;flex-direction:column;gap:10px}.library-shelves{grid-template-columns:1fr;padding:34px 0}.handbook-card{padding:18px}}
 @media(prefers-reduced-motion:reduce){.library-card{transition:none}}

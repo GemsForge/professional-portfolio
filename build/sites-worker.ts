@@ -29,7 +29,22 @@ export default {
       }
       const gate = ownerPageGate(request, '/admin/knowledge');
       if (gate) return gate;
-      return handler.fetch(request, env, ctx).then((response) => {
+      return handler.fetch(request, env, ctx).then((response: Response) => {
+        const headers = new Headers(response.headers);
+        headers.set('Cache-Control', 'private, no-store');
+        headers.set('X-Robots-Tag', 'noindex, nofollow');
+        return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
+      });
+    }
+    // Apply the same owner-only cache and identity gate to each module route.
+    if (url.pathname.startsWith('/admin/knowledge/')) {
+      if (url.pathname.endsWith('/')) {
+        url.pathname = url.pathname.slice(0, -1);
+        return Response.redirect(url.toString(), 308);
+      }
+      const gate = ownerPageGate(request, url.pathname);
+      if (gate) return gate;
+      return handler.fetch(request, env, ctx).then((response: Response) => {
         const headers = new Headers(response.headers);
         headers.set('Cache-Control', 'private, no-store');
         headers.set('X-Robots-Tag', 'noindex, nofollow');
