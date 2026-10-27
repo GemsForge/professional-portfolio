@@ -67,7 +67,10 @@ export function KnowledgeReader({ id }: { /** Stable library resource identifier
   /** Groups a generated Markdown handbook into one chapter and its Page sections. */
   const chapterHeading = markdown.match(/^#\s+(?!Page\b)(.+)$/im)?.[1]?.replace(/\s+#*$/, "").trim();
   const pageBreak = /(?=^#{1,6}\s+Page\b)/im;
-  const pageSources = markdown.split(pageBreak).filter((part) => part.trim());
+  const rawPageSources = markdown.split(pageBreak).filter((part) => part.trim());
+  const pageSources = rawPageSources.length > 1 && /^#\s+(?!Page\b).+\s*$/s.test(rawPageSources[0].trim())
+    ? [`${rawPageSources[0].trim()}\n\n${rawPageSources[1].trim()}`, ...rawPageSources.slice(2)]
+    : rawPageSources;
   const chapters = [{
     title: chapterHeading ?? "Chapter 1",
     pages: pageSources.length ? pageSources : [markdown],
@@ -113,6 +116,19 @@ export function KnowledgeReader({ id }: { /** Stable library resource identifier
       .find((entry) => entry.textContent?.trim() === title);
     heading?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
+  /** Selects a page tab and returns the reader to the beginning of that page. */
+  const navigateToPage = (nextPage: number) => {
+    setPage(nextPage);
+  };
+  useEffect(() => {
+    if (!resource || view !== "rendered") return;
+    const timer = window.setTimeout(() => {
+      const article = document.querySelector<HTMLElement>(".knowledge-reader-content");
+      if (!article) return;
+      window.scrollTo({ top: Math.max(0, article.offsetTop - 230), behavior: "smooth" });
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, [page, resource, view]);
 
   return <>
     <SiteHeader pathname="/admin/knowledge/" />
@@ -163,11 +179,11 @@ export function KnowledgeReader({ id }: { /** Stable library resource identifier
           <section className="knowledge-reader-main">
             <nav className="knowledge-page-tabs-header" aria-label={`${currentChapter.title} pages`}>
               <div role="tablist" aria-label="Handbook pages">
-                {pageTabs.map((tab) => <button className={tab.index === page ? "is-active" : ""} key={tab.index} onClick={() => setPage(tab.index)} role="tab" aria-selected={tab.index === page} type="button">{tab.index + 1}. {tab.title}</button>)}
+                {pageTabs.map((tab) => <button className={tab.index === page ? "is-active" : ""} key={tab.index} onClick={() => navigateToPage(tab.index)} role="tab" aria-selected={tab.index === page} type="button">{tab.index + 1}. {tab.title}</button>)}
               </div>
             </nav>
             <article className="knowledge-reader-content"><KnowledgeMarkdown source={pageSource} /></article>
-            <nav className="knowledge-pagination" aria-label={`${currentChapter.title} pages`}><button className="button secondary" type="button" onClick={() => setPage((current) => Math.max(0, current - 1))} disabled={page === 0}>Previous</button><span>{currentChapter.title} · Page {page + 1} of {Math.max(1, pages.length)}</span><button className="button secondary" type="button" onClick={() => setPage((current) => Math.min(pages.length - 1, current + 1))} disabled={page >= pages.length - 1}>Next</button></nav>
+            <nav className="knowledge-pagination" aria-label={`${currentChapter.title} pages`}><button className="button secondary" type="button" onClick={() => navigateToPage(Math.max(0, page - 1))} disabled={page === 0}>Previous</button><span>{currentChapter.title} · Page {page + 1} of {Math.max(1, pages.length)}</span><button className="button secondary" type="button" onClick={() => navigateToPage(Math.min(pages.length - 1, page + 1))} disabled={page >= pages.length - 1}>Next</button></nav>
           </section>
         </div>
         : <pre className="knowledge-source" tabIndex={0} aria-label="Markdown source"><code>{markdown}</code></pre>)}
