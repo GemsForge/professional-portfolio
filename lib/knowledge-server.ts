@@ -131,15 +131,23 @@ export async function knowledgeRequest(request: Request, env: Cloudflare.Env): P
     const metadata = await bucket.get(`${RECORD_PREFIX}${id}.json`);
     if (!metadata) return json({ error: 'Resource not found.' }, 404);
     const record = await metadata.json<KnowledgeRecord>();
+    // Inline HTML is reserved for the reader's restrictive, sandboxed preview frame.
+    const renderHtml = url.searchParams.get('render') === 'html';
+    if (renderHtml && record.contentType !== 'text/html') {
+      return json({ error: 'Only HTML references can be previewed this way.' }, 415);
+    }
     const file = await bucket.get(`${FILE_PREFIX}${id}`);
     if (!file) return json({ error: 'Resource not found.' }, 404);
     return new Response(file.body, {
       headers: {
         'Content-Type': record.contentType,
-        'Content-Disposition': contentDisposition(record.filename),
+        'Content-Disposition': renderHtml ? 'inline' : contentDisposition(record.filename),
         'Cache-Control': 'private, no-store',
         'X-Robots-Tag': 'noindex, nofollow',
         'X-Content-Type-Options': 'nosniff',
+        ...(renderHtml ? {
+          'Content-Security-Policy': "default-src 'none'; img-src data:; style-src 'unsafe-inline'; font-src data:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'self'",
+        } : {}),
       },
     });
   }

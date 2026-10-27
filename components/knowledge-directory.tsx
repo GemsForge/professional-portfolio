@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react
 import Link from "next/link";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import type { KnowledgeResource } from "@/lib/knowledge-types";
 
 type LibraryFolder = {
   path: string;
@@ -14,15 +15,6 @@ type LibraryFolder = {
 
 /** Names the four separately addressable areas of the owner library. */
 export type KnowledgeModule = "handbooks" | "governance" | "delivery" | "assets";
-
-type KnowledgeResource = {
-  id: string;
-  title: string;
-  folder: string;
-  filename: string;
-  size: number;
-  createdAt: string;
-};
 
 type HandbookCategory = "architecture" | "backend" | "data" | "project" | "codex" | "quality";
 
@@ -181,10 +173,9 @@ const shelfReferences: {
   },
 ];
 
-function formatSize(size: number) {
-  if (size < 1024) return `${size} bytes`;
-  if (size < 1024 * 1024) return `${Math.round(size / 1024)} KB`;
-  return `${(size / (1024 * 1024)).toFixed(1)} MB`;
+/** Builds the owner-gated route used to read stored HTML and Markdown references. */
+function readerHref(resourceId: string) {
+  return `/admin/knowledge/read?id=${encodeURIComponent(resourceId)}`;
 }
 
 /** Owns a private library module page, its folder filtering, search, and upload interaction. */
@@ -355,8 +346,8 @@ export function KnowledgeDirectory({ initialModule, initialFolder }: {
                         {handbook.tags.map((tag) => <li key={tag}>{tag}</li>)}
                       </ul>
                       <div className="handbook-actions">
-                        {isLoading ? <span>Loading HTML edition…</span> : htmlReference ? <Link href={`/api/knowledge/${encodeURIComponent(htmlReference.id)}`}>Download HTML edition ↗</Link> : <span>HTML edition not added</span>}
-                        {isLoading ? <span>Loading Markdown source…</span> : markdownReference ? <Link href={`/api/knowledge/${encodeURIComponent(markdownReference.id)}`}>Markdown source ↗</Link> : <span>Markdown source not added</span>}
+                        {isLoading ? <span>Loading HTML edition…</span> : htmlReference ? <><Link href={readerHref(htmlReference.id)}>Read HTML edition</Link><Link href={`/api/knowledge/${encodeURIComponent(htmlReference.id)}`}>Download HTML ↗</Link></> : <span>HTML edition not added</span>}
+                        {isLoading ? <span>Loading Markdown source…</span> : markdownReference ? <><Link href={readerHref(markdownReference.id)}>Read Markdown</Link><Link href={`/api/knowledge/${encodeURIComponent(markdownReference.id)}`}>Download Markdown ↗</Link></> : <span>Markdown source not added</span>}
                       </div>
                     </article>
                   );
@@ -378,7 +369,7 @@ export function KnowledgeDirectory({ initialModule, initialFolder }: {
                     {shelf.items.map((item) => {
                       const resource = resources.find((entry) => entry.title === item.resourceTitle);
                       return <li key={item.resourceTitle}>{resource
-                        ? <Link href={`/api/knowledge/${encodeURIComponent(resource.id)}`}>{item.title}</Link>
+                        ? <><Link href={readerHref(resource.id)}>{item.title}</Link> · <Link href={`/api/knowledge/${encodeURIComponent(resource.id)}`}>Download</Link></>
                         : <span>{item.title}{isLoading ? " (loading)" : " (not added yet)"}</span>}
                       </li>;
                     })}
@@ -423,25 +414,30 @@ export function KnowledgeDirectory({ initialModule, initialFolder }: {
             <p className="note">{selectedFolder ? `No references in ${selectedFolder.label} yet.` : `No references in ${activeModule?.title.toLocaleLowerCase()} yet.`}</p>
           )}
           {isError && <p className="note" role="alert">{message}</p>}
-          <ul className="knowledge-items" aria-label="Saved reference documents">
-            {visibleResources.map((resource) => {
+          <div className="knowledge-table-scroll" tabIndex={0} role="region" aria-label="Saved reference documents table">
+            <table className="knowledge-resource-table">
+              <caption className="sr-only">Saved knowledge references</caption>
+              <thead><tr><th scope="col">File name</th><th scope="col">Type</th><th scope="col">Area</th><th scope="col">Download</th></tr></thead>
+              <tbody>{visibleResources.map((resource) => {
               const folder = folders.find((entry) => entry.path === resource.folder);
-              const details = [folder?.label || resource.folder, resource.filename, formatSize(resource.size), new Date(resource.createdAt).toLocaleDateString()].join(" · ");
-              return (
-                <li className="knowledge-item" key={resource.id}>
-                  <h3>{resource.title}</h3>
-                  <p>{details}</p>
-                  <Link href={`/api/knowledge/${encodeURIComponent(resource.id)}`}>Download {resource.title}</Link>
-                </li>
-              );
-            })}
-          </ul>
+              return <tr key={resource.id}>
+                <th scope="row"><span>{resource.filename}</span><small>{resource.title}</small></th>
+                <td>{resource.contentType.replace("text/", "").replace("application/", "")}</td>
+                <td>{folder?.label || resource.folder}</td>
+                <td className="knowledge-table-actions">
+                  {(resource.contentType === "text/html" || resource.contentType === "text/markdown") && <Link href={readerHref(resource.id)}>View</Link>}
+                  <Link href={`/api/knowledge/${encodeURIComponent(resource.id)}`}>Download</Link>
+                </td>
+              </tr>;
+            })}</tbody>
+            </table>
+          </div>
         </section> : null}
 
         {initialModule ? <section id="manage-references" className="library-management" aria-label="Manage library references">
           <details>
             <summary>Add a reference to this library</summary>
-            <p>Accepted files: PDF, DOCX, Markdown, HTML, UTF-8 text, PNG, JPEG, WebP, or TIFF. Maximum size: 20 MB. HTML files are downloaded as attachments and are not rendered on this site.</p>
+            <p>Accepted files: PDF, DOCX, Markdown, HTML, UTF-8 text, PNG, JPEG, WebP, or TIFF. Maximum size: 20 MB. HTML previews run in an isolated frame, and Markdown references are formatted for reading.</p>
             <form className="knowledge-form" onSubmit={addReference}>
               <label htmlFor="knowledge-title">Title</label>
               <input id="knowledge-title" name="title" type="text" maxLength={160} required autoComplete="off" />

@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { KnowledgeDirectory, type KnowledgeModule } from "@/components/knowledge-directory";
+import { KnowledgeReader } from "@/components/knowledge-reader";
 import "../knowledge-directory.css";
 
 export const metadata: Metadata = {
-  title: "Developer Library Module",
+  title: "Developer Library",
   robots: { index: false, follow: false },
 };
 
@@ -14,9 +15,13 @@ export default async function KnowledgeModulePage({
   searchParams,
 }: {
   params: Promise<{ module: string }>;
-  searchParams: Promise<{ folder?: string }>;
+  searchParams: Promise<{ folder?: string; id?: string }>;
 }) {
-  const [{ module }, { folder }] = await Promise.all([params, searchParams]);
+  const [{ module }, { folder, id }] = await Promise.all([params, searchParams]);
+  if (module === "read") {
+    if (!id) notFound();
+    return <KnowledgeReader id={id} />;
+  }
   if (!(["handbooks", "governance", "delivery", "assets"] as string[]).includes(module)) notFound();
 
   return <KnowledgeDirectory

@@ -124,12 +124,13 @@ test('knowledge page gate redirects anonymous users and denies non-owners', asyn
   assert.equal(ownerPageGate(request('/admin/knowledge', 'GET', undefined, otherUser), '/admin/knowledge').status, 403);
   assert.equal(ownerPageGate(request('/admin/knowledge'), '/admin/knowledge'), null);
 
-  const [pages, home, worker, route, component] = await Promise.all([
+  const [pages, home, worker, route, component, reader] = await Promise.all([
     readFile(new URL('../lib/static-pages.json', import.meta.url), 'utf8'),
     readFile(new URL('../static-source/index.html', import.meta.url), 'utf8'),
     readFile(new URL('../build/sites-worker.ts', import.meta.url), 'utf8'),
     readFile(new URL('../app/admin/knowledge/page.tsx', import.meta.url), 'utf8'),
     readFile(new URL('../components/knowledge-directory.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../components/knowledge-reader.tsx', import.meta.url), 'utf8'),
   ]);
   assert.doesNotMatch(pages, /Knowledge directory|owner-knowledge/);
   assert.doesNotMatch(home, /href="\/admin\/knowledge\/?"/);
@@ -138,5 +139,10 @@ test('knowledge page gate redirects anonymous users and denies non-owners', asyn
   assert.match(route, /robots: \{ index: false, follow: false \}/);
   assert.match(component, /export function KnowledgeDirectory/);
   assert.match(component, /fetch\("\/api\/knowledge"/);
+  assert.match(component, /File name/);
+  assert.match(component, /Download/);
+  assert.match(reader, /Render Markdown/);
+  assert.match(reader, /Markdown source/);
+  assert.match(reader, /Download Markdown/);
   assert.match(worker, /knowledgeRequest\(request,env\)/);
 });

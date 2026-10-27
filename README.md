@@ -26,7 +26,7 @@ Images and metadata are stored in the provisioned R2 `BUCKET`, independently of 
 
 ## Knowledge directory
 
-Visit `/admin/knowledge/` from the owner workspace for the private React library homepage. It links to separate Handbooks, Governance, Delivery, and Assets module pages. Each module organizes its folders and saved references, with controls to add and search PDF, DOCX, Markdown, HTML, UTF-8 text, and common image references. Files and titles are stored under a separate `owner-knowledge/` prefix in the existing R2 `BUCKET`; every page and API request requires the portfolio owner's authenticated identity. Uploaded knowledge files are not part of this source export.
+Visit `/admin/knowledge/` from the owner workspace for the private React library homepage. It links to separate Handbooks, Governance, Delivery, and Assets module pages. Each module organizes its folders and saved references, with controls to add and search PDF, DOCX, Markdown, HTML, UTF-8 text, and common image references. HTML and Markdown files have a reusable reading view: HTML is served only to an isolated, restrictive preview frame, while Markdown is rendered as text without executing embedded HTML. Original files remain downloadable. Files and titles are stored under a separate `owner-knowledge/` prefix in the existing R2 `BUCKET`; every page and API request requires the portfolio owner's authenticated identity. Uploaded knowledge files are not part of this source export.
 
 ## Development and publishing
 
