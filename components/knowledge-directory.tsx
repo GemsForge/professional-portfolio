@@ -416,16 +416,8 @@ export function KnowledgeDirectory({ initialModule, initialFolder }: {
                   const htmlReference = findHandbookReference(handbook.html);
                   const markdownReference = findHandbookReference(handbook.markdown);
                   const cardHref = markdownReference ? readerHref(markdownReference.id) : htmlReference ? readerHref(htmlReference.id) : undefined;
-                  const openCard = () => { if (cardHref) window.location.assign(cardHref); };
-                  return (
-                    <article
-                      className={cardHref ? "handbook-card handbook-card-link" : "handbook-card"}
-                      key={handbook.title}
-                      onClick={(event) => { if (cardHref && !(event.target as HTMLElement).closest("a,button")) openCard(); }}
-                      onKeyDown={(event) => { if (cardHref && (event.key === "Enter" || event.key === " ")) { event.preventDefault(); openCard(); } }}
-                      role={cardHref ? "link" : undefined}
-                      tabIndex={cardHref ? 0 : undefined}
-                    >
+                  const cardContent = (
+                    <>
                       <div className="handbook-kicker">{handbook.categoryLabel}</div>
                       <h3>{handbook.title}</h3>
                       <p>{handbook.description}</p>
@@ -439,8 +431,12 @@ export function KnowledgeDirectory({ initialModule, initialFolder }: {
                           </li>
                         ))}
                       </ul>
-                    </article>
+                    </>
                   );
+                  // Native links preserve browser navigation, context menus, and assistive-technology discovery.
+                  return cardHref
+                    ? <Link className="handbook-card handbook-card-link" href={cardHref} key={handbook.title}>{cardContent}</Link>
+                    : <article className="handbook-card" key={handbook.title}>{cardContent}</article>;
                 })}
               </div>
               {visibleHandbooks.length === 0 && <p className="handbook-empty" role="status">No handbook matches that search yet.</p>}
