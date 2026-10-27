@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
 import Link from "next/link";
+import { siDotnet, siGithub, siPostgresql, siReact, siRedux, siSqlite, siTypescript } from "simple-icons";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import type { KnowledgeResource } from "@/lib/knowledge-types";
@@ -34,6 +35,33 @@ type Handbook = {
   html: HandbookReference;
   markdown: HandbookReference;
 };
+
+/** Uses saved library logos first, then bundled Simple Icons when available. */
+function HandbookTechnologyIcon({ tag }: { tag: string }) {
+  const savedLogos: Record<string, string> = {
+    OpenAPI: "/assets/auralogbook-stack/swagger.png",
+    React: "/assets/auralogbook-stack/react.png",
+    Redux: "/assets/auralogbook-stack/redux.png",
+    SQLite: "/assets/auralogbook-stack/sqlite.png",
+    TypeScript: "/assets/auralogbook-stack/typescript.png",
+  };
+  if (savedLogos[tag]) return <img alt="" aria-hidden="true" className="dependency-chip-logo" src={savedLogos[tag]} />;
+  const icons = {
+    "ASP.NET Core": siDotnet,
+    GitHub: siGithub,
+    PostgreSQL: siPostgresql,
+    React: siReact,
+    Redux: siRedux,
+    SQLite: siSqlite,
+    TypeScript: siTypescript,
+  };
+  const icon = icons[tag];
+  return icon ? (
+    <svg aria-hidden="true" className="dependency-chip-logo" focusable="false" role="img" viewBox="0 0 24 24">
+      <path d={icon.path} />
+    </svg>
+  ) : null;
+}
 
 const folders: LibraryFolder[] = [
   { path: "handbooks/architecture", label: "Architecture", group: "handbooks", description: "System structure and feature-oriented application design." },
@@ -342,8 +370,15 @@ export function KnowledgeDirectory({ initialModule, initialFolder }: {
                       <div className="handbook-kicker">{handbook.categoryLabel}</div>
                       <h3>{handbook.title}</h3>
                       <p>{handbook.description}</p>
-                      <ul className="handbook-tags" aria-label={`${handbook.title} topics`}>
-                        {handbook.tags.map((tag) => <li key={tag}>{tag}</li>)}
+                      <ul className="dependency-chip-list handbook-tags" aria-label={`${handbook.title} technologies`}>
+                        {handbook.tags.map((tag) => (
+                          <li key={tag}>
+                            <span className="dependency-chip">
+                              <HandbookTechnologyIcon tag={tag} />
+                              <span className="dependency-chip-label">{tag}</span>
+                            </span>
+                          </li>
+                        ))}
                       </ul>
                       <div className="handbook-actions">
                         {isLoading ? <span>Loading HTML edition…</span> : htmlReference ? <><Link href={readerHref(htmlReference.id)}>Read HTML edition</Link><Link href={`/api/knowledge/${encodeURIComponent(htmlReference.id)}`}>Download HTML ↗</Link></> : <span>HTML edition not added</span>}

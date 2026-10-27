@@ -18,8 +18,8 @@
 .handbook-kicker{color:var(--green);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
 .handbook-card h3{font-size:21px;line-height:1.25;margin:9px 0}
 .handbook-card>p{color:var(--muted);font-size:15px;margin:0}
-.handbook-tags{display:flex;gap:7px;flex-wrap:wrap;list-style:none;margin:16px 0;padding:0}
-.handbook-tags li{padding:4px 9px;border:1px solid #aebbab;border-radius:3px;background:#e8ebdf;color:var(--ink);font-size:12px;font-weight:600}
+.handbook-tags{margin:16px 0}
+.handbook-tags .dependency-chip{cursor:default}
 .handbook-actions{display:flex;gap:8px 18px;flex-wrap:wrap;margin-top:auto;padding-top:10px}
 .handbook-actions a,.shelf-module-link{min-height:44px;display:inline-flex;align-items:center;font-size:14px;font-weight:700}
 .handbook-actions span{align-self:center;color:var(--muted);font-size:13px}
@@ -97,3 +97,5 @@
 @media(max-width:900px){.library-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:650px){.library-grid{grid-template-columns:1fr}.directory-toolbar{display:block}.library-section{padding:34px 0}.library-card{padding:17px}.section-heading{align-items:start;flex-direction:column;gap:10px}.library-shelves{grid-template-columns:1fr;padding:34px 0}.handbook-card{padding:18px}}
 @media(prefers-reduced-motion:reduce){.library-card{transition:none}}
+@import url("https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css");
+
