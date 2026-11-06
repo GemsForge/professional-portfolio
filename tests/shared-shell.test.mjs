@@ -11,6 +11,7 @@ const projectCard = await readFile("components/project-card.tsx", "utf8");
 const knowledgeDirectory = await readFile("components/knowledge-directory.tsx", "utf8");
 const knowledgeReader = await readFile("components/knowledge-reader.tsx", "utf8");
 const catalog = await readFile("scripts/project-catalog.mts", "utf8");
+const frameworkRunner = await readFile("scripts/run-framework.mjs", "utf8");
 const rootRoute = await readFile("app/page.tsx", "utf8");
 const route = await readFile("app/[...slug]/page.tsx", "utf8");
 const worker = await readFile("build/sites-worker.ts", "utf8");
@@ -86,6 +87,10 @@ test("every static page source produces a header with one Developer Library link
 
   const attachmentManager = await readFile("lib/image-manager.html", "utf8");
   assert.match(attachmentManager, /<nav class="links" aria-label="Portfolio navigation">[^<]*<a href="\/portfolio\/projects\/">Projects<\/a><!-- Keep the public library accessible from owner-tool headers too\. --><a href="\/knowledge\/">Knowledge<\/a>/);
+});
+
+test("local development refreshes generated pages before starting the preview", () => {
+  assert.match(frameworkRunner, /if \(command === "dev"\)[\s\S]*prepare-pages\.mjs/);
 });
 
 test("the generated page catalog includes the required public routes", async () => {
