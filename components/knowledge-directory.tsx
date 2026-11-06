@@ -215,29 +215,21 @@ const shelfReferences: {
   },
 ];
 
-/** Builds the matching public or owner-gated route for a stored reference. */
-function readerHref(resourceId: string, publicMode = false) {
-  return publicMode
-    ? `/knowledge/${encodeURIComponent(resourceId)}/`
-    : `/admin/knowledge/read?id=${encodeURIComponent(resourceId)}`;
-}
-
-/** Finds a reference by its library folder and original filename. */
-function findReference(resources: KnowledgeResource[], reference: HandbookReference) {
-  return resources.find((resource) => resource.folder === reference.folder && resource.filename === reference.filename);
+/** Builds the owner-gated route used to read stored HTML and Markdown references. */
+function readerHref(resourceId: string) {
+  return `/admin/knowledge/read?id=${encodeURIComponent(resourceId)}`;
 }
 
 /**
- * Renders the shared knowledge directory in private owner or public read-only mode.
- * Native anchors keep document routes reliable, while server authorization protects owner actions.
+ * Owns a private library module page, its folder filtering, search, and upload
+ * interaction. Native anchors keep route changes reliable without client-side
+ * router hydration while server authorization protects each destination.
  */
-export function KnowledgeDirectory({ initialModule, initialFolder, publicMode = false }: {
+export function KnowledgeDirectory({ initialModule, initialFolder }: {
   /** Selects a dedicated module page; omit it to render the module index. */
   initialModule?: KnowledgeModule;
   /** Optionally narrows a module page to one of its folders. */
   initialFolder?: string;
-  /** Uses the public catalogue and hides every owner-only action and route. */
-  publicMode?: boolean;
 }) {
   const [resources, setResources] = useState<KnowledgeResource[]>([]);
   const [activeFolder] = useState<string | null>(
@@ -254,21 +246,6 @@ export function KnowledgeDirectory({ initialModule, initialFolder, publicMode = 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const loadResources = useCallback(async () => {
-    if (publicMode) {
-      const [uploadedResponse, maintainedResponse] = await Promise.all([
-        fetch("/api/public/knowledge", { headers: { Accept: "application/json" } }),
-        fetch("/knowledge-library/index.json"),
-      ]);
-      if (!uploadedResponse.ok || !maintainedResponse.ok) {
-        throw new Error("Could not load the public library. Refresh the page and try again.");
-      }
-      const [uploaded, maintained] = await Promise.all([
-        uploadedResponse.json() as Promise<{ resources?: KnowledgeResource[] }>,
-        maintainedResponse.json() as Promise<{ resources?: KnowledgeResource[] }>,
-      ]);
-      setResources([...(maintained.resources ?? []), ...(uploaded.resources ?? [])]);
-      return;
-    }
     const response = await fetch("/api/knowledge", {
       headers: { Accept: "application/json" },
       cache: "no-store",
@@ -276,7 +253,7 @@ export function KnowledgeDirectory({ initialModule, initialFolder, publicMode = 
     if (!response.ok) throw new Error("Could not load your references. Refresh the page and try again.");
     const data = (await response.json()) as { resources?: KnowledgeResource[] };
     setResources(Array.isArray(data.resources) ? data.resources : []);
-  }, [publicMode]);
+  }, []);
 
   useEffect(() => {
     async function fetchResources() {
@@ -322,14 +299,14 @@ export function KnowledgeDirectory({ initialModule, initialFolder, publicMode = 
           title: resource.title,
           category,
           categoryLabel,
-          description: resource.description ?? (publicMode ? "Published Markdown handbook in the developer library." : "Private Markdown handbook added to the developer library."),
+          description: resource.description ?? "Private Markdown handbook added to the developer library.",
           tags: resource.tags ?? [],
           searchText: resource.searchText ?? `${resource.title} ${resource.filename} ${resource.folder}`,
           markdown: { folder: resource.folder, filename: resource.filename },
         };
       });
     return [...seededHandbooks, ...uploaded];
-  }, [publicMode, resources]);
+  }, [resources]);
   const visibleHandbooks = useMemo(() => {
     const query = handbookSearch.trim().toLocaleLowerCase();
     return libraryHandbooks.filter((handbook) =>
@@ -337,29 +314,6 @@ export function KnowledgeDirectory({ initialModule, initialFolder, publicMode = 
       (!query || `${handbook.title} ${handbook.description} ${handbook.searchText} ${handbook.tags.join(" ")}`.toLocaleLowerCase().includes(query)),
     );
   }, [activeHandbookCategory, handbookSearch, libraryHandbooks]);
-
-  /** Groups every public document not already represented by a handbook card. */
-  const publicShelves = useMemo(() => {
-    const handbookIds = new Set(libraryHandbooks.flatMap((handbook) => {
-      const resource = handbook.markdown ? findReference(resources, handbook.markdown) : undefined;
-      return resource ? [resource.id] : [];
-    }));
-    const shelves = [
-      { id: "governance", title: "Governance and standards", description: "Shared standards, policies, and reusable ways of working." },
-      { id: "delivery", title: "Delivery references", description: "Checklists and templates for delivering work consistently." },
-      { id: "other", title: "Other references", description: "More published material from the developer library." },
-    ].map((shelf) => ({ ...shelf, items: [] as KnowledgeResource[] }));
-    for (const resource of resources) {
-      if (handbookIds.has(resource.id)) continue;
-      const shelf = resource.folder === "governance" || resource.folder.startsWith("governance/")
-        ? shelves[0]
-        : resource.folder === "delivery" || resource.folder.startsWith("delivery/")
-          ? shelves[1]
-          : shelves[2];
-      shelf.items.push(resource);
-    }
-    return shelves.filter((shelf) => shelf.items.length > 0);
-  }, [libraryHandbooks, resources]);
 
   /** Finds an uploaded handbook edition by its module folder and original filename. */
   function findHandbookReference(reference?: HandbookReference) {
@@ -420,12 +374,12 @@ export function KnowledgeDirectory({ initialModule, initialFolder, publicMode = 
 
   return (
     <>
-      <SiteHeader pathname={publicMode ? "/knowledge/" : "/admin/knowledge/"} />
+      <SiteHeader pathname="/admin/knowledge/" />
       <main id="main" className="wrap knowledge-page">
         <div className="pagehero library-intro">
-          <div className="eyebrow">{publicMode ? "GemsForge · Public knowledge library" : "Owner workspace · Private library"}</div>
+          <div className="eyebrow">Owner workspace · Private library</div>
           <h1>{activeModule ? activeModule.title : "GemsForge Developer Library"}</h1>
-          <p className="lead">{activeModule ? activeModule.description : publicMode ? "Build with intention. Keep the map. Explore the published handbooks, standards, and delivery references." : "Build with intention. Keep the map. A private home for the handbooks, standards, and delivery references that support your work."}</p>
+          <p className="lead">{activeModule ? activeModule.description : "Build with intention. Keep the map. A private home for the handbooks, standards, and delivery references that support your work."}</p>
           {activeModule ? (
             <nav className="library-links" aria-label="Module navigation">
               <a className="button secondary" href="/admin/knowledge/">← All modules</a>
@@ -437,7 +391,7 @@ export function KnowledgeDirectory({ initialModule, initialFolder, publicMode = 
               <a className="button" href="#handbooks">📖 Browse handbooks</a>
               <a className="button secondary" href="#governance">🧭 Open governance shelf</a>
               <a className="button secondary" href="#delivery">✅ Delivery references</a>
-              {!publicMode && <a className="button secondary" href="/admin/knowledge/assets/">Tool assets</a>}
+              <a className="button secondary" href="/admin/knowledge/assets/">Tool assets</a>
             </nav>
           )}
         </div>
@@ -448,11 +402,9 @@ export function KnowledgeDirectory({ initialModule, initialFolder, publicMode = 
               <div className="section-heading">
                 <div>
                   <h2 id="handbooks-heading">📚 Handbooks</h2>
-                  <p>{publicMode ? "Explore published guides by topic and technology." : "Download the HTML editions or Markdown source files."}</p>
+                  <p>Download the HTML editions or Markdown source files.</p>
                 </div>
-                {publicMode
-                  ? <a href="#handbook-grid">Browse handbooks →</a>
-                  : <a href="/admin/knowledge/handbooks/">All handbooks →</a>}
+                <a href="/admin/knowledge/handbooks/">All handbooks →</a>
               </div>
               <div className="handbook-controls">
                 <label className="handbook-search">
@@ -478,7 +430,7 @@ export function KnowledgeDirectory({ initialModule, initialFolder, publicMode = 
                 {visibleHandbooks.map((handbook) => {
                   const htmlReference = findHandbookReference(handbook.html);
                   const markdownReference = findHandbookReference(handbook.markdown);
-                  const cardHref = markdownReference ? readerHref(markdownReference.id, publicMode) : htmlReference ? readerHref(htmlReference.id, publicMode) : undefined;
+                  const cardHref = markdownReference ? readerHref(markdownReference.id) : htmlReference ? readerHref(htmlReference.id) : undefined;
                   const cardContent = (
                     <>
                       <div className="handbook-kicker">{handbook.categoryLabel}</div>
@@ -510,20 +462,7 @@ export function KnowledgeDirectory({ initialModule, initialFolder, publicMode = 
             <div className="note reading-path"><strong>💡 Reading path:</strong> Start with Console architecture for UI boundaries, then Backend API for service boundaries, then Database Engineering for persistence decisions.</div>
 
             <section className="library-shelves" aria-label="Governance and delivery references">
-              {publicMode ? publicShelves.map((shelf) => (
-                <div className="library-panel" id={shelf.id} key={shelf.id}>
-                  <h2>{shelf.title}</h2>
-                  <p>{shelf.description}</p>
-                  <ul>
-                    {shelf.items.map((resource) => (
-                      <li key={resource.id}>
-                        <a href={readerHref(resource.id, true)}>{resource.title}</a>
-                        {" · "}<a href={resource.sourceUrl ?? `/api/public/knowledge/${encodeURIComponent(resource.id)}`}>Download</a>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )) : shelfReferences.map((shelf) => (
+              {shelfReferences.map((shelf) => (
                 <div className="library-panel" id={shelf.id} key={shelf.id}>
                   <h2>{shelf.title}</h2>
                   <p>{shelf.description}</p>
@@ -588,9 +527,9 @@ export function KnowledgeDirectory({ initialModule, initialFolder, publicMode = 
                 <td>{folder?.label || resource.folder}</td>
                 <td><time dateTime={resource.createdAt}>{formatUploadDateTime(resource.createdAt)}</time></td>
                 <td className="knowledge-table-actions">
-                  {(resource.contentType === "text/html" || resource.contentType === "text/markdown") && <a href={readerHref(resource.id, publicMode)}>View</a>}
-                  <a href={publicMode ? resource.sourceUrl ?? `/api/public/knowledge/${encodeURIComponent(resource.id)}` : `/api/knowledge/${encodeURIComponent(resource.id)}`}>Download</a>
-                  {!publicMode && <button className="link-button" type="button" onClick={() => void deleteReference(resource)}>Remove</button>}
+                  {(resource.contentType === "text/html" || resource.contentType === "text/markdown") && <a href={readerHref(resource.id)}>View</a>}
+                  <a href={`/api/knowledge/${encodeURIComponent(resource.id)}`}>Download</a>
+                  <button className="link-button" type="button" onClick={() => void deleteReference(resource)}>Remove</button>
                 </td>
               </tr>;
             })}</tbody>
@@ -598,7 +537,7 @@ export function KnowledgeDirectory({ initialModule, initialFolder, publicMode = 
           </div>
         </section> : null}
 
-        {initialModule && !publicMode ? <section id="manage-references" className="library-management" aria-label="Manage library references">
+        {initialModule ? <section id="manage-references" className="library-management" aria-label="Manage library references">
           <details>
             <summary>Add a reference to this library</summary>
             <p>Accepted files: PDF, DOCX, Markdown, HTML, UTF-8 text, PNG, JPEG, WebP, or TIFF. Maximum size: 20 MB. HTML previews run in an isolated frame, and Markdown references are formatted for reading.</p>
