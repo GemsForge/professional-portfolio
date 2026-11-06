@@ -110,10 +110,14 @@ test("portfolio project cards render labeled technology marks in both page rende
   assert.match(css, /\.tech-chip\{[\s\S]*?font-size:12px/);
 });
 
-test("project-card labels leave their decorative arrow to the shared style", () => {
+test("project-card labels render their decorative arrow with Lucide", () => {
   assert.match(catalog, /cardLinkLabel: "Explore Aura Logbook"/);
   assert.doesNotMatch(catalog, /cardLinkLabel: "Explore Aura Logbook ↗"/);
-  assert.match(css, /\.worklink:after\{content:/);
+  assert.doesNotMatch(css, /\.worklink:after\{content:/);
+  assert.match(catalog, /renderArrowIcon\(\)/);
+  assert.match(catalog, /Lucide's ArrowUpRight SVG markup/);
+  assert.match(projectCard, /from "lucide-react"/);
+  assert.match(css, /\.link-arrow\{/);
   assert.match(projectCard, /project\.cardLinkLabel/);
 });
 

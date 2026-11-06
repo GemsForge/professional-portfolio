@@ -1,6 +1,7 @@
 // Intentional: use browser navigation because client-side route transitions are failing.
 /* eslint-disable @next/next/no-html-link-for-pages */
 import Image from "next/image";
+import { ArrowUpRight } from "lucide-react";
 import { siApple, siDotnet, siMui, siNotion, siReact, siRedux, siTypescript } from "simple-icons";
 import {
   PROJECTS,
@@ -44,6 +45,7 @@ export function ProjectCard({ project }: { project: ProjectDefinition }) {
       </div>
       <a className="worklink" href={`/portfolio/projects/${project.slug}/`}>
         {project.cardLinkLabel}
+        <ArrowUpRight aria-hidden="true" focusable="false" className="link-arrow" />
       </a>
     </article>
   );
@@ -72,7 +74,7 @@ export function ProjectCardGrid({ slugs, showMoreLink = false }: { slugs?: strin
       {showMoreLink && (
         <div className="wrap project-grid-actions">
           <a className="button secondary" href="/portfolio/projects/">
-            Explore more projects ↗
+            Explore more projects <ArrowUpRight aria-hidden="true" focusable="false" className="link-arrow" />
           </a>
         </div>
       )}

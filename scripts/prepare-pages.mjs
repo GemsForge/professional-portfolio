@@ -3,7 +3,7 @@ import path from "node:path";
 // Node 22.13+ strips the catalog's TypeScript types at import time; no runtime
 // transpiler or JSX dependency is needed for this build-time-only module.
 import { renderDependencyGroup } from "./auralogbook-dependencies.mts";
-import { applyProjectPageMetadata, HOME_PROJECT_SLUGS, PROJECTS, renderProjectCard } from "./project-catalog.mts";
+import { applyProjectPageMetadata, HOME_PROJECT_SLUGS, PROJECTS, renderArrowIcon, renderProjectCard } from "./project-catalog.mts";
 
 const source = path.resolve("static-source");
 const pages = {};
@@ -32,7 +32,7 @@ async function visit(directory) {
       if (route === "/" || route === "/portfolio/") {
         text = text.replace(
           /<div class="projects">[\s\S]*?<\/div>(?=<\/div><\/section>)/,
-          `<div class="projects">${projects.map((project) => renderProjectCard(project)).join("")}</div><div class="project-grid-actions"><a class="button secondary" href="/portfolio/projects/">Explore more projects ↗</a></div>`,
+          `<div class="projects">${projects.map((project) => renderProjectCard(project)).join("")}</div><div class="project-grid-actions"><a class="button secondary" href="/portfolio/projects/">Explore more projects ${renderArrowIcon()}</a></div>`,
         );
       }
 

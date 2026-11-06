@@ -1,6 +1,7 @@
 // Intentional: use browser navigation because client-side route transitions are failing.
 /* eslint-disable @next/next/no-html-link-for-pages */
 import Image from "next/image";
+import { ArrowUp } from "lucide-react";
 
 /**
  * Renders the single site-wide footer navigation with native anchors so
@@ -22,7 +23,7 @@ export function SiteFooter() {
           <a href="/assets/diamond-brown-resume.pdf">Resume</a>
           <a href="/contact/">Contact</a>
           <a href="/admin/">Admin</a>
-          <a href="#main">Back to top ↑</a>
+          <a href="#main">Back to top <ArrowUp aria-hidden="true" focusable="false" className="link-arrow" /></a>
         </nav>
       </div>
     </footer>

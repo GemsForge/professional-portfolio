@@ -4,6 +4,7 @@
 /* eslint-disable @next/next/no-html-link-for-pages */
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
 import { siDotnet, siGithub, siPostgresql, siReact, siRedux, siSqlite, siTypescript } from "simple-icons";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import type { KnowledgeResource } from "@/lib/knowledge-types";
@@ -372,7 +373,7 @@ export function KnowledgeDirectory({ initialModule, initialFolder }: {
           <p className="lead">{activeModule ? activeModule.description : "Build with intention. Keep the map. A private home for the handbooks, standards, and delivery references that support your work."}</p>
           {activeModule ? (
             <nav className="library-links" aria-label="Module navigation">
-              <a className="button secondary" href="/admin/knowledge/">← All modules</a>
+              <a className="button secondary" href="/admin/knowledge/"><ArrowLeft aria-hidden="true" focusable="false" className="link-arrow" /> All modules</a>
               <a className="button" href="#saved-references">Browse saved references</a>
               <a className="button secondary" href="#manage-references">Add a reference</a>
             </nav>
@@ -394,7 +395,7 @@ export function KnowledgeDirectory({ initialModule, initialFolder }: {
                   <h2 id="handbooks-heading">📚 Handbooks</h2>
                   <p>Download the HTML editions or Markdown source files.</p>
                 </div>
-                <a href="/admin/knowledge/handbooks/">All handbooks →</a>
+                <a href="/admin/knowledge/handbooks/">All handbooks <ArrowRight aria-hidden="true" focusable="false" className="link-arrow" /></a>
               </div>
               <div className="handbook-controls">
                 <label className="handbook-search">
@@ -465,7 +466,7 @@ export function KnowledgeDirectory({ initialModule, initialFolder }: {
                       </li>;
                     })}
                   </ul>
-                  <a className="shelf-module-link" href={`/admin/knowledge/${shelf.id}/`}>Open {shelf.id} module →</a>
+                  <a className="shelf-module-link" href={`/admin/knowledge/${shelf.id}/`}>Open {shelf.id} module <ArrowRight aria-hidden="true" focusable="false" className="link-arrow" /></a>
                 </div>
               ))}
             </section>

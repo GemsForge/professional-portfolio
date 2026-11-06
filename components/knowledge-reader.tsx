@@ -3,6 +3,7 @@
 // Intentional: use browser navigation because client-side route transitions are failing.
 /* eslint-disable @next/next/no-html-link-for-pages */
 import { useEffect, useRef, useState } from "react";
+import { ArrowUpRight } from "lucide-react";
 import type { KeyboardEvent } from "react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
@@ -174,10 +175,10 @@ export function KnowledgeReader({ id }: { /** Stable library resource identifier
             {resource.contentType === "text/markdown" && <>
               <button type="button" onClick={() => setView("rendered")} aria-pressed={view === "rendered"}>Render Markdown</button>
               <button type="button" onClick={() => setView("source")} aria-pressed={view === "source"}>Markdown source</button>
-              <a href={`/api/knowledge/${encodeURIComponent(resource.id)}?format=html`}>Download HTML ↗</a>
-              <a href={`/api/knowledge/${encodeURIComponent(resource.id)}`}>Download Markdown ↗</a>
+              <a href={`/api/knowledge/${encodeURIComponent(resource.id)}?format=html`}>Download HTML <ArrowUpRight aria-hidden="true" focusable="false" className="link-arrow" /></a>
+              <a href={`/api/knowledge/${encodeURIComponent(resource.id)}`}>Download Markdown <ArrowUpRight aria-hidden="true" focusable="false" className="link-arrow" /></a>
             </>}
-            {resource.contentType === "text/html" && <a href={`/api/knowledge/${encodeURIComponent(resource.id)}`}>Download HTML ↗</a>}
+            {resource.contentType === "text/html" && <a href={`/api/knowledge/${encodeURIComponent(resource.id)}`}>Download HTML <ArrowUpRight aria-hidden="true" focusable="false" className="link-arrow" /></a>}
           </div>
         </details>}
       </header>
