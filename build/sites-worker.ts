@@ -1,7 +1,7 @@
 import pages from "../lib/static-pages.json";
 import manager from "../lib/image-manager.html?raw";
 import {adminPageRequest,mediaRequest,ownerPageGate} from "../lib/media-server";
-import {knowledgeRequest} from "../lib/knowledge-server";
+import {knowledgeRequest,publicKnowledgeRequest} from "../lib/knowledge-server";
 import {PROJECT_OPTIONS_HTML} from "../lib/project-registry.ts";
 import handler from "vinext/server/fetch-handler";
 import { runWithConnectorBinding } from "../lib/connector-context";
@@ -12,6 +12,28 @@ const managerPage = manager.replace("<!--PROJECT_OPTIONS-->", PROJECT_OPTIONS_HT
 export default {
   fetch(request: Request, env: Cloudflare.Env, ctx: ExecutionContext<{ CONNECTORS?: ConnectorBinding }>) {
     const url = new URL(request.url);
+    // Keep the short owner route as an alias of the handbooks management module.
+    if (url.pathname === '/admin/handbooks' || url.pathname.startsWith('/admin/handbooks/')) {
+      url.pathname = url.pathname.replace(/^\/admin\/handbooks(?=\/|$)/, '/admin/knowledge/handbooks');
+      request = new Request(url, request);
+    }
+    if(url.pathname === '/api/public/knowledge' || url.pathname.startsWith('/api/public/knowledge/')) return publicKnowledgeRequest(request,env);
+    if (url.pathname === '/knowledge' || url.pathname === '/knowledge/') {
+      if (url.pathname === '/knowledge/') { url.pathname = '/knowledge'; return Response.redirect(url.toString(), 308); }
+      return handler.fetch(request, env, ctx).then((response: Response) => {
+        const headers = new Headers(response.headers);
+        headers.set('Cache-Control', 'public, max-age=60');
+        return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
+      });
+    }
+    if (url.pathname.startsWith('/knowledge/')) {
+      if (url.pathname.endsWith('/')) { url.pathname = url.pathname.slice(0, -1); return Response.redirect(url.toString(), 308); }
+      return handler.fetch(request, env, ctx).then((response: Response) => {
+        const headers = new Headers(response.headers);
+        headers.set('Cache-Control', 'public, max-age=60');
+        return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
+      });
+    }
     // Keep the knowledge API out of static routes so authorization runs on every request.
     if(url.pathname === '/api/knowledge' || url.pathname.startsWith('/api/knowledge/')) {
       return knowledgeRequest(request,env).catch(()=>Response.json({error:'Unable to complete this action. Please try again.'},{status:500,headers:{'Cache-Control':'no-store','X-Robots-Tag':'noindex, nofollow'}}));

@@ -4,6 +4,7 @@ import Image from "next/image";
 
 const links = [
   ["/portfolio/projects/", "Projects"],
+  ["/knowledge/", "Knowledge"],
   ["/about/", "About"],
   ["/assets/diamond-brown-resume.pdf", "Resume"],
   ["/contact/", "Contact"],

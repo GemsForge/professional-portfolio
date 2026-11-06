@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import { ownerPageGate } from '../lib/media-server.ts';
-import { knowledgeRequest } from '../lib/knowledge-server.ts';
+import { knowledgeRequest, publicKnowledgeRequest } from '../lib/knowledge-server.ts';
 
 class Bucket {
   data = new Map();
@@ -88,6 +88,28 @@ test('owner can upload, list, and download a private reference', async () => {
   assert.equal((await knowledgeRequest(request(`/api/knowledge/${resource.id}`), env)).status, 404);
 });
 
+test('public wiki can read uploaded references without exposing owner assets or write operations', async () => {
+  const env = { BUCKET: new Bucket() };
+  const form = new FormData();
+  form.set('title', 'Public handbook');
+  form.set('folder', 'handbooks/backend');
+  form.set('file', new File(['# Public handbook\n\nSecret-looking body text stays on the document route.'], 'guide.md', { type: 'text/markdown' }));
+  const created = await knowledgeRequest(request('/api/knowledge', 'POST', form), env);
+  const { resource } = await created.json();
+  const list = await publicKnowledgeRequest(request('/api/public/knowledge', 'GET', undefined, {}), env);
+  assert.equal(list.status, 200);
+  assert.equal(list.headers.get('cache-control'), 'public, max-age=60');
+  const publicResources = (await list.json()).resources;
+  assert.deepEqual(publicResources.map(({ id }) => id), [resource.id]);
+  assert.equal('searchText' in publicResources[0], false);
+  assert.equal('searchText' in resource, true);
+  const file = await publicKnowledgeRequest(request(`/api/public/knowledge/${resource.id}`, 'GET', undefined, {}), env);
+  assert.equal(file.status, 200);
+  assert.equal(await file.text(), '# Public handbook\n\nSecret-looking body text stays on the document route.');
+  const deniedWrite = await publicKnowledgeRequest(request('/api/public/knowledge', 'POST', pdfUpload(), {}), env);
+  assert.equal(deniedWrite.status, 405);
+});
+
 test('uploads reject cross-origin and unsupported or invalid files', async () => {
   const bucket = new Bucket();
   const env = { BUCKET: bucket };
@@ -168,9 +190,13 @@ test('knowledge page gate redirects anonymous users and denies non-owners', asyn
   assert.match(component, /export function KnowledgeDirectory/);
   assert.match(component, /fetch\("\/api\/knowledge"/);
   assert.match(component, /File name/);
+  assert.match(component, /<th scope="col">Uploaded<\/th>/);
+  assert.match(component, /dateTime=\{resource\.createdAt\}/);
+  assert.match(component, /formatUploadDateTime/);
   assert.match(component, /Download/);
   assert.match(reader, /Render Markdown/);
   assert.match(reader, /Markdown source/);
   assert.match(reader, /Download Markdown/);
   assert.match(worker, /knowledgeRequest\(request,env\)/);
+  assert.ok(worker.includes("url.pathname.replace(/^\\/admin\\/handbooks"));
 });

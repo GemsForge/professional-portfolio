@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { readFile } from "node:fs/promises";
+import { readFile, readdir } from "node:fs/promises";
+import path from "node:path";
+import { addDeveloperLibraryNavigation } from "../scripts/portfolio-navigation.mjs";
 
 const header = await readFile("components/site-header.tsx", "utf8");
 const footer = await readFile("components/site-footer.tsx", "utf8");
@@ -9,6 +11,7 @@ const projectCard = await readFile("components/project-card.tsx", "utf8");
 const knowledgeDirectory = await readFile("components/knowledge-directory.tsx", "utf8");
 const knowledgeReader = await readFile("components/knowledge-reader.tsx", "utf8");
 const catalog = await readFile("scripts/project-catalog.mts", "utf8");
+const frameworkRunner = await readFile("scripts/run-framework.mjs", "utf8");
 const rootRoute = await readFile("app/page.tsx", "utf8");
 const route = await readFile("app/[...slug]/page.tsx", "utf8");
 const worker = await readFile("build/sites-worker.ts", "utf8");
@@ -33,6 +36,7 @@ test("the catch-all route delegates every view to the shared renderer", () => {
 
 test("shared navigation exposes accessible active state for nested project routes", () => {
   assert.match(header, /aria-label="Portfolio navigation"/);
+  assert.match(header, /\["\/knowledge\/", "Knowledge"\]/);
   assert.match(header, /pathname\.startsWith\("\/portfolio\/projects\/"\)/);
   assert.match(header, /aria-current=\{isActive\(href\) \? "page"/);
   assert.match(footer, /aria-label="Footer navigation"/);
@@ -58,6 +62,35 @@ test("normal-click destinations remain present in the generated portfolio route 
   for (const pathname of ["/admin/knowledge/", "/admin/knowledge/handbooks/"]) {
     assert.match(knowledgeDirectory, new RegExp(`href=[\"']${pathname.replaceAll("/", "\\/")}`));
   }
+});
+
+test("every static page source produces a header with one Developer Library link", async () => {
+  async function findPages(directory) {
+    const entries = await readdir(directory, { withFileTypes: true });
+    const nested = await Promise.all(entries.map(async (entry) => {
+      const file = path.join(directory, entry.name);
+      if (entry.isDirectory()) return findPages(file);
+      return entry.name === "index.html" ? [file] : [];
+    }));
+    return nested.flat();
+  }
+
+  const sourceFiles = await findPages("static-source");
+  assert.ok(sourceFiles.length > 0);
+  for (const file of sourceFiles) {
+    const html = await readFile(file, "utf8");
+    const transformed = addDeveloperLibraryNavigation(html, file);
+    assert.equal(addDeveloperLibraryNavigation(transformed, file), transformed, `Header link duplicated in ${file}`);
+    const primaryNavigation = transformed.match(/<nav class="links" aria-label="Portfolio navigation">([\s\S]*?)<\/nav>/)?.[1] ?? "";
+    assert.equal((primaryNavigation.match(/href="\/knowledge\/"/g) ?? []).length, 1, `Knowledge link missing or duplicated in ${file}`);
+  }
+
+  const attachmentManager = await readFile("lib/image-manager.html", "utf8");
+  assert.match(attachmentManager, /<nav class="links" aria-label="Portfolio navigation">[^<]*<a href="\/portfolio\/projects\/">Projects<\/a><!-- Keep the public library accessible from owner-tool headers too\. --><a href="\/knowledge\/">Knowledge<\/a>/);
+});
+
+test("local development refreshes generated pages before starting the preview", () => {
+  assert.match(frameworkRunner, /if \(command === "dev"\)[\s\S]*prepare-pages\.mjs/);
 });
 
 test("the generated page catalog includes the required public routes", async () => {
