@@ -90,15 +90,22 @@ test('owner can upload, list, and download a private reference', async () => {
 
 test('public wiki can read uploaded references without exposing owner assets or write operations', async () => {
   const env = { BUCKET: new Bucket() };
-  const created = await knowledgeRequest(request('/api/knowledge', 'POST', pdfUpload()), env);
+  const form = new FormData();
+  form.set('title', 'Public handbook');
+  form.set('folder', 'handbooks/backend');
+  form.set('file', new File(['# Public handbook\n\nSecret-looking body text stays on the document route.'], 'guide.md', { type: 'text/markdown' }));
+  const created = await knowledgeRequest(request('/api/knowledge', 'POST', form), env);
   const { resource } = await created.json();
   const list = await publicKnowledgeRequest(request('/api/public/knowledge', 'GET', undefined, {}), env);
   assert.equal(list.status, 200);
   assert.equal(list.headers.get('cache-control'), 'public, max-age=60');
-  assert.deepEqual((await list.json()).resources.map(({ id }) => id), [resource.id]);
+  const publicResources = (await list.json()).resources;
+  assert.deepEqual(publicResources.map(({ id }) => id), [resource.id]);
+  assert.equal('searchText' in publicResources[0], false);
+  assert.equal('searchText' in resource, true);
   const file = await publicKnowledgeRequest(request(`/api/public/knowledge/${resource.id}`, 'GET', undefined, {}), env);
   assert.equal(file.status, 200);
-  assert.equal(await file.text(), '%PDF-1.7 sample');
+  assert.equal(await file.text(), '# Public handbook\n\nSecret-looking body text stays on the document route.');
   const deniedWrite = await publicKnowledgeRequest(request('/api/public/knowledge', 'POST', pdfUpload(), {}), env);
   assert.equal(deniedWrite.status, 405);
 });

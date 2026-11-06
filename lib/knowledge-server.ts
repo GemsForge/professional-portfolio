@@ -242,7 +242,14 @@ export async function publicKnowledgeRequest(request: Request, env: Cloudflare.E
   const id = url.pathname.slice('/api/public/knowledge'.length).replace(/^\//, '');
   const headers = { 'Cache-Control': 'public, max-age=60', 'X-Content-Type-Options': 'nosniff' };
   if (!id) {
-    const resources = (await listRecords(bucket)).filter((record) => !record.folder.startsWith('assets/'));
+    // Keep full indexed Markdown bodies out of the catalogue response; readers fetch content on demand.
+    const resources = (await listRecords(bucket))
+      .filter((record) => !record.folder.startsWith('assets/'))
+      .map((record) => {
+        const publicRecord = { ...record };
+        delete publicRecord.searchText;
+        return publicRecord;
+      });
     return Response.json({ resources }, { headers: { ...headers, 'Content-Type': 'application/json' } });
   }
   if (!ID_PATTERN.test(id)) return Response.json({ error: 'Resource not found.' }, { status: 404, headers });
