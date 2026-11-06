@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import { ownerPageGate } from '../lib/media-server.ts';
-import { knowledgeRequest } from '../lib/knowledge-server.ts';
+import { knowledgeRequest, publicKnowledgeRequest } from '../lib/knowledge-server.ts';
 
 class Bucket {
   data = new Map();
@@ -86,6 +86,21 @@ test('owner can upload, list, and download a private reference', async () => {
   assert.equal(deleted.status, 200);
   assert.deepEqual([...env.BUCKET.data.keys()], []);
   assert.equal((await knowledgeRequest(request(`/api/knowledge/${resource.id}`), env)).status, 404);
+});
+
+test('public wiki can read uploaded references without exposing owner assets or write operations', async () => {
+  const env = { BUCKET: new Bucket() };
+  const created = await knowledgeRequest(request('/api/knowledge', 'POST', pdfUpload()), env);
+  const { resource } = await created.json();
+  const list = await publicKnowledgeRequest(request('/api/public/knowledge', 'GET', undefined, {}), env);
+  assert.equal(list.status, 200);
+  assert.equal(list.headers.get('cache-control'), 'public, max-age=60');
+  assert.deepEqual((await list.json()).resources.map(({ id }) => id), [resource.id]);
+  const file = await publicKnowledgeRequest(request(`/api/public/knowledge/${resource.id}`, 'GET', undefined, {}), env);
+  assert.equal(file.status, 200);
+  assert.equal(await file.text(), '%PDF-1.7 sample');
+  const deniedWrite = await publicKnowledgeRequest(request('/api/public/knowledge', 'POST', pdfUpload(), {}), env);
+  assert.equal(deniedWrite.status, 405);
 });
 
 test('uploads reject cross-origin and unsupported or invalid files', async () => {

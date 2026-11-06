@@ -232,3 +232,29 @@ export async function knowledgeRequest(request: Request, env: Cloudflare.Env): P
 
   return json({ error: 'Method not allowed.' }, 405);
 }
+
+/** Serves public read-only metadata and files; write methods remain owner-only above. */
+export async function publicKnowledgeRequest(request: Request, env: Cloudflare.Env): Promise<Response> {
+  if (request.method !== 'GET' && request.method !== 'HEAD') return json({ error: 'Method not allowed.' }, 405);
+  const bucket = env.BUCKET;
+  if (!bucket) return json({ error: 'Knowledge storage is unavailable.' }, 503);
+  const url = new URL(request.url);
+  const id = url.pathname.slice('/api/public/knowledge'.length).replace(/^\//, '');
+  const headers = { 'Cache-Control': 'public, max-age=60', 'X-Content-Type-Options': 'nosniff' };
+  if (!id) {
+    const resources = (await listRecords(bucket)).filter((record) => !record.folder.startsWith('assets/'));
+    return Response.json({ resources }, { headers: { ...headers, 'Content-Type': 'application/json' } });
+  }
+  if (!ID_PATTERN.test(id)) return Response.json({ error: 'Resource not found.' }, { status: 404, headers });
+  const metadata = await bucket.get(`${RECORD_PREFIX}${id}.json`);
+  if (!metadata) return Response.json({ error: 'Resource not found.' }, { status: 404, headers });
+  const record = await metadata.json<KnowledgeRecord>();
+  if (record.folder.startsWith('assets/')) return Response.json({ error: 'Resource not found.' }, { status: 404, headers });
+  const file = await bucket.get(`${FILE_PREFIX}${id}`);
+  if (!file) return Response.json({ error: 'Resource not found.' }, { status: 404, headers });
+  if (url.searchParams.get('render') === 'html') {
+    if (record.contentType !== 'text/html') return Response.json({ error: 'Unsupported preview.' }, { status: 415, headers });
+    return new Response(file.body, { headers: { ...headers, 'Content-Type': 'text/html; charset=utf-8', 'Content-Security-Policy': "default-src 'none'; img-src data:; style-src 'unsafe-inline'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'self'" } });
+  }
+  return new Response(request.method === 'HEAD' ? null : file.body, { headers: { ...headers, 'Content-Type': record.contentType, 'Content-Disposition': contentDisposition(record.filename) } });
+}
