@@ -450,7 +450,9 @@ export function KnowledgeDirectory({ initialModule, initialFolder, publicMode = 
                   <h2 id="handbooks-heading">📚 Handbooks</h2>
                   <p>{publicMode ? "Explore published guides by topic and technology." : "Download the HTML editions or Markdown source files."}</p>
                 </div>
-                <a href={publicMode ? "#handbook-grid" : "/admin/knowledge/handbooks/"}>{publicMode ? "Browse handbooks →" : "All handbooks →"}</a>
+                {publicMode
+                  ? <a href="#handbook-grid">Browse handbooks →</a>
+                  : <a href="/admin/knowledge/handbooks/">All handbooks →</a>}
               </div>
               <div className="handbook-controls">
                 <label className="handbook-search">
