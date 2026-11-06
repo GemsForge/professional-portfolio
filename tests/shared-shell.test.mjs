@@ -33,6 +33,7 @@ test("the catch-all route delegates every view to the shared renderer", () => {
 
 test("shared navigation exposes accessible active state for nested project routes", () => {
   assert.match(header, /aria-label="Portfolio navigation"/);
+  assert.match(header, /\["\/knowledge\/", "Knowledge"\]/);
   assert.match(header, /pathname\.startsWith\("\/portfolio\/projects\/"\)/);
   assert.match(header, /aria-current=\{isActive\(href\) \? "page"/);
   assert.match(footer, /aria-label="Footer navigation"/);
@@ -62,6 +63,10 @@ test("normal-click destinations remain present in the generated portfolio route 
 
 test("the generated page catalog includes the required public routes", async () => {
   const pages = JSON.parse(await readFile("lib/static-pages.json", "utf8"));
+  for (const [pathname, html] of Object.entries(pages)) {
+    const primaryNavigation = html.match(/<nav class="links" aria-label="Portfolio navigation">([\s\S]*?)<\/nav>/)?.[1] ?? "";
+    assert.match(primaryNavigation, /href="\/knowledge\/"/, `Knowledge link missing from ${pathname} header`);
+  }
   for (const pathname of [
     "/",
     "/about/",

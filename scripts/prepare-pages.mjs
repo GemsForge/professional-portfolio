@@ -22,6 +22,16 @@ async function visit(directory) {
     route = route === "/" ? route : `${route}/`;
     let text = await readFile(file, "utf8");
 
+    // Keep the public Developer Library reachable in every generated page header.
+    const navigationPattern = /(<nav class="links" aria-label="Portfolio navigation">)([\s\S]*?)(<\/nav>)/;
+    const navigation = text.match(navigationPattern);
+    if (!navigation) throw new Error(`Missing portfolio header navigation in ${route}`);
+    if (!navigation[2].includes('href="/knowledge/"')) {
+      text = text.replace(navigationPattern, (_match, opening, links, closing) =>
+        `${opening}${links.replace(/<\/a>/, '</a><a href="/knowledge/">Knowledge</a>')}${closing}`,
+      );
+    }
+
     const project = PROJECTS[route.split("/").filter(Boolean).at(-1) ?? ""];
     if (project) text = applyProjectPageMetadata(text, project);
 
