@@ -5,6 +5,7 @@ import { createHash } from "node:crypto";
 // transpiler or JSX dependency is needed for this build-time-only module.
 import { renderDependencyGroup } from "./auralogbook-dependencies.mts";
 import { applyProjectPageMetadata, HOME_PROJECT_SLUGS, PROJECTS, renderProjectCard } from "./project-catalog.mts";
+import { addDeveloperLibraryNavigation } from "./portfolio-navigation.mjs";
 
 const source = path.resolve("static-source");
 const pages = {};
@@ -23,14 +24,7 @@ async function visit(directory) {
     let text = await readFile(file, "utf8");
 
     // Keep the public Developer Library reachable in every generated page header.
-    const navigationPattern = /(<nav class="links" aria-label="Portfolio navigation">)([\s\S]*?)(<\/nav>)/;
-    const navigation = text.match(navigationPattern);
-    if (!navigation) throw new Error(`Missing portfolio header navigation in ${route}`);
-    if (!navigation[2].includes('href="/knowledge/"')) {
-      text = text.replace(navigationPattern, (_match, opening, links, closing) =>
-        `${opening}${links.replace(/<\/a>/, '</a><a href="/knowledge/">Knowledge</a>')}${closing}`,
-      );
-    }
+    text = addDeveloperLibraryNavigation(text, route);
 
     const project = PROJECTS[route.split("/").filter(Boolean).at(-1) ?? ""];
     if (project) text = applyProjectPageMetadata(text, project);

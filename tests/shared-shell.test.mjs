@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { readFile } from "node:fs/promises";
+import { readFile, readdir } from "node:fs/promises";
+import path from "node:path";
+import { addDeveloperLibraryNavigation } from "../scripts/portfolio-navigation.mjs";
 
 const header = await readFile("components/site-header.tsx", "utf8");
 const footer = await readFile("components/site-footer.tsx", "utf8");
@@ -61,12 +63,33 @@ test("normal-click destinations remain present in the generated portfolio route 
   }
 });
 
+test("every static page source produces a header with one Developer Library link", async () => {
+  async function findPages(directory) {
+    const entries = await readdir(directory, { withFileTypes: true });
+    const nested = await Promise.all(entries.map(async (entry) => {
+      const file = path.join(directory, entry.name);
+      if (entry.isDirectory()) return findPages(file);
+      return entry.name === "index.html" ? [file] : [];
+    }));
+    return nested.flat();
+  }
+
+  const sourceFiles = await findPages("static-source");
+  assert.ok(sourceFiles.length > 0);
+  for (const file of sourceFiles) {
+    const html = await readFile(file, "utf8");
+    const transformed = addDeveloperLibraryNavigation(html, file);
+    assert.equal(addDeveloperLibraryNavigation(transformed, file), transformed, `Header link duplicated in ${file}`);
+    const primaryNavigation = transformed.match(/<nav class="links" aria-label="Portfolio navigation">([\s\S]*?)<\/nav>/)?.[1] ?? "";
+    assert.equal((primaryNavigation.match(/href="\/knowledge\/"/g) ?? []).length, 1, `Knowledge link missing or duplicated in ${file}`);
+  }
+
+  const attachmentManager = await readFile("lib/image-manager.html", "utf8");
+  assert.match(attachmentManager, /<nav class="links" aria-label="Portfolio navigation">[^<]*<a href="\/portfolio\/projects\/">Projects<\/a><!-- Keep the public library accessible from owner-tool headers too\. --><a href="\/knowledge\/">Knowledge<\/a>/);
+});
+
 test("the generated page catalog includes the required public routes", async () => {
   const pages = JSON.parse(await readFile("lib/static-pages.json", "utf8"));
-  for (const [pathname, html] of Object.entries(pages)) {
-    const primaryNavigation = html.match(/<nav class="links" aria-label="Portfolio navigation">([\s\S]*?)<\/nav>/)?.[1] ?? "";
-    assert.match(primaryNavigation, /href="\/knowledge\/"/, `Knowledge link missing from ${pathname} header`);
-  }
   for (const pathname of [
     "/",
     "/about/",
