@@ -96,6 +96,12 @@ test("project cards consume the shared catalog and are mounted on all project in
 });
 
 test("portfolio project cards render labeled technology marks in both page renderers", () => {
+  for (const source of [catalog, projectCard]) {
+    assert.match(source, /from "simple-icons"/);
+    for (const icon of ["siApple", "siNotion", "siReact", "siTypescript", "siDotnet", "siMui", "siRedux"]) {
+      assert.ok(source.includes(icon), `missing official Simple Icons export: ${icon}`);
+    }
+  }
   assert.match(catalog, /technologies: \{ label: string; icon\?: string \}\[\]/);
   assert.match(catalog, /class="tech-chip"/);
   assert.match(catalog, /<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24">/);
