@@ -183,9 +183,13 @@ test('knowledge page gate redirects anonymous users and denies non-owners', asyn
   assert.match(component, /export function KnowledgeDirectory/);
   assert.match(component, /fetch\("\/api\/knowledge"/);
   assert.match(component, /File name/);
+  assert.match(component, /<th scope="col">Uploaded<\/th>/);
+  assert.match(component, /dateTime=\{resource\.createdAt\}/);
+  assert.match(component, /formatUploadDateTime/);
   assert.match(component, /Download/);
   assert.match(reader, /Render Markdown/);
   assert.match(reader, /Markdown source/);
   assert.match(reader, /Download Markdown/);
   assert.match(worker, /knowledgeRequest\(request,env\)/);
+  assert.ok(worker.includes("url.pathname.replace(/^\\/admin\\/handbooks"));
 });

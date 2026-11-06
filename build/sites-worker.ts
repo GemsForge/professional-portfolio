@@ -12,6 +12,11 @@ const managerPage = manager.replace("<!--PROJECT_OPTIONS-->", PROJECT_OPTIONS_HT
 export default {
   fetch(request: Request, env: Cloudflare.Env, ctx: ExecutionContext<{ CONNECTORS?: ConnectorBinding }>) {
     const url = new URL(request.url);
+    // Keep the short owner route as an alias of the handbooks management module.
+    if (url.pathname === '/admin/handbooks' || url.pathname.startsWith('/admin/handbooks/')) {
+      url.pathname = url.pathname.replace(/^\/admin\/handbooks(?=\/|$)/, '/admin/knowledge/handbooks');
+      request = new Request(url, request);
+    }
     if(url.pathname === '/api/public/knowledge' || url.pathname.startsWith('/api/public/knowledge/')) return publicKnowledgeRequest(request,env);
     if (url.pathname === '/knowledge' || url.pathname === '/knowledge/') {
       if (url.pathname === '/knowledge/') { url.pathname = '/knowledge'; return Response.redirect(url.toString(), 308); }
