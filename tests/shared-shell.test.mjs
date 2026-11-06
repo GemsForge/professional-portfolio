@@ -12,6 +12,7 @@ const catalog = await readFile("scripts/project-catalog.mts", "utf8");
 const rootRoute = await readFile("app/page.tsx", "utf8");
 const route = await readFile("app/[...slug]/page.tsx", "utf8");
 const worker = await readFile("build/sites-worker.ts", "utf8");
+const css = await readFile("static-source/assets/site.css", "utf8");
 
 test("the routed portfolio page owns the shared shell", () => {
   assert.match(renderer, /<SiteHeader pathname=\{pathname\} \/>/);
@@ -78,7 +79,7 @@ test("project cards consume the shared catalog and are mounted on all project in
   assert.match(projectCard, /project\.name|project\.cardTitle/);
   assert.match(projectCard, /project\.description/);
   assert.match(projectCard, /project\.preTitle/);
-  assert.match(projectCard, /project\.primaryTools/);
+  assert.match(projectCard, /project\.technologies\.map/);
   assert.match(projectCard, /project\.image/);
   assert.match(projectCard, /project\.slug/);
   assert.match(projectCard, /Object\.values\(PROJECTS\)/);
@@ -92,4 +93,22 @@ test("project cards consume the shared catalog and are mounted on all project in
   assert.match(renderer, /pathname === "\/portfolio\/projects\/"/);
   assert.match(catalog, /applyProjectPageMetadata/);
   assert.match(catalog, /renderProjectCard/);
+});
+
+test("portfolio project cards render labeled technology marks in both page renderers", () => {
+  assert.match(catalog, /technologies: \{ label: string; icon\?: string \}\[\]/);
+  assert.match(catalog, /class="tech-chip"/);
+  assert.match(catalog, /<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24">/);
+  assert.match(projectCard, /project\.technologies\.map/);
+  assert.match(projectCard, /aria-label="Technologies and project themes"/);
+  assert.match(css, /\.tech-chip\{[\s\S]*?font-size:12px/);
+});
+
+test("portfolio cards and actions use the shared glass and focus treatments", () => {
+  assert.match(css, /--glass:rgba\(/);
+  assert.match(css, /\.project\{[^}]*linear-gradient/);
+  assert.match(css, /\.project:hover\{[^}]*translateY\(-5px\)/);
+  assert.match(css, /\.button\{[^}]*border-radius:999px/);
+  assert.match(css, /prefers-reduced-motion:reduce/);
+  assert.match(css, /a:focus-visible,button:focus-visible,summary:focus-visible/);
 });
