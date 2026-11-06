@@ -1,5 +1,6 @@
+// Intentional: use browser navigation because client-side route transitions are failing.
+/* eslint-disable @next/next/no-html-link-for-pages */
 import Image from "next/image";
-import Link from "next/link";
 import {
   PROJECTS,
   type ProjectDefinition,
@@ -9,12 +10,13 @@ import {
  * Renders one project card from the shared project catalog.
  *
  * Card copy, imagery, tools, and destination are supplied by the same
- * ProjectDefinition used to prepare the matching detail page.
+ * ProjectDefinition used to prepare the matching detail page. Native anchors
+ * keep project navigation available when client-side routing is unavailable.
  */
 export function ProjectCard({ project }: { project: ProjectDefinition }) {
   return (
     <article className="project">
-      <Link
+      <a
         href={`/portfolio/projects/${project.slug}/`}
         className="project-visual"
         tabIndex={-1}
@@ -27,14 +29,14 @@ export function ProjectCard({ project }: { project: ProjectDefinition }) {
           height={520}
           loading="lazy"
         />
-      </Link>
+      </a>
       <div className="project-meta">{project.preTitle}</div>
       <h3>{project.cardTitle}</h3>
       <p>{project.description}</p>
       <div className="tags">{project.primaryTools}</div>
-      <Link className="worklink" href={`/portfolio/projects/${project.slug}/`}>
+      <a className="worklink" href={`/portfolio/projects/${project.slug}/`}>
         {project.cardLinkLabel}
-      </Link>
+      </a>
     </article>
   );
 }
@@ -54,9 +56,9 @@ export function ProjectCardGrid({ slugs, showMoreLink = false }: { slugs?: strin
       </div>
       {showMoreLink && (
         <div className="wrap project-grid-actions">
-          <Link className="button secondary" href="/portfolio/projects/">
+          <a className="button secondary" href="/portfolio/projects/">
             Explore more projects ↗
-          </Link>
+          </a>
         </div>
       )}
     </>

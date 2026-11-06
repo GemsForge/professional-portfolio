@@ -1,4 +1,5 @@
-import Link from "next/link";
+// Intentional: use browser navigation because client-side route transitions are failing.
+/* eslint-disable @next/next/no-html-link-for-pages */
 import Image from "next/image";
 
 const links = [
@@ -9,7 +10,8 @@ const links = [
 ] as const;
 
 /**
- * Renders the single site-wide header and primary navigation.
+ * Renders the single site-wide header and primary navigation with native
+ * anchors so route changes do not depend on client-side router hydration.
  *
  * The pathname is supplied by the catch-all route so nested project pages can
  * keep Projects active without duplicating navigation markup in each view.
@@ -25,15 +27,15 @@ export function SiteHeader({ pathname }: { pathname: string }) {
       <a className="skip" href="#main">Skip to content</a>
       <header>
         <div className="wrap nav">
-          <Link className="brand" href="/" aria-label="Diamond Brown portfolio home">
+          <a className="brand" href="/" aria-label="Diamond Brown portfolio home">
             <Image src="/assets/brandmark.png" alt="" width={66} height={66} />
             <span>Diamond Brown<small>Software Development &amp; Systems</small></span>
-          </Link>
+          </a>
           <nav className="links" aria-label="Portfolio navigation">
             {links.map(([href, label]) => (
-                <Link key={href} href={href} aria-current={isActive(href) ? "page" : undefined}>
+                <a key={href} href={href} aria-current={isActive(href) ? "page" : undefined}>
                 {label}
-              </Link>
+              </a>
             ))}
           </nav>
         </div>

@@ -6,9 +6,12 @@ const header = await readFile("components/site-header.tsx", "utf8");
 const footer = await readFile("components/site-footer.tsx", "utf8");
 const renderer = await readFile("components/portfolio-page.tsx", "utf8");
 const projectCard = await readFile("components/project-card.tsx", "utf8");
+const knowledgeDirectory = await readFile("components/knowledge-directory.tsx", "utf8");
+const knowledgeReader = await readFile("components/knowledge-reader.tsx", "utf8");
 const catalog = await readFile("scripts/project-catalog.mts", "utf8");
 const rootRoute = await readFile("app/page.tsx", "utf8");
 const route = await readFile("app/[...slug]/page.tsx", "utf8");
+const worker = await readFile("build/sites-worker.ts", "utf8");
 
 test("the routed portfolio page owns the shared shell", () => {
   assert.match(renderer, /<SiteHeader pathname=\{pathname\} \/>/);
@@ -33,6 +36,27 @@ test("shared navigation exposes accessible active state for nested project route
   assert.match(header, /aria-current=\{isActive\(href\) \? "page"/);
   assert.match(footer, /aria-label="Footer navigation"/);
   assert.match(renderer, /href="#main"|id="main"/);
+});
+
+test("site and owner navigation use native anchors for reliable full-page routing", () => {
+  for (const component of [header, footer, projectCard, knowledgeDirectory, knowledgeReader]) {
+    assert.doesNotMatch(component, /from ["']next\/link["']/);
+    assert.match(component, /<a\b[^>]*href=/);
+  }
+  assert.match(footer, /<a href="\/admin\/">Admin<\/a>/);
+  assert.match(knowledgeDirectory, /<a[^>]+href="\/admin\/knowledge\/handbooks\/"/);
+});
+
+test("normal-click destinations remain present in the generated portfolio route map", async () => {
+  const pages = JSON.parse(await readFile("lib/static-pages.json", "utf8"));
+  for (const pathname of ["/", "/portfolio/projects/", "/about/", "/contact/"]) {
+    assert.ok(pages[pathname], `normal navigation destination is missing: ${pathname}`);
+  }
+  assert.match(worker, /url\.pathname === ['"]\/admin['"] \|\| url\.pathname === ['"]\/admin\/['"]/);
+  assert.match(worker, /adminPageRequest\(request,managerPage\)/);
+  for (const pathname of ["/admin/knowledge/", "/admin/knowledge/handbooks/"]) {
+    assert.match(knowledgeDirectory, new RegExp(`href=[\"']${pathname.replaceAll("/", "\\/")}`));
+  }
 });
 
 test("the generated page catalog includes the required public routes", async () => {

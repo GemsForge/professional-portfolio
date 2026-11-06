@@ -1,8 +1,10 @@
-import Link from "next/link";
+// Intentional: use browser navigation because client-side route transitions are failing.
+/* eslint-disable @next/next/no-html-link-for-pages */
 import Image from "next/image";
 
 /**
- * Renders the single site-wide footer navigation.
+ * Renders the single site-wide footer navigation with native anchors so
+ * navigation remains reliable without client-side router hydration.
  *
  * Keeping this in the shared shell ensures every generated view exposes the
  * same project, resume, contact, admin, and back-to-top links.
@@ -16,10 +18,10 @@ export function SiteFooter() {
           <span>© 2026 Diamond Brown · GemsForge</span>
         </div>
         <nav aria-label="Footer navigation">
-          <Link href="/portfolio/projects/">Projects</Link>
-          <Link href="/assets/diamond-brown-resume.pdf">Resume</Link>
-          <Link href="/contact/">Contact</Link>
-          <Link href="/admin/">Admin</Link>
+          <a href="/portfolio/projects/">Projects</a>
+          <a href="/assets/diamond-brown-resume.pdf">Resume</a>
+          <a href="/contact/">Contact</a>
+          <a href="/admin/">Admin</a>
           <a href="#main">Back to top ↑</a>
         </nav>
       </div>

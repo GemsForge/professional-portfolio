@@ -1,14 +1,19 @@
 "use client";
 
+// Intentional: use browser navigation because client-side route transitions are failing.
+/* eslint-disable @next/next/no-html-link-for-pages */
 import { useEffect, useRef, useState } from "react";
 import type { KeyboardEvent } from "react";
-import Link from "next/link";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { KnowledgeMarkdown } from "@/components/knowledge-markdown";
 import type { KnowledgeResource } from "@/lib/knowledge-types";
 
-/** Presents one private HTML or Markdown reference in a focused reading view. */
+/**
+ * Presents one private HTML or Markdown reference in a focused reading view.
+ * Native anchors keep route changes reliable without client-side router
+ * hydration; the server continues to authorize every destination.
+ */
 export function KnowledgeReader({ id }: { /** Stable library resource identifier. */ id: string }) {
   const [resource, setResource] = useState<KnowledgeResource | null>(null);
   const [markdown, setMarkdown] = useState("");
@@ -149,7 +154,7 @@ export function KnowledgeReader({ id }: { /** Stable library resource identifier
     <SiteHeader pathname="/admin/knowledge/" />
     <main id="main" className="wrap knowledge-page knowledge-reader">
       <nav className="library-location" aria-label="Breadcrumb">
-        <Link href="/admin/knowledge/">Developer library</Link>
+        <a href="/admin/knowledge/">Developer library</a>
         <span aria-current="page">{resource?.title ?? "Reference"}</span>
       </nav>
       <header className={`reader-heading${readerHeadingCollapsed ? " is-collapsed" : ""}`}>
@@ -159,7 +164,7 @@ export function KnowledgeReader({ id }: { /** Stable library resource identifier
           {resource && <p>{resource.filename}</p>}
         </div>
         <nav className="reader-collapsed-breadcrumb" aria-label="Collapsed breadcrumb">
-          <Link href="/admin/knowledge/">Developer library</Link>
+          <a href="/admin/knowledge/">Developer library</a>
           <span aria-hidden="true">/</span>
           <span>{resource?.title ?? "Reference"}</span>
         </nav>
@@ -169,10 +174,10 @@ export function KnowledgeReader({ id }: { /** Stable library resource identifier
             {resource.contentType === "text/markdown" && <>
               <button type="button" onClick={() => setView("rendered")} aria-pressed={view === "rendered"}>Render Markdown</button>
               <button type="button" onClick={() => setView("source")} aria-pressed={view === "source"}>Markdown source</button>
-              <Link href={`/api/knowledge/${encodeURIComponent(resource.id)}?format=html`}>Download HTML ↗</Link>
-              <Link href={`/api/knowledge/${encodeURIComponent(resource.id)}`}>Download Markdown ↗</Link>
+              <a href={`/api/knowledge/${encodeURIComponent(resource.id)}?format=html`}>Download HTML ↗</a>
+              <a href={`/api/knowledge/${encodeURIComponent(resource.id)}`}>Download Markdown ↗</a>
             </>}
-            {resource.contentType === "text/html" && <Link href={`/api/knowledge/${encodeURIComponent(resource.id)}`}>Download HTML ↗</Link>}
+            {resource.contentType === "text/html" && <a href={`/api/knowledge/${encodeURIComponent(resource.id)}`}>Download HTML ↗</a>}
           </div>
         </details>}
       </header>
