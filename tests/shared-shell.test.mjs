@@ -110,6 +110,13 @@ test("portfolio project cards render labeled technology marks in both page rende
   assert.match(css, /\.tech-chip\{[\s\S]*?font-size:12px/);
 });
 
+test("project-card labels leave their decorative arrow to the shared style", () => {
+  assert.match(catalog, /cardLinkLabel: "Explore Aura Logbook"/);
+  assert.doesNotMatch(catalog, /cardLinkLabel: "Explore Aura Logbook ↗"/);
+  assert.match(css, /\.worklink:after\{content:/);
+  assert.match(projectCard, /project\.cardLinkLabel/);
+});
+
 test("portfolio cards and actions use the shared glass and focus treatments", () => {
   assert.match(css, /--glass:rgba\(/);
   assert.match(css, /\.project\{[^}]*linear-gradient/);
