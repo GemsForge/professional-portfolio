@@ -1,0 +1,573 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GitHub Project Management Handbook</title>
+<style>
+:root{--ink:#2b2730;--muted:#706976;--blue:#8b5e3c;--pale:#fff1d6;--line:#e3d4c2;--paper:#fffdf9;--bg:#f4eadf;--amber:#d48a3a;--rose:#bd6d5b}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:"Avenir Next",Avenir,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.62}.book{max-width:980px;margin:32px auto;background:var(--paper);box-shadow:0 12px 36px #6c4a3020}.cover{min-height:760px;padding:100px 88px 72px;display:flex;flex-direction:column;justify-content:center;border-bottom:1px solid var(--line);background:linear-gradient(145deg,#fffdf9 0%,#fff3df 62%,#f8dfcf 100%)}.eyebrow{color:var(--rose);font-weight:800;letter-spacing:.12em;text-transform:uppercase;font-size:.78rem}.cover h1{font-size:3.3rem;line-height:1.06;margin:.35rem 0 1rem;color:var(--ink)}.subtitle{font-size:1.28rem;color:var(--muted);max-width:700px}.loop{display:flex;margin:50px 0 28px}.loop span{flex:1;padding:14px 12px;background:var(--pale);border:1px solid #d9b27e;font-weight:750;text-align:center}.cover-note{color:var(--muted);font-size:.92rem}.frontmatter,.content{padding:52px 88px}.frontmatter{border-bottom:1px solid var(--line)}h1,h2,h3{color:var(--ink);line-height:1.2;scroll-margin-top:20px}h1{font-size:2.05rem;border-bottom:2px solid var(--blue);padding-bottom:.35rem;margin-top:3rem}h1::before{content:'📘  CHAPTER';display:block;color:var(--rose);font-size:.68rem;letter-spacing:.14em;font-weight:800;margin-bottom:.35rem}h2{font-size:1.35rem;color:var(--blue);margin-top:2.15rem}h2::before{content:'🧭  GUIDANCE';display:block;color:var(--amber);font-size:.62rem;letter-spacing:.13em;font-weight:800;margin-bottom:.3rem}h3{font-size:1.05rem;color:var(--muted);margin-top:1.6rem}h3::before{content:'🔎  DETAIL';display:block;color:var(--muted);font-size:.58rem;letter-spacing:.12em;font-weight:800;margin-bottom:.2rem}.content>h1{break-before:page}.content>h1:first-child{break-before:auto}p,li{font-size:1rem}a{color:#0563c1;text-decoration-thickness:1px;text-underline-offset:2px}ul,ol{padding-left:1.45rem}.toc{columns:2;column-gap:40px;padding:0;list-style:none}.toc li{break-inside:avoid;margin:.35rem 0}.toc-level-1{font-weight:750;margin-top:.75rem!important}.toc-level-2{padding-left:1rem;font-size:.93rem}pre{position:relative;background:#fff8ed;border:1px solid var(--line);border-left:4px solid var(--amber);padding:36px 20px 18px;overflow:auto;white-space:pre-wrap;font:.9rem/1.45 "SFMono-Regular",Consolas,monospace;border-radius:4px}pre::before{content:'💻  CODE EXAMPLE';position:absolute;top:10px;left:20px;color:var(--blue);font:800 .62rem/1 Inter,system-ui;letter-spacing:.13em}code{background:#fff1d6;padding:.1em .3em;border-radius:3px;font-family:"SFMono-Regular",Consolas,monospace;font-size:.92em}strong{font-weight:800;background:linear-gradient(transparent 58%,#ffe99a 58%);padding:0 .08em}table{border-collapse:collapse;width:100%;margin:20px 0 28px;font-size:.94rem;position:relative}table::before{content:'📋  REFERENCE TABLE';display:block;color:var(--muted);font:800 .62rem/1 Inter,system-ui;letter-spacing:.13em;margin-bottom:7px}th,td{border:1px solid var(--line);padding:10px 12px;vertical-align:top}th{background:#4a3a34;color:#fff;text-align:left}tr:nth-child(even) td{background:#fff8ed}blockquote{margin:22px 0;padding:36px 20px 14px;background:#fff4c9;border-left:4px solid #d49a27;color:#51433b;position:relative}blockquote::before{content:'💡  DECISION RULE';position:absolute;top:12px;left:20px;color:#9a7800;font:800 .62rem/1 Inter,system-ui;letter-spacing:.13em}.resource-note{padding:16px 18px;background:var(--pale);border:1px solid #d9b27e;color:#51433b}.tech-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:24px 0 30px}.tech-card{min-height:92px;border:1px solid var(--line);background:#fffaf2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;padding:10px;text-align:center;font-size:.78rem;font-weight:750;color:var(--muted)}.tech-logo{max-height:42px;max-width:78px;object-fit:contain}.tech-mark{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:5px 9px;border-radius:8px;background:var(--blue);color:white;font-size:.75rem;line-height:1.1}.mermaid{margin:24px 0;padding:18px;background:#fffaf2;border:1px solid var(--line);border-left:4px solid var(--rose);overflow:auto;text-align:center}.mermaid svg{max-width:100%;height:auto}
+@media(max-width:700px){.book{margin:0;box-shadow:none}.cover,.frontmatter,.content{padding:42px 22px}.cover{min-height:650px}.cover h1{font-size:2.35rem}.loop{display:block}.loop span{display:block}.toc{columns:1}table{display:block;overflow-x:auto}}@media print{body{background:#fff}.book{margin:0;box-shadow:none;max-width:none}.cover{min-height:100vh}.frontmatter,.content{padding:28px 0}.content>h1{break-before:page}.content>h1:first-child{break-before:auto}a{color:inherit;text-decoration:none}.toc a::after{content:"  " target-counter(attr(href),page);color:#666}}
+</style>
+<style>
+:root{--ink:#1E2823;--muted:#4C554F;--blue:#355A3A;--pale:#E3F2E3;--line:#B3B3B3;--paper:#F2F3F2;--bg:#F2F2DB;--amber:#C7831B;--rose:#D49B7E}
+.cover{background:linear-gradient(145deg,#F2F3F2 0%,#E3F2E3 62%,#D49B7E 100%)}
+a{color:var(--blue)}pre{background:#FAF9F0}code{background:var(--pale)}strong{background:linear-gradient(transparent 58%,#F6D98C 58%)}th{background:var(--ink)}tr:nth-child(even) td{background:#FAF9F0}blockquote{background:#F2F2DB;border-left-color:var(--amber)}.resource-note{background:var(--pale);border-color:var(--emerald,#7DB687);color:var(--ink)}.tech-card{background:#FAF9F0}.book-nav{background:var(--ink);border-bottom-color:var(--emerald,#7DB687)}.book-nav a{background:var(--pale);border-color:var(--emerald,#7DB687);color:var(--ink)}.book-nav a.secondary{color:var(--paper)}
+.book-nav{position:sticky;top:0;z-index:10;display:flex;gap:10px;align-items:center;padding:12px 18px;background:#4a3a34;border-bottom:1px solid #d9b27e}.book-nav a{display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border:1px solid #e8c99d;border-radius:999px;background:#fff1d6;color:#4a3a34;font-weight:800;font-size:.84rem;text-decoration:none}.book-nav a.secondary{background:transparent;color:#fff}.book-nav a:hover{background:#ffe3ad}.book-nav a.secondary:hover{background:#6b5143}@media print{.book-nav{display:none}}
+.book-menu{position:relative}.book-menu summary{list-style:none}.book-menu summary::-webkit-details-marker{display:none}.book-menu-trigger{display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border:1px solid #7DB687;border-radius:999px;background:transparent;color:#F2F3F2;font:800 .84rem/1.2 "Avenir Next",Avenir,sans-serif;cursor:pointer}.cover-options{margin-top:24px}.cover-options .book-menu-trigger{background:#E3F2E3;color:#1E2823}.book-menu-panel{position:absolute;right:0;top:calc(100% + 8px);z-index:20;display:grid;min-width:220px;padding:7px;border:1px solid #7DB687;border-radius:10px;background:#F2F3F2;box-shadow:0 10px 24px #1E282344}.book-menu-panel a{display:block!important;width:100%;padding:9px 10px;border:0;background:transparent!important;color:#1E2823!important;border-radius:7px;text-decoration:none}.book-menu-panel a:hover{background:#E3F2E3!important}
+ </style>
+<style>.book-nav{background:#1E2823!important;border-bottom-color:#7DB687!important}.book-nav a{background:#E3F2E3!important;border-color:#7DB687!important;color:#1E2823!important}.book-nav a.secondary{background:transparent!important;color:#F2F3F2!important}</style>
+</head>
+<body><main class="book">
+<nav class="book-nav" aria-label="Book navigation"><a href="index.html">🏠 Home</a><a class="secondary" href="#navigator">🧭 Navigator</a></nav>
+<section class="cover"><div class="eyebrow">GemsForge Reference</div><h1>GitHub Project Management Handbook</h1><p class="subtitle">A practical reference for repositories, Scrum boards, issues, pull requests, and MVP delivery</p><div class="loop"><span>🧭 Orientation</span><span>🧱 Boundaries</span><span>🧪 Practice</span><span>✅ Evidence</span></div><p class="cover-note">Generated from the source Markdown guide. Open in a browser for links; print from the browser for a booklet-style reference.</p><div class="cover-options"><details class="book-menu"><summary class="book-menu-trigger">⚙️ View options</summary><div class="book-menu-panel"><a href="github-project-management-handbook-source.html">📝 View rendered Markdown</a><a href="github-project-management-handbook.md">📄 Open raw Markdown</a><a href="./" target="_blank" rel="noreferrer">📂 Browse enclosing folder</a><a href="index.html">🏠 Library home</a></div></details></div></section>
+<section id="navigator" class="frontmatter"><h1>Navigator</h1><p>This booklet preserves the source guide while adding a warm visual system, responsive layout, technology marks, and print rules.</p><ol class="toc"><li class="toc-level-1"><a href="#section-1">🐙 GitHub Project Management Handbook</a></li><li class="toc-level-2"><a href="#section-2">🎯 Purpose</a></li><li class="toc-level-2"><a href="#section-3">🧭 1. Repository setup</a></li><li class="toc-level-3"><a href="#section-4">✅ Minimum repository setup</a></li><li class="toc-level-3"><a href="#section-5">📁 Recommended repository documentation</a></li><li class="toc-level-3"><a href="#section-6">Why these files exist</a></li><li class="toc-level-2"><a href="#section-7">🧭 2. Project Scrum board setup</a></li><li class="toc-level-3"><a href="#section-8">Recommended project fields</a></li><li class="toc-level-3"><a href="#section-9">Size or story points</a></li><li class="toc-level-3"><a href="#section-10">Risk criteria</a></li><li class="toc-level-3"><a href="#section-11">Recommended views</a></li><li class="toc-level-3"><a href="#section-12">Status meanings</a></li><li class="toc-level-2"><a href="#section-13">🏷️ 3. Labels</a></li><li class="toc-level-3"><a href="#section-14">Label rule</a></li><li class="toc-level-3"><a href="#section-15">Minimal starting label set</a></li><li class="toc-level-3"><a href="#section-16">Label decisions</a></li><li class="toc-level-2"><a href="#section-17">📝 4. MVP story creation</a></li><li class="toc-level-3"><a href="#section-18">Quick issue template</a></li><li class="toc-level-3"><a href="#section-19">Story template</a></li><li class="toc-level-3"><a href="#section-20">MVP story rules</a></li><li class="toc-level-2"><a href="#section-21">🌿 5. Branches, commits, and pull requests</a></li><li class="toc-level-3"><a href="#section-22">Branch rule</a></li><li class="toc-level-3"><a href="#section-23">Commit policy</a></li><li class="toc-level-3"><a href="#section-24">Pull request expectations</a></li><li class="toc-level-2"><a href="#section-25">🔒 6. Protecting branches</a></li><li class="toc-level-3"><a href="#section-26">Minimum protections</a></li><li class="toc-level-2"><a href="#section-27">📚 7. Supporting GitHub documentation</a></li><li class="toc-level-3"><a href="#section-28">Repository, issues, labels, and pull requests</a></li><li class="toc-level-3"><a href="#section-29">Branches, checks, and workflows</a></li><li class="toc-level-2"><a href="#section-30">🔄 8. From client request to promotion</a></li><li class="toc-level-3"><a href="#section-31">Client to story</a></li><li class="toc-level-3"><a href="#section-32">Story to development</a></li><li class="toc-level-3"><a href="#section-33">Development to review</a></li><li class="toc-level-3"><a href="#section-34">Review to QA</a></li><li class="toc-level-3"><a href="#section-35">QA to promotion</a></li><li class="toc-level-2"><a href="#section-36">📊 9. Delivery reports and checkpoints</a></li><li class="toc-level-3"><a href="#section-37">Development checkpoint</a></li><li class="toc-level-3"><a href="#section-38">Sprint delivery report</a></li><li class="toc-level-2"><a href="#section-39">🧩 10. MVP GitHub setup</a></li><li class="toc-level-2"><a href="#section-40">📚 11. Glossary</a></li></ol><h2>Technology referenced in the guide</h2><div class="tech-strip"><div class="tech-card"><img class="tech-logo" src="data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjMjA4OEZGIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+R2l0SHViIEFjdGlvbnM8L3RpdGxlPjxwYXRoIGQ9Ik0xMC45ODQgMTMuODM2YS41LjUgMCAwIDEtLjM1My0uMTQ2bC0uNzQ1LS43NDNhLjUuNSAwIDEgMSAuNzA2LS43MDhsLjM5Mi4zOTEgMS4xODEtMS4xOGEuNS41IDAgMCAxIC43MDguNzA3bC0xLjUzNSAxLjUzM2EuNTA0LjUwNCAwIDAgMS0uMzU0LjE0NnptOS4zNTMtLjE0N2wxLjUzNC0xLjUzMmEuNS41IDAgMCAwLS43MDctLjcwN2wtMS4xODEgMS4xOC0uMzkyLS4zOTFhLjUuNSAwIDEgMC0uNzA2LjcwOGwuNzQ2Ljc0M2EuNDk3LjQ5NyAwIDAgMCAuNzA2LS4wMDF6TTQuNTI3IDcuNDUybDIuNTU3LTEuNTg1QTEgMSAwIDAgMCA3LjA5IDQuMTdMNC41MzMgMi41NkExIDEgMCAwIDAgMyAzLjQwNnYzLjE5NmExLjAwMSAxLjAwMSAwIDAgMCAxLjUyNy44NXptMi4wMy0yLjQzNkw0IDYuNjAyVjMuNDA2bDIuNTU3IDEuNjF6TTI0IDEyLjVjMCAxLjkzLTEuNTcgMy41LTMuNSAzLjVhMy41MDMgMy41MDMgMCAwIDEtMy40Ni0zaC0yLjA4YTMuNTAzIDMuNTAzIDAgMCAxLTMuNDYgMyAzLjUwMiAzLjUwMiAwIDAgMS0zLjQ2LTNoLS41NThjLS45NzIgMC0xLjg1LS4zOTktMi40ODItMS4wNDJWMTdjMCAxLjY1NCAxLjM0NiAzIDMgM2guMDRjLjI0NC0xLjY5MyAxLjctMyAzLjQ2LTMgMS45MyAwIDMuNSAxLjU3IDMuNSAzLjVTMTMuNDMgMjQgMTEuNSAyNGEzLjUwMiAzLjUwMiAwIDAgMS0zLjQ2LTNIOGMtMi4yMDYgMC00LTEuNzk0LTQtNFY5Ljg5OUE1LjAwOCA1LjAwOCAwIDAgMSAwIDVjMC0yLjc1NyAyLjI0My01IDUtNXM1IDIuMjQzIDUgNWE1LjAwNSA1LjAwNSAwIDAgMS00Ljk1MiA0Ljk5OEEyLjQ4MiAyLjQ4MiAwIDAgMCA3LjQ4MiAxMmguNTU4Yy4yNDQtMS42OTMgMS43LTMgMy40Ni0zYTMuNTAyIDMuNTAyIDAgMCAxIDMuNDYgM2gyLjA4YTMuNTAzIDMuNTAzIDAgMCAxIDMuNDYtM2MxLjkzIDAgMy41IDEuNTcgMy41IDMuNXptLTE1IDhjMCAxLjM3OCAxLjEyMiAyLjUgMi41IDIuNXMyLjUtMS4xMjIgMi41LTIuNS0xLjEyMi0yLjUtMi41LTIuNVM5IDE5LjEyMiA5IDIwLjV6TTUgOWMyLjIwNiAwIDQtMS43OTQgNC00UzcuMjA2IDEgNSAxIDEgMi43OTQgMSA1czEuNzk0IDQgNCA0em05IDMuNWMwLTEuMzc4LTEuMTIyLTIuNS0yLjUtMi41UzkgMTEuMTIyIDkgMTIuNXMxLjEyMiAyLjUgMi41IDIuNSAyLjUtMS4xMjIgMi41LTIuNXptOSAwYzAtMS4zNzgtMS4xMjItMi41LTIuNS0yLjVTMTggMTEuMTIyIDE4IDEyLjVzMS4xMjIgMi41IDIuNSAyLjUgMi41LTEuMTIyIDIuNS0yLjV6bS0xMyA4YS41LjUgMCAxIDAgMSAwIC41LjUgMCAwIDAtMSAwem0yIDBhLjUuNSAwIDEgMCAxIDAgLjUuNSAwIDAgMC0xIDB6bTEyIDBjMCAxLjkzLTEuNTcgMy41LTMuNSAzLjVhMy41MDMgMy41MDMgMCAwIDEtMy40Ni0zLjAwMmMtLjAwNy4wMDEtLjAxMy4wMDUtLjAyMS4wMDVsLS41MDYuMDE3aC0uMDE3YS41LjUgMCAwIDEtLjAxNi0uOTk5bC41MDYtLjAxN2MuMDE4LS4wMDIuMDM1LjAwNi4wNTIuMDA3QTMuNTAzIDMuNTAzIDAgMCAxIDIwLjUgMTdjMS45MyAwIDMuNSAxLjU3IDMuNSAzLjV6bS0xIDBjMC0xLjM3OC0xLjEyMi0yLjUtMi41LTIuNVMxOCAxOS4xMjIgMTggMjAuNXMxLjEyMiAyLjUgMi41IDIuNSAyLjUtMS4xMjIgMi41LTIuNXoiLz48L3N2Zz4=" alt="GitHub Actions logo"><span>GitHub Actions</span></div><div class="tech-card"><span class="tech-mark">GitHub</span><span>GitHub</span></div><div class="tech-card"><span class="tech-mark">Scrum</span><span>Scrum</span></div></div><p class="resource-note"><strong>Use it when:</strong> reading, teaching, reviewing, or printing this guide as a durable reference.</p></section>
+<article class="content"><h1 id="section-1">🐙 GitHub Project Management Handbook</h1>
+<h2 id="section-2">🎯 Purpose</h2>
+<p>This handbook explains how to set up and operate a GitHub repository and Scrum project for a small product team, solo developer, or AI-assisted development team.</p>
+<p>It covers the work from client intent to planned story, development branch, verified pull request, and approved promotion. It does not replace a deployment handbook; it defines the project-management flow and the evidence required before promotion.</p>
+<blockquote>
+<p>🧬 Guiding principle: Make the work traceable from user need to verified change without creating administrative work that does not improve clarity.</p>
+</blockquote>
+<p><strong>💬 Client intent → 📝 Story → 🧭 Plan → 🌿 Branch → 💻 Development → 🧪 Verification → 🔍 Review → 🚦 Approval → 📦 Promotion</strong></p>
+<h2 id="section-3">🧭 1. Repository setup</h2>
+<h3 id="section-4">✅ Minimum repository setup</h3>
+<ul>
+<li>Create the repository with a clear product name and description.</li>
+<li>Keep the default branch protected.</li>
+<li>Add a README with purpose, local setup, supported environments, and current status.</li>
+<li>Add a license when the project’s distribution policy is known.</li>
+<li>Add a <code>.gitignore</code> for the language, IDE, operating system, and local secrets.</li>
+<li>Add contribution and development guidance when more than one person or agent will work in the repository.</li>
+<li>Add issue and pull-request templates when recurring information is required.</li>
+<li>Add a documented commit policy and local validation hook where appropriate.</li>
+<li>Add required checks before allowing protected-branch merges.</li>
+</ul>
+<h3 id="section-5">📁 Recommended repository documentation</h3>
+<pre><code class="language-text">README.md
+CONTRIBUTING.md
+SECURITY.md
+CHANGELOG.md
+.github/
+├── ISSUE_TEMPLATE/
+│   ├── feature.md
+│   ├── bug.md
+│   └── task.md
+├── PULL_REQUEST_TEMPLATE.md
+└── workflows/
+    ├── policy-checks.yml
+    └── test-and-build.yml</code></pre><h3 id="section-6">Why these files exist</h3>
+<table>
+<thead>
+<tr>
+<th>File or folder</th>
+<th>Why it helps</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>README.md</code></td>
+<td>Gives a new contributor the shortest path to understand the product, run it, test it, and find deeper documentation.</td>
+</tr>
+<tr>
+<td><code>CONTRIBUTING.md</code></td>
+<td>Explains how changes should be proposed, developed, verified, and reviewed when the rules need more detail than the README.</td>
+</tr>
+<tr>
+<td><code>SECURITY.md</code></td>
+<td>Tells people how to report a vulnerability without exposing it in a public issue.</td>
+</tr>
+<tr>
+<td><code>CHANGELOG.md</code></td>
+<td>Records meaningful user-facing changes across versions or releases.</td>
+</tr>
+<tr>
+<td><code>.github/ISSUE_TEMPLATE/</code></td>
+<td>Helps recurring issue types capture the information needed for planning and triage.</td>
+</tr>
+<tr>
+<td><code>feature.md</code></td>
+<td>Captures user outcome, scope, acceptance criteria, and verification for a new capability.</td>
+</tr>
+<tr>
+<td><code>bug.md</code></td>
+<td>Captures reproduction steps, expected behavior, actual behavior, impact, and evidence.</td>
+</tr>
+<tr>
+<td><code>task.md</code></td>
+<td>Captures focused maintenance, documentation, research, or technical work that is not a feature or bug.</td>
+</tr>
+<tr>
+<td><code>PULL_REQUEST_TEMPLATE.md</code></td>
+<td>Reminds contributors to include outcome, scope, checks, risks, screenshots, and approval needs.</td>
+</tr>
+<tr>
+<td><code>.github/workflows/</code></td>
+<td>Stores repeatable automated checks that run consistently for pushes and pull requests.</td>
+</tr>
+<tr>
+<td><code>policy-checks.yml</code></td>
+<td>Validates repository rules such as branch names, commit subjects, issue linkage, labels, or required metadata.</td>
+</tr>
+<tr>
+<td><code>test-and-build.yml</code></td>
+<td>Runs the relevant tests, type checks, lint, builds, or other evidence needed before review or merge.</td>
+</tr>
+</tbody></table>
+<p>These files are a starting structure, not a requirement to create every file immediately. An MVP repository can begin with <code>README.md</code>, one issue template, one pull-request template, and one required check, then grow as the workflow proves what needs to be standardized.</p>
+<p>Do not commit secrets, real environment files, credentials, production data, generated private exports, or local database files unless the repository policy explicitly requires a safe fixture.</p>
+<h2 id="section-7">🧭 2. Project Scrum board setup</h2>
+<h3 id="section-8">Recommended project fields</h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Purpose</th>
+<th>Example values</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Status</td>
+<td>Shows lifecycle state</td>
+<td>Backlog, Ready, In progress, Review, QA, Done</td>
+</tr>
+<tr>
+<td>Priority</td>
+<td>Shows urgency and value</td>
+<td>P0, P1, P2, P3</td>
+</tr>
+<tr>
+<td>Type</td>
+<td>Shows kind of work</td>
+<td>Feature, Bug, Task, Documentation, Security</td>
+</tr>
+<tr>
+<td>Area</td>
+<td>Shows ownership or product location</td>
+<td>API, Console, Database, QA, Infrastructure</td>
+</tr>
+<tr>
+<td>Iteration</td>
+<td>Groups work into a sprint or timebox</td>
+<td>Sprint 01, Sprint 02</td>
+</tr>
+<tr>
+<td>Size</td>
+<td>Estimates relative effort and uncertainty for planning</td>
+<td>Story points such as 1, 2, 3, 5, 8, 13, or t-shirt sizes XS, S, M, L, XL</td>
+</tr>
+<tr>
+<td>Risk</td>
+<td>Makes uncertainty, impact, or dependency danger visible</td>
+<td>Low, Medium, High, Blocked</td>
+</tr>
+</tbody></table>
+<h3 id="section-9">Size or story points</h3>
+<p>Yes, Size can be the Project’s story-points field. Choose one estimation language and use it consistently; do not maintain both <code>size:m</code> and <code>5 points</code> for the same purpose unless the relationship is documented.</p>
+<p>Story points are relative—not hours. They combine:</p>
+<ul>
+<li>implementation effort;</li>
+<li>technical complexity;</li>
+<li>uncertainty or unknowns; and</li>
+<li>coordination or testing difficulty.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Points</th>
+<th>Relative meaning</th>
+<th>Typical example</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>Tiny, understood change</td>
+<td>Documentation correction or small copy update</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Small, low-risk change</td>
+<td>One focused validation rule or isolated UI adjustment</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Small feature with a few moving parts</td>
+<td>One endpoint plus focused tests</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Medium story with multiple boundaries</td>
+<td>API, database change, UI state, and verification</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Large or uncertain story</td>
+<td>Several layers, migration risk, or external dependency</td>
+</tr>
+<tr>
+<td>13+</td>
+<td>Too large or too uncertain for one story</td>
+<td>Split the work or run a discovery task first</td>
+</tr>
+</tbody></table>
+<p>The exact scale is less important than shared comparison. If the team cannot explain why a story is larger than another, the story may need clearer scope or decomposition.</p>
+<h3 id="section-10">Risk criteria</h3>
+<table>
+<thead>
+<tr>
+<th>Risk</th>
+<th>Use when</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Low</td>
+<td>The change is isolated, reversible, well understood, and has ordinary test coverage.</td>
+<td>Copy change or isolated unit test improvement</td>
+</tr>
+<tr>
+<td>Medium</td>
+<td>The change crosses a few layers or has compatibility, data, or accessibility concerns.</td>
+<td>New API field consumed by an existing Console screen</td>
+</tr>
+<tr>
+<td>High</td>
+<td>The change affects ownership, authentication, personal data, migrations, shared contracts, or protected workflows.</td>
+<td>Live-schema migration or owner-isolation change</td>
+</tr>
+<tr>
+<td>Blocked</td>
+<td>The work cannot proceed until a decision, dependency, permission, environment, or external change is resolved.</td>
+<td>Missing credential, undecided contract, or failing required infrastructure</td>
+</tr>
+</tbody></table>
+<h3 id="section-11">Recommended views</h3>
+<ul>
+<li><strong>Backlog:</strong> unscheduled work ordered by value and priority.</li>
+<li><strong>Current sprint:</strong> work committed for the current timebox.</li>
+<li><strong>Board:</strong> status columns for daily flow.</li>
+<li><strong>By area:</strong> grouped by API, Console, database, QA, or other responsibility.</li>
+<li><strong>Blocked:</strong> issues requiring a decision, dependency, permission, or fix.</li>
+<li><strong>Release readiness:</strong> work with acceptance, verification, and approval evidence.</li>
+</ul>
+<h3 id="section-12">Status meanings</h3>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Meaning</th>
+<th>Exit evidence</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Backlog</td>
+<td>Captured but not ready or committed</td>
+<td>Clear enough to prioritize</td>
+</tr>
+<tr>
+<td>Ready</td>
+<td>Defined and available for development</td>
+<td>Scope, acceptance criteria, and dependencies are understood</td>
+</tr>
+<tr>
+<td>In progress</td>
+<td>Active implementation is underway</td>
+<td>Branch and current work are visible</td>
+</tr>
+<tr>
+<td>Review</td>
+<td>Implementation is ready for review</td>
+<td>PR, checks, and developer evidence exist</td>
+</tr>
+<tr>
+<td>QA</td>
+<td>Merged development work is being validated</td>
+<td>Acceptance, regression, accessibility, security, and responsive checks are recorded</td>
+</tr>
+<tr>
+<td>Done</td>
+<td>Acceptance and required approvals are complete</td>
+<td>Delivery evidence and closure decision are recorded</td>
+</tr>
+<tr>
+<td>Blocked</td>
+<td>Work cannot proceed without a decision or external change</td>
+<td>Exact blocker and next decision are recorded</td>
+</tr>
+</tbody></table>
+<p>Do not infer Project ownership, status, priority, or QA readiness from an assignee alone. Use the Project fields and issue evidence as the source of truth.</p>
+<h2 id="section-13">🏷️ 3. Labels</h2>
+<p>Labels are shared metadata for an issue and its pull request. Their job is to answer a small planning question that is useful when filtering, reviewing, or reporting work.</p>
+<h3 id="section-14">Label rule</h3>
+<p>Apply the same meaningful labels to the working issue and its pull request. GitHub does not automatically copy every issue label to a linked pull request, so check the PR before review.</p>
+<pre><code class="language-text">Issue: feature · api · database
+PR:    feature · api · database</code></pre><p>Do not create a label merely because it sounds useful. Keep a label only when it changes a decision, identifies a review need, or makes a recurring view easier to use. If a label describes lifecycle, urgency, sprint, or effort that already has a Project field, use the Project field instead of duplicating it.</p>
+<h3 id="section-15">Minimal starting label set</h3>
+<p>Start with only the labels that fit the current workflow. This is a practical baseline, not a requirement to create every label listed.</p>
+<table>
+<thead>
+<tr>
+<th>Label</th>
+<th>Function</th>
+<th>Use it when</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>feature</code></td>
+<td>Work type</td>
+<td>The change adds a user-visible capability.</td>
+</tr>
+<tr>
+<td><code>bug</code></td>
+<td>Work type</td>
+<td>Existing behavior is incorrect or broken.</td>
+</tr>
+<tr>
+<td><code>task</code></td>
+<td>Work type</td>
+<td>The work is focused maintenance, research, or technical setup.</td>
+</tr>
+<tr>
+<td><code>docs</code></td>
+<td>Work type</td>
+<td>The change is documentation-focused.</td>
+</tr>
+<tr>
+<td><code>security</code></td>
+<td>Review flag</td>
+<td>Authentication, authorization, secrets, privacy, or security risk needs attention.</td>
+</tr>
+<tr>
+<td><code>api</code></td>
+<td>Area flag</td>
+<td>The API, backend service, or public contract is affected.</td>
+</tr>
+<tr>
+<td><code>console</code></td>
+<td>Area flag</td>
+<td>The Console or frontend application is affected.</td>
+</tr>
+<tr>
+<td><code>database</code></td>
+<td>Area flag</td>
+<td>Schema, migrations, queries, or persisted data are affected.</td>
+</tr>
+<tr>
+<td><code>ui</code></td>
+<td>Area flag</td>
+<td>Visual, accessibility, responsive, or interaction behavior is affected.</td>
+</tr>
+<tr>
+<td><code>workflow</code></td>
+<td>Area flag</td>
+<td>Repository, GitHub Project, automation, or development process is affected.</td>
+</tr>
+<tr>
+<td><code>blocked</code></td>
+<td>Attention flag</td>
+<td>Work cannot proceed until an external dependency or decision is resolved.</td>
+</tr>
+<tr>
+<td><code>needs-decision</code></td>
+<td>Attention flag</td>
+<td>Scope, ownership, contract, or implementation direction is unresolved.</td>
+</tr>
+<tr>
+<td><code>ready-for-qa</code></td>
+<td>Attention flag</td>
+<td>Merged work is ready for QA validation.</td>
+</tr>
+</tbody></table>
+<p>You may use fewer labels. For example, a solo project may begin with only <code>feature</code>, <code>bug</code>, <code>task</code>, <code>docs</code>, <code>api</code>, <code>console</code>, <code>database</code>, <code>blocked</code>, and <code>needs-decision</code>. Do not add priority, size, sprint, or status labels when those values already live in Project fields.</p>
+<h3 id="section-16">Label decisions</h3>
+<pre><code class="language-text">New authenticated user endpoint:
+feature · api · security
+
+Broken mobile table focus state:
+bug · console · ui
+
+Document migration-test setup:
+docs · database
+
+Ownership rule is undecided:
+task · api · blocked · needs-decision</code></pre><p>Use one primary work-type label, then add only the area and attention labels that help someone make a real decision. Avoid labels that duplicate assignees, milestones, Project Status, Priority, Size, or prose.</p>
+<h2 id="section-17">📝 4. MVP story creation</h2>
+<p>An MVP story should describe one valuable outcome that can be developed, verified, and reviewed without guessing.</p>
+<h3 id="section-18">Quick issue template</h3>
+<p>Use this when you need to capture an idea, defect, question, or task quickly. It is intentionally incomplete; refine it into the full story template before marking the issue <strong>Ready</strong> for development.</p>
+<pre><code class="language-markdown"># [type(scope):] short outcome or problem
+
+## Why
+What is the user or developer need?
+
+## What I need
+- [The smallest useful change, question, or investigation]
+
+## Done when
+- [ ] [Observable result]
+
+## Notes
+- Labels:
+- Related issues or links:
+- Questions, risks, or blockers:</code></pre><p>The fastest acceptable version is a clear title, one sentence explaining why it matters, and one observable result. Do not wait for perfect wording before recording useful work.</p>
+<h3 id="section-19">Story template</h3>
+<pre><code class="language-markdown"># [type(scope):] imperative outcome
+
+## User outcome
+As a [user], I want [capability] so that [value].
+
+## Scope
+- [Included behavior]
+
+## Non-goals
+- [Explicitly deferred behavior]
+
+## Acceptance criteria
+- [ ] [Observable behavior]
+- [ ] [Validation, error, or permission behavior]
+- [ ] [Accessibility or responsive behavior when UI changes]
+- [ ] [Data, migration, or security boundary when applicable]
+
+## Relationships
+- Parent:
+- Blocked by:
+- Blocks:
+
+## Verification
+- Automated:
+- Manual:
+- Security/privacy:
+- Accessibility/responsive:
+
+## Stop condition
+Stop after the listed checks and return the delivery report. Do not merge,
+deploy, close the issue, or change Project state without approval.</code></pre><h3 id="section-20">MVP story rules</h3>
+<ul>
+<li>Start with the smallest end-to-end outcome, not a list of technical tasks.</li>
+<li>State what is intentionally not included.</li>
+<li>Make acceptance observable.</li>
+<li>Name the data and ownership boundary.</li>
+<li>Include failure and permission behavior.</li>
+<li>Identify dependencies and relationships explicitly.</li>
+<li>Define the checks that will prove the story.</li>
+<li>Give the story a stop condition.</li>
+</ul>
+<h2 id="section-21">🌿 5. Branches, commits, and pull requests</h2>
+<h3 id="section-22">Branch rule</h3>
+<p>Formal work uses a focused issue-numbered branch. Exploratory work may remain local until formalization is requested.</p>
+<pre><code class="language-text">fix/205-live-metadata-migration
+feat/418-shared-actions-standard
+docs/500-development-handbook</code></pre><h3 id="section-23">Commit policy</h3>
+<pre><code class="language-text">type(scope): #issue short imperative description</code></pre><p>Approved types should follow the repository policy, such as <code>feat</code>, <code>fix</code>, <code>refactor</code>, <code>test</code>, <code>docs</code>, and <code>chore</code>. Keep the scope lowercase, include a positive issue number, and begin the description with a lowercase imperative word.</p>
+<pre><code class="language-text">feat(api): #205 add service logo endpoint
+test(database): #205 verify logo ownership constraint
+docs(workflow): #500 document QA checkpoint</code></pre><p>Use focused commits for independently reviewable parts such as contracts, implementation, integrations, tests, and documentation. Do not collapse a whole story into one opaque commit.</p>
+<h3 id="section-24">Pull request expectations</h3>
+<ul>
+<li>Link the working issue.</li>
+<li>Use a title that follows the repository policy.</li>
+<li>State the user outcome and scope.</li>
+<li>List files or areas changed.</li>
+<li>Record automated checks and manual review.</li>
+<li>Identify blockers and remaining risk.</li>
+<li>Keep merge, deploy, issue closure, and Project changes as separate approvals.</li>
+</ul>
+<h2 id="section-25">🔒 6. Protecting branches</h2>
+<p>Protect the default branch and any release or production branch.</p>
+<h3 id="section-26">Minimum protections</h3>
+<ul>
+<li>Require pull requests before merging.</li>
+<li>Require the relevant status checks to pass.</li>
+<li>Restrict direct pushes.</li>
+<li>Restrict review bypass permissions.</li>
+<li>Require a review when the repository risk warrants it.</li>
+<li>Require branches to be up to date when the workflow depends on current target-branch behavior.</li>
+<li>Preserve signed or verified commits when that is part of the repository policy.</li>
+<li>Keep Actions permissions least-privileged.</li>
+<li>Protect production environments and secrets separately.</li>
+</ul>
+<p>Branch protection does not replace code review, QA, security review, or explicit approval. A green check proves only what that check tested.</p>
+<h2 id="section-27">📚 7. Supporting GitHub documentation</h2>
+<p>These references support the workflow described in this handbook. GitHub changes its interface and available features over time, so use the current GitHub documentation when a setting name or screen differs from this guide.</p>
+<h3 id="section-28">Repository, issues, labels, and pull requests</h3>
+<ul>
+<li><a href="https://docs.github.com/en/issues/tracking-your-work-with-issues/learning-about-issues/planning-and-tracking-work-for-your-team-or-project">Planning and tracking work for your team or project</a> — how repositories, issues, and Projects fit together.</li>
+<li><a href="https://docs.github.com/en/issues/using-labels-and-milestones-to-track-work">Using labels and milestones to track work</a> — creating, applying, filtering, and maintaining labels for issues and pull requests.</li>
+<li><a href="https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/about-issue-and-pull-request-templates">About issue and pull request templates</a> — standardizing the information contributors provide.</li>
+<li><a href="https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/configuring-issue-templates-for-your-repository">Configuring issue templates for your repository</a> — including default titles, labels, types, and assignees.</li>
+<li><a href="https://docs.github.com/en/issues/planning-and-tracking-with-projects">Planning and tracking with Projects</a> — views, fields, automation, and reporting for GitHub Projects.</li>
+</ul>
+<h3 id="section-29">Branches, checks, and workflows</h3>
+<ul>
+<li><a href="https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches">About protected branches</a> — required reviews, status checks, signed commits, merge queues, and bypass controls.</li>
+<li><a href="https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/managing-a-branch-protection-rule">Managing a branch protection rule</a> — configuring the protection behavior for a branch or branch pattern.</li>
+<li><a href="https://docs.github.com/en/actions/get-started/understand-github-actions">Understanding GitHub Actions</a> — workflows, events, jobs, steps, runners, and reusable actions.</li>
+<li><a href="https://docs.github.com/en/actions/concepts/workflows-and-actions/workflows">Workflows</a> — the structure and purpose of workflow files in <code>.github/workflows/</code>.</li>
+<li><a href="https://docs.github.com/en/actions/reference/security/secure-use">Secure use reference</a> — least-privilege permissions, secrets, third-party actions, and untrusted code risks.</li>
+</ul>
+<p>Use these references to verify the current GitHub behavior; use this handbook to decide how those features fit the GemsForge workflow.</p>
+<h2 id="section-30">🔄 8. From client request to promotion</h2>
+<div class="mermaid" role="img" aria-label="Mermaid diagram">flowchart LR
+    A[Client intent] --&gt; B[Product story]
+    B --&gt; C[Acceptance and plan]
+    C --&gt; D[Issue branch]
+    D --&gt; E[Development environment]
+    E --&gt; F[Automated checks]
+    F --&gt; G[Pull request review]
+    G --&gt; H[QA validation]
+    H --&gt; I[Approval]
+    I --&gt; J[Promotion decision]</div><h3 id="section-31">Client to story</h3>
+<p>Translate the request into an outcome, scope, non-goals, acceptance criteria, dependencies, risks, and verification. Do not turn an ambiguous request directly into implementation tasks.</p>
+<h3 id="section-32">Story to development</h3>
+<p>Create or update the issue, assign the Project fields, create the issue branch, and report a checkpoint before materially ambiguous work. Keep implementation focused on that story.</p>
+<h3 id="section-33">Development to review</h3>
+<p>Run the narrowest relevant checks first. Record the exact commands, results, affected files, and blockers. Open a PR only when authorized and when the evidence is ready to review.</p>
+<h3 id="section-34">Review to QA</h3>
+<p>Review checks, code, acceptance criteria, security, privacy, accessibility, responsive behavior, and regression risk. QA validates merged development code and reports evidence; QA does not merge, release, or close the story without authorization.</p>
+<h3 id="section-35">QA to promotion</h3>
+<p>Promotion requires a separate decision. This handbook records the project and approval flow; the deployment handbook will define the technical release and hosting procedure.</p>
+<h2 id="section-36">📊 9. Delivery reports and checkpoints</h2>
+<h3 id="section-37">Development checkpoint</h3>
+<pre><code class="language-text">Goal:
+Acceptance criteria:
+Branch:
+Files changed:
+Checks run:
+Manual review:
+Risks and blockers:
+Stop condition:</code></pre><h3 id="section-38">Sprint delivery report</h3>
+<pre><code class="language-text">Sprint goal:
+Delivered:
+Outstanding:
+Verification:
+Approval decision:
+Recommended next sprint:</code></pre><p>The report should distinguish delivered work, outstanding work, evidence, risks, and the next approval decision. It is not permission to merge or deploy.</p>
+<h2 id="section-39">🧩 10. MVP GitHub setup</h2>
+<p>Start with:</p>
+<ol>
+<li>One repository.</li>
+<li>One protected default branch.</li>
+<li>One Scrum Project.</li>
+<li>A small, documented label set.</li>
+<li>One story template and one bug template.</li>
+<li>One commit policy.</li>
+<li>One required test or policy check.</li>
+<li>A clear issue → branch → commit → PR relationship.</li>
+<li>A development checkpoint and delivery report.</li>
+<li>Explicit approval before merge, release, closure, or Project mutation.</li>
+</ol>
+<p>Add automation only when the manual workflow is understood and the automation removes repeated work without hiding state.</p>
+<h2 id="section-40">📚 11. Glossary</h2>
+<ul>
+<li><strong>Acceptance criteria:</strong> Observable conditions that prove a story outcome is complete.</li>
+<li><strong>Branch protection:</strong> Rules that prevent unsafe direct changes to a protected branch.</li>
+<li><strong>Checkpoint:</strong> A structured progress record for plan, implementation, verification, or PR work.</li>
+<li><strong>Issue branch:</strong> A focused branch associated with one story or change.</li>
+<li><strong>MVP:</strong> The smallest valuable, testable outcome that establishes a safe foundation for future work.</li>
+<li><strong>Project field:</strong> Structured metadata used to filter, sort, group, and report work.</li>
+<li><strong>Promotion:</strong> Moving verified work toward another environment or release stage.</li>
+<li><strong>QA:</strong> Validation of merged development code against acceptance criteria and regression risks.</li>
+<li><strong>Story:</strong> A user-centered unit of planned work with scope, acceptance, relationships, and verification.</li>
+<li><strong>Stop condition:</strong> The explicit point where work pauses and returns evidence for a decision.</li>
+</ul>
+</article>
+</main><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs'; mermaid.initialize({startOnLoad:true,theme:'base',themeVariables:{primaryColor:'#fff1d6',primaryTextColor:'#2b2730',primaryBorderColor:'#bd6d5b',lineColor:'#8b5e3c'}});</script></body></html>

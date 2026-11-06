@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Database Testing Handbook — Markdown view</title>
+<style>
+:root{--ink:#1E2823;--muted:#4C554F;--blue:#355A3A;--pale:#E3F2E3;--line:#B3B3B3;--paper:#F2F3F2;--bg:#F2F2DB;--amber:#C7831B;--rose:#D49B7E}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:"Avenir Next",Avenir,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.62}.shell{max-width:980px;margin:32px auto;background:var(--paper);box-shadow:0 12px 36px #1E282322}.topbar{position:sticky;top:0;z-index:10;display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:12px 18px;background:var(--ink);border-bottom:1px solid #7DB687}.topbar a{display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border:1px solid #7DB687;border-radius:999px;background:var(--pale);color:var(--ink);font-weight:800;font-size:.84rem;text-decoration:none}.topbar a.secondary{background:transparent;color:var(--paper)}.topbar a:hover{background:#7DB687;color:var(--ink)}.cover{padding:66px 88px 52px;background:linear-gradient(145deg,#F2F3F2 0%,#E3F2E3 62%,#D49B7E 100%);border-bottom:1px solid var(--line)}.eyebrow{color:var(--rose);font-weight:850;letter-spacing:.13em;text-transform:uppercase;font-size:.78rem}.cover h1{max-width:760px;margin:.45rem 0 .8rem;color:var(--ink);font-size:2.7rem;line-height:1.08}.cover p{max-width:720px;color:var(--muted)}.frontmatter,.content{padding:42px 88px}.frontmatter{border-bottom:1px solid var(--line)}h1,h2,h3{color:var(--ink);line-height:1.2;scroll-margin-top:20px}h1{font-size:2rem;border-bottom:2px solid var(--blue);padding-bottom:.35rem;margin-top:3rem}h1::before{content:'📘  SECTION';display:block;color:var(--rose);font-size:.68rem;letter-spacing:.14em;font-weight:800;margin-bottom:.35rem}h2{font-size:1.35rem;color:var(--blue);margin-top:2.15rem}h2::before{content:'🧭  GUIDANCE';display:block;color:var(--amber);font-size:.62rem;letter-spacing:.13em;font-weight:800;margin-bottom:.3rem}h3{font-size:1.05rem;color:var(--muted);margin-top:1.6rem}h3::before{content:'🔎  DETAIL';display:block;color:var(--muted);font-size:.58rem;letter-spacing:.12em;font-weight:800;margin-bottom:.2rem}a{color:var(--blue);text-underline-offset:3px}ul,ol{padding-left:1.45rem}.toc{columns:2;column-gap:40px;padding:0;list-style:none}.toc li{break-inside:avoid;margin:.35rem 0}.toc-level-1{font-weight:850;margin-top:1rem!important;color:var(--blue)}.toc-level-2{padding-left:1rem;font-size:.94rem}.toc-level-3{padding-left:2rem;font-size:.86rem;color:var(--muted)}pre{position:relative;background:#FAF9F0;border:1px solid var(--line);border-left:4px solid var(--amber);padding:36px 20px 18px;overflow:auto;white-space:pre-wrap;font:.9rem/1.45 "SFMono-Regular",Consolas,monospace;border-radius:4px}pre::before{content:'💻  CODE EXAMPLE';position:absolute;top:10px;left:20px;color:var(--blue);font:800 .62rem/1 Inter,system-ui;letter-spacing:.13em}code{background:var(--pale);padding:.1em .3em;border-radius:3px;font-family:"SFMono-Regular",Consolas,monospace;font-size:.92em}strong{font-weight:800;background:linear-gradient(transparent 58%,#F6D98C 58%);padding:0 .08em}table{border-collapse:collapse;width:100%;margin:20px 0 28px;font-size:.94rem}table::before{content:'📋  REFERENCE TABLE';display:block;color:var(--muted);font:800 .62rem/1 Inter,system-ui;letter-spacing:.13em;margin-bottom:7px}th,td{border:1px solid var(--line);padding:10px 12px;vertical-align:top}th{background:var(--ink);color:#fff;text-align:left}tr:nth-child(even) td{background:#FAF9F0}blockquote{margin:22px 0;padding:36px 20px 14px;background:var(--bg);border-left:4px solid var(--amber);color:var(--muted);position:relative}blockquote::before{content:'💡  DECISION RULE';position:absolute;top:12px;left:20px;color:var(--amber);font:800 .62rem/1 Inter,system-ui;letter-spacing:.13em}.mermaid{margin:24px 0;padding:18px;background:#FAF9F0;border:1px solid var(--line);border-left:4px solid var(--rose);overflow:auto;text-align:center}.mermaid svg{max-width:100%;height:auto}.footer-note{padding:18px 88px 40px;color:var(--muted);font-size:.88rem}@media(max-width:700px){.shell{margin:0;box-shadow:none}.cover,.frontmatter,.content{padding:38px 22px}.cover h1{font-size:2.2rem}.toc{columns:1}.footer-note{padding:18px 22px 34px}}@media print{body{background:#fff}.shell{margin:0;box-shadow:none}.topbar{position:static}.cover,.frontmatter,.content{padding:28px 0}.topbar a{color:inherit;text-decoration:none}}
+</style>
+<style>
+.source-menu{position:relative;margin-left:auto}.source-menu summary{list-style:none}.source-menu summary::-webkit-details-marker{display:none}.source-menu-trigger{display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border:1px solid #7DB687;border-radius:999px;background:transparent;color:#F2F3F2;font:800 .84rem/1.2 "Avenir Next",Avenir,sans-serif;cursor:pointer}.source-menu-trigger:hover{background:#7DB687;color:#1E2823}.source-menu-panel{position:absolute;right:0;top:calc(100% + 8px);z-index:20;display:grid;min-width:240px;padding:7px;border:1px solid #7DB687;border-radius:10px;background:#F2F3F2;box-shadow:0 10px 24px #1E282344}.source-menu-panel a{display:block!important;width:100%;padding:9px 10px;border:0;background:transparent!important;color:#1E2823!important;border-radius:7px;text-decoration:none}.source-menu-panel a:hover{background:#E3F2E3!important}.reader-badge{display:inline-flex;align-items:center;gap:7px;margin-top:12px;padding:7px 11px;border:1px solid #7DB687;border-radius:999px;background:#E3F2E3;color:#1E2823;font-size:.84rem;font-weight:800}.reader-badge::before{content:'✓'}.frontmatter h1{scroll-margin-top:90px}
+@media(max-width:700px){.source-menu{margin-left:0}.source-menu-panel{left:0;right:auto}}
+</style>
+</head>
+<body><main class="shell">
+<nav class="topbar" aria-label="Markdown reader navigation"><a href="index.html">🏠 Home</a><a class="secondary" href="#navigator">🧭 Navigator</a><details class="source-menu"><summary class="source-menu-trigger">⚙️ View options</summary><div class="source-menu-panel"><a href="database-testing-handbook.html">📖 HTML booklet</a><a href="database-testing-handbook.md">📄 Open raw Markdown</a><a href="./" target="_blank" rel="noreferrer">📂 Open enclosing folder</a><a href="index.html">🏠 Library home</a></div></details></nav>
+<section class="cover"><div class="eyebrow">📄 Markdown reader · read mode</div><h1>Database Testing Handbook</h1><p>This page renders the maintained Markdown source as a formatted, read-only handbook page. The source file remains authoritative, while this view keeps the familiar GemsForge navigation, diagrams, links, tables, and code examples readable.</p><span class="reader-badge">Rendered source · database-testing-handbook.md</span></section>
+<section id="navigator" class="frontmatter"><h1>Navigator</h1><ol class="toc"><li class="toc-level-1"><a href="#section-1">🧪 Database Testing Handbook</a></li><li class="toc-level-2"><a href="#section-2">Purpose</a></li><li class="toc-level-2"><a href="#section-3">The short version</a></li><li class="toc-level-2"><a href="#section-4">The practical minimum</a></li><li class="toc-level-2"><a href="#section-5">🧭 Database test map</a></li><li class="toc-level-2"><a href="#section-6">1. Foreign-key enforcement</a></li><li class="toc-level-2"><a href="#section-7">2. Uniqueness and nullability</a></li><li class="toc-level-2"><a href="#section-8">3. Migration apply-order tests</a></li><li class="toc-level-2"><a href="#section-9">4. Fresh database versus upgrade path</a></li><li class="toc-level-2"><a href="#section-10">5. Transaction rollback</a></li><li class="toc-level-2"><a href="#section-11">6. Query and model mapping</a></li><li class="toc-level-2"><a href="#section-12">7. SQLite and PostgreSQL compatibility</a></li><li class="toc-level-2"><a href="#section-13">8. Fixture isolation and cleanup</a></li><li class="toc-level-2"><a href="#section-14">9. ERD-to-schema verification</a></li><li class="toc-level-2"><a href="#section-15">10. Backup restore and integrity checks</a></li><li class="toc-level-2"><a href="#section-16">11. Swift Testing example</a></li><li class="toc-level-2"><a href="#section-17">Minimum database test matrix</a></li><li class="toc-level-2"><a href="#section-18">Supportive references</a></li><li class="toc-level-2"><a href="#section-19">Closing rule</a></li></ol></section>
+<article class="content"><h1 id="section-1">🧪 Database Testing Handbook</h1>
+<h2 id="section-2">Purpose</h2>
+<p>This handbook is a practical reference for proving that a database preserves the rules the application depends on. It complements the Database Engineering Handbook: that book explains how to design the schema; this one explains how to challenge the schema, migrations, queries, fixtures, and recovery process.</p>
+<h2 id="section-3">The short version</h2>
+<ul>
+<li>Test the database rules where they actually live: constraints in the database, behavior in the repository, and workflows across the API.</li>
+<li>Use a disposable FIT database and isolated fixtures.</li>
+<li>Test both a fresh database and an existing database upgraded through migrations.</li>
+<li>Treat SQLite compatibility as useful evidence, not proof that PostgreSQL behaves identically.</li>
+<li>Keep restore testing separate from ordinary application tests.</li>
+</ul>
+<h2 id="section-4">The practical minimum</h2>
+<p>You do not run every test in this handbook for every change.</p>
+<pre><code class="language-text">Every database change:
+  1. Test the changed constraint or query.
+  2. Test the migration against a disposable database.
+  3. Test the important success and failure result.
+  4. Keep fixtures isolated.
+
+Migration or schema change:
+  Add fresh-apply and upgrade-path checks.
+
+Production database or recovery change:
+  Add target-database compatibility and restore checks.</code></pre><p>The remaining sections are a menu for choosing the evidence that matches the risk—not ten mandatory test suites.</p>
+<h2 id="section-5">🧭 Database test map</h2>
+<div class="mermaid" role="img" aria-label="Mermaid diagram">flowchart TD
+    schema[Schema and ERD] --&gt; constraints[Constraint tests]
+    migrations[Migrations] --&gt; fresh[Fresh apply]
+    migrations --&gt; upgrade[Upgrade path]
+    repository[Repository and queries] --&gt; mapping[Mapping tests]
+    fixtures[Test fixtures] --&gt; isolation[Isolation and cleanup]
+    target[Actual target database] --&gt; compatibility[Compatibility tests]
+    backup[Backup artifact] --&gt; restore[Restore and integrity test]
+    constraints --&gt; report[Evidence and test report]
+    fresh --&gt; report
+    upgrade --&gt; report
+    mapping --&gt; report
+    isolation --&gt; report
+    compatibility --&gt; report
+    restore --&gt; report</div><h2 id="section-6">1. Foreign-key enforcement</h2>
+<p>A foreign key should reject a child row that points to a parent that does not exist. Test the database constraint directly, not only the API validation.</p>
+<p>For SQLite, enable foreign keys on every test connection before running the test. SQLite does not guarantee foreign-key enforcement merely because the table declares a foreign key.</p>
+<pre><code class="language-sql">CREATE TABLE Accounts (
+    AccountID TEXT PRIMARY KEY
+);
+
+CREATE TABLE Transactions (
+    TransactionID TEXT PRIMARY KEY,
+    AccountID TEXT NOT NULL,
+    Amount NUMERIC NOT NULL,
+    FOREIGN KEY (AccountID) REFERENCES Accounts(AccountID)
+);
+
+PRAGMA foreign_keys = ON;
+
+-- This must fail because account-missing does not exist.
+INSERT INTO Transactions (TransactionID, AccountID, Amount)
+VALUES ('transaction-1', 'account-missing', 25.00);</code></pre><p>✅ Evidence: the insert fails with a foreign-key violation and no transaction row is created.</p>
+<h2 id="section-7">2. Uniqueness and nullability</h2>
+<p>Test both required values and values that must be unique. A UI check is helpful, but the database must remain the final protection.</p>
+<pre><code class="language-sql">CREATE TABLE Users (
+    UserID TEXT PRIMARY KEY,
+    Email TEXT NOT NULL UNIQUE,
+    DisplayName TEXT NOT NULL
+);
+
+INSERT INTO Users (UserID, Email, DisplayName)
+VALUES ('user-1', 'diamond@example.com', 'Diamond');
+
+-- Must fail: duplicate email.
+INSERT INTO Users (UserID, Email, DisplayName)
+VALUES ('user-2', 'diamond@example.com', 'Another name');
+
+-- Must fail: required display name is missing.
+INSERT INTO Users (UserID, Email, DisplayName)
+VALUES ('user-3', 'new@example.com', NULL);</code></pre><h2 id="section-8">3. Migration apply-order tests</h2>
+<p>Migrations are a sequence, not a collection of unrelated table scripts. Test that they apply in order on an empty database and produce the expected schema.</p>
+<pre><code class="language-text">Given an empty FIT database
+When every migration runs in its recorded order
+Then the migration history contains every expected version
+And the final tables, columns, indexes, and constraints exist
+And the application can start against the result</code></pre><p>❌ Do not test only the latest schema snapshot. That can hide a broken migration that fails on a real upgrade.</p>
+<h2 id="section-9">4. Fresh database versus upgrade path</h2>
+<p>Run two different tests:</p>
+<table>
+<thead>
+<tr>
+<th>Path</th>
+<th>What it proves</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Fresh apply</td>
+<td>A new installation can build the complete schema.</td>
+</tr>
+<tr>
+<td>Upgrade path</td>
+<td>Existing user data survives every migration in order.</td>
+</tr>
+</tbody></table>
+<pre><code class="language-text">Fresh path:
+  empty database → all migrations → schema assertions
+
+Upgrade path:
+  migration N database + representative data → migrations N+1…latest → data and schema assertions</code></pre><p>The upgrade fixture should include old rows, nullable legacy values, relationships, and any data that the migration transforms.</p>
+<h2 id="section-10">5. Transaction rollback</h2>
+<p>If a multi-step operation fails, the database should not keep half of the change.</p>
+<pre><code class="language-text">Begin transaction
+  Create transaction header
+  Create transaction detail
+  Force a detail constraint failure
+Rollback
+
+Assert:
+  header does not exist
+  detail does not exist
+  unrelated records are unchanged</code></pre><p>✅ A good rollback test proves the final database state, not merely that an exception was thrown.</p>
+<h2 id="section-11">6. Query and model mapping</h2>
+<p>A query can succeed while mapping the wrong column, dropping a nullable value, or converting a date incorrectly. Test the returned model and the persisted values.</p>
+<pre><code class="language-text">Given a transaction with:
+  Amount = 25.50
+  Status = 'pending'
+  CreatedAt = a known UTC instant
+
+When the repository loads the transaction
+Then Amount remains 25.50
+And Status remains pending
+And CreatedAt remains the same instant
+And AccountID remains the owning account</code></pre><p>Test inserts, reads, updates, deletes, filters, sorting, pagination, and empty results through the repository boundary.</p>
+<h2 id="section-12">7. SQLite and PostgreSQL compatibility</h2>
+<p>SQLite is excellent for fast local and unit tests, but it is not identical to PostgreSQL. Run portability tests on both when PostgreSQL is the production target.</p>
+<table>
+<thead>
+<tr>
+<th>Concern</th>
+<th>Compatibility check</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Types</td>
+<td>Dates, decimals, booleans, and identifiers preserve their meaning.</td>
+</tr>
+<tr>
+<td>Constraints</td>
+<td>Foreign keys, uniqueness, nullability, and checks behave as intended.</td>
+</tr>
+<tr>
+<td>Queries</td>
+<td>Filtering, ordering, joins, pagination, and case behavior match.</td>
+</tr>
+<tr>
+<td>Transactions</td>
+<td>Commit and rollback behavior matches the application assumption.</td>
+</tr>
+<tr>
+<td>Concurrency</td>
+<td>Locking and concurrent writes are tested on the actual server database.</td>
+</tr>
+</tbody></table>
+<p>✅ SQLite success means the portable part passed. It does not replace a PostgreSQL FIT run.</p>
+<h2 id="section-13">8. Fixture isolation and cleanup</h2>
+<p>Every test should own its data and leave the database ready for the next test.</p>
+<pre><code class="language-text">Before each test:
+  create a unique account and test records
+
+Run the test:
+  use only the records created by this test
+
+After each test:
+  rollback the transaction or delete the fixture records
+
+Assert:
+  another test cannot see this test's data</code></pre><p>❌ Do not use production data, shared mutable IDs, test-order assumptions, or a fixture that one test silently changes for another.</p>
+<h2 id="section-14">9. ERD-to-schema verification</h2>
+<p>The ERD is a design contract. Compare the diagram with the actual schema before a migration is considered complete.</p>
+<pre><code class="language-text">For every ERD entity:
+  table exists
+  primary key exists
+  required attributes exist with the intended type
+  relationships have matching foreign keys
+  cardinality assumptions are enforced where possible
+
+For every schema relationship:
+  the ERD documents it or the design decision explains why it is physical-only</code></pre><p>✅ Store the ERD with the project and update it when tables, relationships, or ownership boundaries change. It helps developers, QA, reviewers, and future migrations reason about the whole data model.</p>
+<h2 id="section-15">10. Backup restore and integrity checks</h2>
+<p>A backup is not evidence of recoverability until it has been restored and checked.</p>
+<pre><code class="language-text">Create backup artifact
+Restore into an isolated database
+Run integrity check
+Run migration/schema version check
+Query representative records
+Verify relationships and row counts
+Record duration, result, and backup identifier</code></pre><p>For SQLite, run both checks because they prove different things:</p>
+<pre><code class="language-sql">PRAGMA integrity_check;    -- file, table, index, UNIQUE, CHECK, and NOT NULL integrity
+PRAGMA foreign_key_check;  -- foreign-key violations</code></pre><p><code>integrity_check</code> returning <code>ok</code> does not prove that foreign-key relationships are valid. For PostgreSQL, <code>pg_verifybackup</code> can detect many backup problems, but it does not replace a real restore. Restore into an isolated database and run representative queries plus application-level checks.</p>
+<h2 id="section-16">11. Swift Testing example</h2>
+<p>For a Swift/Vapor/Fluent repository, keep the database disposable and assert the final state with Swift Testing. The exact database bootstrapping belongs to the repository, but the test shape should remain recognizable.</p>
+<pre><code class="language-swift">import Testing
+
+@Test
+func transactionInsertPersistsOwnerAndAmount() async throws {
+    let database = try await TestDatabase.makeIsolated()
+    defer { database.cleanup() }
+
+    let account = try await database.insertAccount(id: "account-1")
+    let transaction = try await database.insertTransaction(
+        accountID: account.id,
+        amount: 25.50
+    )
+
+    #expect(transaction.accountID == account.id)
+    #expect(transaction.amount == 25.50)
+
+    let stored = try await database.findTransaction(id: transaction.id)
+    #expect(stored?.accountID == account.id)
+    #expect(stored?.amount == 25.50)
+}</code></pre><p>The test should fail if the repository maps the wrong column, loses the owner relationship, rounds the amount incorrectly, or writes to a shared database.</p>
+<h2 id="section-17">Minimum database test matrix</h2>
+<table>
+<thead>
+<tr>
+<th>Change</th>
+<th>Required evidence</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>New table</td>
+<td>Fresh migration, required fields, primary key, constraints, and representative insert/read.</td>
+</tr>
+<tr>
+<td>New relationship</td>
+<td>Foreign-key success and failure, delete/update behavior, and ERD update.</td>
+</tr>
+<tr>
+<td>New migration</td>
+<td>Fresh apply, upgrade path, data preservation, and final schema assertions.</td>
+</tr>
+<tr>
+<td>Query change</td>
+<td>Mapping, empty result, filter/order behavior, and target-database test.</td>
+</tr>
+<tr>
+<td>Transaction change</td>
+<td>Commit success, rollback failure, and unchanged unrelated data.</td>
+</tr>
+<tr>
+<td>Backup process</td>
+<td>Restore, integrity check, representative records, and recorded evidence.</td>
+</tr>
+</tbody></table>
+<h2 id="section-18">Supportive references</h2>
+<ul>
+<li><a href="https://sqlite.org/foreignkeys.html">SQLite foreign key support</a> — enabling and testing foreign-key enforcement.</li>
+<li><a href="https://sqlite.org/pragma.html#pragma_integrity_check">SQLite PRAGMA integrity_check</a> — database integrity verification.</li>
+<li><a href="https://sqlite.org/pragma.html#pragma_foreign_key_check">SQLite PRAGMA foreign_key_check</a> — foreign-key violation detection, which is separate from <code>integrity_check</code>.</li>
+<li><a href="https://www.postgresql.org/docs/current/ddl-constraints.html">PostgreSQL constraints</a> — primary keys, foreign keys, unique constraints, and checks.</li>
+<li><a href="https://www.postgresql.org/docs/current/backup.html">PostgreSQL backup and restore</a> — backup and recovery concepts.</li>
+<li><a href="https://www.postgresql.org/docs/current/app-pgverifybackup.html">PostgreSQL <code>pg_verifybackup</code></a> — backup verification and why test restores are still required.</li>
+<li><a href="https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests">ASP.NET Core integration tests</a> — application/database integration testing patterns.</li>
+<li><a href="https://developer.apple.com/xcode/swift-testing/">Swift Testing</a> — Swift test authoring.</li>
+<li><a href="database-engineering-handbook.md">Database Engineering Handbook</a> — schema, migration, ERD, and recovery design guidance.</li>
+</ul>
+<h2 id="section-19">Closing rule</h2>
+<p>Test the rules that protect the data, the migration paths that change those rules, and the recovery paths that restore them. A database test is complete when it proves the final state and records enough evidence for another person to trust it.</p>
+</article>
+<p class="footer-note">Rendered from <a href="database-testing-handbook.md">database-testing-handbook.md</a>. The Markdown file remains the content authority. Use <strong>⚙️ View options</strong> for the raw source or its enclosing folder.</p>
+</main><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs'; mermaid.initialize({startOnLoad:true,theme:'base',themeVariables:{primaryColor:'#E3F2E3',primaryTextColor:'#1E2823',primaryBorderColor:'#D49B7E',lineColor:'#355A3A'}});</script></body>
+</html>

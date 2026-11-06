@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Testing and QA Handbook — Markdown view</title>
+<style>
+:root{--ink:#1E2823;--muted:#4C554F;--blue:#355A3A;--pale:#E3F2E3;--line:#B3B3B3;--paper:#F2F3F2;--bg:#F2F2DB;--amber:#C7831B;--rose:#D49B7E}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:"Avenir Next",Avenir,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.62}.shell{max-width:980px;margin:32px auto;background:var(--paper);box-shadow:0 12px 36px #1E282322}.topbar{position:sticky;top:0;z-index:10;display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:12px 18px;background:var(--ink);border-bottom:1px solid #7DB687}.topbar a{display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border:1px solid #7DB687;border-radius:999px;background:var(--pale);color:var(--ink);font-weight:800;font-size:.84rem;text-decoration:none}.topbar a.secondary{background:transparent;color:var(--paper)}.topbar a:hover{background:#7DB687;color:var(--ink)}.cover{padding:66px 88px 52px;background:linear-gradient(145deg,#F2F3F2 0%,#E3F2E3 62%,#D49B7E 100%);border-bottom:1px solid var(--line)}.eyebrow{color:var(--rose);font-weight:850;letter-spacing:.13em;text-transform:uppercase;font-size:.78rem}.cover h1{max-width:760px;margin:.45rem 0 .8rem;color:var(--ink);font-size:2.7rem;line-height:1.08}.cover p{max-width:720px;color:var(--muted)}.frontmatter,.content{padding:42px 88px}.frontmatter{border-bottom:1px solid var(--line)}h1,h2,h3{color:var(--ink);line-height:1.2;scroll-margin-top:20px}h1{font-size:2rem;border-bottom:2px solid var(--blue);padding-bottom:.35rem;margin-top:3rem}h1::before{content:'📘  SECTION';display:block;color:var(--rose);font-size:.68rem;letter-spacing:.14em;font-weight:800;margin-bottom:.35rem}h2{font-size:1.35rem;color:var(--blue);margin-top:2.15rem}h2::before{content:'🧭  GUIDANCE';display:block;color:var(--amber);font-size:.62rem;letter-spacing:.13em;font-weight:800;margin-bottom:.3rem}h3{font-size:1.05rem;color:var(--muted);margin-top:1.6rem}h3::before{content:'🔎  DETAIL';display:block;color:var(--muted);font-size:.58rem;letter-spacing:.12em;font-weight:800;margin-bottom:.2rem}a{color:var(--blue);text-underline-offset:3px}ul,ol{padding-left:1.45rem}.toc{columns:2;column-gap:40px;padding:0;list-style:none}.toc li{break-inside:avoid;margin:.35rem 0}.toc-level-1{font-weight:850;margin-top:1rem!important;color:var(--blue)}.toc-level-2{padding-left:1rem;font-size:.94rem}.toc-level-3{padding-left:2rem;font-size:.86rem;color:var(--muted)}pre{position:relative;background:#FAF9F0;border:1px solid var(--line);border-left:4px solid var(--amber);padding:36px 20px 18px;overflow:auto;white-space:pre-wrap;font:.9rem/1.45 "SFMono-Regular",Consolas,monospace;border-radius:4px}pre::before{content:'💻  CODE EXAMPLE';position:absolute;top:10px;left:20px;color:var(--blue);font:800 .62rem/1 Inter,system-ui;letter-spacing:.13em}code{background:var(--pale);padding:.1em .3em;border-radius:3px;font-family:"SFMono-Regular",Consolas,monospace;font-size:.92em}strong{font-weight:800;background:linear-gradient(transparent 58%,#F6D98C 58%);padding:0 .08em}table{border-collapse:collapse;width:100%;margin:20px 0 28px;font-size:.94rem}table::before{content:'📋  REFERENCE TABLE';display:block;color:var(--muted);font:800 .62rem/1 Inter,system-ui;letter-spacing:.13em;margin-bottom:7px}th,td{border:1px solid var(--line);padding:10px 12px;vertical-align:top}th{background:var(--ink);color:#fff;text-align:left}tr:nth-child(even) td{background:#FAF9F0}blockquote{margin:22px 0;padding:36px 20px 14px;background:var(--bg);border-left:4px solid var(--amber);color:var(--muted);position:relative}blockquote::before{content:'💡  DECISION RULE';position:absolute;top:12px;left:20px;color:var(--amber);font:800 .62rem/1 Inter,system-ui;letter-spacing:.13em}.mermaid{margin:24px 0;padding:18px;background:#FAF9F0;border:1px solid var(--line);border-left:4px solid var(--rose);overflow:auto;text-align:center}.mermaid svg{max-width:100%;height:auto}.footer-note{padding:18px 88px 40px;color:var(--muted);font-size:.88rem}@media(max-width:700px){.shell{margin:0;box-shadow:none}.cover,.frontmatter,.content{padding:38px 22px}.cover h1{font-size:2.2rem}.toc{columns:1}.footer-note{padding:18px 22px 34px}}@media print{body{background:#fff}.shell{margin:0;box-shadow:none}.topbar{position:static}.cover,.frontmatter,.content{padding:28px 0}.topbar a{color:inherit;text-decoration:none}}
+</style>
+<style>
+.source-menu{position:relative;margin-left:auto}.source-menu summary{list-style:none}.source-menu summary::-webkit-details-marker{display:none}.source-menu-trigger{display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border:1px solid #7DB687;border-radius:999px;background:transparent;color:#F2F3F2;font:800 .84rem/1.2 "Avenir Next",Avenir,sans-serif;cursor:pointer}.source-menu-trigger:hover{background:#7DB687;color:#1E2823}.source-menu-panel{position:absolute;right:0;top:calc(100% + 8px);z-index:20;display:grid;min-width:240px;padding:7px;border:1px solid #7DB687;border-radius:10px;background:#F2F3F2;box-shadow:0 10px 24px #1E282344}.source-menu-panel a{display:block!important;width:100%;padding:9px 10px;border:0;background:transparent!important;color:#1E2823!important;border-radius:7px;text-decoration:none}.source-menu-panel a:hover{background:#E3F2E3!important}.reader-badge{display:inline-flex;align-items:center;gap:7px;margin-top:12px;padding:7px 11px;border:1px solid #7DB687;border-radius:999px;background:#E3F2E3;color:#1E2823;font-size:.84rem;font-weight:800}.reader-badge::before{content:'✓'}.frontmatter h1{scroll-margin-top:90px}
+@media(max-width:700px){.source-menu{margin-left:0}.source-menu-panel{left:0;right:auto}}
+</style>
+</head>
+<body><main class="shell">
+<nav class="topbar" aria-label="Markdown reader navigation"><a href="index.html">🏠 Home</a><a class="secondary" href="#navigator">🧭 Navigator</a><details class="source-menu"><summary class="source-menu-trigger">⚙️ View options</summary><div class="source-menu-panel"><a href="testing-and-qa-handbook.html">📖 HTML booklet</a><a href="testing-and-qa-handbook.md">📄 Open raw Markdown</a><a href="./" target="_blank" rel="noreferrer">📂 Open enclosing folder</a><a href="index.html">🏠 Library home</a></div></details></nav>
+<section class="cover"><div class="eyebrow">📄 Markdown reader · read mode</div><h1>Testing and QA Handbook</h1><p>This page renders the maintained Markdown source as a formatted, read-only handbook page. The source file remains authoritative, while this view keeps the familiar GemsForge navigation, diagrams, links, tables, and code examples readable.</p><span class="reader-badge">Rendered source · testing-and-qa-handbook.md</span></section>
+<section id="navigator" class="frontmatter"><h1>Navigator</h1><ol class="toc"><li class="toc-level-1"><a href="#section-1">🧪 Testing and QA Handbook</a></li><li class="toc-level-2"><a href="#section-2">Purpose</a></li><li class="toc-level-2"><a href="#section-3">The short version</a></li><li class="toc-level-2"><a href="#section-4">🧭 Testing map</a></li><li class="toc-level-2"><a href="#section-5">1. API testing versus UI testing</a></li><li class="toc-level-3"><a href="#section-6">✅ API example</a></li><li class="toc-level-3"><a href="#section-7">✅ UI example</a></li><li class="toc-level-3"><a href="#section-8">❌ Do not duplicate the same proof everywhere</a></li><li class="toc-level-2"><a href="#section-9">2. Framework tests versus testing tools</a></li><li class="toc-level-3"><a href="#section-10">✅ Practical division of labor</a></li><li class="toc-level-3"><a href="#section-11">✅ What belongs in each place</a></li><li class="toc-level-3"><a href="#section-12">❌ Do not treat tool coverage as product coverage</a></li><li class="toc-level-2"><a href="#section-13">3. Test layers and responsibilities</a></li><li class="toc-level-3"><a href="#section-14">Unit tests</a></li><li class="toc-level-3"><a href="#section-15">Component tests</a></li><li class="toc-level-3"><a href="#section-16">Integration tests</a></li><li class="toc-level-3"><a href="#section-17">Browser or end-to-end tests</a></li><li class="toc-level-3"><a href="#section-18">Migration and database tests</a></li><li class="toc-level-2"><a href="#section-19">4. Developer testing versus QA testing</a></li><li class="toc-level-3"><a href="#section-20">✅ Developer evidence</a></li><li class="toc-level-3"><a href="#section-21">✅ QA evidence</a></li><li class="toc-level-2"><a href="#section-22">5. Good tests versus bad tests</a></li><li class="toc-level-3"><a href="#section-23">✅ A good test</a></li><li class="toc-level-3"><a href="#section-24">❌ A weak test</a></li><li class="toc-level-3"><a href="#section-25">✅ API test quality</a></li><li class="toc-level-3"><a href="#section-26">❌ Avoid false confidence</a></li><li class="toc-level-2"><a href="#section-27">6. QA quality</a></li><li class="toc-level-3"><a href="#section-28">✅ A high-quality QA finding includes</a></li><li class="toc-level-3"><a href="#section-29">✅ QA readiness questions</a></li><li class="toc-level-3"><a href="#section-30">❌ QA does not mean</a></li><li class="toc-level-2"><a href="#section-31">7. Minimum test checklist by change type</a></li><li class="toc-level-2"><a href="#section-32">8. Test report template</a></li><li class="toc-level-2"><a href="#section-33">9. Reusable GitHub CI policy templates</a></li><li class="toc-level-3"><a href="#section-34">✅ Policy-check workflow</a></li><li class="toc-level-3"><a href="#section-35">✅ Test-and-build workflow</a></li><li class="toc-level-3"><a href="#section-36">✅ Required-check policy</a></li><li class="toc-level-3"><a href="#section-37">❌ Do not copy these blindly</a></li><li class="toc-level-2"><a href="#section-38">10. Glossary</a></li><li class="toc-level-2"><a href="#section-39">Supportive references</a></li><li class="toc-level-2"><a href="#section-40">Closing rule</a></li></ol></section>
+<article class="content"><h1 id="section-1">🧪 Testing and QA Handbook</h1>
+<h2 id="section-2">Purpose</h2>
+<p>This handbook explains how GemsForge tests software across API, database, UI, and workflow boundaries. It is a practical guide for deciding what a test should prove, who should run it, and what evidence makes a quality claim trustworthy.</p>
+<p>Testing is not only “does the code run?” Testing asks whether the system behaves correctly for real users, real data boundaries, invalid input, failure, change, and recovery.</p>
+<h2 id="section-3">The short version</h2>
+<ul>
+<li>Developers prove that the code they changed behaves according to its contract.</li>
+<li>QA proves that the product behavior satisfies the story and remains safe across boundaries.</li>
+<li>API tests prove service behavior without depending on a browser.</li>
+<li>UI tests prove user-visible behavior without duplicating every backend implementation detail.</li>
+<li>Good tests explain a risk and fail for a meaningful reason.</li>
+<li>Passing tests are evidence, not permission to merge, deploy, or release.</li>
+</ul>
+<h2 id="section-4">🧭 Testing map</h2>
+<div class="mermaid" role="img" aria-label="Mermaid diagram">flowchart TD
+    story["Story and acceptance criteria"] --&gt; boundary{"What boundary changed?"}
+    boundary --&gt;|"API, service, contract"| api["API and integration tests"]
+    boundary --&gt;|"UI, route, form, interaction"| ui["Component and browser tests"]
+    boundary --&gt;|"Schema, migration, query"| data["Database and migration tests"]
+    boundary --&gt;|"Cross-boundary behavior"| e2e["End-to-end or workflow test"]
+    api --&gt; dev["Developer verification"]
+    ui --&gt; dev
+    data --&gt; dev
+    e2e --&gt; qa["QA review and risk-based exploration"]
+    dev --&gt; qa
+    qa --&gt; report["Evidence and delivery report"]</div><h2 id="section-5">1. API testing versus UI testing</h2>
+<p>API and UI tests are related, but they answer different questions.</p>
+<table>
+<thead>
+<tr>
+<th>Test boundary</th>
+<th>Main question</th>
+<th>Best evidence</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>API/unit</td>
+<td>Do a function, service, validator, or policy produce the correct result?</td>
+<td>Focused test with controlled inputs and explicit assertions.</td>
+<td><code>TransactionValidator</code> rejects <code>Amount = -5</code> and returns a named validation error.</td>
+</tr>
+<tr>
+<td>API/integration</td>
+<td>Do routes, authentication, persistence, transactions, and contracts work together?</td>
+<td>Request/response test against a disposable or controlled database.</td>
+<td><code>POST /transactions</code> returns <code>201</code>, saves one owner-scoped row, and returns the response DTO.</td>
+</tr>
+<tr>
+<td>Contract</td>
+<td>Does the producer and consumer agree on shape, status, errors, and meaning?</td>
+<td>Schema, contract, or compatibility test.</td>
+<td>An OpenAPI response still contains <code>id</code>, <code>amount</code>, and <code>createdAt</code> with the documented types.</td>
+</tr>
+<tr>
+<td>UI/component</td>
+<td>Does a component render and respond correctly to user interaction?</td>
+<td>Accessible interaction test with visible state assertions.</td>
+<td>A form shows “Amount must be greater than zero” and does not call the save action.</td>
+</tr>
+<tr>
+<td>UI/browser</td>
+<td>Can a user complete the workflow through the route, form, and browser?</td>
+<td>Browser test with realistic navigation and recovery.</td>
+<td>A user opens <code>/transactions</code>, submits the form, sees the saved row, and recovers from a server error.</td>
+</tr>
+<tr>
+<td>End-to-end</td>
+<td>Does the complete path work across client, API, and data boundaries?</td>
+<td>Narrow critical-path test with stable test data.</td>
+<td>A seeded owner signs in, creates a transaction in the Console, refreshes, and sees the persisted result.</td>
+</tr>
+</tbody></table>
+<h3 id="section-6">✅ API example</h3>
+<pre><code class="language-text">Given an authenticated owner submits a valid transaction
+When POST /transactions is called
+Then the API returns the documented success status
+And the response contains the created transaction contract
+And the record belongs to the authenticated owner</code></pre><h3 id="section-7">✅ UI example</h3>
+<pre><code class="language-text">Given the Transactions page is open
+When the user submits the form with a missing amount
+Then the amount field exposes an accessible error
+And the request is not sent
+And the user can correct the field without losing the other values</code></pre><h3 id="section-8">❌ Do not duplicate the same proof everywhere</h3>
+<p>If an API test already proves the exact validation rule, a UI test should prove that the user can see and recover from the validation—not reimplement every server rule in a browser test.</p>
+<h2 id="section-9">2. Framework tests versus testing tools</h2>
+<p>“UI testing” can mean testing a user interface through code or testing it through a visual automation tool. API tools also have different strengths from framework tests.</p>
+<table>
+<thead>
+<tr>
+<th>Approach</th>
+<th>What it is best at</th>
+<th>What it should not replace</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Framework tests</td>
+<td>Fast, versioned, repeatable unit, component, integration, contract, and browser tests close to the code.</td>
+<td>Risk-based exploratory testing and product review.</td>
+</tr>
+<tr>
+<td>Postman</td>
+<td>API requests, collection workflows, response scripts, exploratory failures, and shared API suites.</td>
+<td>Unit tests, repository integration tests, authorization coverage, and UI behavior.</td>
+</tr>
+<tr>
+<td>mabl</td>
+<td>Browser/mobile journeys plus API tests, plans, scheduled runs, and deployment-triggered checks.</td>
+<td>Focused developer tests, local debugging, and every internal rule.</td>
+</tr>
+<tr>
+<td>Manual exploratory testing</td>
+<td>Investigation of ambiguity, usability, unusual sequences, and new risk.</td>
+<td>Repeatable regression coverage.</td>
+</tr>
+</tbody></table>
+<h3 id="section-10">✅ Practical division of labor</h3>
+<pre><code class="language-text">Framework tests → prove code contracts quickly and repeatably
+Postman         → prove API requests, responses, workflows, and service behavior
+mabl            → prove browser/mobile journeys and selected API workflows
+QA exploration  → discover risks scripted tests did not anticipate</code></pre><p>Postman is an API testing client: requests can contain scripts and collections can be run as suites. mabl can test browser/mobile flows and can also run API tests, including scheduled or deployment-triggered plans. Neither tool makes a test valuable automatically; the assertion, data, environment, and evidence still need review.</p>
+<h3 id="section-11">✅ What belongs in each place</h3>
+<pre><code class="language-text">Developer framework test:
+  “Does this service reject a negative amount and preserve the database?”
+
+Postman collection:
+  “Can an authenticated client create, retrieve, and update a transaction?”
+
+mabl browser test:
+  “Can a user complete the form, recover from an error, and see the saved result?”
+
+QA exploration:
+  “What happens if the user double-submits, changes the route ID, loses connectivity, or uses a narrow viewport?”</code></pre><h3 id="section-12">❌ Do not treat tool coverage as product coverage</h3>
+<ul>
+<li>A green Postman collection does not prove that the UI presents the response correctly.</li>
+<li>A green mabl journey does not prove every service rule, migration constraint, or error branch.</li>
+<li>A passing framework test does not prove the workflow is understandable or accessible.</li>
+<li>A manual pass does not create durable regression protection by itself.</li>
+</ul>
+<p>Choose the smallest overlapping set that protects the risk: framework tests for fast contracts, Postman or equivalent for API workflows, mabl or equivalent for critical user journeys, and QA exploration for uncertainty.</p>
+<h2 id="section-13">3. Test layers and responsibilities</h2>
+<h3 id="section-14">Unit tests</h3>
+<p>Prove one focused function, reducer, validator, mapper, or domain rule. They should be fast and isolate dependencies when isolation helps explain the rule.</p>
+<h3 id="section-15">Component tests</h3>
+<p>Prove a component’s public behavior: accessible names, visible states, events, controlled values, disabled behavior, and composition. Test through the user-facing contract rather than private implementation details.</p>
+<h3 id="section-16">Integration tests</h3>
+<p>Prove that boundaries work together: route to service, service to repository, query to cache, component to workflow hook, or migration to database.</p>
+<h3 id="section-17">Browser or end-to-end tests</h3>
+<p>Prove a small number of high-value user workflows. Keep them stable, independent, and focused on user outcomes.</p>
+<h3 id="section-18">Migration and database tests</h3>
+<p>Prove that migrations apply in order, constraints prevent invalid states, relationships behave correctly, and recovery assumptions are documented.</p>
+<h2 id="section-19">4. Developer testing versus QA testing</h2>
+<p>Developer testing and QA testing overlap in quality, but they do not have the same job.</p>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Primary responsibility</th>
+<th>Typical question</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Developer</td>
+<td>Prove the implementation works within its changed boundaries.</td>
+<td>“Does this code satisfy the contract and its focused acceptance criteria?”</td>
+</tr>
+<tr>
+<td>QA</td>
+<td>Independently challenge the product against the story, risks, and user behavior.</td>
+<td>“What happens when the user does something unexpected, incomplete, repeated, unauthorized, or unsupported?”</td>
+</tr>
+<tr>
+<td>Product/design review</td>
+<td>Prove the experience matches the intended flow and identity.</td>
+<td>“Can the user understand and complete the task?”</td>
+</tr>
+<tr>
+<td>Security review</td>
+<td>Prove boundaries resist unauthorized or unsafe use.</td>
+<td>“Can another user access, alter, or infer data they do not own?”</td>
+</tr>
+</tbody></table>
+<h3 id="section-20">✅ Developer evidence</h3>
+<ul>
+<li>Focused unit/component/API tests.</li>
+<li>Type checks, lint, formatting, and build checks.</li>
+<li>Migration or contract checks for changed boundaries.</li>
+<li>A local manual pass for the changed behavior.</li>
+<li>Known limitations and unavailable checks.</li>
+</ul>
+<h3 id="section-21">✅ QA evidence</h3>
+<ul>
+<li>Story acceptance criteria reviewed one by one.</li>
+<li>Happy path and important failure paths.</li>
+<li>Loading, empty, error, retry, permission, and not-found states.</li>
+<li>Keyboard, accessibility, and responsive behavior where relevant.</li>
+<li>Regression checks around shared components and contracts.</li>
+<li>Reproduction steps for every finding.</li>
+</ul>
+<p>QA is not simply “running the developer’s tests again.” QA provides an independent risk-based challenge.</p>
+<h2 id="section-22">5. Good tests versus bad tests</h2>
+<h3 id="section-23">✅ A good test</h3>
+<pre><code class="language-ts">it('does not submit an invalid transaction amount', async () =&gt; {
+  render(&lt;TransactionForm /&gt;);
+
+  await user.type(screen.getByLabelText('Amount'), '-5');
+  await user.click(screen.getByRole('button', { name: 'Save transaction' }));
+
+  expect(screen.getByRole('alert')).toHaveTextContent('Amount must be greater than zero');
+  expect(saveTransaction).not.toHaveBeenCalled();
+});</code></pre><p>Why it is useful:</p>
+<ul>
+<li>It names the behavior.</li>
+<li>It interacts through the accessible UI.</li>
+<li>It asserts what the user sees.</li>
+<li>It proves the unsafe side effect did not occur.</li>
+</ul>
+<h3 id="section-24">❌ A weak test</h3>
+<pre><code class="language-ts">it('works', () =&gt; {
+  expect(component.state.amount).toBe('-5');
+});</code></pre><p>Why it is weak:</p>
+<ul>
+<li>“Works” does not describe a contract.</li>
+<li>It inspects implementation state instead of behavior.</li>
+<li>It does not prove the error is visible.</li>
+<li>It does not prove submission was prevented.</li>
+</ul>
+<h3 id="section-25">✅ API test quality</h3>
+<p>Prefer assertions about status, response shape, ownership, persistence, and error behavior.</p>
+<pre><code class="language-text">Assert:
+  status = 403
+  error type = forbidden
+  response does not reveal another owner’s record
+  database remains unchanged</code></pre><h3 id="section-26">❌ Avoid false confidence</h3>
+<ul>
+<li>Do not assert only that a request returned <code>200</code>.</li>
+<li>Do not snapshot an entire page when one behavior is the requirement.</li>
+<li>Do not test private function names when the public contract is what matters.</li>
+<li>Do not share mutable state between tests.</li>
+<li>Do not depend on test order.</li>
+<li>Do not use production data or real credentials.</li>
+<li>Do not make retries hide a real failure.</li>
+</ul>
+<h2 id="section-27">6. QA quality</h2>
+<p>QA quality is the quality of the evidence and reasoning, not the number of test cases.</p>
+<h3 id="section-28">✅ A high-quality QA finding includes</h3>
+<pre><code class="language-text">Title: Owner can view another account’s transaction by changing the route ID
+Severity: High
+Environment: FIT database, Console build 123
+Steps: 1... 2... 3...
+Expected: request is rejected and no record details are shown
+Actual: record details are returned
+Evidence: request, response, screenshot, or test output
+Risk: cross-owner data exposure</code></pre><h3 id="section-29">✅ QA readiness questions</h3>
+<ul>
+<li>Is the story outcome clear?</li>
+<li>Can each acceptance criterion be observed?</li>
+<li>Are the test data and environment identified?</li>
+<li>Were unauthorized, malformed, empty, repeated, and boundary inputs considered?</li>
+<li>Were shared components, routes, queries, migrations, and contracts checked for regression?</li>
+<li>Are failures reproducible?</li>
+<li>Are blockers distinguished from defects?</li>
+<li>Is the remaining risk visible to the approver?</li>
+</ul>
+<h3 id="section-30">❌ QA does not mean</h3>
+<ul>
+<li>A guarantee that no defects exist.</li>
+<li>A replacement for developer tests.</li>
+<li>Permission to merge, deploy, close, or release.</li>
+<li>A green status without evidence.</li>
+</ul>
+<h2 id="section-31">7. Minimum test checklist by change type</h2>
+<table>
+<thead>
+<tr>
+<th>Change</th>
+<th>Minimum checks</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>API route</td>
+<td>Valid request, malformed request, unauthenticated, unauthorized, owner isolation, success, structured error, persistence effect.</td>
+</tr>
+<tr>
+<td>UI form</td>
+<td>Labels, valid submission, field errors, disabled/submitting state, server error, keyboard flow, responsive layout.</td>
+</tr>
+<tr>
+<td>Shared component</td>
+<td>Public props, loading/empty/error states, accessibility, keyboard behavior, existing consumers.</td>
+</tr>
+<tr>
+<td>Query or mutation</td>
+<td>Query key, loading/error state, cancellation, cache update/invalidation, retry policy, stale data behavior.</td>
+</tr>
+<tr>
+<td>Database migration</td>
+<td>Fresh apply, upgrade path, constraints, relationships, indexes, rollback/recovery assumption, fixture/test data.</td>
+</tr>
+<tr>
+<td>GitHub workflow</td>
+<td>Trigger, permissions, action versions, secrets, fork behavior, required check result.</td>
+</tr>
+</tbody></table>
+<h2 id="section-32">8. Test report template</h2>
+<pre><code class="language-text">Change:
+Risk:
+
+Developer checks:
+- Command/result:
+
+QA checks:
+- Acceptance criterion/result:
+- Failure-path result:
+- Accessibility/responsive result:
+
+Blocked checks:
+- Exact blocker:
+
+Open findings:
+- Severity, reproduction, owner:
+
+Recommendation:
+Ready for review / Needs revision / Blocked</code></pre><h2 id="section-33">9. Reusable GitHub CI policy templates</h2>
+<p>These templates are starting points, not a replacement for the repository&#39;s approved policy. Copy them into <code>.github/workflows/</code>, replace the commands with the repository&#39;s real checks, and make the resulting check names required in branch protection.</p>
+<h3 id="section-34">✅ Policy-check workflow</h3>
+<p>Use this for fast, deterministic repository rules such as formatting, branch naming, commit policy, required metadata, and documentation checks.</p>
+<pre><code class="language-yaml">name: Policy checks
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  policy:
+    name: Policy checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: &lt;repository-specific install command&gt;
+      - name: Run policy checks
+        run: &lt;repository-specific policy command&gt;</code></pre><h3 id="section-35">✅ Test-and-build workflow</h3>
+<p>Use this for the checks that prove the changed application still builds and its automated tests pass.</p>
+<pre><code class="language-yaml">name: Test and build
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Test and build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: &lt;repository-specific install command&gt;
+      - name: Run framework tests
+        run: &lt;repository-specific test command&gt;
+      - name: Run type, lint, or format checks
+        run: &lt;repository-specific quality command&gt;
+      - name: Build
+        run: &lt;repository-specific build command&gt;</code></pre><h3 id="section-36">✅ Required-check policy</h3>
+<p>For a protected branch, require the named checks that protect the repository&#39;s actual risks. A typical minimum is:</p>
+<pre><code class="language-text">Policy checks       → repository rules and metadata
+Test and build     → framework tests and compilability
+Security checks    → dependency, secret, and static-analysis checks when configured
+Review approval    → human review before merge</code></pre><h3 id="section-37">❌ Do not copy these blindly</h3>
+<ul>
+<li>Do not use a command that the repository does not actually run locally.</li>
+<li>Do not grant <code>contents: write</code>, issue, pull-request, or project permissions unless that job needs them.</li>
+<li>Do not expose repository secrets to untrusted fork pull requests.</li>
+<li>Do not treat a green workflow as authorization to deploy or release.</li>
+<li>Do not make a check required until its name is stable and its failure message is actionable.</li>
+</ul>
+<p>The maintained policy contract is <a href="../../governance/github-actions-standard.md">GitHub Actions Standard</a>. The reusable source files are in <a href="../../governance/templates/ci/">CI policy templates</a>.</p>
+<p>For the repository-specific baseline, use the <a href="../../governance/templates/ci/gemsforge-api/">GemsForgeAPI workflow templates</a>. These preserve the actual branch, commit, Console, database, label, and metadata-sync policies instead of asking you to recreate them from memory.</p>
+<p>For a new repository, use the <a href="../../governance/templates/ci/portable-github-development/">portable GitHub development and project-management policy kit</a>. Its policy logic is self-contained in YAML workflows; only the repository&#39;s own test and build commands need to be added separately.</p>
+<h2 id="section-38">10. Glossary</h2>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Unit test</td>
+<td>A focused test of one function, rule, mapper, or reducer.</td>
+</tr>
+<tr>
+<td>Component test</td>
+<td>A test of a UI component through its public behavior.</td>
+</tr>
+<tr>
+<td>Integration test</td>
+<td>A test of two or more application boundaries working together.</td>
+</tr>
+<tr>
+<td>Contract test</td>
+<td>A test that protects the agreed shape and meaning between producer and consumer.</td>
+</tr>
+<tr>
+<td>End-to-end test</td>
+<td>A test of a complete user workflow across major system boundaries.</td>
+</tr>
+<tr>
+<td>Regression</td>
+<td>A previously working behavior that has been broken by a change.</td>
+</tr>
+<tr>
+<td>Test fixture</td>
+<td>Controlled data or setup used to make a test repeatable.</td>
+</tr>
+<tr>
+<td>Framework test</td>
+<td>A versioned test written and run with the application’s test framework.</td>
+</tr>
+<tr>
+<td>Postman collection</td>
+<td>A group of API requests and scripts that can be run as an API test suite.</td>
+</tr>
+<tr>
+<td>mabl plan</td>
+<td>A managed set of browser, mobile, or API tests that can run on demand, on a schedule, or after deployment events.</td>
+</tr>
+<tr>
+<td>QA finding</td>
+<td>An evidence-backed observation that behavior differs from the expected result.</td>
+</tr>
+<tr>
+<td>Blocker</td>
+<td>A condition that prevents verification or delivery from proceeding.</td>
+</tr>
+</tbody></table>
+<h2 id="section-39">Supportive references</h2>
+<ul>
+<li><a href="https://testing-library.com/docs/guiding-principles/">Testing Library guiding principles</a> — test behavior through user-facing interfaces.</li>
+<li><a href="https://playwright.dev/docs/intro">Playwright testing documentation</a> — browser and end-to-end testing.</li>
+<li><a href="https://vitest.dev/guide/">Vitest documentation</a> — JavaScript and TypeScript unit testing.</li>
+<li><a href="https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests">ASP.NET Core integration tests</a> — API integration testing patterns.</li>
+<li><a href="https://developer.apple.com/xcode/swift-testing/">Swift Testing</a> — modern Swift test authoring.</li>
+<li><a href="https://learning.postman.com/docs/tests-and-scripts/tests-and-scripts">Postman API testing</a> — request scripts, collections, and API test suites.</li>
+<li><a href="https://help.mabl.com/hc/en-us/articles/19078231747604-API-testing-overview">mabl API testing</a> — API tests alongside browser/mobile workflows and plans.</li>
+<li><a href="https://owasp.org/www-project-web-security-testing-guide/">OWASP Web Security Testing Guide</a> — security testing for authentication, authorization, input validation, sessions, and APIs.</li>
+<li><a href="https://www.nist.gov/publications/guidelines-minimum-standards-developer-verification-software">NIST developer verification guidance</a> — a minimum verification baseline covering automated tests, static analysis, fuzzing, threat modeling, and dependency review.</li>
+<li><a href="../../governance/definition-of-done.md">GemsForge Definition of Done</a> — completion evidence and approval boundaries.</li>
+</ul>
+<h2 id="section-40">Closing rule</h2>
+<p>Write the smallest test that proves the most important risk. Let developers prove the changed contract. Let QA challenge the product behavior. Report evidence clearly enough that another person can trust the conclusion.</p>
+</article>
+<p class="footer-note">Rendered from <a href="testing-and-qa-handbook.md">testing-and-qa-handbook.md</a>. The Markdown file remains the content authority. Use <strong>⚙️ View options</strong> for the raw source or its enclosing folder.</p>
+</main><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs'; mermaid.initialize({startOnLoad:true,theme:'base',themeVariables:{primaryColor:'#E3F2E3',primaryTextColor:'#1E2823',primaryBorderColor:'#D49B7E',lineColor:'#355A3A'}});</script></body>
+</html>

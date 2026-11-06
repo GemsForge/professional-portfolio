@@ -1,0 +1,19 @@
+name: Policy checks
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  policy:
+    name: Policy checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: <repository-specific install command>
+      - name: Run policy checks
+        run: <repository-specific policy command>

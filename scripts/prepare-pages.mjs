@@ -1,5 +1,6 @@
 import { cp, readFile, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { createHash } from "node:crypto";
 // Node 22.13+ strips the catalog's TypeScript types at import time; no runtime
 // transpiler or JSX dependency is needed for this build-time-only module.
 import { renderDependencyGroup } from "./auralogbook-dependencies.mts";
@@ -128,4 +129,40 @@ async function visit(directory) {
 await visit(source);
 await writeFile("lib/static-pages.json", JSON.stringify(pages));
 await cp("static-source/assets", "public/assets", { recursive: true });
+
+// Build a public catalogue from the reviewed Markdown files checked into this
+// repository; no workstation-only documentation path is needed at deploy time.
+const publicKnowledge = path.resolve("public/knowledge-library");
+const knowledgeResources = [];
+async function indexKnowledge(directory, relative = "") {
+  for (const entry of await readdir(directory, { withFileTypes: true })) {
+    const sourceFile = path.join(directory, entry.name);
+    const childRelative = path.join(relative, entry.name);
+    if (entry.isDirectory()) {
+      await indexKnowledge(sourceFile, childRelative);
+      continue;
+    }
+    if (!entry.name.toLowerCase().endsWith(".md")) continue;
+    const markdown = await readFile(sourceFile, "utf8");
+    const title = markdown.split(/\r?\n/).find((line) => /^#\s+/.test(line))?.replace(/^#\s+/, "").trim()
+      ?? path.basename(entry.name, path.extname(entry.name));
+    const description = markdown.split(/\r?\n/).map((line) => line.trim()).find((line) => line && !/^#/.test(line) && !/^[-*`>]/.test(line))
+      ?? `Reference material for ${title}.`;
+    const filePath = childRelative.split(path.sep).map(encodeURIComponent).join("/");
+    const id = `library-${createHash("sha256").update(childRelative).digest("hex").slice(0, 24)}`;
+    knowledgeResources.push({
+      id,
+      title,
+      folder: path.dirname(childRelative).split(path.sep).join("/"),
+      filename: entry.name,
+      contentType: "text/markdown",
+      size: Buffer.byteLength(markdown),
+      description,
+      sourceUrl: `/knowledge-library/${filePath}`,
+    });
+  }
+}
+await indexKnowledge(publicKnowledge);
+knowledgeResources.sort((left, right) => left.title.localeCompare(right.title));
+await writeFile(path.join(publicKnowledge, "index.json"), JSON.stringify({ resources: knowledgeResources }));
 console.log(`Prepared ${Object.keys(pages).length} portfolio pages.`);

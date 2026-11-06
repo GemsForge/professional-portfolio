@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Codex Development Handbook — Markdown view</title>
+<style>
+:root{--ink:#1E2823;--muted:#4C554F;--blue:#355A3A;--pale:#E3F2E3;--line:#B3B3B3;--paper:#F2F3F2;--bg:#F2F2DB;--amber:#C7831B;--rose:#D49B7E}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:"Avenir Next",Avenir,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.62}.shell{max-width:980px;margin:32px auto;background:var(--paper);box-shadow:0 12px 36px #1E282322}.topbar{position:sticky;top:0;z-index:10;display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:12px 18px;background:var(--ink);border-bottom:1px solid #7DB687}.topbar a{display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border:1px solid #7DB687;border-radius:999px;background:var(--pale);color:var(--ink);font-weight:800;font-size:.84rem;text-decoration:none}.topbar a.secondary{background:transparent;color:var(--paper)}.topbar a:hover{background:#7DB687;color:var(--ink)}.cover{padding:66px 88px 52px;background:linear-gradient(145deg,#F2F3F2 0%,#E3F2E3 62%,#D49B7E 100%);border-bottom:1px solid var(--line)}.eyebrow{color:var(--rose);font-weight:850;letter-spacing:.13em;text-transform:uppercase;font-size:.78rem}.cover h1{max-width:760px;margin:.45rem 0 .8rem;color:var(--ink);font-size:2.7rem;line-height:1.08}.cover p{max-width:720px;color:var(--muted)}.frontmatter,.content{padding:42px 88px}.frontmatter{border-bottom:1px solid var(--line)}h1,h2,h3{color:var(--ink);line-height:1.2;scroll-margin-top:20px}h1{font-size:2rem;border-bottom:2px solid var(--blue);padding-bottom:.35rem;margin-top:3rem}h1::before{content:'📘  SECTION';display:block;color:var(--rose);font-size:.68rem;letter-spacing:.14em;font-weight:800;margin-bottom:.35rem}h2{font-size:1.35rem;color:var(--blue);margin-top:2.15rem}h2::before{content:'🧭  GUIDANCE';display:block;color:var(--amber);font-size:.62rem;letter-spacing:.13em;font-weight:800;margin-bottom:.3rem}h3{font-size:1.05rem;color:var(--muted);margin-top:1.6rem}h3::before{content:'🔎  DETAIL';display:block;color:var(--muted);font-size:.58rem;letter-spacing:.12em;font-weight:800;margin-bottom:.2rem}a{color:var(--blue);text-underline-offset:3px}ul,ol{padding-left:1.45rem}.toc{columns:2;column-gap:40px;padding:0;list-style:none}.toc li{break-inside:avoid;margin:.35rem 0}.toc-level-1{font-weight:850;margin-top:1rem!important;color:var(--blue)}.toc-level-2{padding-left:1rem;font-size:.94rem}.toc-level-3{padding-left:2rem;font-size:.86rem;color:var(--muted)}pre{position:relative;background:#FAF9F0;border:1px solid var(--line);border-left:4px solid var(--amber);padding:36px 20px 18px;overflow:auto;white-space:pre-wrap;font:.9rem/1.45 "SFMono-Regular",Consolas,monospace;border-radius:4px}pre::before{content:'💻  CODE EXAMPLE';position:absolute;top:10px;left:20px;color:var(--blue);font:800 .62rem/1 Inter,system-ui;letter-spacing:.13em}code{background:var(--pale);padding:.1em .3em;border-radius:3px;font-family:"SFMono-Regular",Consolas,monospace;font-size:.92em}strong{font-weight:800;background:linear-gradient(transparent 58%,#F6D98C 58%);padding:0 .08em}table{border-collapse:collapse;width:100%;margin:20px 0 28px;font-size:.94rem}table::before{content:'📋  REFERENCE TABLE';display:block;color:var(--muted);font:800 .62rem/1 Inter,system-ui;letter-spacing:.13em;margin-bottom:7px}th,td{border:1px solid var(--line);padding:10px 12px;vertical-align:top}th{background:var(--ink);color:#fff;text-align:left}tr:nth-child(even) td{background:#FAF9F0}blockquote{margin:22px 0;padding:36px 20px 14px;background:var(--bg);border-left:4px solid var(--amber);color:var(--muted);position:relative}blockquote::before{content:'💡  DECISION RULE';position:absolute;top:12px;left:20px;color:var(--amber);font:800 .62rem/1 Inter,system-ui;letter-spacing:.13em}.mermaid{margin:24px 0;padding:18px;background:#FAF9F0;border:1px solid var(--line);border-left:4px solid var(--rose);overflow:auto;text-align:center}.mermaid svg{max-width:100%;height:auto}.footer-note{padding:18px 88px 40px;color:var(--muted);font-size:.88rem}@media(max-width:700px){.shell{margin:0;box-shadow:none}.cover,.frontmatter,.content{padding:38px 22px}.cover h1{font-size:2.2rem}.toc{columns:1}.footer-note{padding:18px 22px 34px}}@media print{body{background:#fff}.shell{margin:0;box-shadow:none}.topbar{position:static}.cover,.frontmatter,.content{padding:28px 0}.topbar a{color:inherit;text-decoration:none}}
+</style>
+<style>
+.source-menu{position:relative;margin-left:auto}.source-menu summary{list-style:none}.source-menu summary::-webkit-details-marker{display:none}.source-menu-trigger{display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border:1px solid #7DB687;border-radius:999px;background:transparent;color:#F2F3F2;font:800 .84rem/1.2 "Avenir Next",Avenir,sans-serif;cursor:pointer}.source-menu-trigger:hover{background:#7DB687;color:#1E2823}.source-menu-panel{position:absolute;right:0;top:calc(100% + 8px);z-index:20;display:grid;min-width:240px;padding:7px;border:1px solid #7DB687;border-radius:10px;background:#F2F3F2;box-shadow:0 10px 24px #1E282344}.source-menu-panel a{display:block!important;width:100%;padding:9px 10px;border:0;background:transparent!important;color:#1E2823!important;border-radius:7px;text-decoration:none}.source-menu-panel a:hover{background:#E3F2E3!important}.reader-badge{display:inline-flex;align-items:center;gap:7px;margin-top:12px;padding:7px 11px;border:1px solid #7DB687;border-radius:999px;background:#E3F2E3;color:#1E2823;font-size:.84rem;font-weight:800}.reader-badge::before{content:'✓'}.frontmatter h1{scroll-margin-top:90px}
+@media(max-width:700px){.source-menu{margin-left:0}.source-menu-panel{left:0;right:auto}}
+</style>
+</head>
+<body><main class="shell">
+<nav class="topbar" aria-label="Markdown reader navigation"><a href="index.html">🏠 Home</a><a class="secondary" href="#navigator">🧭 Navigator</a><details class="source-menu"><summary class="source-menu-trigger">⚙️ View options</summary><div class="source-menu-panel"><a href="codex-development-handbook.html">📖 HTML booklet</a><a href="codex-development-handbook.md">📄 Open raw Markdown</a><a href="./" target="_blank" rel="noreferrer">📂 Open enclosing folder</a><a href="index.html">🏠 Library home</a></div></details></nav>
+<section class="cover"><div class="eyebrow">📄 Markdown reader · read mode</div><h1>Codex Development Handbook</h1><p>This page renders the maintained Markdown source as a formatted, read-only handbook page. The source file remains authoritative, while this view keeps the familiar GemsForge navigation, diagrams, links, tables, and code examples readable.</p><span class="reader-badge">Rendered source · codex-development-handbook.md</span></section>
+<section id="navigator" class="frontmatter"><h1>Navigator</h1><ol class="toc"><li class="toc-level-1"><a href="#section-1">🤖 Codex Development Handbook</a></li><li class="toc-level-2"><a href="#section-2">Purpose</a></li><li class="toc-level-2"><a href="#section-3">The short version</a></li><li class="toc-level-2"><a href="#section-4">🧭 The operating map</a></li><li class="toc-level-2"><a href="#section-5">1. Instructions: give Codex the map first</a></li><li class="toc-level-3"><a href="#section-6">✅ What an instruction file should answer</a></li><li class="toc-level-3"><a href="#section-7">✅ Recommended instruction hierarchy</a></li><li class="toc-level-3"><a href="#section-8">✅ Keep instructions maintainable</a></li><li class="toc-level-2"><a href="#section-9">2. Agents and subagents</a></li><li class="toc-level-3"><a href="#section-10">✅ Use one primary agent when</a></li><li class="toc-level-3"><a href="#section-11">✅ Use subagents when</a></li><li class="toc-level-3"><a href="#section-12">❌ Do not delegate ownership</a></li><li class="toc-level-3"><a href="#section-13">✅ Good subagent request</a></li><li class="toc-level-3"><a href="#section-14">❌ Weak subagent request</a></li><li class="toc-level-2"><a href="#section-15">3. Getting the most out of Codex</a></li><li class="toc-level-3"><a href="#section-16">📝 A useful task packet</a></li><li class="toc-level-3"><a href="#section-17">✅ Give feedback by pointing to evidence</a></li><li class="toc-level-3"><a href="#section-18">✅ Ask for the smallest useful change</a></li><li class="toc-level-3"><a href="#section-19">✅ Ask Codex to explain uncertainty</a></li><li class="toc-level-2"><a href="#section-20">4. Iterative development versus formal delivery</a></li><li class="toc-level-3"><a href="#section-21">🧪 Iterative development</a></li><li class="toc-level-3"><a href="#section-22">✅ Formal delivery</a></li><li class="toc-level-2"><a href="#section-23">5. UI, terminal, IDE, and CLI</a></li><li class="toc-level-3"><a href="#section-24">✅ Choose the surface by the shape of the work</a></li><li class="toc-level-2"><a href="#section-25">6. ChatGPT projects and chats versus Codex projects and chats</a></li><li class="toc-level-3"><a href="#section-26">✅ Use a project for continuity</a></li><li class="toc-level-3"><a href="#section-27">✅ Use a separate chat for a clean decision boundary</a></li><li class="toc-level-3"><a href="#section-28">❌ Do not assume history is authority</a></li><li class="toc-level-2"><a href="#section-29">7. My automation patterns</a></li><li class="toc-level-3"><a href="#section-30">🫀 Thread follow-up or heartbeat</a></li><li class="toc-level-3"><a href="#section-31">🗓️ Scheduled or recurring work</a></li><li class="toc-level-3"><a href="#section-32">✅ Automation checklist</a></li><li class="toc-level-3"><a href="#section-33">My documented operating pattern</a></li><li class="toc-level-2"><a href="#section-34">8. Safety, permissions, and approval boundaries</a></li><li class="toc-level-3"><a href="#section-35">✅ Safe default</a></li><li class="toc-level-3"><a href="#section-36">❌ Do not confuse capability with authorization</a></li><li class="toc-level-2"><a href="#section-37">9. A reusable Codex review prompt</a></li><li class="toc-level-2"><a href="#section-38">10. Glossary</a></li><li class="toc-level-2"><a href="#section-39">Supportive references</a></li><li class="toc-level-2"><a href="#section-40">Closing rule</a></li></ol></section>
+<article class="content"><h1 id="section-1">🤖 Codex Development Handbook</h1>
+<h2 id="section-2">Purpose</h2>
+<p>This handbook is a practical reference for using Codex as a development partner across the GemsForge workspace. It explains how to give Codex useful context, how to choose between the app, terminal, IDE, ChatGPT, projects, and chats, and how to keep agent work safe, reviewable, and aligned with the user’s authority.</p>
+<p>This guide is about using Codex and ChatGPT Work. It is not an OpenAI API implementation guide, and it does not replace repository-specific governance.</p>
+<h2 id="section-3">The short version</h2>
+<p>Use Codex for work that needs a coding agent: inspect files, edit code, run commands, test changes, review a diff, or prepare a handoff.</p>
+<p>Use ChatGPT when the work is primarily conversation, research, planning, writing, or a deliverable that does not need a local coding workspace.</p>
+<p>Use a project when the work needs a durable home for related chats, files, and instructions.</p>
+<p>Use a chat when the work is a focused conversation or one bounded task.</p>
+<p>Use the terminal when the work is repeatable, inspectable, scriptable, or naturally expressed as commands.</p>
+<p>Use the Codex app when the work benefits from an interactive workspace, visual review, browser panels, file navigation, or a continuing development thread.</p>
+<h2 id="section-4">🧭 The operating map</h2>
+<div class="mermaid" role="img" aria-label="Mermaid diagram">flowchart TD
+    intent["User intent"] --&gt; choose{"What kind of work?"}
+    choose --&gt;|"Writing, research, planning"| chat["ChatGPT chat or project"]
+    choose --&gt;|"Read or change local code"| codex["Codex app, IDE, or CLI"]
+    choose --&gt;|"Repeatable command workflow"| terminal["Terminal or Codex CLI"]
+    codex --&gt; context["AGENTS.md + repository instructions"]
+    terminal --&gt; context
+    context --&gt; mode{"Development mode"}
+    mode --&gt;|"Explore and refine"| iterative["Build → test → review → refine"]
+    mode --&gt;|"Ready to integrate"| formal["Review → checks → PR → approval"]
+    iterative --&gt; evidence["Report observed results"]
+    formal --&gt; evidence</div><h2 id="section-5">1. Instructions: give Codex the map first</h2>
+<p>Codex should inspect the applicable instructions before changing code. In this workspace, the instruction path begins with <code>AGENTS.md</code>, then the operating standard, then the relevant architecture and governance documents.</p>
+<h3 id="section-6">✅ What an instruction file should answer</h3>
+<ul>
+<li>What the project is and where the relevant code lives.</li>
+<li>Which architecture and naming rules apply.</li>
+<li>Which commands verify the work.</li>
+<li>Which changes require approval.</li>
+<li>What must not be inferred or changed.</li>
+<li>How exploratory work differs from formal delivery.</li>
+</ul>
+<h3 id="section-7">✅ Recommended instruction hierarchy</h3>
+<pre><code class="language-text">Workspace AGENTS.md
+    ↓
+Repository or project AGENTS.md
+    ↓
+Directory-specific instructions
+    ↓
+Issue, story, or user request
+    ↓
+Current files and test evidence</code></pre><p>The user request defines the goal. Instruction files define the operating boundaries. Existing code, tests, and tool output provide evidence. A page, comment, screenshot, or generated artifact may provide useful context, but it does not silently override governing instructions.</p>
+<p>Codex CLI discovers project instructions from the project root down to the current working directory and combines them in that order. A more local <code>AGENTS.md</code> can add directory-specific guidance. Keep this inheritance in mind when a task behaves differently in a nested folder.</p>
+<h3 id="section-8">✅ Keep instructions maintainable</h3>
+<p>Put durable rules in <code>AGENTS.md</code> or the project’s established policy file. Put task-specific context in the prompt or issue. Do not turn every preference into a permanent rule.</p>
+<pre><code class="language-text">Durable rule: Use Avenir Next and the GemsForge palette in local booklets.
+Task context: Add a glossary to the database handbook.
+Evidence: The generated HTML contains the expected heading and links.</code></pre><h2 id="section-9">2. Agents and subagents</h2>
+<p>An agent is a working role with a goal, context, tools, and a responsibility boundary. A subagent is a delegated piece of work that should return evidence or a focused result to the main task.</p>
+<p>Delegation is not implied by a request for depth or thoroughness. Spawn a subagent only when the user or applicable instructions authorize delegation, and give it a bounded task with a clear write scope or read-only result.</p>
+<h3 id="section-10">✅ Use one primary agent when</h3>
+<ul>
+<li>The work has a single coherent implementation path.</li>
+<li>Changes must be coordinated across several files.</li>
+<li>The agent needs to make decisions from the same evolving context.</li>
+<li>The user is iterating on visual or written feedback.</li>
+</ul>
+<h3 id="section-11">✅ Use subagents when</h3>
+<ul>
+<li>Parts of the work are independent.</li>
+<li>A second perspective is useful for review, accessibility, security, or documentation quality.</li>
+<li>One agent can inspect while another prepares a bounded change.</li>
+<li>Parallel research will shorten the task without creating conflicting edits.</li>
+</ul>
+<div class="mermaid" role="img" aria-label="Mermaid diagram">flowchart LR
+    lead["Primary Codex task"] --&gt; inspect["Inspect architecture and request"]
+    lead --&gt; delegate["Delegate bounded review"]
+    delegate --&gt; qa["QA or documentation subagent"]
+    delegate --&gt; refs["Reference or dependency subagent"]
+    inspect --&gt; integrate["Primary agent integrates evidence"]
+    qa --&gt; integrate
+    refs --&gt; integrate
+    integrate --&gt; verify["Run focused verification"]</div><h3 id="section-12">❌ Do not delegate ownership</h3>
+<p>Subagents may investigate, draft, test, or review. They do not gain authority to merge, deploy, change permissions, mutate external records, close issues, or approve delivery unless the user explicitly authorizes that action and the workflow allows it.</p>
+<h3 id="section-13">✅ Good subagent request</h3>
+<pre><code class="language-text">Review only the generated HTML for missing headings, links, Mermaid blocks, and broken internal anchors.
+Do not edit files. Return the failures with exact filenames and evidence.</code></pre><h3 id="section-14">❌ Weak subagent request</h3>
+<pre><code class="language-text">Make the documentation better.</code></pre><p>The second request has no boundary, success condition, or handoff format.</p>
+<h2 id="section-15">3. Getting the most out of Codex</h2>
+<p>Codex works best when the prompt describes the outcome, the scope, and the evidence expected at the end.</p>
+<h3 id="section-16">📝 A useful task packet</h3>
+<pre><code class="language-text">Goal:
+  What should exist when this is complete?
+
+Scope:
+  Which files, project, page, or feature are in scope?
+
+Reference:
+  Which architecture, issue, image, or document should guide the work?
+
+Constraints:
+  What must remain unchanged? What requires approval?
+
+Acceptance:
+  What should I be able to see, run, click, or verify?
+
+Report:
+  List changed files, checks run, failures, limitations, and next action.</code></pre><h3 id="section-17">✅ Give feedback by pointing to evidence</h3>
+<pre><code class="language-text">The flowchart is still rendered as a code block in the HTML at the Request flow section.
+Convert that source block to Mermaid, regenerate the page, and verify the SVG/runtime path.</code></pre><h3 id="section-18">✅ Ask for the smallest useful change</h3>
+<p>Start with one page, one workflow, one component, or one handbook section. Small iterations keep the result visible and make corrections inexpensive.</p>
+<h3 id="section-19">✅ Ask Codex to explain uncertainty</h3>
+<p>Useful phrases include:</p>
+<ul>
+<li>“Distinguish what you verified from what you inferred.”</li>
+<li>“Show me the exact file and line that owns this behavior.”</li>
+<li>“Do not implement the fix yet; diagnose the cause first.”</li>
+<li>“Stop before merge, deployment, or external mutation.”</li>
+</ul>
+<h2 id="section-20">4. Iterative development versus formal delivery</h2>
+<p>These are different modes, not different levels of quality.</p>
+<h3 id="section-21">🧪 Iterative development</h3>
+<p>Use this mode for exploration, UI refinement, troubleshooting, and feedback-driven construction.</p>
+<pre><code class="language-text">Prompt → Build → Test → Review results → Refine → Repeat</code></pre><p>It does not require a new issue, commit, or pull request for every small refinement unless the repository or user specifically requires one.</p>
+<h3 id="section-22">✅ Formal delivery</h3>
+<p>Use this mode when the implementation is ready for integration.</p>
+<pre><code class="language-text">Finalize → Test → Independent review → Resolve findings → Pull request → Human approval → Merge</code></pre><p>Formal delivery requires evidence, applicable branch and commit rules, required checks, issue linkage, and human approval. Codex should stop at the approval boundary rather than silently merging or releasing.</p>
+<h2 id="section-23">5. UI, terminal, IDE, and CLI</h2>
+<table>
+<thead>
+<tr>
+<th>Surface</th>
+<th>Best for</th>
+<th>Remember</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Codex app</td>
+<td>Multi-file implementation, visual review, browser panels, task continuity</td>
+<td>Keep the working context and user feedback together.</td>
+</tr>
+<tr>
+<td>Codex CLI</td>
+<td>Repeatable terminal work, scripts, batch transforms, local inspection</td>
+<td>Make commands inspectable and rerunnable.</td>
+</tr>
+<tr>
+<td>IDE extension</td>
+<td>Editing while staying inside the code editor</td>
+<td>Review the diff and test output in the repository’s normal tools.</td>
+</tr>
+<tr>
+<td>Terminal</td>
+<td>Git, tests, builds, search, formatters, and diagnostics</td>
+<td>A command result is evidence, not automatically acceptance.</td>
+</tr>
+<tr>
+<td>ChatGPT</td>
+<td>Research, planning, writing, explanation, and non-local deliverables</td>
+<td>Use a project when the context should persist.</td>
+</tr>
+<tr>
+<td>ChatGPT Work</td>
+<td>Longer-running deliverables, recurring work, and reviewable progress</td>
+<td>Treat external actions and approvals as explicit boundaries.</td>
+</tr>
+</tbody></table>
+<h3 id="section-24">✅ Choose the surface by the shape of the work</h3>
+<div class="mermaid" role="img" aria-label="Mermaid diagram">flowchart TD
+    start["Start with the desired outcome"] --&gt; local{"Does it need local files or commands?"}
+    local --&gt;|"No"| chatgpt["ChatGPT chat or project"]
+    local --&gt;|"Yes"| repeat{"Will I rerun it or script it?"}
+    repeat --&gt;|"Yes"| cli["Terminal or Codex CLI"]
+    repeat --&gt;|"No"| visual{"Does visual inspection matter?"}
+    visual --&gt;|"Yes"| app["Codex app or IDE"]
+    visual --&gt;|"No"| cli</div><h2 id="section-25">6. ChatGPT projects and chats versus Codex projects and chats</h2>
+<p>These names are related but should not be treated as the same workspace.</p>
+<table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>Practical meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ChatGPT chat</td>
+<td>A conversation for questions, research, writing, planning, or a focused deliverable.</td>
+</tr>
+<tr>
+<td>ChatGPT project</td>
+<td>A durable collection of related chats, files, sources, and project instructions.</td>
+</tr>
+<tr>
+<td>Codex chat/task</td>
+<td>A coding-oriented working thread with a local or remote development context.</td>
+</tr>
+<tr>
+<td>Codex project</td>
+<td>The saved project/workspace that provides a repository or folder context for Codex work.</td>
+</tr>
+<tr>
+<td>Codex worktree</td>
+<td>An isolated Git checkout used when work must be separated from another checkout.</td>
+</tr>
+<tr>
+<td>Project instructions</td>
+<td>Persistent guidance applied within the project’s scope.</td>
+</tr>
+<tr>
+<td>Chat prompt</td>
+<td>Immediate context for the current request.</td>
+</tr>
+</tbody></table>
+<h3 id="section-26">✅ Use a project for continuity</h3>
+<p>Create or use a project when several tasks share:</p>
+<ul>
+<li>the same codebase or document collection;</li>
+<li>the same instructions and vocabulary;</li>
+<li>recurring decisions or reference files; or</li>
+<li>a long-running outcome that should remain easy to resume.</li>
+</ul>
+<h3 id="section-27">✅ Use a separate chat for a clean decision boundary</h3>
+<p>Use a separate chat when the work needs a fresh context, an independent review, a different project, or a clearly separate deliverable.</p>
+<h3 id="section-28">❌ Do not assume history is authority</h3>
+<p>A previous chat can explain intent, but current files, current instructions, current checks, and the current user request are stronger evidence of present state.</p>
+<h2 id="section-29">7. My automation patterns</h2>
+<p>Automation is useful when it removes repeated checking without hiding state or taking an unauthorized action.</p>
+<h3 id="section-30">🫀 Thread follow-up or heartbeat</h3>
+<p>Use a thread-attached recurring follow-up when Codex should revisit the same task, monitor a known condition, or continue work later. Keep unchanged-state runs quiet; notify only on a meaningful change, completion, failure, or required user action.</p>
+<h3 id="section-31">🗓️ Scheduled or recurring work</h3>
+<p>Use a standalone scheduled run when the work should execute independently on a recurring schedule, such as a digest, report, or repository scan.</p>
+<h3 id="section-32">✅ Automation checklist</h3>
+<ul>
+<li>Name the automation by its human purpose.</li>
+<li>State what it checks and what counts as a meaningful change.</li>
+<li>Identify the source of truth.</li>
+<li>Keep credentials and secrets out of the prompt.</li>
+<li>Define whether it may edit, message, create, or only report.</li>
+<li>Preserve the user’s notification preference.</li>
+<li>Include a quiet no-change path.</li>
+<li>Record limitations when data or permissions are unavailable.</li>
+</ul>
+<h3 id="section-33">My documented operating pattern</h3>
+<p>The GemsForge operating model uses recurring development and Scrum-oriented checks, but automation output is still a dated observation. Confirm the current automation configuration in the Codex app before treating a schedule or delivery state as live truth.</p>
+<pre><code class="language-text">No meaningful change → stay quiet
+Meaningful change → report the delta and evidence
+Blocked or failed → report the blocker and required action
+Approval boundary → stop and ask the user</code></pre><h2 id="section-34">8. Safety, permissions, and approval boundaries</h2>
+<p>Codex can help prepare changes, but the user retains final authority over:</p>
+<ul>
+<li>merging protected branches;</li>
+<li>deployment and release;</li>
+<li>secrets, credentials, and permissions;</li>
+<li>destructive cleanup or history rewriting;</li>
+<li>issue closure and project-state mutation;</li>
+<li>external messages or records; and</li>
+<li>production data and private APIs.</li>
+</ul>
+<h3 id="section-35">✅ Safe default</h3>
+<p>Inspect first. Make the smallest scoped change. Verify proportionally. Report exact evidence. Stop before an external or irreversible action unless it is explicitly authorized.</p>
+<h3 id="section-36">❌ Do not confuse capability with authorization</h3>
+<p>The fact that a tool can open a browser, call an app, edit a file, send a message, or mutate a project does not mean that action is approved for the current task.</p>
+<h2 id="section-37">9. A reusable Codex review prompt</h2>
+<pre><code class="language-text">Review this change against the applicable AGENTS.md, architecture, and acceptance criteria.
+
+Check:
+- correctness and scope;
+- type safety and contracts;
+- security and privacy boundaries;
+- accessibility and responsive behavior;
+- tests, formatting, and build evidence;
+- documentation and links;
+- generated artifacts and source synchronization.
+
+Do not merge, deploy, close the issue, or mutate external project state.
+Return findings by severity with exact file paths and evidence.</code></pre><h2 id="section-38">10. Glossary</h2>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Agent</td>
+<td>A role with a goal, context, tools, and responsibility boundary.</td>
+</tr>
+<tr>
+<td>Subagent</td>
+<td>A delegated agent used for a bounded investigation, implementation, or review.</td>
+</tr>
+<tr>
+<td>AGENTS.md</td>
+<td>A project instruction file that tells coding agents how to work safely and consistently.</td>
+</tr>
+<tr>
+<td>Context packet</td>
+<td>The goal, scope, references, constraints, acceptance criteria, and reporting format supplied to Codex.</td>
+</tr>
+<tr>
+<td>Iterative development</td>
+<td>Prompt-driven build, test, review, and refinement without unnecessary delivery overhead.</td>
+</tr>
+<tr>
+<td>Formal delivery</td>
+<td>The controlled path from finalized change through review, checks, pull request, approval, and merge.</td>
+</tr>
+<tr>
+<td>Project</td>
+<td>A durable workspace for related files, instructions, chats, or repository context.</td>
+</tr>
+<tr>
+<td>Chat</td>
+<td>A conversation or task thread with a bounded history and working context.</td>
+</tr>
+<tr>
+<td>Worktree</td>
+<td>An isolated Git checkout used to separate development changes.</td>
+</tr>
+<tr>
+<td>Heartbeat</td>
+<td>A recurring follow-up attached to an ongoing thread or task.</td>
+</tr>
+<tr>
+<td>Scheduled work</td>
+<td>A recurring or one-time run that executes independently on a schedule.</td>
+</tr>
+<tr>
+<td>Evidence</td>
+<td>Observable file content, command output, test result, link, screenshot, or tool response.</td>
+</tr>
+<tr>
+<td>Approval boundary</td>
+<td>The point where Codex must stop before merge, deployment, external mutation, or another consequential action.</td>
+</tr>
+</tbody></table>
+<h2 id="section-39">Supportive references</h2>
+<ul>
+<li><a href="https://developers.openai.com/learn/codex">Codex — OpenAI Developers</a> — Codex app, CLI, IDE, and learning resources.</li>
+<li><a href="https://help.openai.com/en/articles/11369540-using-codex-with-your-chatgpt-plan">Using Codex with your ChatGPT plan</a> — access, usage, and project instruction basics.</li>
+<li><a href="https://help.openai.com/en/articles/10169521-projects-in-chatgpt">Projects in ChatGPT</a> — project files, instructions, sources, memory, and moving chats.</li>
+<li><a href="https://help.openai.com/en/articles/20001275/">ChatGPT Work and Codex</a> — distinctions between Work and Codex history and workflows.</li>
+<li><a href="https://developers.openai.com/api/docs/libraries/openai-cli">OpenAI CLI</a> — repeatable CLI work and the CLI-versus-subagent distinction.</li>
+<li><a href="https://developers.openai.com/learn/docs-mcp">Docs MCP</a> — connecting Codex to current OpenAI developer documentation.</li>
+<li><a href="https://github.com/openai/codex/blob/main/codex-rs/core/src/agents_md.rs">Codex AGENTS.md discovery</a> — project-root-to-working-directory instruction loading.</li>
+<li><a href="https://github.com/openai/codex/blob/main/codex-rs/core/src/tools/handlers/multi_agents_spec.rs">Codex multi-agent specification</a> — delegation boundaries and parallel-work guidance.</li>
+<li><a href="../../governance/GemsForge-Development-Operating-Standard.md">GemsForge Development Operating Standard</a> — local development modes and approval boundaries.</li>
+<li><a href="../../AGENTS.md">AGENTS.md</a> — workspace-specific instructions.</li>
+</ul>
+<h2 id="section-40">Closing rule</h2>
+<p>Give Codex a clear map, a bounded mission, and a visible definition of done. Let it inspect, build, test, and explain. Keep authority, approval, and evidence explicit.</p>
+</article>
+<p class="footer-note">Rendered from <a href="codex-development-handbook.md">codex-development-handbook.md</a>. The Markdown file remains the content authority. Use <strong>⚙️ View options</strong> for the raw source or its enclosing folder.</p>
+</main><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs'; mermaid.initialize({startOnLoad:true,theme:'base',themeVariables:{primaryColor:'#E3F2E3',primaryTextColor:'#1E2823',primaryBorderColor:'#D49B7E',lineColor:'#355A3A'}});</script></body>
+</html>

@@ -1,0 +1,1403 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Console Feature-Oriented Layered UI Architecture — Markdown view</title>
+<style>
+:root{--ink:#1E2823;--muted:#4C554F;--blue:#355A3A;--pale:#E3F2E3;--line:#B3B3B3;--paper:#F2F3F2;--bg:#F2F2DB;--amber:#C7831B;--rose:#D49B7E}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:"Avenir Next",Avenir,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.62}.shell{max-width:980px;margin:32px auto;background:var(--paper);box-shadow:0 12px 36px #1E282322}.topbar{position:sticky;top:0;z-index:10;display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:12px 18px;background:var(--ink);border-bottom:1px solid #7DB687}.topbar a{display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border:1px solid #7DB687;border-radius:999px;background:var(--pale);color:var(--ink);font-weight:800;font-size:.84rem;text-decoration:none}.topbar a.secondary{background:transparent;color:var(--paper)}.topbar a:hover{background:#7DB687;color:var(--ink)}.cover{padding:66px 88px 52px;background:linear-gradient(145deg,#F2F3F2 0%,#E3F2E3 62%,#D49B7E 100%);border-bottom:1px solid var(--line)}.eyebrow{color:var(--rose);font-weight:850;letter-spacing:.13em;text-transform:uppercase;font-size:.78rem}.cover h1{max-width:760px;margin:.45rem 0 .8rem;color:var(--ink);font-size:2.7rem;line-height:1.08}.cover p{max-width:720px;color:var(--muted)}.frontmatter,.content{padding:42px 88px}.frontmatter{border-bottom:1px solid var(--line)}h1,h2,h3{color:var(--ink);line-height:1.2;scroll-margin-top:20px}h1{font-size:2rem;border-bottom:2px solid var(--blue);padding-bottom:.35rem;margin-top:3rem}h1::before{content:'📘  SECTION';display:block;color:var(--rose);font-size:.68rem;letter-spacing:.14em;font-weight:800;margin-bottom:.35rem}h2{font-size:1.35rem;color:var(--blue);margin-top:2.15rem}h2::before{content:'🧭  GUIDANCE';display:block;color:var(--amber);font-size:.62rem;letter-spacing:.13em;font-weight:800;margin-bottom:.3rem}h3{font-size:1.05rem;color:var(--muted);margin-top:1.6rem}h3::before{content:'🔎  DETAIL';display:block;color:var(--muted);font-size:.58rem;letter-spacing:.12em;font-weight:800;margin-bottom:.2rem}a{color:var(--blue);text-underline-offset:3px}ul,ol{padding-left:1.45rem}.toc{columns:2;column-gap:40px;padding:0;list-style:none}.toc li{break-inside:avoid;margin:.35rem 0}.toc-level-1{font-weight:850;margin-top:1rem!important;color:var(--blue)}.toc-level-2{padding-left:1rem;font-size:.94rem}.toc-level-3{padding-left:2rem;font-size:.86rem;color:var(--muted)}pre{position:relative;background:#FAF9F0;border:1px solid var(--line);border-left:4px solid var(--amber);padding:36px 20px 18px;overflow:auto;white-space:pre-wrap;font:.9rem/1.45 "SFMono-Regular",Consolas,monospace;border-radius:4px}pre::before{content:'💻  CODE EXAMPLE';position:absolute;top:10px;left:20px;color:var(--blue);font:800 .62rem/1 Inter,system-ui;letter-spacing:.13em}code{background:var(--pale);padding:.1em .3em;border-radius:3px;font-family:"SFMono-Regular",Consolas,monospace;font-size:.92em}strong{font-weight:800;background:linear-gradient(transparent 58%,#F6D98C 58%);padding:0 .08em}table{border-collapse:collapse;width:100%;margin:20px 0 28px;font-size:.94rem}table::before{content:'📋  REFERENCE TABLE';display:block;color:var(--muted);font:800 .62rem/1 Inter,system-ui;letter-spacing:.13em;margin-bottom:7px}th,td{border:1px solid var(--line);padding:10px 12px;vertical-align:top}th{background:var(--ink);color:#fff;text-align:left}tr:nth-child(even) td{background:#FAF9F0}blockquote{margin:22px 0;padding:36px 20px 14px;background:var(--bg);border-left:4px solid var(--amber);color:var(--muted);position:relative}blockquote::before{content:'💡  DECISION RULE';position:absolute;top:12px;left:20px;color:var(--amber);font:800 .62rem/1 Inter,system-ui;letter-spacing:.13em}.mermaid{margin:24px 0;padding:18px;background:#FAF9F0;border:1px solid var(--line);border-left:4px solid var(--rose);overflow:auto;text-align:center}.mermaid svg{max-width:100%;height:auto}.footer-note{padding:18px 88px 40px;color:var(--muted);font-size:.88rem}@media(max-width:700px){.shell{margin:0;box-shadow:none}.cover,.frontmatter,.content{padding:38px 22px}.cover h1{font-size:2.2rem}.toc{columns:1}.footer-note{padding:18px 22px 34px}}@media print{body{background:#fff}.shell{margin:0;box-shadow:none}.topbar{position:static}.cover,.frontmatter,.content{padding:28px 0}.topbar a{color:inherit;text-decoration:none}}
+</style>
+<style>
+.source-menu{position:relative;margin-left:auto}.source-menu summary{list-style:none}.source-menu summary::-webkit-details-marker{display:none}.source-menu-trigger{display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border:1px solid #7DB687;border-radius:999px;background:transparent;color:#F2F3F2;font:800 .84rem/1.2 "Avenir Next",Avenir,sans-serif;cursor:pointer}.source-menu-trigger:hover{background:#7DB687;color:#1E2823}.source-menu-panel{position:absolute;right:0;top:calc(100% + 8px);z-index:20;display:grid;min-width:240px;padding:7px;border:1px solid #7DB687;border-radius:10px;background:#F2F3F2;box-shadow:0 10px 24px #1E282344}.source-menu-panel a{display:block!important;width:100%;padding:9px 10px;border:0;background:transparent!important;color:#1E2823!important;border-radius:7px;text-decoration:none}.source-menu-panel a:hover{background:#E3F2E3!important}.reader-badge{display:inline-flex;align-items:center;gap:7px;margin-top:12px;padding:7px 11px;border:1px solid #7DB687;border-radius:999px;background:#E3F2E3;color:#1E2823;font-size:.84rem;font-weight:800}.reader-badge::before{content:'✓'}.frontmatter h1{scroll-margin-top:90px}
+@media(max-width:700px){.source-menu{margin-left:0}.source-menu-panel{left:0;right:auto}}
+</style>
+</head>
+<body><main class="shell">
+<nav class="topbar" aria-label="Markdown reader navigation"><a href="index.html">🏠 Home</a><a class="secondary" href="#navigator">🧭 Navigator</a><details class="source-menu"><summary class="source-menu-trigger">⚙️ View options</summary><div class="source-menu-panel"><a href="console-feature-oriented-layered-ui-architecture-booklet.html">📖 HTML booklet</a><a href="Console%20Feature-Oriented%20Layered%20UI%20Architecture.md">📄 Open raw Markdown</a><a href="./" target="_blank" rel="noreferrer">📂 Open enclosing folder</a><a href="index.html">🏠 Library home</a></div></details></nav>
+<section class="cover"><div class="eyebrow">📄 Markdown reader · read mode</div><h1>Console Feature-Oriented Layered UI Architecture</h1><p>This page renders the maintained Markdown source as a formatted, read-only handbook page. The source file remains authoritative, while this view keeps the familiar GemsForge navigation, diagrams, links, tables, and code examples readable.</p><span class="reader-badge">Rendered source · Console Feature-Oriented Layered UI Architecture.md</span></section>
+<section id="navigator" class="frontmatter"><h1>Navigator</h1><ol class="toc"><li class="toc-level-1"><a href="#section-1">Developer Knowledge Reference: Feature-Oriented Layered UI</a></li><li class="toc-level-2"><a href="#section-2">Purpose</a></li><li class="toc-level-2"><a href="#section-3">Recommended description</a></li><li class="toc-level-2"><a href="#section-4">Architecture map</a></li><li class="toc-level-2"><a href="#section-5">Current Console layers</a></li><li class="toc-level-2"><a href="#section-6">Responsibility rule</a></li><li class="toc-level-2"><a href="#section-7">Redux placement</a></li><li class="toc-level-3"><a href="#section-8">🧭 GemsForgeAPI Console reference</a></li><li class="toc-level-3"><a href="#section-9">Redux owns</a></li><li class="toc-level-3"><a href="#section-10">Redux does not own</a></li><li class="toc-level-2"><a href="#section-11">Growth and UX redesign</a></li><li class="toc-level-2"><a href="#section-12">Adding a new feature</a></li><li class="toc-level-2"><a href="#section-13">Useful search terms</a></li><li class="toc-level-2"><a href="#section-14">Learning path</a></li><li class="toc-level-3"><a href="#section-15">State ownership decision guide</a></li><li class="toc-level-3"><a href="#section-16">Component extraction decision guide</a></li><li class="toc-level-2"><a href="#section-17">Live examples and interactive references</a></li><li class="toc-level-2"><a href="#section-18">Reference material</a></li><li class="toc-level-2"><a href="#section-19">Repository references</a></li><li class="toc-level-1"><a href="#section-20">Page 2: Envisioning Boundaries Before Coding</a></li><li class="toc-level-2"><a href="#section-21">Purpose</a></li><li class="toc-level-2"><a href="#section-22">The responsibility map</a></li><li class="toc-level-2"><a href="#section-23">File responsibility cards</a></li><li class="toc-level-3"><a href="#section-24">Feature view</a></li><li class="toc-level-3"><a href="#section-25">Workflow hook</a></li><li class="toc-level-3"><a href="#section-26">Data/query module</a></li><li class="toc-level-3"><a href="#section-27">Shared component</a></li><li class="toc-level-3"><a href="#section-28">Contract or schema module</a></li><li class="toc-level-2"><a href="#section-29">Before-and-after responsibility thinking</a></li><li class="toc-level-3"><a href="#section-30">Too broad</a></li><li class="toc-level-3"><a href="#section-31">Better boundary map</a></li><li class="toc-level-2"><a href="#section-32">A design exercise before implementation</a></li><li class="toc-level-2"><a href="#section-33">Applied Console example</a></li><li class="toc-level-1"><a href="#section-34">Page 3: Crafting Reusable View Components</a></li><li class="toc-level-2"><a href="#section-35">The purpose of a reusable view</a></li><li class="toc-level-2"><a href="#section-36">What belongs in a reusable view</a></li><li class="toc-level-2"><a href="#section-37">Generic view pattern</a></li><li class="toc-level-2"><a href="#section-38">The three-level boundary</a></li><li class="toc-level-2"><a href="#section-39">Choosing a name</a></li><li class="toc-level-2"><a href="#section-40">Guardrail: avoid the universal page component</a></li><li class="toc-level-3"><a href="#section-41">📝 The same warning applies to forms</a></li><li class="toc-level-1"><a href="#section-42">Page 4: The Anatomy of a Composable Form</a></li><li class="toc-level-2"><a href="#section-43">The goal</a></li><li class="toc-level-2"><a href="#section-44">Form anatomy</a></li><li class="toc-level-2"><a href="#section-45">Recommended file boundary</a></li><li class="toc-level-2"><a href="#section-46">Schema owns validation</a></li><li class="toc-level-2"><a href="#section-47">Field metadata owns scaffolding decisions</a></li><li class="toc-level-2"><a href="#section-48">The form controller owns behavior</a></li><li class="toc-level-2"><a href="#section-49">Responsibility rule</a></li><li class="toc-level-2"><a href="#section-50">The design principle</a></li><li class="toc-level-2"><a href="#section-51">Applied Console structure</a></li><li class="toc-level-1"><a href="#section-52">Page 5: Data Sources, Adapters, and Query State</a></li><li class="toc-level-2"><a href="#section-53">The core statement</a></li><li class="toc-level-2"><a href="#section-54">Interface means contract</a></li><li class="toc-level-2"><a href="#section-55">Adapter versus API client</a></li><li class="toc-level-2"><a href="#section-56">Query is not Redux configuration</a></li><li class="toc-level-2"><a href="#section-57">What `useQuery` means</a></li><li class="toc-level-2"><a href="#section-58">Finding the API contract</a></li><li class="toc-level-2"><a href="#section-59">CSV and JSON are boundary formats</a></li><li class="toc-level-2"><a href="#section-60">Fetch or Axios?</a></li><li class="toc-level-2"><a href="#section-61">Practical decision rule</a></li><li class="toc-level-1"><a href="#section-62">Page 6: Routing as the Addressable Feature Boundary</a></li><li class="toc-level-2"><a href="#section-63">The core idea</a></li><li class="toc-level-2"><a href="#section-64">The routing anatomy</a></li><li class="toc-level-2"><a href="#section-65">Route declarations</a></li><li class="toc-level-2"><a href="#section-66">What React Router owns</a></li><li class="toc-level-2"><a href="#section-67">Links and programmatic navigation</a></li><li class="toc-level-2"><a href="#section-68">Route parameters</a></li><li class="toc-level-2"><a href="#section-69">Nested routes and `Outlet`</a></li><li class="toc-level-2"><a href="#section-70">Routing and data loading</a></li><li class="toc-level-2"><a href="#section-71">The applied Console pattern</a></li><li class="toc-level-1"><a href="#section-72">Page 7: File Names as Role and Action Labels</a></li><li class="toc-level-2"><a href="#section-73">The purpose of naming</a></li><li class="toc-level-2"><a href="#section-74">File-name convention map</a></li><li class="toc-level-2"><a href="#section-75">“Feature-owned hook” versus “factory”</a></li><li class="toc-level-3"><a href="#section-76">Feature-owned hook</a></li><li class="toc-level-3"><a href="#section-77">Factory</a></li><li class="toc-level-2"><a href="#section-78">Avoiding a web of files</a></li><li class="toc-level-2"><a href="#section-79">Applied Console examples</a></li></ol></section>
+<article class="content"><h1 id="section-1">Developer Knowledge Reference: Feature-Oriented Layered UI</h1>
+<h2 id="section-2">Purpose</h2>
+<p>This is a reusable development reference for building modular React and
+TypeScript interfaces. The GemsForgeAPI Console is the applied example, but the
+principles, diagrams, decision rules, and links are intended to be useful for
+future projects as well.</p>
+<p>The architecture separates feature intent, reusable presentation, client
+workflows, server state, transport, and typed data contracts.</p>
+<p>The goal is to make the product easier to expand and redesign. A visual UX
+redesign should not require rewriting API behavior, schema contracts, or every
+feature screen.</p>
+<h2 id="section-3">Recommended description</h2>
+<p>The Console uses a <strong>feature-oriented layered UI architecture</strong> based on:</p>
+<ul>
+<li>separation of concerns;</li>
+<li>the Single Responsibility Principle;</li>
+<li>component composition;</li>
+<li>typed data contracts;</li>
+<li>custom hooks for feature workflows; and</li>
+<li>a dedicated server-state/query layer.</li>
+</ul>
+<p>This is influenced by Clean Architecture, but it is not a strict backend Clean
+Architecture implementation. The UI version focuses on ownership, dependency
+direction, replaceable visual layers, and feature boundaries.</p>
+<h2 id="section-4">Architecture map</h2>
+<div class="mermaid" role="img" aria-label="Mermaid diagram">flowchart TD
+    entry["Routes and application entry"] --&gt; views["Feature views"]
+    views --&gt; shared["Shared components"]
+    shared --&gt; design["Design system"]
+    views --&gt; workflows["Feature workflow hooks"]
+    views --&gt; client["Client state: Redux when justified"]
+    views --&gt; server["Server state: TanStack Query"]
+    views --&gt; contracts["Typed contracts"]
+    contracts --&gt; clientApi["Typed API client"]
+    clientApi --&gt; api["Vapor API"]</div><h2 id="section-5">Current Console layers</h2>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Current location</th>
+<th>Responsibility</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Application entry</td>
+<td><code>Console/src/main.tsx</code>, <code>App.tsx</code></td>
+<td>Bootstrapping, providers, and the application shell.</td>
+</tr>
+<tr>
+<td>Navigation</td>
+<td><code>Console/src/routes/</code></td>
+<td>Exact URLs, route parameters, feature loading, and recovery boundaries.</td>
+</tr>
+<tr>
+<td>Feature modules</td>
+<td><code>Console/src/features/</code></td>
+<td>Feature screens, domain intent, feature composition, and feature-specific controls.</td>
+</tr>
+<tr>
+<td>Workflow hooks</td>
+<td><code>Console/src/hooks/</code></td>
+<td>Multi-step workflows, reducers, temporary state, editing, paging, and uploads.</td>
+</tr>
+<tr>
+<td>Shared UI primitives</td>
+<td><code>Console/src/components/ui/</code></td>
+<td>Reusable visual structure, semantics, accessibility, and behavior.</td>
+</tr>
+<tr>
+<td>Shared application patterns</td>
+<td><code>Console/src/components/</code>, <code>components/layout/</code></td>
+<td>Shell, record collections, imports, attachments, feedback, and recurring layouts.</td>
+</tr>
+<tr>
+<td>Design system</td>
+<td><code>Console/src/design-system/</code></td>
+<td>Tamagui tokens, themes, typography, spacing, and responsive rules.</td>
+</tr>
+<tr>
+<td>Server state</td>
+<td><code>Console/src/data/</code></td>
+<td>TanStack Query keys, reads, mutations, caching, loading, errors, and invalidation.</td>
+</tr>
+<tr>
+<td>Transport</td>
+<td><code>Console/src/api.ts</code></td>
+<td>HTTP requests, response parsing, cancellation, uploads, binaries, and <code>APIError</code>.</td>
+</tr>
+<tr>
+<td>Contracts</td>
+<td><code>Console/src/types.ts</code></td>
+<td>Request, response, record, create-payload, and schema types.</td>
+</tr>
+<tr>
+<td>Native boundary</td>
+<td><code>Console/src/bridge/</code></td>
+<td>Typed React-to-SwiftUI communication.</td>
+</tr>
+<tr>
+<td>Table capability</td>
+<td><code>Console/src/table-kit/</code></td>
+<td>Reusable table, selection, query, and import behavior.</td>
+</tr>
+<tr>
+<td>Authentication</td>
+<td><code>Console/src/auth/</code></td>
+<td>Session, sign-in, reset-password, and protected-route behavior.</td>
+</tr>
+</tbody></table>
+<h2 id="section-6">Responsibility rule</h2>
+<p>Feature code provides <strong>values and user intent</strong>. Shared components provide
+<strong>structure and behavior</strong>.</p>
+<p>For example:</p>
+<pre><code class="language-tsx">&lt;GemEmptyState
+  icon="✦"
+  title="No education records"
+  description="The Education table did not return any records."
+/&gt;</code></pre><p>The feature supplies the meaning. <code>GemEmptyState</code> owns the markup, semantics,
+accessibility, spacing, and visual treatment.</p>
+<p>Each module should have one primary reason to change:</p>
+<ul>
+<li><code>GemDataTable</code> changes when table structure or table accessibility changes.</li>
+<li><code>EducationView</code> changes when the Education feature’s composition changes.</li>
+<li><code>useSchemaBuilder</code> changes when the schema-building workflow changes.</li>
+<li><code>recordQueries.ts</code> changes when server reads, mutations, or invalidation change.</li>
+<li><code>types.ts</code> changes when the data contract changes.</li>
+<li><code>tamagui.config.ts</code> changes when the visual system changes.</li>
+</ul>
+<h2 id="section-7">Redux placement</h2>
+<p>Redux is an optional <strong>client/application-state layer</strong>. It should not replace
+TanStack Query or become a general-purpose storage location for every value.</p>
+<h3 id="section-8">🧭 GemsForgeAPI Console reference</h3>
+<p>This handbook uses the GemsForgeAPI Console as its applicable reference
+application. The current Console uses <code>@tanstack/react-query</code> for server state,
+feature query modules under <code>Console/src/data/</code>, and a shared <code>QueryClient</code>.
+It does not currently use RTK Query. When reading this handbook for the
+Console, follow that established implementation rather than introducing a
+second server-state library.</p>
+<div class="mermaid" role="img" aria-label="Mermaid diagram">flowchart TD
+    view["Feature view"] --&gt; components["Shared components"]
+    view --&gt; hooks["Feature hooks"]
+    view --&gt; redux["Redux selectors/actions&lt;br/&gt;shared client state, if needed"]
+    view --&gt; query["TanStack Query hooks&lt;br/&gt;server state"]</div><h3 id="section-9">Redux owns</h3>
+<ul>
+<li>shared workspace or navigation state;</li>
+<li>multi-screen workflows;</li>
+<li>offline queues;</li>
+<li>cross-feature selections;</li>
+<li>undo/redo history;</li>
+<li>durable client drafts; or</li>
+<li>global UI coordination that has outgrown feature-local hooks.</li>
+</ul>
+<h3 id="section-10">Redux does not own</h3>
+<ul>
+<li>API records that TanStack Query already caches;</li>
+<li>loading and error state for server requests;</li>
+<li>one dialog’s open state;</li>
+<li>a selected row used by one screen;</li>
+<li>a local form draft; or</li>
+<li>derived values that can be calculated from existing state.</li>
+</ul>
+<p>The decision rule is:</p>
+<blockquote>
+<p>Redux owns durable or cross-feature client state. TanStack Query owns server
+state. Local React state and feature hooks own short-lived state that has no
+reason to leave the feature.</p>
+</blockquote>
+<h2 id="section-11">Growth and UX redesign</h2>
+<p>This architecture supports UX redesign by keeping visual concerns replaceable:</p>
+<div class="mermaid" role="img" aria-label="Mermaid diagram">flowchart TD
+    intent["Stable feature intent"] --&gt; contracts["Stable contracts and workflows"]
+    contracts --&gt; components["Replaceable shared component layer"]
+    components --&gt; theme["Replaceable design tokens and visual theme"]</div><p>Changing the visual language should primarily affect shared components and the
+design system. Changing a feature’s API behavior should primarily affect its
+data module or workflow hook. Changing a server response should primarily
+affect the contract, API mapping, and affected feature consumers.</p>
+<h2 id="section-12">Adding a new feature</h2>
+<p>Start with a feature boundary rather than adding unrelated files to a global
+folder:</p>
+<pre><code class="language-text">features/example/
+├── ExampleView.tsx
+├── exampleTypes.ts          # only if feature-specific
+├── exampleQueries.ts        # feature server-state behavior
+├── useExampleWorkflow.ts    # only if workflow state is needed
+└── components/              # only feature-specific components</code></pre><p>Use shared <code>components/</code> only when a pattern has repeated structure,
+accessibility behavior, interaction behavior, or a stable semantic API. Do not
+extract a wrapper merely to hide one <code>div</code>.</p>
+<h2 id="section-13">Useful search terms</h2>
+<ul>
+<li><code>feature-oriented frontend architecture React</code></li>
+<li><code>layered frontend architecture React TypeScript</code></li>
+<li><code>separation of concerns React custom hooks</code></li>
+<li><code>React component composition architecture</code></li>
+<li><code>server state versus client state React</code></li>
+<li><code>Feature-Sliced Design frontend</code></li>
+<li><code>Redux versus TanStack Query server state</code></li>
+</ul>
+<h2 id="section-14">Learning path</h2>
+<p>When a codebase starts feeling tangled, work through these questions in order:</p>
+<div class="mermaid" role="img" aria-label="Mermaid diagram">flowchart TD
+    one["1. What is the user-visible feature?"] --&gt; two["2. What data does the feature need?"]
+    two --&gt; three["3. Who owns that data?&lt;br/&gt;Component, feature, client store, or server?"]
+    three --&gt; four["4. What behavior is reusable?"]
+    four --&gt; five["5. What visual structure belongs in a shared component?"]
+    five --&gt; six["6. What contract crosses the API boundary?"]</div><h3 id="section-15">State ownership decision guide</h3>
+<div class="mermaid" role="img" aria-label="Mermaid diagram">flowchart TD
+    start{"Who needs this state?"} --&gt; one{"Only one component?"}
+    one -- Yes --&gt; local["Local React state"]
+    one -- No --&gt; nearby{"Several nearby components?"}
+    nearby -- Yes --&gt; parent["Lift state or use a feature hook"]
+    nearby -- No --&gt; workflow{"Multi-step workflow in one feature?"}
+    workflow -- Yes --&gt; hook["Custom hook and possibly useReducer"]
+    workflow -- No --&gt; distant{"Across distant features and complex to update?"}
+    distant -- Yes --&gt; redux["Consider Redux Toolkit"]
+    distant -- No --&gt; server{"Comes from or belongs to the server?"}
+    server -- Yes --&gt; query["TanStack Query/server-state layer"]
+    server -- No --&gt; review["Keep ownership close to the consumer"]</div><h3 id="section-16">Component extraction decision guide</h3>
+<div class="mermaid" role="img" aria-label="Mermaid diagram">flowchart TD
+    repeated{"Is the markup repeated?"}
+    repeated -- No --&gt; local["Keep it local unless it has a clear semantic boundary"]
+    repeated -- Yes --&gt; responsibility{"Does it repeat structure, accessibility, or behavior?"}
+    responsibility -- No --&gt; wrapper["Do not extract just to hide a wrapper"]
+    responsibility -- Yes --&gt; extract["Extract a typed component with a meaningful API"]</div><h2 id="section-17">Live examples and interactive references</h2>
+<p>These resources are useful when the concepts are easier to understand by
+editing and running an example:</p>
+<ul>
+<li><a href="https://react.dev/learn/thinking-in-react">Thinking in React</a> — interactive
+component decomposition and minimal state exercises.</li>
+<li><a href="https://react.dev/learn/sharing-state-between-components">Sharing State Between Components</a>
+— live controlled/uncontrolled component examples and lifting state.</li>
+<li><a href="https://react.dev/learn/managing-state">React Managing State</a> — interactive
+examples for reducers, state structure, and scaling state management.</li>
+<li><a href="https://redux.js.org/tutorials/fundamentals/part-1-overview">Redux Fundamentals</a>
+— an incremental working Redux example showing actions, reducers, and store
+data flow.</li>
+<li><a href="https://redux.js.org/tutorials/quick-start">Redux Toolkit Quick Start</a> —
+the recommended modern Redux setup with a runnable example.</li>
+<li><a href="https://tanstack.com/query/latest/docs/framework/react/examples/basic">TanStack Query examples</a>
+— live examples of queries, mutations, caching, and invalidation.</li>
+<li><a href="https://storybook.js.org/docs/get-started/examples">Storybook examples</a> —
+component-driven examples for developing visual components independently.</li>
+<li><a href="https://codesandbox.io/templates/react">CodeSandbox React templates</a> —
+disposable browser projects for trying a pattern without changing a real
+repository.</li>
+</ul>
+<h2 id="section-18">Reference material</h2>
+<ul>
+<li><a href="https://react.dev/learn/thinking-in-react">React: Thinking in React</a></li>
+<li><a href="https://react.dev/learn/managing-state">React: Managing State</a></li>
+<li><a href="https://react.dev/learn/sharing-state-between-components">React: Sharing State Between Components</a></li>
+<li><a href="https://redux.js.org/introduction/getting-started">Redux: Getting Started</a></li>
+<li><a href="https://redux.js.org/redux-toolkit/overview/">Redux Toolkit overview</a></li>
+<li><a href="https://tanstack.com/query/latest/docs/framework/react/overview">TanStack Query overview</a></li>
+<li><a href="https://reactrouter.com/home">React Router documentation</a></li>
+<li><a href="https://tamagui.dev/docs/intro/introduction">Tamagui documentation</a></li>
+<li><a href="https://zod.dev/">Zod documentation</a></li>
+<li><a href="https://martinfowler.com/bliki/FlagArgument.html">Martin Fowler: Flag Argument</a></li>
+<li><a href="https://legacy.reactjs.org/docs/composition-vs-inheritance.html">React legacy Composition vs. Inheritance</a> — historical context; prefer current React composition guidance for new work.</li>
+<li><a href="https://fsd.how/docs/get-started/overview/">Feature-Sliced Design overview</a></li>
+<li><a href="https://www.patterns.dev/react/presentational-container-pattern/">Presentational-Container Pattern</a></li>
+</ul>
+<h2 id="section-19">Repository references</h2>
+<ul>
+<li><a href="../../../../GemsForgeAPI/Console/ARCHITECTURE.md"><code>Console/ARCHITECTURE.md</code></a></li>
+<li><a href="../../../../GemsForgeAPI/Console/UI_STANDARDS.md"><code>Console/UI_STANDARDS.md</code></a></li>
+<li><a href="../../../../GemsForgeAPI/Console/COMPONENT_API.md"><code>Console/COMPONENT_API.md</code></a></li>
+<li><a href="../../../../GemsForgeAPI/Console/README.md"><code>Console/README.md</code></a></li>
+</ul>
+<hr>
+<h1 id="section-20">Page 2: Envisioning Boundaries Before Coding</h1>
+<h2 id="section-21">Purpose</h2>
+<p>Before creating a file, decide what responsibility it will own. The goal is
+not to predict every future file or force a rigid folder structure. The goal is
+to make the boundary visible before implementation begins.</p>
+<p>The guiding question is:</p>
+<blockquote>
+<p>If this behavior changes later, what should be the smallest set of files that
+needs to change?</p>
+</blockquote>
+<p>If the answer is “the whole feature,” the boundary may still be too broad. If
+the answer is “a tiny, clearly named module,” the responsibility is probably
+well placed.</p>
+<h2 id="section-22">The responsibility map</h2>
+<div class="mermaid" role="img" aria-label="Mermaid diagram">flowchart TD
+    intent["User intent"] --&gt; view["Feature view&lt;br/&gt;What does this screen coordinate?"]
+    view --&gt; workflow["Workflow hook&lt;br/&gt;What sequence of actions and transitions does this feature need?"]
+    workflow --&gt; query["Data/query module&lt;br/&gt;What server data does this feature read or change?"]
+    query --&gt; client["API client&lt;br/&gt;How is the request transported?"]
+    client --&gt; server["Server&lt;br/&gt;What is authoritative?"]</div><p>At the same time:</p>
+<div class="mermaid" role="img" aria-label="Mermaid diagram">flowchart TD
+    intent["Feature intent"] --&gt; component["Shared component&lt;br/&gt;What structure, semantics, and behavior can be reused?"]
+    component --&gt; design["Design system&lt;br/&gt;What visual language should the application use?"]</div><h2 id="section-23">File responsibility cards</h2>
+<h3 id="section-24">Feature view</h3>
+<p>Example: <code>EducationView.tsx</code></p>
+<p>The feature view is the coordinator for one user-facing capability.</p>
+<p>It may:</p>
+<ul>
+<li>choose which feature components to render;</li>
+<li>connect feature hooks and query hooks;</li>
+<li>pass values and event handlers into components;</li>
+<li>coordinate selection, layout, and feature-level empty states;</li>
+<li>translate user intent into workflow calls.</li>
+</ul>
+<p>It should not:</p>
+<ul>
+<li>construct raw API URLs;</li>
+<li>duplicate shared loading, error, or empty-state markup;</li>
+<li>own an unrelated feature workflow;</li>
+<li>define generic visual primitives;</li>
+<li>become the permanent home for every detail component.</li>
+</ul>
+<h3 id="section-25">Workflow hook</h3>
+<p>Example: <code>useSchemaBuilder.ts</code></p>
+<p>The workflow hook owns a feature’s behavior over time.</p>
+<p>It may:</p>
+<ul>
+<li>use <code>useState</code> or <code>useReducer</code>;</li>
+<li>validate draft input;</li>
+<li>expose commands such as <code>addColumn</code>, <code>previewTable</code>, or <code>createTable</code>;</li>
+<li>coordinate asynchronous operations;</li>
+<li>protect against stale responses or duplicate submissions;</li>
+<li>return a view-ready state and actions.</li>
+</ul>
+<p>It should not:</p>
+<ul>
+<li>render JSX;</li>
+<li>define the application’s visual styling;</li>
+<li>duplicate the query cache;</li>
+<li>silently bypass server authority.</li>
+</ul>
+<h3 id="section-26">Data/query module</h3>
+<p>Example: <code>data/lifeQueries.ts</code> or <code>data/workflowQueries.ts</code></p>
+<p>The data layer owns server state.</p>
+<p>It may:</p>
+<ul>
+<li>define query keys;</li>
+<li>call the typed API client;</li>
+<li>configure queries and mutations;</li>
+<li>manage cancellation, caching, retries, and invalidation;</li>
+<li>expose server data to feature views and hooks.</li>
+</ul>
+<p>It should not:</p>
+<ul>
+<li>render components;</li>
+<li>decide page layout;</li>
+<li>store temporary visual state;</li>
+<li>become a second Redux store.</li>
+</ul>
+<h3 id="section-27">Shared component</h3>
+<p>Example: <code>components/ui/GemEmptyState.tsx</code></p>
+<p>The shared component owns a recurring interface pattern.</p>
+<p>It may:</p>
+<ul>
+<li>define semantic markup;</li>
+<li>provide accessibility behavior;</li>
+<li>own repeated interaction behavior;</li>
+<li>accept typed, meaningful props;</li>
+<li>use design-system tokens.</li>
+</ul>
+<p>It should not:</p>
+<ul>
+<li>know which feature fetched its data;</li>
+<li>construct feature-specific requests;</li>
+<li>import feature views;</li>
+<li>accept implementation details as its public API.</li>
+</ul>
+<h3 id="section-28">Contract or schema module</h3>
+<p>Example: <code>types.ts</code> or a future feature-local <code>schemaTypes.ts</code></p>
+<p>The contract module defines the shape of information crossing a boundary.</p>
+<p>It may define:</p>
+<ul>
+<li>API response types;</li>
+<li>create and patch payloads;</li>
+<li>schema-builder column definitions;</li>
+<li>finite status or variant types;</li>
+<li>mappings between server and UI representations.</li>
+</ul>
+<p>It should not:</p>
+<ul>
+<li>render UI;</li>
+<li>perform requests;</li>
+<li>contain component state;</li>
+<li>become a miscellaneous collection of unrelated helper functions.</li>
+</ul>
+<h2 id="section-29">Before-and-after responsibility thinking</h2>
+<h3 id="section-30">Too broad</h3>
+<pre><code class="language-text">EducationView.tsx
+├── fetches records
+├── defines query keys
+├── validates forms
+├── renders every field
+├── owns generic buttons
+├── handles uploads
+└── formats API errors</code></pre><h3 id="section-31">Better boundary map</h3>
+<pre><code class="language-text">EducationView.tsx
+    └── coordinates the Education screen
+
+useEducationWorkflow.ts
+    └── owns Education-specific editing behavior
+
+data/recordQueries.ts
+    └── owns Education reads and mutations
+
+EducationDetail.tsx
+    └── renders Education-specific detail structure
+
+EditableRecordFields.tsx
+    └── owns the reusable editable-field pattern
+
+GemEmptyState.tsx
+    └── owns the reusable empty-state pattern
+
+types.ts
+    └── owns Education data contracts</code></pre><h2 id="section-32">A design exercise before implementation</h2>
+<p>For every new feature, write this small map before writing JSX:</p>
+<pre><code class="language-text">Feature: ______________________________
+
+User outcome:
+_______________________________________
+
+Feature view owns:
+_______________________________________
+
+Workflow hook owns:
+_______________________________________
+
+Server data/query module owns:
+_______________________________________
+
+Shared components needed:
+_______________________________________
+
+Contracts or schemas needed:
+_______________________________________
+
+Local state only:
+_______________________________________
+
+Cross-feature state, if any:
+_______________________________________</code></pre><p>Then test each proposed file with three questions:</p>
+<ol>
+<li>What is this file’s one primary responsibility?</li>
+<li>What is this file explicitly not responsible for?</li>
+<li>What other file would change if this responsibility changed?</li>
+</ol>
+<h2 id="section-33">Applied Console example</h2>
+<p>For the schema builder, the boundary map is:</p>
+<pre><code class="language-text">SchemaBuilderView.tsx
+    └── renders the schema-building experience
+
+useSchemaBuilder.ts
+    └── owns draft state, validation, approval, and workflow transitions
+
+data/workflowQueries.ts
+    └── owns guidance, preview, creation, and import requests
+
+types.ts
+    └── owns TableBuilderColumn, TableBuilderRequest, and preview contracts
+
+LiveSchemaView.tsx
+    └── renders live schema inspection
+
+Tamagui/design-system
+    └── owns reusable visual language</code></pre><p>This map can be designed before deciding whether a responsibility belongs in a
+new file, a feature-local module, a shared component, or Redux. The architecture
+therefore becomes a planning tool, not merely a description of code that has
+already been written.</p>
+<hr>
+<h1 id="section-34">Page 3: Crafting Reusable View Components</h1>
+<h2 id="section-35">The purpose of a reusable view</h2>
+<p>A reusable view component should reuse a <strong>screen pattern</strong> without erasing the
+meaning of the feature using it.</p>
+<pre><code class="language-text">GemDataTable
+    reusable visual primitive
+
+RecordCollectionView
+    reusable application-level view pattern
+
+EducationView
+    feature-specific view</code></pre><p>The reusable view owns the common structure. The feature supplies the meaning,
+data, labels, and feature-specific choices.</p>
+<h2 id="section-36">What belongs in a reusable view</h2>
+<p>A collection-oriented view may own:</p>
+<ul>
+<li>page heading and description placement;</li>
+<li>loading, empty, and error states;</li>
+<li>search, sorting, filtering, and pagination regions;</li>
+<li>list/detail or master/detail layout;</li>
+<li>toolbar and action slots;</li>
+<li>stable accessibility structure;</li>
+<li>responsive behavior for the common layout.</li>
+</ul>
+<p>The feature should still supply:</p>
+<ul>
+<li>the record type;</li>
+<li>labels and descriptions;</li>
+<li>columns and display values;</li>
+<li>empty-state copy;</li>
+<li>detail rendering;</li>
+<li>create and import actions;</li>
+<li>feature-specific query and workflow behavior.</li>
+</ul>
+<h2 id="section-37">Generic view pattern</h2>
+<pre><code class="language-tsx">interface RecordCollectionViewProps&lt;TRecord&gt; {
+  title: string;
+  description?: string;
+  records: TRecord[];
+  isLoading: boolean;
+  error?: Error | null;
+  getKey: (record: TRecord) =&gt; string;
+  renderRecord: (record: TRecord) =&gt; ReactNode;
+  renderDetail: (record: TRecord) =&gt; ReactNode;
+  emptyState: ReactNode;
+  toolbar?: ReactNode;
+}</code></pre><p>The reusable view owns the screen structure:</p>
+<pre><code class="language-tsx">export function RecordCollectionView&lt;TRecord&gt;({
+  title,
+  description,
+  records,
+  isLoading,
+  error,
+  getKey,
+  renderRecord,
+  renderDetail,
+  emptyState,
+  toolbar,
+}: RecordCollectionViewProps&lt;TRecord&gt;) {
+  if (isLoading) return &lt;GemLoadingState label={`Loading ${title}`} /&gt;;
+  if (error) return &lt;QueryFeedback error={error} /&gt;;
+  if (records.length === 0) return emptyState;
+
+  return (
+    &lt;section&gt;
+      &lt;GemSectionHeader title={title} description={description}&gt;
+        {toolbar}
+      &lt;/GemSectionHeader&gt;
+
+      &lt;div className="record-layout"&gt;
+        &lt;div&gt;
+          {records.map((record) =&gt; (
+            &lt;div key={getKey(record)}&gt;{renderRecord(record)}&lt;/div&gt;
+          ))}
+        &lt;/div&gt;
+
+        &lt;aside&gt;{records[0] &amp;&amp; renderDetail(records[0])}&lt;/aside&gt;
+      &lt;/div&gt;
+    &lt;/section&gt;
+  );
+}</code></pre><p>The feature view supplies the feature meaning:</p>
+<pre><code class="language-tsx">&lt;RecordCollectionView
+  title="Education"
+  description="Read education history from Gem Life."
+  records={paging.items}
+  isLoading={false}
+  getKey={(record) =&gt; record.id}
+  renderRecord={(record) =&gt; (
+    &lt;GemRecordCard
+      title={record.institutionName}
+      subtitle={record.educationType}
+      status={record.status}
+    /&gt;
+  )}
+  renderDetail={(record) =&gt; &lt;EducationDetail record={record} /&gt;}
+  emptyState={
+    &lt;GemEmptyState
+      title="No education records"
+      description="The Education table did not return any records."
+    /&gt;
+  }
+/&gt;</code></pre><h2 id="section-38">The three-level boundary</h2>
+<pre><code class="language-text">Reusable view component
+    owns screen structure and common states
+
+Feature view
+    owns feature meaning and feature-specific choices
+
+Shared primitives
+    own individual visual and interaction patterns</code></pre><p>This allows a UX redesign to change the collection layout while keeping the
+Education, Employment, Address, and Transaction features responsible for their
+own meaning and data decisions.</p>
+<h2 id="section-39">Choosing a name</h2>
+<p>Names should describe the reusable pattern rather than the implementation:</p>
+<ul>
+<li><code>RecordCollectionView</code></li>
+<li><code>ResourceListView</code></li>
+<li><code>FeaturePageLayout</code></li>
+<li><code>MasterDetailView</code></li>
+<li><code>DataCollectionView</code></li>
+</ul>
+<p>For the Console, <code>RecordCollectionView</code> is the strongest starting name because
+the same collection pattern appears across Education, Employment, Addresses,
+and Transactions.</p>
+<h2 id="section-40">Guardrail: avoid the universal page component</h2>
+<p>Do not create one component with dozens of boolean flags and feature-specific
+exceptions:</p>
+<pre><code class="language-tsx">&lt;UniversalPage
+  hasAttachments
+  supportsCSV
+  showDomainSidebar
+  isEducation
+  isTransaction
+  enableLegacyMode
+  useCompactTable
+/&gt;</code></pre><p>Prefer typed render props, named slots, and feature composition. A reusable view
+should provide a stable structure while leaving meaningful decisions to the
+feature that owns them.</p>
+<h3 id="section-41">📝 The same warning applies to forms</h3>
+<p>The universal-page problem can quietly become a universal-form problem. A shared
+form shell is useful; a single form that learns every resource’s fields, schema,
+payload rules, and feature exceptions is not.</p>
+<pre><code class="language-tsx">&lt;UniversalForm
+  isEducation
+  isEmployment
+  hasAddressFields
+  supportsTransactions
+  showLegacyFields
+/&gt;</code></pre><p>Prefer this boundary:</p>
+<pre><code class="language-text">Shared form primitives
+    └── input, select, date, error, and action structure
+
+Feature-owned form
+    └── fields, schema, payload mapping, and feature workflow</code></pre><p>If two forms share field structure or interaction behavior, extract the field
+primitive or form shell. If they only share a similar screen today, keep their
+schemas and feature meaning separate until a real repeated pattern appears.</p>
+<p>Supporting references:</p>
+<ul>
+<li><a href="https://martinfowler.com/bliki/FlagArgument.html">Martin Fowler: Flag Argument</a> — explains why flags that select different behavior can hide intent and create tangled implementations.</li>
+<li><a href="https://react.dev/learn/thinking-in-react">React: Thinking in React</a> — recommends decomposing a UI into a component hierarchy and keeping component concerns focused.</li>
+<li><a href="https://react.dev/learn/sharing-state-between-components">React: Sharing State Between Components</a> — explains when state belongs in a common parent instead of being duplicated or hidden inside a universal child.</li>
+</ul>
+<p>The extraction test is:</p>
+<blockquote>
+<p>Does this abstraction solve a recurring screen-pattern problem, or does it
+merely hide feature code behind a larger API?</p>
+</blockquote>
+<p>If it solves a recurring pattern, extract it. If it only hides one feature’s
+markup, keep it feature-local until a second real use case appears.</p>
+<hr>
+<h1 id="section-42">Page 4: The Anatomy of a Composable Form</h1>
+<h2 id="section-43">The goal</h2>
+<p>A form should be a <strong>composable, schema-driven workflow</strong>, not one bulky file
+that contains every validation rule, field scaffold, API call, and layout
+decision.</p>
+<p>The form file should describe the user experience. The supporting modules should
+own validation, field structure, state management, payload mapping, and server
+communication.</p>
+<h2 id="section-44">Form anatomy</h2>
+<pre><code class="language-text">Feature form
+├── schema
+│   └── validation rules and inferred form values
+├── form controller
+│   └── React Hook Form setup, defaults, and submission state
+├── field definitions
+│   └── labels, names, types, options, and layout metadata
+├── field components
+│   └── reusable input, select, date, error, and label structure
+├── form sections
+│   └── meaningful groups of related fields
+├── submit workflow
+│   └── mutation, success, error, and cache invalidation
+└── form layout
+    └── feature-specific arrangement and visual composition</code></pre><p>The data flow is:</p>
+<div class="mermaid" role="img" aria-label="Mermaid diagram">flowchart TD
+    user["User enters values"] --&gt; controller["Form controller"]
+    controller --&gt; schema["Schema validation"]
+    schema --&gt; mapper["Feature-specific payload mapping"]
+    mapper --&gt; mutation["Mutation hook"]
+    mutation --&gt; client["API client"]
+    client --&gt; server["Server"]</div><h2 id="section-45">Recommended file boundary</h2>
+<p>Instead of putting every responsibility in one file:</p>
+<pre><code class="language-text">EducationCreateForm.tsx
+├── every field
+├── every label
+├── validation
+├── error formatting
+├── API call
+├── loading state
+├── layout
+└── success behavior</code></pre><p>Use focused modules:</p>
+<pre><code class="language-text">features/education/
+├── EducationCreateForm.tsx       # composition and layout
+├── educationFormSchema.ts        # validation and form contract
+├── educationFormFields.ts        # field metadata
+├── useEducationCreateForm.ts     # controller and submit workflow
+└── educationPayload.ts           # form values → API payload
+
+components/forms/
+├── FormField.tsx                 # reusable field scaffold
+├── FormSelect.tsx                # reusable select behavior
+├── FormDateField.tsx             # reusable date behavior
+├── FormError.tsx                 # reusable error presentation
+└── FormActions.tsx               # reusable submit/cancel actions</code></pre><h2 id="section-46">Schema owns validation</h2>
+<pre><code class="language-tsx">import { z } from "zod";
+
+export const educationFormSchema = z.object({
+  educationType: z.string().min(1, "Education type is required."),
+  institutionName: z.string().min(1, "Institution is required."),
+  program: z.string().nullable(),
+  startDate: z.string().nullable(),
+});
+
+export type EducationFormValues = z.infer&lt;typeof educationFormSchema&gt;;</code></pre><p>Validation is defined once and can support the form, tests, imported data,
+preview workflows, and future alternate interfaces.</p>
+<h2 id="section-47">Field metadata owns scaffolding decisions</h2>
+<pre><code class="language-tsx">export const educationFields = [
+  {
+    name: "educationType",
+    label: "Education type",
+    kind: "text",
+    required: true,
+  },
+  {
+    name: "institutionName",
+    label: "Institution",
+    kind: "text",
+    required: true,
+  },
+  {
+    name: "program",
+    label: "Program",
+    kind: "text",
+    required: false,
+  },
+] as const;</code></pre><p>The feature chooses which fields exist. <code>FormField</code> owns the repeated label,
+input, description, error, and accessibility structure.</p>
+<h2 id="section-48">The form controller owns behavior</h2>
+<pre><code class="language-tsx">export function useEducationCreateForm({ onSuccess }: Options) {
+  const createEducation = useCreateEducationMutation();
+
+  const form = useForm&lt;EducationFormValues&gt;({
+    resolver: zodResolver(educationFormSchema),
+    defaultValues: {
+      educationType: "",
+      institutionName: "",
+      program: null,
+      startDate: null,
+    },
+  });
+
+  const onSubmit = form.handleSubmit(async (values) =&gt; {
+    await createEducation.mutateAsync(toEducationPayload(values));
+    onSuccess();
+  });
+
+  return {
+    ...form,
+    onSubmit,
+    isSubmitting: createEducation.isPending,
+  };
+}</code></pre><p>The form view remains focused on composition:</p>
+<pre><code class="language-tsx">export function EducationCreateForm({ onSuccess }: Props) {
+  const form = useEducationCreateForm({ onSuccess });
+
+  return (
+    &lt;form onSubmit={form.onSubmit}&gt;
+      &lt;FormSection title="Education"&gt;
+        &lt;FormField
+          control={form.control}
+          name="educationType"
+          label="Education type"
+        /&gt;
+
+        &lt;FormField
+          control={form.control}
+          name="institutionName"
+          label="Institution"
+        /&gt;
+
+        &lt;FormField
+          control={form.control}
+          name="program"
+          label="Program"
+        /&gt;
+      &lt;/FormSection&gt;
+
+      &lt;FormActions isSubmitting={form.isSubmitting} /&gt;
+    &lt;/form&gt;
+  );
+}</code></pre><h2 id="section-49">Responsibility rule</h2>
+<div class="mermaid" role="img" aria-label="Mermaid diagram">flowchart TD
+    schema["Schema&lt;br/&gt;What values are valid?"] --&gt; field["Field component&lt;br/&gt;How is one field rendered?"]
+    field --&gt; metadata["Field metadata&lt;br/&gt;Which fields exist and what do they mean?"]
+    metadata --&gt; controller["Form controller&lt;br/&gt;How is form state managed?"]
+    controller --&gt; mapper["Payload mapper&lt;br/&gt;How do form values become an API request?"]
+    mapper --&gt; mutation["Mutation hook&lt;br/&gt;How is the request sent and cached?"]
+    mutation --&gt; view["Form view&lt;br/&gt;How are the pieces arranged for this feature?"]</div><h2 id="section-50">The design principle</h2>
+<p>Forms should be composed from reusable field primitives, schema contracts,
+field definitions, and workflow hooks—not rebuilt as large one-off scaffolds.</p>
+<p>The existing Console convention already points in this direction: React Hook
+Form owns form state, Zod owns validation, TanStack Query owns writes and cache
+invalidation, and each feature keeps its resource-specific fields and payload
+mapping explicit.</p>
+<h2 id="section-51">Applied Console structure</h2>
+<p>The Console does not currently use one folder per form schema. Its actual
+pattern is a centralized form family:</p>
+<pre><code class="language-text">Console/src/
+├── components/forms/CreateForm.tsx
+│   └── reusable frame and field scaffolds
+│
+└── features/create/RecordCreateForms.tsx
+    ├── shared FormShell
+    ├── shared Text and Select wrappers
+    ├── addressSchema + AddressCreateForm
+    ├── educationSchema + EducationCreateForm
+    ├── employmentSchema + EmploymentCreateForm
+    ├── transactionSchema + TransactionCreateForm
+    ├── serviceSchema + ServiceAccountCreateForm
+    └── domainSchema + DomainCreateForm</code></pre><p>Feature screens consume those forms from their existing locations:</p>
+<pre><code class="language-text">EducationView
+    └── features/create/RecordCreateForms.tsx
+            ├── educationSchema
+            ├── EducationCreateForm
+            └── components/forms/CreateForm.tsx</code></pre><p>This is already a valid modular pattern:</p>
+<ul>
+<li><code>CreateForm.tsx</code> owns reusable form presentation and field scaffolding.</li>
+<li><code>RecordCreateForms.tsx</code> owns the create-form family and its resource-specific
+schemas.</li>
+<li>Each exported <code>*CreateForm</code> owns the fields for one resource.</li>
+<li>The feature view owns when the form opens and what happens after creation.</li>
+<li>The data mutation remains with the feature or query layer that invokes it.</li>
+</ul>
+<p>The earlier per-feature tree is a possible future extraction, not a requirement
+and not the current Console structure. Only split <code>RecordCreateForms.tsx</code> when
+the file’s size or change frequency makes the shared family harder to navigate.
+If that happens, preserve the existing public form components while moving one
+resource at a time:</p>
+<pre><code class="language-text">features/create/
+├── RecordCreateForms.tsx        # compatibility exports during migration
+├── education/
+│   ├── EducationCreateForm.tsx
+│   └── educationSchema.ts
+└── employment/
+    ├── EmploymentCreateForm.tsx
+    └── employmentSchema.ts</code></pre><p>The boundary should follow a real reason to change, not an idealized folder
+diagram.</p>
+<hr>
+<h1 id="section-52">Page 5: Data Sources, Adapters, and Query State</h1>
+<h2 id="section-53">The core statement</h2>
+<blockquote>
+<p>The UI should consume a stable application-facing interface, while
+source-specific code handles API, JSON, CSV, or another backend.</p>
+</blockquote>
+<p>This is the <strong>data-source adapter pattern</strong>. It lets a feature remain stable
+while its source changes.</p>
+<div class="mermaid" role="img" aria-label="Mermaid diagram">flowchart TD
+    feature["Feature"] --&gt; contract["Data-source contract"]
+    contract --&gt; adapter["Adapter"]
+    adapter --&gt; api["API adapter"]
+    adapter --&gt; json["JSON adapter"]
+    adapter --&gt; csv["CSV adapter"]
+    adapter --&gt; db["Local database adapter"]
+    api --&gt; source["Source-specific implementation"]
+    json --&gt; source
+    csv --&gt; source
+    db --&gt; source</div><p>The adapter is often confusing because it resembles the API call. That
+similarity is intentional: the adapter translates a source into the contract
+the feature understands.</p>
+<h2 id="section-54">Interface means contract</h2>
+<p>An interface is a contract. It says what a feature can ask for and what it will
+receive. It does not say how the request is implemented.</p>
+<pre><code class="language-tsx">export interface EducationDataSource {
+  list(signal?: AbortSignal): Promise&lt;Education[]&gt;;
+  get(id: string, signal?: AbortSignal): Promise&lt;Education&gt;;
+  create(
+    payload: EducationCreate,
+    signal?: AbortSignal,
+  ): Promise&lt;Education&gt;;
+}</code></pre><p>The feature knows it can list, retrieve, and create Education records. It does
+not need to know whether those records came from <code>/education</code> using <code>fetch</code>, a
+JSON fixture, or a CSV import.</p>
+<p><code>EducationCreate</code> is separate from <code>Education</code> because a server response may
+include generated fields, timestamps, relationships, or computed values that a
+create form should never submit.</p>
+<h2 id="section-55">Adapter versus API client</h2>
+<p>The API client describes the actual transport endpoint:</p>
+<pre><code class="language-tsx">export const api = {
+  listEducation: (signal?: AbortSignal) =&gt;
+    request&lt;Education[]&gt;("/education", { signal }),
+
+  createEducation: (payload: EducationCreate) =&gt;
+    request&lt;Education&gt;("/education", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+};</code></pre><p>The adapter presents that source through the feature contract:</p>
+<pre><code class="language-tsx">export const educationApiSource: EducationDataSource = {
+  list: (signal) =&gt; api.listEducation(signal),
+  get: (id, signal) =&gt; api.getEducation(id, signal),
+  create: (payload, signal) =&gt; api.createEducation(payload, signal),
+};</code></pre><p>At first, an adapter may be a small pass-through. It becomes valuable when a
+source needs translation, such as mapping JSON fields, parsing CSV, or
+converting an external API response into application contracts.</p>
+<h2 id="section-56">Query is not Redux configuration</h2>
+<p>TanStack Query and Redux solve different problems:</p>
+<pre><code class="language-text">TanStack Query
+    owns server state
+    ├── fetching
+    ├── caching
+    ├── refetching
+    ├── loading and error state
+    └── mutation invalidation
+
+Redux Toolkit
+    owns shared client/application state
+    ├── workspace state
+    ├── cross-feature selections
+    ├── offline queues
+    ├── durable drafts
+    └── complex global workflows</code></pre><p>TanStack Query does not configure Redux. Redux does not replace TanStack Query.
+They may coexist, but their ownership boundaries remain separate.</p>
+<div class="mermaid" role="img" aria-label="Mermaid diagram">flowchart TD
+    view["Feature view"] --&gt; reduxHook["useAppSelector / useAppDispatch"]
+    reduxHook --&gt; reduxState["Redux client state"]
+    view --&gt; queryHook["useEducationQuery / useMutation"]
+    queryHook --&gt; queryState["TanStack Query server state"]
+    queryState --&gt; adapter["Data-source adapter"]
+    adapter --&gt; sources["API, JSON, CSV, or database"]</div><h2 id="section-57">What <code>useQuery</code> means</h2>
+<p><code>useQuery</code> is the React-facing hook from TanStack Query. It connects a
+component or feature hook to a query cache.</p>
+<pre><code class="language-tsx">export function useEducationQuery(enabled: boolean) {
+  return useQuery({
+    queryKey: ["education"],
+    queryFn: ({ signal }) =&gt; educationApiSource.list(signal),
+    enabled,
+  });
+}</code></pre><p>The adapter owns how records are obtained. The query owns how the UI observes,
+caches, refreshes, and invalidates those records.</p>
+<h2 id="section-58">Finding the API contract</h2>
+<p>Use this order of evidence when writing an adapter:</p>
+<div class="mermaid" role="img" aria-label="Mermaid diagram">flowchart TD
+    repo["1. Repository API client and types"] --&gt; server["2. Server routes, DTOs, and documentation"]
+    server --&gt; tests["3. Tests and fixtures"]
+    tests --&gt; devtools["4. Network/browser DevTools for verification"]</div><p>Browser DevTools can verify the request URL, HTTP method, headers, request body,
+response status, response JSON, pagination parameters, cache headers, and
+validation failures.</p>
+<p>DevTools should verify a contract, not become the only source of truth. If the
+repository and browser disagree, investigate the mismatch instead of copying
+an observed request into the UI without understanding it.</p>
+<h2 id="section-59">CSV and JSON are boundary formats</h2>
+<p>External formats should be normalized before entering the feature layer:</p>
+<div class="mermaid" role="img" aria-label="Mermaid diagram">flowchart TD
+    source["CSV or JSON"] --&gt; parser["Parser"]
+    parser --&gt; raw["Raw external row type"]
+    raw --&gt; schema["Validation schema"]
+    schema --&gt; mapper["Mapper/normalizer"]
+    mapper --&gt; contract["Application contract"]
+    contract --&gt; feature["Feature and query layer"]</div><pre><code class="language-tsx">interface EducationCSVRow {
+  institutionName: string;
+  educationType: string;
+  program?: string;
+}
+
+function mapEducationCSVRow(row: EducationCSVRow): EducationCreate {
+  return {
+    id: crypto.randomUUID(),
+    institutionName: row.institutionName.trim(),
+    educationType: row.educationType.trim(),
+    program: row.program?.trim() || null,
+  };
+}</code></pre><p>CSV column names and formatting stay at the ingestion boundary. The rest of the
+application works with <code>EducationCreate</code>, not raw CSV rows.</p>
+<h2 id="section-60">Fetch or Axios?</h2>
+<p>Both are transport choices, not architecture choices:</p>
+<div class="mermaid" role="img" aria-label="Mermaid diagram">flowchart TD
+    contract["Data-source contract"] --&gt; adapter["Adapter"]
+    adapter --&gt; transport["Transport: fetch or Axios"]</div><p><code>fetch</code> is built into the browser and is already appropriate for the Console.
+The Console’s <code>checkedFetch</code> and <code>request&lt;T&gt;</code> functions add authentication,
+cancellation, status handling, JSON parsing, and standardized <code>APIError</code>
+values.</p>
+<p>Axios can provide defaults, interceptors, timeout configuration, and convenient
+response handling. It does not remove the need for contracts, adapters, query
+hooks, or response normalization.</p>
+<h2 id="section-61">Practical decision rule</h2>
+<p>Start simple:</p>
+<pre><code class="language-text">api.ts + query hook</code></pre><p>Introduce an explicit data-source interface and adapter when one feature needs
+more than one source:</p>
+<pre><code class="language-text">EducationDataSource
+├── educationApiSource
+├── educationJsonSource
+└── educationCsvSource</code></pre><p>Keep the concerns separate:</p>
+<pre><code class="language-text">Transport
+    How is the request made?
+
+Adapter
+    How is this source translated?
+
+Data-source contract
+    What operations does the feature need?
+
+Query layer
+    How is asynchronous server state observed and cached?
+
+Redux layer
+    What shared client state must the application remember?
+
+Feature
+    How is the result presented to the user?</code></pre><hr>
+<h1 id="section-62">Page 6: Routing as the Addressable Feature Boundary</h1>
+<h2 id="section-63">The core idea</h2>
+<p>Routing connects a URL to a React feature. React renders components, while
+React Router decides which component belongs to a path.</p>
+<p>The applicable GemsForgeAPI Console reference currently uses
+<code>react-router-dom</code> 7.x. The examples in this section use the familiar
+declarative <code>BrowserRouter</code>, <code>Routes</code>, and <code>Route</code> style; keep the repository&#39;s
+actual package imports and route setup authoritative when React Router changes.</p>
+<div class="mermaid" role="img" aria-label="Mermaid diagram">flowchart TD
+    url["Browser URL"] --&gt; router["BrowserRouter"]
+    router --&gt; routes["Routes"]
+    routes --&gt; match["Matching Route"]
+    match --&gt; element["Route element"]
+    element --&gt; feature["Feature view"]</div><p>The simplest description is:</p>
+<blockquote>
+<p>A route is the addressable entry point to a feature.</p>
+</blockquote>
+<h2 id="section-64">The routing anatomy</h2>
+<p>In a React application, the layers usually look like this:</p>
+<div class="mermaid" role="img" aria-label="Mermaid diagram">flowchart TD
+    app["App.tsx"] --&gt; router["BrowserRouter"]
+    router --&gt; routes["AppRoutes"]
+    routes --&gt; public["Public routes"]
+    public --&gt; login["/login"]
+    public --&gt; reset["/reset-password"]
+    routes --&gt; protected["Protected routes"]
+    protected --&gt; auth["RequireAuth"]
+    auth --&gt; session["LocalSession"]
+    session --&gt; layout["Layout"]
+    layout --&gt; home["/"]
+    layout --&gt; domains["/domains"]
+    layout --&gt; education["/education"]
+    layout --&gt; transactions["/transactions"]
+    layout --&gt; schema["/schema-builder"]</div><p>The route configuration answers:</p>
+<pre><code class="language-text">What URL activates this feature?
+What access rules apply?
+What layout surrounds it?
+What parameters does it receive?
+Which feature view should render?</code></pre><p>The feature then answers:</p>
+<pre><code class="language-text">What data does it need?
+What workflow does it own?
+What components should it compose?</code></pre><h2 id="section-65">Route declarations</h2>
+<pre><code class="language-tsx">&lt;Route path="education" element={&lt;Education /&gt;} /&gt;
+&lt;Route path="transactions" element={&lt;Transactions /&gt;} /&gt;
+&lt;Route path="schema-builder" element={&lt;Schema /&gt;} /&gt;</code></pre><p>This means:</p>
+<div class="mermaid" role="img" aria-label="Mermaid diagram">flowchart TD
+    education["/education"] --&gt; educationRoute["Education route wrapper"]
+    educationRoute --&gt; educationQuery["useEducationQuery()"]
+    educationQuery --&gt; educationView["EducationView"]
+    transactions["/transactions"] --&gt; transactionsRoute["Transactions route wrapper"]
+    transactionsRoute --&gt; transactionsQuery["useTransactionsQuery()"]
+    transactionsQuery --&gt; transactionsView["TransactionsView"]
+    schema["/schema-builder"] --&gt; schemaRoute["Schema route wrapper"]
+    schemaRoute --&gt; schemaView["SchemaBuilderView"]
+    schemaView --&gt; schemaHook["useSchemaBuilder()"]</div><h2 id="section-66">What React Router owns</h2>
+<p>React Router owns:</p>
+<ul>
+<li>the current URL;</li>
+<li>browser Back and Forward behavior;</li>
+<li>route matching;</li>
+<li>path parameters;</li>
+<li>navigation;</li>
+<li>nested layouts;</li>
+<li>redirects;</li>
+<li>not-found routes; and</li>
+<li>route-level loading or error boundaries.</li>
+</ul>
+<p>React Router does not own:</p>
+<ul>
+<li>API requests;</li>
+<li>server-state caching;</li>
+<li>form state;</li>
+<li>Redux state;</li>
+<li>feature business rules; or</li>
+<li>visual styling.</li>
+</ul>
+<p>This separation keeps the router as the page-routing service instead of turning
+it into a global application controller.</p>
+<h2 id="section-67">Links and programmatic navigation</h2>
+<p>Use <code>Link</code> for visible navigation:</p>
+<pre><code class="language-tsx">&lt;Link to="/education"&gt;Education&lt;/Link&gt;</code></pre><p>Use <code>useNavigate</code> when navigation happens because of an event or workflow:</p>
+<pre><code class="language-tsx">const navigate = useNavigate();
+
+function openChildren(pageID: number) {
+  navigate(`/forgekeeper/${pageID}/children`);
+}</code></pre><pre><code class="language-text">Link
+    declarative navigation in the rendered interface
+
+useNavigate
+    programmatic navigation after an action or workflow</code></pre><p>Use router links for internal application paths rather than plain anchor tags
+when a full document reload is unnecessary.</p>
+<h2 id="section-68">Route parameters</h2>
+<p>This route declares a dynamic parameter:</p>
+<pre><code class="language-tsx">&lt;Route path="domains/:domainID" element={&lt;Pages kind="domain" /&gt;} /&gt;</code></pre><p>The component reads it with <code>useParams</code>:</p>
+<pre><code class="language-tsx">function Pages() {
+  const { domainID, pageID } = useParams();
+
+  // domainID came from /domains/:domainID
+  // pageID came from /forgekeeper/:pageID/children
+}</code></pre><p>The URL is the source of truth:</p>
+<pre><code class="language-text">/domains/POS
+    domainID = "POS"
+
+/forgekeeper/42/children
+    pageID = "42"</code></pre><p>Do not copy a route parameter into unrelated React state unless the application
+needs a temporary editable version.</p>
+<h2 id="section-69">Nested routes and <code>Outlet</code></h2>
+<p>Nested routes allow several pages to share a layout. The parent route renders
+the shell, and the <code>Outlet</code> is the location where the matching child route is
+inserted.</p>
+<pre><code class="language-tsx">function Layout() {
+  return (
+    &lt;GemLifeShell&gt;
+      &lt;Notice /&gt;
+      &lt;ScreenBoundary&gt;
+        &lt;Suspense fallback={&lt;p&gt;Loading screen…&lt;/p&gt;}&gt;
+          &lt;Outlet /&gt;
+        &lt;/Suspense&gt;
+      &lt;/ScreenBoundary&gt;
+    &lt;/GemLifeShell&gt;
+  );
+}</code></pre><div class="mermaid" role="img" aria-label="Mermaid diagram">flowchart TD
+    layout["Layout renders the shared application shell"] --&gt; outlet["Outlet renders the matching child route inside that shell"]
+    outlet --&gt; education["Education renders at /education"]
+    outlet --&gt; schema["Schema renders at /schema-builder"]</div><p>The <code>Outlet</code> does not represent a path by itself. It represents a rendering
+slot for whichever nested route matched.</p>
+<p>This gives every authenticated screen the same:</p>
+<ul>
+<li>application shell;</li>
+<li>sidebar;</li>
+<li>notification region;</li>
+<li>error boundary;</li>
+<li>lazy-loading boundary; and</li>
+<li>route-focus behavior.</li>
+</ul>
+<h2 id="section-70">Routing and data loading</h2>
+<p>Routing selects the feature. Query hooks load the feature’s data.</p>
+<div class="mermaid" role="img" aria-label="Mermaid diagram">flowchart TD
+    url["URL: /education"] --&gt; router["React Router selects Education"]
+    router --&gt; hook["Education calls useEducationQuery()"]
+    hook --&gt; query["TanStack Query loads server data"]
+    query --&gt; view["EducationView renders records"]</div><p>Do not make the router responsible for all data behavior. The route connects the
+URL to the feature; the feature and query layers own their data.</p>
+<h2 id="section-71">The applied Console pattern</h2>
+<pre><code class="language-tsx">function Education() {
+  const query = useEducationQuery(true);
+
+  return (
+    &lt;QueryScreen query={query}&gt;
+      {(records) =&gt; &lt;EducationView records={records} /&gt;}
+    &lt;/QueryScreen&gt;
+  );
+}</code></pre><p>This route wrapper connects three boundaries:</p>
+<pre><code class="language-text">Route wrapper
+    connects URL to data
+
+Query hook
+    owns asynchronous server state
+
+Feature view
+    renders and coordinates the feature</code></pre><p>The routing layer is therefore an addressable composition layer, not the place
+to put every feature responsibility.</p>
+<hr>
+<h1 id="section-72">Page 7: File Names as Role and Action Labels</h1>
+<h2 id="section-73">The purpose of naming</h2>
+<p>A file name should help answer two questions before the file is opened:</p>
+<pre><code class="language-text">What role does this file play?
+What action or responsibility does it own?</code></pre><p>The name should describe the file’s responsibility, not merely the screen where
+it happens to be used.</p>
+<pre><code class="language-text">DatabaseRecordCollection.tsx
+    role: shared collection view
+    action: renders table structure, pagination, views, selection, and rendering
+
+useEducationRecordActions.ts
+    role: feature-owned action composer
+    action: builds Education-specific create/import menu actions</code></pre><h2 id="section-74">File-name convention map</h2>
+<table>
+<thead>
+<tr>
+<th>File-name pattern</th>
+<th>Role</th>
+<th>Owns</th>
+<th>Does not own</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>SomethingView.tsx</code></td>
+<td>Feature view</td>
+<td>Feature composition and user intent</td>
+<td>Generic primitives or raw transport</td>
+</tr>
+<tr>
+<td><code>SomethingPage.tsx</code></td>
+<td>Route/page composition</td>
+<td>Addressable page composition</td>
+<td>Reusable field or table internals</td>
+</tr>
+<tr>
+<td><code>SomethingLayout.tsx</code></td>
+<td>Layout</td>
+<td>Shared visual arrangement and slots</td>
+<td>Feature API behavior</td>
+</tr>
+<tr>
+<td><code>SomethingCollection.tsx</code></td>
+<td>Collection view</td>
+<td>Repeated list/table/gallery structure</td>
+<td>Resource-specific fetching</td>
+</tr>
+<tr>
+<td><code>SomethingDetail.tsx</code></td>
+<td>Detail view</td>
+<td>One record’s feature-specific presentation</td>
+<td>Collection pagination</td>
+</tr>
+<tr>
+<td><code>SomethingCard.tsx</code></td>
+<td>Card component</td>
+<td>One reusable record/card presentation</td>
+<td>Server requests</td>
+</tr>
+<tr>
+<td><code>SomethingField.tsx</code></td>
+<td>Field component</td>
+<td>Label, input, error, and accessibility pattern</td>
+<td>Whole-form submission</td>
+</tr>
+<tr>
+<td><code>SomethingForm.tsx</code></td>
+<td>Form composition</td>
+<td>Feature form layout and field arrangement</td>
+<td>Shared field scaffolding and transport</td>
+</tr>
+<tr>
+<td><code>SomethingSchema.ts</code></td>
+<td>Validation contract</td>
+<td>Valid values and validation rules</td>
+<td>Rendering and requests</td>
+</tr>
+<tr>
+<td><code>SomethingTypes.ts</code></td>
+<td>Type contract</td>
+<td>TypeScript shapes and unions</td>
+<td>Side effects and UI rendering</td>
+</tr>
+<tr>
+<td><code>SomethingPayload.ts</code></td>
+<td>Data mapper</td>
+<td>Form/UI values to API payloads</td>
+<td>Form state and visual layout</td>
+</tr>
+<tr>
+<td><code>useSomething.ts</code></td>
+<td>Custom hook</td>
+<td>One reusable state or behavior boundary</td>
+<td>Generic unrelated concerns</td>
+</tr>
+<tr>
+<td><code>useSomethingWorkflow.ts</code></td>
+<td>Workflow hook</td>
+<td>Multi-step state transitions and commands</td>
+<td>JSX structure</td>
+</tr>
+<tr>
+<td><code>useSomethingActions.ts</code></td>
+<td>Feature action composer</td>
+<td>Feature-specific action configuration and handlers</td>
+<td>Shared action rendering</td>
+</tr>
+<tr>
+<td><code>createSomethingActions.ts</code></td>
+<td>Action factory</td>
+<td>Builds action configuration from explicit inputs</td>
+<td>React lifecycle or hidden global state</td>
+</tr>
+<tr>
+<td><code>SomethingQueries.ts</code></td>
+<td>Query module</td>
+<td>Reads, mutations, keys, and invalidation</td>
+<td>JSX and visual styling</td>
+</tr>
+<tr>
+<td><code>SomethingApi.ts</code></td>
+<td>API adapter</td>
+<td>Endpoint-specific transport calls</td>
+<td>Query caching and feature layout</td>
+</tr>
+<tr>
+<td><code>SomethingAdapter.ts</code></td>
+<td>Source adapter</td>
+<td>Maps API, JSON, CSV, or database data to a contract</td>
+<td>Rendering and route decisions</td>
+</tr>
+<tr>
+<td><code>SomethingTableAdapter.ts</code></td>
+<td>Table adapter</td>
+<td>Maps a domain record to table properties and cells</td>
+<td>Table rendering engine behavior</td>
+</tr>
+<tr>
+<td><code>SomethingReducer.ts</code></td>
+<td>State transition logic</td>
+<td>Pure workflow state transitions</td>
+<td>Network requests and JSX</td>
+</tr>
+<tr>
+<td><code>Something.test.tsx</code></td>
+<td>Component/feature test</td>
+<td>User interactions and rendered behavior</td>
+<td>Production responsibilities</td>
+</tr>
+<tr>
+<td><code>Something.test.ts</code></td>
+<td>Logic/data test</td>
+<td>Schemas, reducers, mappers, and query behavior</td>
+<td>Browser layout assertions</td>
+</tr>
+<tr>
+<td><code>index.ts</code></td>
+<td>Public module boundary</td>
+<td>Intentional exports for a module</td>
+<td>Unrelated implementation logic</td>
+</tr>
+</tbody></table>
+<h2 id="section-75">“Feature-owned hook” versus “factory”</h2>
+<p>These names describe related but different mechanisms.</p>
+<h3 id="section-76">Feature-owned hook</h3>
+<p>Use a hook when the action composer needs React state, React Query mutations,
+other hooks, or lifecycle behavior.</p>
+<pre><code class="language-tsx">const actions = useEducationRecordActions({
+  addresses: addresses.data ?? [],
+  onCreated: (record) =&gt; setSelectedID(record.id),
+});</code></pre><pre><code class="language-text">useEducationRecordActions.ts
+    reads hooks
+    creates callbacks
+    returns TableActionsProps</code></pre><h3 id="section-77">Factory</h3>
+<p>Use a factory when action configuration can be built from explicit inputs without
+calling React hooks.</p>
+<pre><code class="language-tsx">const actions = createEducationRecordActions({
+  addresses,
+  onCreate,
+  onCreated,
+});</code></pre><pre><code class="language-text">createEducationActions.ts
+    receives dependencies
+    returns configuration
+    has no React lifecycle</code></pre><p>The distinction is:</p>
+<pre><code class="language-text">Hook
+    “I need React behavior to compose this.”
+
+Factory
+    “Give me the inputs and I will build the configuration.”</code></pre><h2 id="section-78">Avoiding a web of files</h2>
+<p>Naming conventions should clarify boundaries, not force a file for every
+function. Use this extraction rule:</p>
+<div class="mermaid" role="img" aria-label="Mermaid diagram">flowchart TD
+    reused{"Is the responsibility reused or independently testable?"}
+    reused -- No --&gt; local["Keep it near its consumer"]
+    reused -- Yes --&gt; react{"Does it need React state, hooks, or lifecycle?"}
+    react -- Yes --&gt; hook["useSomething.ts"]
+    react -- No --&gt; factory["createSomething.ts or Something.ts"]</div><p>Keep related files together when they form one cohesive feature. Extract only
+when the file has a clear role, a meaningful name, and a reason to change that
+is different from its current owner.</p>
+<h2 id="section-79">Applied Console examples</h2>
+<pre><code class="language-text">DatabaseRecordCollection.tsx
+    shared collection view
+    renders table structure, pagination, views, selection, and rendering
+
+RecordUtilities.tsx
+    shared utility control
+    renders search, sort, filter, and result summaries
+
+educationTableAdapter.ts
+    Education-to-table mapping
+    defines table properties and display values
+
+useEducationRecordActions.ts
+    feature-owned action composer
+    builds Input Form, Import File, and Paste Data options
+
+EducationView.tsx
+    feature view
+    coordinates records, selection, detail, and feature composition</code></pre><p>The title is part of the architecture. When a file name accurately describes
+its role, the folder becomes easier to scan and the next developer can predict
+where a new responsibility belongs.</p>
+</article>
+<p class="footer-note">Rendered from <a href="Console%20Feature-Oriented%20Layered%20UI%20Architecture.md">Console Feature-Oriented Layered UI Architecture.md</a>. The Markdown file remains the content authority. Use <strong>⚙️ View options</strong> for the raw source or its enclosing folder.</p>
+</main><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs'; mermaid.initialize({startOnLoad:true,theme:'base',themeVariables:{primaryColor:'#E3F2E3',primaryTextColor:'#1E2823',primaryBorderColor:'#D49B7E',lineColor:'#355A3A'}});</script></body>
+</html>

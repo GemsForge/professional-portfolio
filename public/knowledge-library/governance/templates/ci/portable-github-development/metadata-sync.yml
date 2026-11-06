@@ -1,0 +1,32 @@
+name: Metadata sync
+
+on:
+  issues:
+    types: [opened, reopened, closed]
+  pull_request:
+    types: [opened, reopened, edited, ready_for_review, closed]
+
+permissions:
+  issues: write
+  pull-requests: write
+  contents: read
+
+jobs:
+  sync:
+    name: Copy issue planning metadata to pull request
+    if: ${{ github.event_name == 'issues' || github.event.pull_request.number }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Synchronize issue and PR metadata
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const issueNumber = context.payload.issue?.number ?? Number((context.payload.pull_request?.head.ref || '').match(/^[^/]+\/(\d+)-/)?.[1]);
+            if (!issueNumber) { core.notice('No issue number found; nothing to synchronize.'); return; }
+            const { data: issue } = await github.rest.issues.get({ ...context.repo, issue_number: issueNumber });
+            const pr = context.payload.pull_request;
+            if (pr) {
+              await github.rest.issues.setLabels({ ...context.repo, issue_number: pr.number, labels: issue.labels.map(label => label.name) });
+              await github.rest.issues.update({ ...context.repo, issue_number: pr.number, assignees: issue.assignees.map(user => user.login), milestone: issue.milestone?.number ?? null });
+              core.notice(`Copied labels, assignees, and milestone from issue #${issueNumber} to PR #${pr.number}.`);
+            }

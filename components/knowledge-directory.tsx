@@ -38,7 +38,8 @@ type Handbook = {
 };
 
 /** Formats stored upload timestamps as local date and time for the owner. */
-function formatUploadDateTime(createdAt: string) {
+function formatUploadDateTime(createdAt?: string) {
+  if (!createdAt) return "—";
   const date = new Date(createdAt);
   return Number.isNaN(date.getTime()) ? "Unknown" : new Intl.DateTimeFormat(undefined, {
     dateStyle: "medium",

@@ -1,0 +1,40 @@
+name: Development policy
+
+on:
+  pull_request_target:
+    types: [opened, edited, synchronize, reopened, ready_for_review, labeled, unlabeled]
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+
+jobs:
+  validate:
+    name: Branch, issue, title, and label policy
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Validate development metadata
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const allowedBases = ['main', 'master'];
+            const branchPattern = /^(feat|fix|docs|refactor|test|chore)\/[1-9][0-9]*-[a-z0-9][a-z0-9-]*$/;
+            const titlePattern = /^(feat|fix|refactor|test|docs|chore)\(([a-z0-9-]+)\): #([1-9][0-9]*) ([a-z][a-z0-9-]*(?:\s+\S.*)?)$/;
+            if (!allowedBases.includes(pr.base.ref)) core.setFailed(`PRs must target: ${allowedBases.join(', ')}.`);
+            if (!branchPattern.test(pr.head.ref)) core.setFailed('Branch must match <type>/<issue-number>-<short-description>.');
+            const branchIssue = pr.head.ref.match(/^[^/]+\/(\d+)-/);
+            const bodyIssue = (pr.body || '').match(/(?:^|\s)#([1-9][0-9]*)\b/);
+            const issueNumber = Number(branchIssue?.[1] || bodyIssue?.[1]);
+            if (!issueNumber) { core.setFailed('PR must identify a working issue in its branch or body.'); return; }
+            const titleMatch = pr.title.match(titlePattern);
+            if (!titleMatch) { core.setFailed('PR title must match type(scope): #issue short imperative description.'); return; }
+            if (Number(titleMatch[3]) !== issueNumber) core.setFailed('PR title issue number must match the working issue.');
+            const { data: issue } = await github.rest.issues.get({ ...context.repo, issue_number: issueNumber });
+            if (pr.title !== issue.title) core.setFailed(`PR title must match issue #${issueNumber} title: "${issue.title}".`);
+            const requiredLabel = { feat: 'feature', fix: 'fix', refactor: 'refactor', test: 'testing', docs: 'documentation', chore: 'chore' }[titleMatch[1]];
+            const labels = (pr.labels || []).map(label => label.name);
+            if (!labels.includes(requiredLabel)) core.setFailed(`Missing required label: ${requiredLabel}.`);
+            core.notice(`Development policy checked for issue #${issueNumber}.`);

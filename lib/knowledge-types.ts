@@ -10,7 +10,7 @@ export type KnowledgeContentType =
   | "image/webp"
   | "image/tiff";
 
-/** Describes one owner-only reference returned by the knowledge library API. */
+/** Describes one knowledge reference from the owner API or public catalogue. */
 export type KnowledgeResource = {
   id: string;
   title: string;
@@ -18,8 +18,10 @@ export type KnowledgeResource = {
   filename: string;
   contentType: KnowledgeContentType;
   size: number;
-  createdAt: string;
+  createdAt?: string;
   description?: string;
   tags?: string[];
   searchText?: string;
+  /** Public URL for maintained Markdown stored with the site rather than R2. */
+  sourceUrl?: string;
 };
