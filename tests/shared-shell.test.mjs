@@ -11,6 +11,7 @@ const knowledgeReader = await readFile("components/knowledge-reader.tsx", "utf8"
 const catalog = await readFile("scripts/project-catalog.mts", "utf8");
 const rootRoute = await readFile("app/page.tsx", "utf8");
 const route = await readFile("app/[...slug]/page.tsx", "utf8");
+const worker = await readFile("build/sites-worker.ts", "utf8");
 
 test("the routed portfolio page owns the shared shell", () => {
   assert.match(renderer, /<SiteHeader pathname=\{pathname\} \/>/);
@@ -44,6 +45,18 @@ test("site and owner navigation use native anchors for reliable full-page routin
   }
   assert.match(footer, /<a href="\/admin\/">Admin<\/a>/);
   assert.match(knowledgeDirectory, /<a[^>]+href="\/admin\/knowledge\/handbooks\/"/);
+});
+
+test("normal-click destinations remain present in the generated portfolio route map", async () => {
+  const pages = JSON.parse(await readFile("lib/static-pages.json", "utf8"));
+  for (const pathname of ["/", "/portfolio/projects/", "/about/", "/contact/"]) {
+    assert.ok(pages[pathname], `normal navigation destination is missing: ${pathname}`);
+  }
+  assert.match(worker, /url\.pathname === ['"]\/admin['"] \|\| url\.pathname === ['"]\/admin\/['"]/);
+  assert.match(worker, /adminPageRequest\(request,managerPage\)/);
+  for (const pathname of ["/admin/knowledge/", "/admin/knowledge/handbooks/"]) {
+    assert.match(knowledgeDirectory, new RegExp(`href=[\"']${pathname.replaceAll("/", "\\/")}`));
+  }
 });
 
 test("the generated page catalog includes the required public routes", async () => {
