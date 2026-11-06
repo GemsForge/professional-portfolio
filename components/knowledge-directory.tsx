@@ -37,6 +37,15 @@ type Handbook = {
   markdown?: HandbookReference;
 };
 
+/** Formats stored upload timestamps as local date and time for the owner. */
+function formatUploadDateTime(createdAt: string) {
+  const date = new Date(createdAt);
+  return Number.isNaN(date.getTime()) ? "Unknown" : new Intl.DateTimeFormat(undefined, {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(date);
+}
+
 /** Uses saved library logos first, then bundled Simple Icons when available. */
 function HandbookTechnologyIcon({ tag }: { tag: string }) {
   const savedLogos: Record<string, string> = {
@@ -508,13 +517,14 @@ export function KnowledgeDirectory({ initialModule, initialFolder }: {
           <div className="knowledge-table-scroll" tabIndex={0} role="region" aria-label="Saved reference documents table">
             <table className="knowledge-resource-table">
               <caption className="sr-only">Saved knowledge references</caption>
-              <thead><tr><th scope="col">File name</th><th scope="col">Type</th><th scope="col">Area</th><th scope="col">Download</th></tr></thead>
+              <thead><tr><th scope="col">File name</th><th scope="col">Type</th><th scope="col">Area</th><th scope="col">Uploaded</th><th scope="col">Download</th></tr></thead>
               <tbody>{visibleResources.map((resource) => {
               const folder = folders.find((entry) => entry.path === resource.folder);
               return <tr key={resource.id}>
                 <th scope="row"><span>{resource.filename}</span><small>{resource.title}</small></th>
                 <td>{resource.contentType.replace("text/", "").replace("application/", "")}</td>
                 <td>{folder?.label || resource.folder}</td>
+                <td><time dateTime={resource.createdAt}>{formatUploadDateTime(resource.createdAt)}</time></td>
                 <td className="knowledge-table-actions">
                   {(resource.contentType === "text/html" || resource.contentType === "text/markdown") && <a href={readerHref(resource.id)}>View</a>}
                   <a href={`/api/knowledge/${encodeURIComponent(resource.id)}`}>Download</a>
