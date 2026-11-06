@@ -1,7 +1,8 @@
 "use client";
 
+// Intentional: use browser navigation because client-side route transitions are failing.
+/* eslint-disable @next/next/no-html-link-for-pages */
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
-import Link from "next/link";
 import { siDotnet, siGithub, siPostgresql, siReact, siRedux, siSqlite, siTypescript } from "simple-icons";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
@@ -209,7 +210,11 @@ function readerHref(resourceId: string) {
   return `/admin/knowledge/read?id=${encodeURIComponent(resourceId)}`;
 }
 
-/** Owns a private library module page, its folder filtering, search, and upload interaction. */
+/**
+ * Owns a private library module page, its folder filtering, search, and upload
+ * interaction. Native anchors keep route changes reliable without client-side
+ * router hydration while server authorization protects each destination.
+ */
 export function KnowledgeDirectory({ initialModule, initialFolder }: {
   /** Selects a dedicated module page; omit it to render the module index. */
   initialModule?: KnowledgeModule;
@@ -367,7 +372,7 @@ export function KnowledgeDirectory({ initialModule, initialFolder }: {
           <p className="lead">{activeModule ? activeModule.description : "Build with intention. Keep the map. A private home for the handbooks, standards, and delivery references that support your work."}</p>
           {activeModule ? (
             <nav className="library-links" aria-label="Module navigation">
-              <Link className="button secondary" href="/admin/knowledge/">← All modules</Link>
+              <a className="button secondary" href="/admin/knowledge/">← All modules</a>
               <a className="button" href="#saved-references">Browse saved references</a>
               <a className="button secondary" href="#manage-references">Add a reference</a>
             </nav>
@@ -376,7 +381,7 @@ export function KnowledgeDirectory({ initialModule, initialFolder }: {
               <a className="button" href="#handbooks">📖 Browse handbooks</a>
               <a className="button secondary" href="#governance">🧭 Open governance shelf</a>
               <a className="button secondary" href="#delivery">✅ Delivery references</a>
-              <Link className="button secondary" href="/admin/knowledge/assets/">Tool assets</Link>
+              <a className="button secondary" href="/admin/knowledge/assets/">Tool assets</a>
             </nav>
           )}
         </div>
@@ -389,7 +394,7 @@ export function KnowledgeDirectory({ initialModule, initialFolder }: {
                   <h2 id="handbooks-heading">📚 Handbooks</h2>
                   <p>Download the HTML editions or Markdown source files.</p>
                 </div>
-                <Link href="/admin/knowledge/handbooks/">All handbooks →</Link>
+                <a href="/admin/knowledge/handbooks/">All handbooks →</a>
               </div>
               <div className="handbook-controls">
                 <label className="handbook-search">
@@ -433,9 +438,9 @@ export function KnowledgeDirectory({ initialModule, initialFolder }: {
                       </ul>
                     </>
                   );
-                  // Native links preserve browser navigation, context menus, and assistive-technology discovery.
+                  // Plain anchors preserve browser navigation, context menus, and assistive-technology discovery.
                   return cardHref
-                    ? <Link className="handbook-card handbook-card-link" href={cardHref} key={handbook.title}>{cardContent}</Link>
+                    ? <a className="handbook-card handbook-card-link" href={cardHref} key={handbook.title}>{cardContent}</a>
                     : <article className="handbook-card" key={handbook.title}>{cardContent}</article>;
                 })}
               </div>
@@ -455,12 +460,12 @@ export function KnowledgeDirectory({ initialModule, initialFolder }: {
                     {shelf.items.map((item) => {
                       const resource = resources.find((entry) => entry.title === item.resourceTitle);
                       return <li key={item.resourceTitle}>{resource
-                        ? <><Link href={readerHref(resource.id)}>{item.title}</Link> · <Link href={`/api/knowledge/${encodeURIComponent(resource.id)}`}>Download</Link></>
+                        ? <><a href={readerHref(resource.id)}>{item.title}</a> · <a href={`/api/knowledge/${encodeURIComponent(resource.id)}`}>Download</a></>
                         : <span>{item.title}{isLoading ? " (loading)" : " (not added yet)"}</span>}
                       </li>;
                     })}
                   </ul>
-                  <Link className="shelf-module-link" href={`/admin/knowledge/${shelf.id}/`}>Open {shelf.id} module →</Link>
+                  <a className="shelf-module-link" href={`/admin/knowledge/${shelf.id}/`}>Open {shelf.id} module →</a>
                 </div>
               ))}
             </section>
@@ -471,11 +476,11 @@ export function KnowledgeDirectory({ initialModule, initialFolder }: {
             <div className="library-grid">
               {moduleFolders.map((folder) => {
                 const count = resources.filter((resource) => resource.folder === folder.path).length;
-                return <Link className="library-card" href={`?folder=${encodeURIComponent(folder.path)}#saved-references`} key={folder.path}>
+                return <a className="library-card" href={`?folder=${encodeURIComponent(folder.path)}#saved-references`} key={folder.path}>
                   <h3>{folder.label}</h3>
                   <p>{folder.description}</p>
                   <span>{count} {count === 1 ? "reference" : "references"}</span>
-                </Link>;
+                </a>;
               })}
             </div>
           </section>
@@ -485,7 +490,7 @@ export function KnowledgeDirectory({ initialModule, initialFolder }: {
           <div className="directory-toolbar">
             <div>
               <nav className="library-location" aria-label="Library location">
-                {selectedFolder && <Link href={`/admin/knowledge/${initialModule}/`}>All {activeModule?.title.toLocaleLowerCase()}</Link>}
+                {selectedFolder && <a href={`/admin/knowledge/${initialModule}/`}>All {activeModule?.title.toLocaleLowerCase()}</a>}
                 <span className="eyebrow">{selectedFolder?.label ?? `All ${activeModule?.title.toLocaleLowerCase()}`}</span>
               </nav>
               <h2 id="references-heading">Saved references</h2>
@@ -511,8 +516,8 @@ export function KnowledgeDirectory({ initialModule, initialFolder }: {
                 <td>{resource.contentType.replace("text/", "").replace("application/", "")}</td>
                 <td>{folder?.label || resource.folder}</td>
                 <td className="knowledge-table-actions">
-                  {(resource.contentType === "text/html" || resource.contentType === "text/markdown") && <Link href={readerHref(resource.id)}>View</Link>}
-                  <Link href={`/api/knowledge/${encodeURIComponent(resource.id)}`}>Download</Link>
+                  {(resource.contentType === "text/html" || resource.contentType === "text/markdown") && <a href={readerHref(resource.id)}>View</a>}
+                  <a href={`/api/knowledge/${encodeURIComponent(resource.id)}`}>Download</a>
                   <button className="link-button" type="button" onClick={() => void deleteReference(resource)}>Remove</button>
                 </td>
               </tr>;
