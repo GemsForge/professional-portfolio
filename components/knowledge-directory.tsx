@@ -222,8 +222,8 @@ function formatCreatedAt(createdAt: string) {
 
 /**
  * Renders the existing directory view for public read-only browsing and owner
- * management. Native anchors preserve route behavior; owner routes and APIs
- * enforce authorization independently of this presentation mode.
+ * management and backup export. Native anchors preserve route behavior; owner
+ * routes and APIs enforce authorization independently of this presentation mode.
  */
 export function KnowledgeDirectory({ initialModule, initialFolder, publicMode = false }: {
   /** Selects a dedicated module page; omit it to render the module index. */
@@ -396,6 +396,7 @@ export function KnowledgeDirectory({ initialModule, initialFolder, publicMode = 
               <a className="button secondary" href="#governance">🧭 Open governance shelf</a>
               <a className="button secondary" href="#delivery">✅ Delivery references</a>
               {!publicMode && <a className="button secondary" href="/admin/knowledge/assets/">Tool assets</a>}
+              {!publicMode && <a className="button secondary" href="/api/knowledge/export">Download document backup</a>}
             </nav>
           )}
         </div>

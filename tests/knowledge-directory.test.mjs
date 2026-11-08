@@ -14,6 +14,10 @@ class Bucket {
     const bytes = this.data.get(key);
     return bytes ? { body: bytes, text: async () => new TextDecoder().decode(bytes), json: async () => JSON.parse(new TextDecoder().decode(bytes)) } : null;
   }
+  async head(key) {
+    const bytes = this.data.get(key);
+    return bytes ? { size: bytes.length } : null;
+  }
   async list({ prefix }) {
     return { objects: [...this.data.keys()].filter((key) => key.startsWith(prefix)).map((key) => ({ key })), truncated: false };
   }
@@ -86,6 +90,40 @@ test('owner can upload, list, and download a private reference', async () => {
   assert.equal(deleted.status, 200);
   assert.deepEqual([...env.BUCKET.data.keys()], []);
   assert.equal((await knowledgeRequest(request(`/api/knowledge/${resource.id}`), env)).status, 404);
+});
+
+test('owner can download a TAR backup containing original documents and metadata', async () => {
+  const env = { BUCKET: new Bucket() };
+  const created = await knowledgeRequest(request('/api/knowledge', 'POST', pdfUpload('Backup guide')), env);
+  const { resource } = await created.json();
+
+  const anonymous = await knowledgeRequest(request('/api/knowledge/export', 'GET', undefined, {}), env);
+  assert.equal(anonymous.status, 401);
+  const otherUser = { 'oai-authenticated-user-id': 'another-user', 'oai-authenticated-user-email': 'other@example.com' };
+  assert.equal((await knowledgeRequest(request('/api/knowledge/export', 'GET', undefined, otherUser), env)).status, 403);
+
+  const backup = await knowledgeRequest(request('/api/knowledge/export'), env);
+  assert.equal(backup.status, 200);
+  assert.equal(backup.headers.get('content-type'), 'application/x-tar');
+  assert.match(backup.headers.get('content-disposition'), /developer-wiki-backup-\d{4}-\d{2}-\d{2}\.tar/);
+  assert.equal(backup.headers.get('cache-control'), 'private, no-store');
+
+  const archive = new Uint8Array(await backup.arrayBuffer());
+  const decoder = new TextDecoder();
+  assert.equal(decoder.decode(archive.slice(257, 262)), 'ustar');
+  const manifestSize = Number.parseInt(decoder.decode(archive.slice(124, 135)).replace(/\0.*$/, ''), 8);
+  const manifestStart = 512;
+  const manifest = JSON.parse(decoder.decode(archive.slice(manifestStart, manifestStart + manifestSize)));
+  assert.equal(manifest.files[0].id, resource.id);
+  assert.equal(manifest.files[0].filename, 'guide.pdf');
+  assert.equal(manifest.files[0].archivePath, 'documents/handbooks/backend/guide.pdf');
+
+  const documentHeader = Math.ceil((manifestStart + manifestSize) / 512) * 512;
+  const documentName = decoder.decode(archive.slice(documentHeader, documentHeader + 100)).replace(/\0.*$/, '');
+  const documentPrefix = decoder.decode(archive.slice(documentHeader + 345, documentHeader + 500)).replace(/\0.*$/, '');
+  const documentSize = Number.parseInt(decoder.decode(archive.slice(documentHeader + 124, documentHeader + 135)).replace(/\0.*$/, ''), 8);
+  assert.equal([documentPrefix, documentName].filter(Boolean).join('/'), manifest.files[0].archivePath);
+  assert.equal(decoder.decode(archive.slice(documentHeader + 512, documentHeader + 512 + documentSize)), '%PDF-1.7 sample');
 });
 
 test('public directory metadata excludes document bodies and body-derived search fields', async () => {
@@ -225,6 +263,7 @@ test('public and owner directories share the existing reader while keeping owner
   assert.match(directory, /MY DEVELOPER NOTES/);
   assert.match(directory, /Developer Wiki/);
   assert.match(directory, /<time dateTime=\{resource\.createdAt\}>/);
+  assert.match(directory, /href="\/api\/knowledge\/export">Download document backup/);
   assert.match(reader, /publicMode \? "\/knowledge\/" : "\/admin\/knowledge\/"/);
   assert.match(footer, /href="\/knowledge\/">Dev Wiki/);
   assert.match(generator, /href="\/knowledge\/">Dev Wiki/);
