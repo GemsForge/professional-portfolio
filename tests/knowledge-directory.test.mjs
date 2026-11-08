@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import { ownerPageGate } from '../lib/media-server.ts';
-import { knowledgeRequest } from '../lib/knowledge-server.ts';
+import { knowledgeRequest, publicKnowledgeRequest } from '../lib/knowledge-server.ts';
 
 class Bucket {
   data = new Map();
@@ -88,6 +88,30 @@ test('owner can upload, list, and download a private reference', async () => {
   assert.equal((await knowledgeRequest(request(`/api/knowledge/${resource.id}`), env)).status, 404);
 });
 
+test('public directory metadata excludes document bodies and body-derived search fields', async () => {
+  const env = { BUCKET: new Bucket() };
+  const form = new FormData();
+  form.set('title', 'Personal query notes');
+  form.set('folder', 'handbooks/backend');
+  form.set('file', new File(['# Private heading\n\nprivate-body-sentinel'], 'notes.md', { type: 'text/markdown' }));
+  const created = await knowledgeRequest(request('/api/knowledge', 'POST', form), env);
+  const { resource } = await created.json();
+
+  const response = await publicKnowledgeRequest(request('/api/public/knowledge', 'GET', undefined, {}), env);
+  const data = await response.json();
+  const serialized = JSON.stringify(data);
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get('cache-control'), 'private, no-store');
+  assert.equal(data.resources[0].id, resource.id);
+  assert.equal(data.resources[0].title, 'Personal query notes');
+  assert.equal('searchText' in data.resources[0], false);
+  assert.equal('description' in data.resources[0], false);
+  assert.equal('tags' in data.resources[0], false);
+  assert.doesNotMatch(serialized, /private-body-sentinel|Private heading/);
+  assert.equal((await knowledgeRequest(request(`/api/knowledge/${resource.id}`, 'GET', undefined, {}), env)).status, 401);
+  assert.equal((await publicKnowledgeRequest(request('/api/public/knowledge', 'POST', undefined, {}), env)).status, 405);
+});
+
 test('uploads reject cross-origin and unsupported or invalid files', async () => {
   const bucket = new Bucket();
   const env = { BUCKET: bucket };
@@ -151,6 +175,9 @@ test('knowledge page gate redirects anonymous users and denies non-owners', asyn
   };
   assert.equal(ownerPageGate(request('/admin/knowledge', 'GET', undefined, otherUser), '/admin/knowledge').status, 403);
   assert.equal(ownerPageGate(request('/admin/knowledge'), '/admin/knowledge'), null);
+  const wikiReaderGate = ownerPageGate(request('/knowledge/private-wiki', 'GET', undefined, {}), '/knowledge/private-wiki');
+  assert.equal(wikiReaderGate.status, 302);
+  assert.equal(new URL(wikiReaderGate.headers.get('location')).searchParams.get('return_to'), '/knowledge/private-wiki');
 
   const [pages, home, worker, route, component, reader] = await Promise.all([
     readFile(new URL('../lib/static-pages.json', import.meta.url), 'utf8'),
@@ -163,6 +190,7 @@ test('knowledge page gate redirects anonymous users and denies non-owners', asyn
   assert.doesNotMatch(pages, /Knowledge directory|owner-knowledge/);
   assert.doesNotMatch(home, /href="\/admin\/knowledge\/?"/);
   assert.match(worker, /ownerPageGate\(request, '\/admin\/knowledge'\)/);
+  assert.match(worker, /url\.pathname\.startsWith\('\/knowledge\/'\)/);
   assert.match(worker, /handler\.fetch\(request, env, ctx\)/);
   assert.match(route, /robots: \{ index: false, follow: false \}/);
   assert.match(component, /export function KnowledgeDirectory/);
@@ -173,4 +201,32 @@ test('knowledge page gate redirects anonymous users and denies non-owners', asyn
   assert.match(reader, /Markdown source/);
   assert.match(reader, /Download Markdown/);
   assert.match(worker, /knowledgeRequest\(request,env\)/);
+});
+
+test('public and owner directories share the existing reader while keeping owner tools gated', async () => {
+  const [worker, publicPage, publicReader, ownerHandbooks, directory, reader, footer, generator, adminPage] = await Promise.all([
+    readFile(new URL('../build/sites-worker.ts', import.meta.url), 'utf8'),
+    readFile(new URL('../app/knowledge/page.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../app/knowledge/[id]/page.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../app/admin/handbooks/page.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../components/knowledge-directory.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../components/knowledge-reader.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../components/site-footer.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../scripts/prepare-pages.mjs', import.meta.url), 'utf8'),
+    readFile(new URL('../lib/image-manager.html', import.meta.url), 'utf8'),
+  ]);
+  assert.match(publicPage, /<KnowledgeDirectory publicMode \/>/);
+  assert.match(publicReader, /<KnowledgeReader id=\{id\} publicMode \/>/);
+  assert.match(ownerHandbooks, /initialModule="handbooks"/);
+  assert.match(worker, /ownerPageGate\(request, `\$\{url\.pathname\}\$\{url\.search\}`\)/);
+  assert.match(worker, /ownerPageGate\(request, '\/admin\/handbooks'\)/);
+  assert.match(directory, /fetch\(publicMode \? "\/api\/public\/knowledge" : "\/api\/knowledge"/);
+  assert.match(directory, /initialModule && !publicMode/);
+  assert.match(directory, /MY DEVELOPER NOTES/);
+  assert.match(directory, /Developer Wiki/);
+  assert.match(directory, /<time dateTime=\{resource\.createdAt\}>/);
+  assert.match(reader, /publicMode \? "\/knowledge\/" : "\/admin\/knowledge\/"/);
+  assert.match(footer, /href="\/knowledge\/">Dev Wiki/);
+  assert.match(generator, /href="\/knowledge\/">Dev Wiki/);
+  assert.match(adminPage, /Developer Wiki/);
 });

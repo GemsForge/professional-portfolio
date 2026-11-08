@@ -45,7 +45,8 @@ test("site and owner navigation use native anchors for reliable full-page routin
     assert.match(component, /<a\b[^>]*href=/);
   }
   assert.match(footer, /<a href="\/admin\/">Admin<\/a>/);
-  assert.match(knowledgeDirectory, /<a[^>]+href="\/admin\/knowledge\/handbooks\/"/);
+  assert.match(footer, /<a href="\/knowledge\/">Dev Wiki<\/a>/);
+  assert.match(knowledgeDirectory, /href=\{publicMode \? "#all-references" : "\/admin\/handbooks"\}/);
 });
 
 test("normal-click destinations remain present in the generated portfolio route map", async () => {
@@ -55,7 +56,7 @@ test("normal-click destinations remain present in the generated portfolio route 
   }
   assert.match(worker, /url\.pathname === ['"]\/admin['"] \|\| url\.pathname === ['"]\/admin\/['"]/);
   assert.match(worker, /adminPageRequest\(request,managerPage\)/);
-  for (const pathname of ["/admin/knowledge/", "/admin/knowledge/handbooks/"]) {
+  for (const pathname of ["/admin/knowledge/"]) {
     assert.match(knowledgeDirectory, new RegExp(`href=[\"']${pathname.replaceAll("/", "\\/")}`));
   }
 });

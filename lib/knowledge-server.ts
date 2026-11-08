@@ -122,6 +122,23 @@ async function listRecords(bucket: R2Bucket) {
   return found.sort((left, right) => right.createdAt.localeCompare(left.createdAt));
 }
 
+/** Exposes only directory metadata publicly; document bodies and body-derived search data stay private. */
+export async function publicKnowledgeRequest(request: Request, env: Cloudflare.Env): Promise<Response> {
+  if (request.method !== 'GET') return json({ error: 'Method not allowed.' }, 405);
+  const bucket = env.BUCKET;
+  if (!bucket) return json({ error: 'Knowledge storage is unavailable.' }, 503);
+  const resources = (await listRecords(bucket)).map(({ id, title, folder, filename, contentType, size, createdAt }) => ({
+    id,
+    title,
+    folder,
+    filename,
+    contentType,
+    size,
+    createdAt,
+  }));
+  return json({ resources });
+}
+
 function contentDisposition(filename: string) {
   const ascii = filename.replace(/[^\x20-\x7e]/g, '_').replace(/["\\]/g, '_');
   const encoded = encodeURIComponent(filename).replace(/[!'()*]/g, (character) => `%${character.charCodeAt(0).toString(16).toUpperCase()}`);

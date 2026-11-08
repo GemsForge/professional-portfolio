@@ -1,7 +1,6 @@
 "use client";
 
 // Intentional: use browser navigation because client-side route transitions are failing.
-/* eslint-disable @next/next/no-html-link-for-pages */
 import { useEffect, useRef, useState } from "react";
 import type { KeyboardEvent } from "react";
 import { SiteHeader } from "@/components/site-header";
@@ -10,11 +9,15 @@ import { KnowledgeMarkdown } from "@/components/knowledge-markdown";
 import type { KnowledgeResource } from "@/lib/knowledge-types";
 
 /**
- * Presents one private HTML or Markdown reference in a focused reading view.
- * Native anchors keep route changes reliable without client-side router
- * hydration; the server continues to authorize every destination.
+ * Presents one owner-authorized library reference in the established reading
+ * view. Server routes and APIs enforce access for public and owner card links.
  */
-export function KnowledgeReader({ id }: { /** Stable library resource identifier. */ id: string }) {
+export function KnowledgeReader({ id, publicMode = false }: {
+  /** Stable library resource identifier. */
+  id: string;
+  /** Uses the public directory as the return route while retaining owner access checks. */
+  publicMode?: boolean;
+}) {
   const [resource, setResource] = useState<KnowledgeResource | null>(null);
   const [markdown, setMarkdown] = useState("");
   const [error, setError] = useState("");
@@ -35,9 +38,6 @@ export function KnowledgeReader({ id }: { /** Stable library resource identifier
         const index = await indexResponse.json() as { resources?: KnowledgeResource[] };
         const selected = index.resources?.find((entry) => entry.id === id);
         if (!selected) throw new Error("This reference is no longer available in your library.");
-        if (!["text/html", "text/markdown"].includes(selected.contentType)) {
-          throw new Error("This reader supports HTML and Markdown references.");
-        }
         let content = "";
         if (selected.contentType === "text/markdown") {
           const contentResponse = await fetch(`/api/knowledge/${encodeURIComponent(selected.id)}`, { cache: "no-store" });
@@ -151,20 +151,20 @@ export function KnowledgeReader({ id }: { /** Stable library resource identifier
   }, [page, resource, view]);
 
   return <>
-    <SiteHeader pathname="/admin/knowledge/" />
+    <SiteHeader pathname={publicMode ? "/knowledge/" : "/admin/knowledge/"} />
     <main id="main" className="wrap knowledge-page knowledge-reader">
       <nav className="library-location" aria-label="Breadcrumb">
-        <a href="/admin/knowledge/">Developer library</a>
+        <a href={publicMode ? "/knowledge/" : "/admin/knowledge/"}>Developer Wiki</a>
         <span aria-current="page">{resource?.title ?? "Reference"}</span>
       </nav>
       <header className={`reader-heading${readerHeadingCollapsed ? " is-collapsed" : ""}`}>
         <div className="reader-heading-copy">
-          <p className="eyebrow">Private library · {resource?.contentType === "text/html" ? "HTML document" : "Markdown document"}</p>
+          <p className="eyebrow">MY DEVELOPER NOTES · {resource?.contentType === "text/html" ? "HTML document" : resource?.contentType === "text/markdown" ? "Markdown document" : "Reference"}</p>
           <h1>{resource?.title ?? (loading ? "Opening reference…" : "Reference unavailable")}</h1>
           {resource && <p>{resource.filename}</p>}
         </div>
         <nav className="reader-collapsed-breadcrumb" aria-label="Collapsed breadcrumb">
-          <a href="/admin/knowledge/">Developer library</a>
+          <a href={publicMode ? "/knowledge/" : "/admin/knowledge/"}>Developer Wiki</a>
           <span aria-hidden="true">/</span>
           <span>{resource?.title ?? "Reference"}</span>
         </nav>
@@ -178,6 +178,7 @@ export function KnowledgeReader({ id }: { /** Stable library resource identifier
               <a href={`/api/knowledge/${encodeURIComponent(resource.id)}`}>Download Markdown ↗</a>
             </>}
             {resource.contentType === "text/html" && <a href={`/api/knowledge/${encodeURIComponent(resource.id)}`}>Download HTML ↗</a>}
+            {!['text/html', 'text/markdown'].includes(resource.contentType) && <a href={`/api/knowledge/${encodeURIComponent(resource.id)}`}>Download original</a>}
           </div>
         </details>}
       </header>
@@ -226,6 +227,9 @@ export function KnowledgeReader({ id }: { /** Stable library resource identifier
           </section>
         </div>
         : <pre className="knowledge-source" tabIndex={0} aria-label="Markdown source"><code>{markdown}</code></pre>)}
+      {!loading && resource && !["text/html", "text/markdown"].includes(resource.contentType) && (
+        <p className="note">This reference is available as a download: <a href={`/api/knowledge/${encodeURIComponent(resource.id)}`}>Download original</a></p>
+      )}
     </main>
     <SiteFooter />
   </>;

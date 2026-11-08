@@ -5,7 +5,7 @@ import { KnowledgeReader } from "@/components/knowledge-reader";
 import "../knowledge-directory.css";
 
 export const metadata: Metadata = {
-  title: "Developer Library",
+  title: "Developer Wiki · GemsForge",
   robots: { index: false, follow: false },
 };
 

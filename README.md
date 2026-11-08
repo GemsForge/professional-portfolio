@@ -24,9 +24,9 @@ Choose a project, upload a PNG/JPEG/WebP image (10 MB maximum), and add alt text
 
 Images and metadata are stored in the provisioned R2 `BUCKET`, independently of code deployments. Do not change binding names or remove storage configuration during ordinary edits. Image bytes are not part of this source export. The code export is not a backup of uploaded images.
 
-## Knowledge directory
+## Developer Wiki
 
-Visit `/admin/knowledge/` from the owner workspace for the private React library homepage. It links to separate Handbooks, Governance, Delivery, and Assets module pages. Each module organizes its folders and saved references, with controls to add and search PDF, DOCX, Markdown, HTML, UTF-8 text, and common image references. HTML and Markdown files have a reusable reading view: HTML is served only to an isolated, restrictive preview frame, while Markdown is rendered as text without executing embedded HTML. Original files remain downloadable. Files and titles are stored under a separate `owner-knowledge/` prefix in the existing R2 `BUCKET`; every page and API request requires the portfolio owner's authenticated identity. Uploaded knowledge files are not part of this source export.
+The public `/knowledge/` page lists document metadata and reuses the existing Developer Wiki directory view. The shared footer link is labeled **Dev Wiki**. Opening a wiki, downloading its original file, or loading an HTML preview requires the portfolio owner's authenticated identity; the public index never returns document bodies or body-derived search text. The owner workspace links to the same directory at `/admin/knowledge/`, with upload and management tools available only on owner-gated module pages. `/admin/handbooks` opens the owner handbook tools and shows when each reference was added. Files and titles are stored under a separate `owner-knowledge/` prefix in the existing R2 `BUCKET`. Uploaded knowledge files are not part of this source export.
 
 ## Development and publishing
 
