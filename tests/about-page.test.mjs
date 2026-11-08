@@ -92,9 +92,11 @@ test("About page presents the optimized profile photo accessibly", async () => {
   assert.equal((html.match(/src="\/assets\/profile-photo\.jpg"/g) ?? []).length, 1, "About should show the portrait once");
   assert.match(html, /width="1200"\s+height="1200"/);
   const homeHtml = await readFile(homePage, "utf8");
-  assert.match(homeHtml, /<div class="hero-art">[\s\S]*?role="img" aria-label="Abstract intersecting paths converge into a diamond, then emerge as aligned lines"/);
-  assert.equal((homeHtml.match(/src="\/assets\/profile-photo\.jpg"/g) ?? []).length, 1, "Home should show the portrait once in the About section");
-  assert.match(homeHtml, /<section id="about" class="dark"><div class="wrap about-grid"><div><img class="about-section-portrait" src="\/assets\/profile-photo\.jpg"/);
+  // The homepage now leads with the developer profile and places the real portrait beside the role and stack.
+  assert.match(homeHtml, /<main id="main" class="home-profile">[\s\S]*?<h1 id="profile-title">I build full-stack applications and improve the systems behind them\.<\/h1>/);
+  assert.equal((homeHtml.match(/src="\/assets\/profile-photo\.jpg"/g) ?? []).length, 1, "Home should show the profile portrait once");
+  assert.match(homeHtml, /<figure class="profile-portrait"><img src="\/assets\/profile-photo\.jpg"/);
+  assert.match(homeHtml, /<h2>Core stack<\/h2>[\s\S]*?React[\s\S]*?C# \/ \.NET[\s\S]*?SQL/);
   assert.match(css, /\.about-hero\s*\{[^}]*display:grid/);
   assert.match(css, /\.about-section-portrait\s*\{[^}]*aspect-ratio:4\/5/);
   assert.match(css, /@media\s*\(max-width:\s*650px\)\s*\{\.about-hero\s*\{[^}]*grid-template-columns:1fr/);
