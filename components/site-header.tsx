@@ -3,6 +3,7 @@
 import Image from "next/image";
 
 const links = [
+  ["/work/", "Experience"],
   ["/portfolio/projects/", "Projects"],
   ["/about/", "About"],
   ["/assets/diamond-brown-resume.pdf", "Resume"],
@@ -11,7 +12,7 @@ const links = [
 
 /**
  * Renders the single site-wide header and primary navigation with native
- * anchors so route changes do not depend on client-side router hydration.
+ * anchors, including a direct route to the recruiter-facing experience overview.
  *
  * The pathname is supplied by the catch-all route so nested project pages can
  * keep Projects active without duplicating navigation markup in each view.
