@@ -95,7 +95,7 @@ test("About page presents the optimized profile photo accessibly", async () => {
   // The homepage now leads with the developer profile and places the real portrait beside the role and stack.
   assert.match(homeHtml, /<main id="main" class="home-profile">[\s\S]*?<h1 id="profile-title">I build full-stack applications and improve the systems behind them\.<\/h1>/);
   assert.equal((homeHtml.match(/src="\/assets\/profile-photo\.jpg"/g) ?? []).length, 1, "Home should show the profile portrait once");
-  assert.match(homeHtml, /<figure class="profile-portrait"><img src="\/assets\/profile-photo\.jpg"/);
+  assert.match(homeHtml, /<figure class="profile-portrait">\s*<img src="\/assets\/profile-photo\.jpg"/);
   assert.match(homeHtml, /<h2>Core stack<\/h2>[\s\S]*?React[\s\S]*?C# \/ \.NET[\s\S]*?SQL/);
   assert.match(css, /\.about-hero\s*\{[^}]*display:grid/);
   assert.match(css, /\.about-section-portrait\s*\{[^}]*aspect-ratio:4\/5/);
