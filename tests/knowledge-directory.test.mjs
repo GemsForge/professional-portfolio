@@ -6,13 +6,14 @@ import { knowledgeRequest, publicKnowledgeRequest } from '../lib/knowledge-serve
 
 class Bucket {
   data = new Map();
+  textReads = 0;
   async put(key, value) {
     const bytes = typeof value === 'string' ? new TextEncoder().encode(value) : value;
     this.data.set(key, bytes);
   }
   async get(key) {
     const bytes = this.data.get(key);
-    return bytes ? { body: bytes, text: async () => new TextDecoder().decode(bytes), json: async () => JSON.parse(new TextDecoder().decode(bytes)) } : null;
+    return bytes ? { body: bytes, text: async () => { this.textReads += 1; return new TextDecoder().decode(bytes); }, json: async () => JSON.parse(new TextDecoder().decode(bytes)) } : null;
   }
   async head(key) {
     const bytes = this.data.get(key);
@@ -116,7 +117,7 @@ test('owner can download a TAR backup containing original documents and metadata
   const manifest = JSON.parse(decoder.decode(archive.slice(manifestStart, manifestStart + manifestSize)));
   assert.equal(manifest.files[0].id, resource.id);
   assert.equal(manifest.files[0].filename, 'guide.pdf');
-  assert.equal(manifest.files[0].archivePath, 'documents/handbooks/backend/guide.pdf');
+  assert.equal(manifest.files[0].archivePath, `documents/handbooks/backend/${resource.id}/guide.pdf`);
 
   const documentHeader = Math.ceil((manifestStart + manifestSize) / 512) * 512;
   const documentName = decoder.decode(archive.slice(documentHeader, documentHeader + 100)).replace(/\0.*$/, '');
@@ -124,6 +125,19 @@ test('owner can download a TAR backup containing original documents and metadata
   const documentSize = Number.parseInt(decoder.decode(archive.slice(documentHeader + 124, documentHeader + 135)).replace(/\0.*$/, ''), 8);
   assert.equal([documentPrefix, documentName].filter(Boolean).join('/'), manifest.files[0].archivePath);
   assert.equal(decoder.decode(archive.slice(documentHeader + 512, documentHeader + 512 + documentSize)), '%PDF-1.7 sample');
+});
+
+test('backup paths stay unique when separate uploads share a filename', async () => {
+  const env = { BUCKET: new Bucket() };
+  await knowledgeRequest(request('/api/knowledge', 'POST', pdfUpload('First guide')), env);
+  await knowledgeRequest(request('/api/knowledge', 'POST', pdfUpload('Second guide')), env);
+  const backup = await knowledgeRequest(request('/api/knowledge/export'), env);
+  const archive = new Uint8Array(await backup.arrayBuffer());
+  const manifestSize = Number.parseInt(new TextDecoder().decode(archive.slice(124, 135)).replace(/\0.*$/, ''), 8);
+  const manifest = JSON.parse(new TextDecoder().decode(archive.slice(512, 512 + manifestSize)));
+  assert.equal(manifest.files.length, 2);
+  assert.deepEqual(manifest.files.map((file) => file.filename), ['guide.pdf', 'guide.pdf']);
+  assert.equal(new Set(manifest.files.map((file) => file.archivePath)).size, 2);
 });
 
 test('public directory metadata excludes document bodies and body-derived search fields', async () => {
@@ -168,6 +182,10 @@ test('public directory derives tags for older Markdown records without exposing 
   const data = await response.json();
   assert.deepEqual(data.resources[0].tags, ['React', 'TypeScript']);
   assert.doesNotMatch(JSON.stringify(data), /private-body-sentinel|Useful TypeScript patterns/);
+  assert.equal(bucket.textReads, 1);
+
+  await publicKnowledgeRequest(request('/api/public/knowledge', 'GET', undefined, {}), { BUCKET: bucket });
+  assert.equal(bucket.textReads, 1, 'the migrated tags prevent subsequent Markdown body reads');
 });
 
 test('uploads reject cross-origin and unsupported or invalid files', async () => {

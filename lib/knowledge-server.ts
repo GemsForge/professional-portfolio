@@ -116,10 +116,11 @@ async function listRecords(bucket: R2Bucket) {
       const stored = await bucket.get(object.key);
       if (!stored) return null;
       const record = await stored.json<KnowledgeRecord>();
-      // Older Markdown records may predate tag extraction; derive only labels when needed.
-      if (record.contentType === 'text/markdown' && !record.tags?.length) {
+      // Migrate only legacy records with no tag field, then keep listings from rereading their bodies.
+      if (record.contentType === 'text/markdown' && record.tags === undefined) {
         const file = await bucket.get(`${FILE_PREFIX}${record.id}`);
-        if (file) record.tags = inferMarkdownMetadata(await file.text(), record.title).tags;
+        record.tags = file ? inferMarkdownMetadata(await file.text(), record.title).tags : [];
+        await bucket.put(object.key, JSON.stringify(record));
       }
       return record;
     }));
@@ -225,7 +226,7 @@ async function knowledgeBackup(bucket: R2Bucket, resources: KnowledgeRecord[]) {
   const generatedAt = new Date().toISOString();
   const entries = resources.map((record) => ({
     ...record,
-    archivePath: `documents/${FOLDERS.has(record.folder) ? record.folder : 'uncategorized'}/${safeFilename(record.filename) || record.id}`,
+    archivePath: `documents/${FOLDERS.has(record.folder) ? record.folder : 'uncategorized'}/${record.id}/${safeFilename(record.filename) || record.id}`,
   }));
   for (let start = 0; start < entries.length; start += 50) {
     const batch = entries.slice(start, start + 50);
