@@ -144,10 +144,30 @@ test('public directory metadata excludes document bodies and body-derived search
   assert.equal(data.resources[0].title, 'Personal query notes');
   assert.equal('searchText' in data.resources[0], false);
   assert.equal('description' in data.resources[0], false);
-  assert.equal('tags' in data.resources[0], false);
+  assert.deepEqual(data.resources[0].tags, []);
   assert.doesNotMatch(serialized, /private-body-sentinel|Private heading/);
   assert.equal((await knowledgeRequest(request(`/api/knowledge/${resource.id}`, 'GET', undefined, {}), env)).status, 401);
   assert.equal((await publicKnowledgeRequest(request('/api/public/knowledge', 'POST', undefined, {}), env)).status, 405);
+});
+
+test('public directory derives tags for older Markdown records without exposing their bodies', async () => {
+  const bucket = new Bucket();
+  const id = '1a8ef5e2-03b7-4e5c-9f82-888e55dc6c80';
+  bucket.data.set(`owner-knowledge/files/${id}`, new TextEncoder().encode('# React reference\n\nUseful TypeScript patterns. private-body-sentinel'));
+  bucket.data.set(`owner-knowledge/records/${id}.json`, new TextEncoder().encode(JSON.stringify({
+    id,
+    title: 'React notes',
+    folder: 'handbooks/architecture',
+    filename: 'react-notes.md',
+    contentType: 'text/markdown',
+    size: 73,
+    createdAt: '2026-11-07T12:00:00.000Z',
+  })));
+
+  const response = await publicKnowledgeRequest(request('/api/public/knowledge', 'GET', undefined, {}), { BUCKET: bucket });
+  const data = await response.json();
+  assert.deepEqual(data.resources[0].tags, ['React', 'TypeScript']);
+  assert.doesNotMatch(JSON.stringify(data), /private-body-sentinel|Useful TypeScript patterns/);
 });
 
 test('uploads reject cross-origin and unsupported or invalid files', async () => {
@@ -263,9 +283,10 @@ test('public and owner directories share the existing reader while keeping owner
   assert.match(directory, /MY DEVELOPER NOTES/);
   assert.match(directory, /Developer Wiki/);
   assert.match(directory, /<time dateTime=\{resource\.createdAt\}>/);
-  assert.match(directory, /href="\/api\/knowledge\/export">Download document backup/);
+  assert.match(directory, /href="\/api\/knowledge\/export"[\s\S]*?Download document backup/);
+  assert.match(directory, /<th scope="col">Date created<\/th>/);
   assert.match(reader, /publicMode \? "\/knowledge\/" : "\/admin\/knowledge\/"/);
-  assert.match(footer, /href="\/knowledge\/">Dev Wiki/);
+  assert.match(footer, /wikiMode \? "Portfolio" : "Dev Wiki"/);
   assert.match(generator, /href="\/knowledge\/">Dev Wiki/);
   assert.match(adminPage, /Developer Wiki/);
 });

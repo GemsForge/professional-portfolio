@@ -114,7 +114,14 @@ async function listRecords(bucket: R2Bucket) {
     const page = await bucket.list({ prefix: RECORD_PREFIX, cursor });
     const records = await Promise.all(page.objects.map(async (object) => {
       const stored = await bucket.get(object.key);
-      return stored ? stored.json<KnowledgeRecord>() : null;
+      if (!stored) return null;
+      const record = await stored.json<KnowledgeRecord>();
+      // Older Markdown records may predate tag extraction; derive only labels when needed.
+      if (record.contentType === 'text/markdown' && !record.tags?.length) {
+        const file = await bucket.get(`${FILE_PREFIX}${record.id}`);
+        if (file) record.tags = inferMarkdownMetadata(await file.text(), record.title).tags;
+      }
+      return record;
     }));
     found.push(...records.filter((record): record is KnowledgeRecord => record !== null));
     cursor = page.truncated ? page.cursor : undefined;
@@ -268,7 +275,7 @@ export async function publicKnowledgeRequest(request: Request, env: Cloudflare.E
   if (request.method !== 'GET') return json({ error: 'Method not allowed.' }, 405);
   const bucket = env.BUCKET;
   if (!bucket) return json({ error: 'Knowledge storage is unavailable.' }, 503);
-  const resources = (await listRecords(bucket)).map(({ id, title, folder, filename, contentType, size, createdAt }) => ({
+  const resources = (await listRecords(bucket)).map(({ id, title, folder, filename, contentType, size, createdAt, tags }) => ({
     id,
     title,
     folder,
@@ -276,6 +283,7 @@ export async function publicKnowledgeRequest(request: Request, env: Cloudflare.E
     contentType,
     size,
     createdAt,
+    tags: tags ?? [],
   }));
   return json({ resources });
 }

@@ -151,7 +151,7 @@ export function KnowledgeReader({ id, publicMode = false }: {
   }, [page, resource, view]);
 
   return <>
-    <SiteHeader pathname={publicMode ? "/knowledge/" : "/admin/knowledge/"} />
+    <SiteHeader pathname={publicMode ? "/knowledge/" : "/admin/knowledge/"} handbookReader />
     <main id="main" className="wrap knowledge-page knowledge-reader">
       <nav className="library-location" aria-label="Breadcrumb">
         <a href={publicMode ? "/knowledge/" : "/admin/knowledge/"}>Developer Wiki</a>
@@ -231,6 +231,6 @@ export function KnowledgeReader({ id, publicMode = false }: {
         <p className="note">This reference is available as a download: <a href={`/api/knowledge/${encodeURIComponent(resource.id)}`}>Download original</a></p>
       )}
     </main>
-    <SiteFooter />
+    <SiteFooter wikiMode />
   </>;
 }
