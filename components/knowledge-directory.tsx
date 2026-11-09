@@ -545,7 +545,8 @@ export function KnowledgeDirectory({
   const moduleFolders = folders.filter(
     (folder, index) =>
       (!initialModule || folder.group === initialModule) &&
-      folders.findIndex((candidate) => candidate.path === folder.path) === index,
+      folders.findIndex((candidate) => candidate.path === folder.path) ===
+        index,
   );
   const moduleResources = initialModule
     ? resources.filter((resource) =>
@@ -652,7 +653,8 @@ export function KnowledgeDirectory({
       form.reset();
       await loadResources();
       if (data.resource?.contentType === "text/markdown") {
-        const target = uploaderOnly && window.parent !== window ? window.parent : window;
+        const target =
+          uploaderOnly && window.parent !== window ? window.parent : window;
         target.location.assign(readerHref(data.resource.id, true));
         return;
       }
@@ -722,10 +724,7 @@ export function KnowledgeDirectory({
               accept=".pdf,.docx,.md,.markdown,.txt,.html,.htm,.png,.jpg,.jpeg,.webp,.tif,.tiff,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/markdown,text/plain,text/html,image/png,image/jpeg,image/webp,image/tiff"
               required
             />
-            <button
-              className="button"
-              type="submit"
-              disabled={isSubmitting}>
+            <button className="button" type="submit" disabled={isSubmitting}>
               {isSubmitting ? "Adding…" : "Add to directory"}
             </button>
           </form>
@@ -926,9 +925,12 @@ export function KnowledgeDirectory({
                 <div>
                   <h2 id="handbooks-heading">Handbooks</h2>
                   <p>Choose a handbook to open its wiki.</p>
+                  {/*TODO: Remove the "All handbooks" link and view */}
                 </div>
-                {!publicMode && <a href="/admin/handbooks">All handbooks →</a>}
               </div>
+              {/* </div>
+                {!publicMode && <a href="/admin/handbooks">All handbooks →</a>}
+              </div> */}
               <div className="handbook-controls">
                 <label className="handbook-search">
                   <span>Search handbooks</span>
@@ -1082,7 +1084,6 @@ export function KnowledgeDirectory({
                 </div>
               ))}
             </section>
-
           </>
         ) : (
           <section
@@ -1110,7 +1111,6 @@ export function KnowledgeDirectory({
             </div>
           </section>
         )}
-
       </main>
       <SiteFooter wikiMode />
     </>
