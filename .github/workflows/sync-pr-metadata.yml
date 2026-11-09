@@ -118,11 +118,12 @@ jobs:
               { id: project.id }
             );
             const items = itemsData.node?.items?.nodes || [];
+            // Keep existing and newly added project items in the same ID-only shape.
             const findItem = (kind, number) => items.find((i) =>
               i.content?.__typename === kind &&
               i.content.number === number &&
               i.content.repository?.nameWithOwner === fullName
-            );
+            )?.id;
             const issueItem = findItem("Issue", issueNumber) || await addItem(issue.node_id);
             const setStatus = async (itemId, name) => {
               await gql(
