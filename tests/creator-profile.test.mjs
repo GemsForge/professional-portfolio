@@ -36,7 +36,7 @@ test("creator catalog keeps seven posts in the grid and a separate technology sh
   const profileName = profile.indexOf('<h1 id="creator-name">Diamond Brown</h1>');
   const profileRole = profile.indexOf('class="profile-kicker">Full-stack developer</p>');
   const profileLocation = profile.indexOf('class="profile-location"><svg');
-  const profileBio = profile.indexOf('class="profile-bio">I build apps, organize the work behind them, and shape how people use them.</p>');
+  const profileBio = profile.indexOf('class="profile-bio">I build apps, organize the work behind them, and shape how people use them. Interested in application development, systems analysis, QA automation, or technical enablement? Tell me what your team is working on.</p>');
   const profileActions = profile.indexOf('class="profile-links profile-actions"');
   assert.ok(profileName >= 0 && profileName < profileRole && profileRole < profileLocation && profileLocation < profileBio && profileBio < profileActions, "profile details should follow the requested hierarchy");
   assert.match(profile.slice(profileActions), /profile-button-icon/);
