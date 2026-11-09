@@ -24,7 +24,6 @@ export function KnowledgeReader({ id, publicMode = false }: {
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState<"rendered" | "source">("rendered");
   const [page, setPage] = useState(0);
-  const [readerHeadingCollapsed, setReaderHeadingCollapsed] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeContentsTitle, setActiveContentsTitle] = useState("");
   const pageTabRefs = useRef<Array<HTMLButtonElement | null>>([]);
@@ -57,16 +56,6 @@ export function KnowledgeReader({ id, publicMode = false }: {
     void load();
     return () => { active = false; };
   }, [id]);
-
-  /** Keeps the reader heading compact after it leaves the initial viewport. */
-  useEffect(() => {
-    const handleScroll = () => {
-      setReaderHeadingCollapsed(window.scrollY > 140);
-    };
-    handleScroll();
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   const htmlPreviewUrl = resource?.contentType === "text/html"
     ? `/api/knowledge/${encodeURIComponent(resource.id)}?render=html`
@@ -153,11 +142,8 @@ export function KnowledgeReader({ id, publicMode = false }: {
   return <>
     <SiteHeader pathname={publicMode ? "/knowledge/" : "/admin/knowledge/"} handbookReader />
     <main id="main" className="wrap knowledge-page knowledge-reader">
-      <nav className="library-location" aria-label="Breadcrumb">
-        <a href={publicMode ? "/knowledge/" : "/admin/knowledge/"}>Developer Wiki</a>
-        <span aria-current="page">{resource?.title ?? "Reference"}</span>
-      </nav>
-      <header className={`reader-heading${readerHeadingCollapsed ? " is-collapsed" : ""}`}>
+      {/* Keep the compact wiki heading from first render so the large title block never takes over the reader. */}
+      <header className="reader-heading is-collapsed">
         <div className="reader-heading-copy">
           <p className="eyebrow">MY DEVELOPER NOTES · {resource?.contentType === "text/html" ? "HTML document" : resource?.contentType === "text/markdown" ? "Markdown document" : "Reference"}</p>
           <h1>{resource?.title ?? (loading ? "Opening reference…" : "Reference unavailable")}</h1>

@@ -150,8 +150,10 @@
 .knowledge-toc button:hover{color:var(--ink);background:#f7f5eb}
 .knowledge-toc button:focus-visible{outline:3px solid #90671d;outline-offset:-2px}
 /* Keep the rendered tab strip bounded on narrow screens while preserving horizontal access. */
-@media(max-width:900px){.knowledge-reader-layout{grid-template-columns:1fr}.knowledge-reader-sidebar{position:static;min-height:0}.knowledge-page-tabs-header [role="tablist"],.knowledge-toc ol{max-height:220px}}
-@media(max-width:650px){.reader-heading.is-collapsed{top:80px}.knowledge-page-tabs-header{top:138px}.knowledge-reader-sidebar{top:138px}}
+/* Keep the reader columns shrinkable on small screens; scrollable controls own their overflow. */
+@media(max-width:900px){.knowledge-reader-layout{grid-template-columns:minmax(0,1fr)}.knowledge-reader-sidebar,.knowledge-reader-main{min-width:0}.knowledge-reader-sidebar{position:static;min-height:0}.knowledge-page-tabs-header [role="tablist"],.knowledge-toc ol{max-height:220px}}
+/* Align sticky wiki controls below the two-row portfolio header on phones. */
+@media(max-width:650px){.reader-heading.is-collapsed{top:190px}.reader-heading.is-collapsed h1{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.knowledge-page-tabs-header{top:270px}.knowledge-reader-sidebar{top:270px}}
 @media(max-width:650px){.reader-heading{grid-template-columns:1fr}.reader-heading.is-collapsed{grid-template-columns:minmax(0,1fr) auto}.reader-heading.is-collapsed .reader-collapsed-breadcrumb{display:none}}
 @media(max-width:650px){.knowledge-html-preview{height:72vh;min-height:420px}.knowledge-reader-content{padding:20px 16px}.knowledge-markdown{font-size:16px}}
 @media(max-width:900px){.library-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}

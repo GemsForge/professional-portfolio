@@ -319,6 +319,8 @@ test('public and owner directories share the existing reader while keeping owner
   assert.match(directory, /href="\/api\/knowledge\/export"[\s\S]*?Download document backup/);
   assert.match(directory, /<th scope="col">Date created<\/th>/);
   assert.match(reader, /publicMode \? "\/knowledge\/" : "\/admin\/knowledge\/"/);
+  assert.match(reader, /className="reader-heading is-collapsed"/);
+  assert.doesNotMatch(reader, /setReaderHeadingCollapsed/);
   assert.match(footer, /wikiMode \? "Portfolio" : "Dev Wiki"/);
   assert.match(generator, /href="\/knowledge\/">Dev Wiki/);
   assert.match(adminPage, /Manage Project Assets/);
