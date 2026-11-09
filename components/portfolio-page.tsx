@@ -12,7 +12,7 @@ function cleanPage(html: string) {
     .replace(/<footer[\s\S]*?<\/footer>/i, "")
     .replace(/<script[\s\S]*?<\/script>/gi, "")
     .replace(/<!doctype html>/i, "")
-    .replace(/<html[^>]*>|<\/html>|<head>[\s\S]*?<\/head>|<body[^>]*>|<\/body>|<main\b[^>]*>|<\/main>/gi, "")
+    .replace(/<html[^>]*>|<\/html>|<head>[\s\S]*?<\/head>|<body[^>]*>|<\/body>/gi, "")
     .trim();
 }
 
@@ -36,21 +36,19 @@ export function PortfolioPage({ pathname }: { pathname: string }) {
   return (
     <>
       <SiteHeader pathname={pathname} />
-      {/* Scope recruiter profile refinements to the homepage without changing shared subpage styles. */}
-      <main
-        id="main"
-        className={isHome ? "home-profile" : pathname === "/work/" ? "experience-landing" : undefined}
-      >
+      <main id="main">
         <div dangerouslySetInnerHTML={{ __html: beforeGrid }} />
         {isHome ? (
           <section id="work">
             <div className="wrap">
               <div className="sectionhead">
                 <div>
-                  <h2>Selected projects</h2>
+                  <div className="eyebrow">01 / Selected projects</div>
+                  <h2>Software meets real life.</h2>
                 </div>
                 <p>
-                  Independent work demonstrating application development, systems design, and practical automation.
+                  Three featured projects that connect application development,
+                  system design, and practical automation.
                 </p>
               </div>
               <ProjectCardGrid

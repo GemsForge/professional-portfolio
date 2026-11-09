@@ -39,15 +39,10 @@ for (const [name, path, labels] of [
 test("Aura Logbook card and detail page share the catalog image", async () => {
   const catalog = await read("../scripts/project-catalog.mts");
   const home = await read("../static-source/index.html");
-  const profileRenderer = await read("../components/portfolio-page.tsx");
-  const projectCard = await read("../components/project-card.tsx");
   const projects = await read("../static-source/portfolio/projects/index.html");
   const detail = await read("../static-source/portfolio/projects/auralogbook/index.html");
   assert.match(catalog, /auralogbook[\s\S]*?image: "\/assets\/aura-logbook\.png"/);
-  // The homepage keeps its featured set in the shared catalog-driven React renderer.
-  assert.match(home, /<!--PROJECT_CARD_GRID-->/);
-  assert.match(profileRenderer, /ProjectCardGrid[\s\S]*HOME_PROJECT_SLUGS/);
-  assert.match(projectCard, /src=\{project\.image\}/);
+  assert.match(home, /auralogbook\/[\s\S]*?src="\/assets\/aura-logbook\.png"/);
   assert.match(projects, /auralogbook\/[\s\S]*?src="\/assets\/aura-logbook\.png"/);
   assert.match(detail, /src="\/assets\/aura-logbook\.png"/);
 });
