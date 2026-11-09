@@ -90,6 +90,7 @@ test("generated post viewer retains project routes, source links, and the one-pa
   assert.match(stackPost, /The tools I’ve worked with professionally and in personal projects over the past four years/);
   assert.match(stackPost, /<section class="post-tools stack-profile"><section class="stack-groups"/);
   assert.match(stackPost, /<a class="tech-chip" href="#post\/auralogbook"/);
+  assert.match(stackPost, /<img src="\/assets\/auralogbook-stack\/sqlite\.png" alt=""/);
   assert.doesNotMatch(stackPost, /post-facts|post-decisions|Illustrative prototype|class="post-tool-list"/, "the Tech Stack story should read as a profile, not a project case study");
   assert.match(script, /history\.pushState/);
   assert.match(script, /window\.addEventListener\("popstate"/);
@@ -128,6 +129,7 @@ test("Tech Stack summarizes professional and personal tools with relevant projec
   const evidenceLinks = stack.stackGroups.flatMap(({ items }) => items);
   assert.ok(evidenceLinks.some(({ label, postSlug }) => label === "React" && postSlug === "auralogbook"));
   assert.ok(evidenceLinks.some(({ label }) => label === "PostgreSQL"));
+  assert.ok(evidenceLinks.some(({ label, postSlug }) => label === "SQLite" && postSlug === "auralogbook"));
   assert.ok(evidenceLinks.some(({ label }) => label === "Java"));
   assert.ok(evidenceLinks.some(({ label, postSlug }) => label === "Notion" && postSlug === "notion-api-shortcuts"));
 });

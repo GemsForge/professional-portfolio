@@ -173,7 +173,7 @@ export const PORTFOLIO_POSTS: PortfolioPostDefinition[] = [
     tools: ["C#", ".NET", "React", "TypeScript", "Redux", "PostgreSQL", "Java", "Notion"],
     stackGroups: [
       { label: "Languages & frameworks", items: [{ label: "C# / .NET", postSlug: "auralogbook" }, { label: "React", postSlug: "auralogbook" }, { label: "TypeScript", postSlug: "auralogbook" }, { label: "Redux", postSlug: "auralogbook" }, { label: "Java" }] },
-      { label: "Data & APIs", items: [{ label: "PostgreSQL" }, { label: "REST APIs", postSlug: "notion-api-shortcuts" }, { label: "SQL" }, { label: "JSON", postSlug: "notion-api-shortcuts" }] },
+      { label: "Data & APIs", items: [{ label: "PostgreSQL" }, { label: "SQLite", postSlug: "auralogbook" }, { label: "REST APIs", postSlug: "notion-api-shortcuts" }, { label: "SQL" }, { label: "JSON", postSlug: "notion-api-shortcuts" }] },
       { label: "Personal projects & tools", items: [{ label: "Notion", postSlug: "notion-api-shortcuts" }, { label: "Apple Shortcuts", postSlug: "hair-log" }, { label: "MUI", postSlug: "auralogbook" }] },
     ],
   },

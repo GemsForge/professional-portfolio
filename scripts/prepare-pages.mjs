@@ -26,6 +26,7 @@ const TECH_PILL_MARKS = {
   Redux: { image: "/assets/auralogbook-stack/redux.png" },
   "Redux Toolkit": { image: "/assets/auralogbook-stack/redux.png" },
   PostgreSQL: { icon: siPostgresql },
+  SQLite: { image: "/assets/auralogbook-stack/sqlite.png" },
   Java: { icon: siOpenjdk },
   Notion: { image: "/assets/auralogbook-stack/notion.png" },
   "Notion API": { image: "/assets/auralogbook-stack/notion.png" },
