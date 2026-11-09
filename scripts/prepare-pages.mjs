@@ -3,10 +3,36 @@ import path from "node:path";
 // Node 22.13+ strips the catalog's TypeScript types at import time; no runtime
 // transpiler or JSX dependency is needed for this build-time-only module.
 import { renderDependencyGroup } from "./auralogbook-dependencies.mts";
-import { applyProjectPageMetadata, HOME_PROJECT_SLUGS, PROJECTS, renderProjectCard } from "./project-catalog.mts";
+import { applyProjectPageMetadata, HOME_PROJECT_SLUGS, PORTFOLIO_POSTS, PROJECTS, renderProjectCard } from "./project-catalog.mts";
 
 const source = path.resolve("static-source");
 const pages = {};
+
+/** Emits the image-led, progressive-enhancement post grid from the typed catalog. */
+function renderCreatorGrid() {
+  return PORTFOLIO_POSTS.map((post, index) => {
+    const fallback = post.caseStudy ?? (post.slug === "tech-stack" ? "/about/" : "#about");
+    const category = post.category === "tech-stack" ? "Tech Stack" : post.category === "process" ? "Process" : "Project";
+    const label = `${post.title}. ${category}. ${post.eyebrow}`;
+    return `<a class="creator-post-tile tile-${post.slug}" href="${fallback}" data-post-link="${post.slug}" data-category="${post.category}" aria-label="Open post: ${label}"><span class="tile-art"><img src="${post.image}" alt="" width="720" height="720" loading="${index < 3 ? "eager" : "lazy"}"><span class="tile-overline">${category} <span aria-hidden="true">✳</span></span><span class="tile-title">${post.title}</span><span class="tile-caption">${post.caption}</span><span class="tile-open" aria-hidden="true">↗</span></span><span class="tile-social-cues" aria-hidden="true"><span class="tile-social-icons">♡　▤　↗</span><span>◉ Field note</span></span></a>`;
+  }).join("");
+}
+
+/** Emits an accessible, same-page post body while retaining case-study links. */
+function renderPostViews() {
+  return PORTFOLIO_POSTS.map((post, index) => {
+    const chips = post.tools.map((tool) => `<span class="post-tool-chip">${tool}</span>`).join("");
+    const decisions = post.decisions.map((decision) => `<li>${decision}</li>`).join("");
+    const links = [
+      post.caseStudy ? `<a class="post-action-link" href="${post.caseStudy}">Read the full case study <span aria-hidden="true">↗</span></a>` : "",
+      post.source ? `<a class="post-action-link" href="${post.source}" target="_blank" rel="noopener noreferrer">Inspect source <span aria-hidden="true">↗</span></a>` : "",
+    ].filter(Boolean).join("");
+    const groupedStack = post.stackGroups ? `<section class="stack-groups" aria-label="Technologies linked to project evidence">${post.stackGroups.map((group) => `<div class="stack-group"><h4>${group.label}</h4><div>${group.items.map((item) => `<a href="${item.href ?? `#post/${item.postSlug}`}"${item.postSlug ? ` data-post-link="${item.postSlug}"` : ""}>${item.label}<span aria-hidden="true"> ↗</span></a>`).join("")}</div></div>`).join("")}</section>` : "";
+    const walkthrough = post.walkthrough ? `<section class="walkthrough" aria-labelledby="walkthrough-${post.slug}"><div class="walkthrough-heading"><div><span class="eyebrow">Illustrative prototype</span><h3 id="walkthrough-${post.slug}">Walk through the idea</h3></div><span class="walkthrough-counter" data-step-counter>01 / ${String(post.walkthrough.length).padStart(2, "0")}</span></div><ol class="walkthrough-steps" data-walkthrough="${post.slug}">${post.walkthrough.map((step, stepIndex) => `<li data-walkthrough-step="${stepIndex}"><span class="walkthrough-step-no">${String(stepIndex + 1).padStart(2, "0")}</span><div><h4>${step.title}</h4><p>${step.detail}</p></div></li>`).join("")}</ol><p class="walkthrough-status" data-walkthrough-status aria-live="polite"></p><div class="walkthrough-controls" hidden><button type="button" data-step-prev>← Previous</button><button type="button" data-step-next>Next step →</button></div><p class="walkthrough-disclaimer">A guided prototype based on the documented project flow; not a live production app.</p></section>` : "";
+    const visualHotspots = post.walkthrough ? post.walkthrough.map((step, stepIndex) => `<button type="button" class="visual-hotspot" data-visual-hotspot="${stepIndex}" data-hotspot-label="${step.hotspot.label}" data-hotspot-detail="${step.detail}" style="--hotspot-x:${step.hotspot.x}%;--hotspot-y:${step.hotspot.y}%" aria-label="Explore: ${step.hotspot.label}"><span aria-hidden="true">+</span></button>`).join("") : "";
+    return `<article class="post-story" data-post-view="${post.slug}" aria-labelledby="post-title-${post.slug}" hidden><template class="post-visual-template"><figure class="post-main-visual"><div class="post-visual-stage"><img src="${post.image}" alt="${post.imageAlt}" width="960" height="960">${visualHotspots}</div><figcaption><span>${post.eyebrow}</span><span>${post.imageAlt}</span></figcaption></figure></template><div class="post-story-topline"><span>${post.eyebrow}</span><span>${String(index + 1).padStart(2, "0")} / ${String(PORTFOLIO_POSTS.length).padStart(2, "0")}</span></div><h2 id="post-title-${post.slug}">${post.title}</h2><p class="post-lead">${post.caption}</p><dl class="post-facts"><div><dt>My role</dt><dd>${post.role}</dd></div><div><dt>Evidence &amp; status</dt><dd>${post.evidence}</dd></div></dl><section class="post-decisions"><h3>Decisions that shaped it</h3><ul>${decisions}</ul></section><section class="post-tools"><h3>Tools in this story</h3><div class="post-tool-list">${chips}</div></section>${groupedStack}${walkthrough}${links ? `<nav class="post-actions" aria-label="Related project links">${links}</nav>` : ""}<nav class="post-sequence" aria-label="Browse other posts"><button type="button" data-adjacent-post="previous">← Previous post</button><button type="button" data-adjacent-post="next">Next post →</button></nav></article>`;
+  }).join("");
+}
 
 async function visit(directory) {
   for (const entry of await readdir(directory, { withFileTypes: true })) {
@@ -31,9 +57,16 @@ async function visit(directory) {
 
       if (route === "/" || route === "/portfolio/") {
         text = text.replace(
-          /<div class="projects">[\s\S]*?<\/div>(?=<\/div><\/section>)/,
-          `<div class="projects">${projects.map((project) => renderProjectCard(project)).join("")}</div><div class="project-grid-actions"><a class="button secondary" href="/portfolio/projects/">Explore more projects ↗</a></div>`,
+          /<div id="creator-post-grid" class="creator-post-grid" aria-label="Portfolio posts"><\/div>/,
+          `<div id="creator-post-grid" class="creator-post-grid" aria-label="Portfolio posts">${renderCreatorGrid()}</div>`,
         );
+        text = text.replace(
+          '<div class="post-view-story" id="post-story" tabindex="-1"></div>',
+          `<div class="post-view-story" id="post-story" tabindex="-1">${renderPostViews()}</div>`,
+        );
+        if (!text.includes('data-post-view="auralogbook"') || !text.includes("creator-profile.js")) {
+          throw new Error("Creator posts were not rendered into the profile page.");
+        }
       }
 
       for (const project of projects) {
