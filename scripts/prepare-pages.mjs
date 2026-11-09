@@ -1,6 +1,6 @@
 import { cp, readFile, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { siDotnet, siOpenjdk, siPostgresql } from "simple-icons";
+import { siApple, siDotnet, siOpenjdk, siPostgresql } from "simple-icons";
 // Node 22.13+ strips the catalog's TypeScript types at import time; no runtime
 // transpiler or JSX dependency is needed for this build-time-only module.
 import { renderDependencyGroup } from "./auralogbook-dependencies.mts";
@@ -18,6 +18,35 @@ const PROFILE_TECHNOLOGIES = [
   { label: "Java", icon: siOpenjdk },
   { label: "Notion", image: "/assets/auralogbook-stack/notion.png" },
 ];
+const TECH_PILL_MARKS = {
+  "C#": { image: "/assets/auralogbook-stack/csharp.png" },
+  ".NET": { icon: siDotnet },
+  React: { image: "/assets/auralogbook-stack/react.png" },
+  TypeScript: { image: "/assets/auralogbook-stack/typescript.png" },
+  Redux: { image: "/assets/auralogbook-stack/redux.png" },
+  "Redux Toolkit": { image: "/assets/auralogbook-stack/redux.png" },
+  PostgreSQL: { icon: siPostgresql },
+  Java: { icon: siOpenjdk },
+  Notion: { image: "/assets/auralogbook-stack/notion.png" },
+  "Notion API": { image: "/assets/auralogbook-stack/notion.png" },
+  "Apple Shortcuts": { icon: siApple },
+};
+
+/** Renders a tool label and any available brand mark using the project-card pill assets. */
+function renderTechPillContents(tool) {
+  const mark = TECH_PILL_MARKS[tool];
+  const logo = mark?.image
+    ? `<img src="${mark.image}" alt="" loading="lazy" decoding="async">`
+    : mark?.icon
+      ? `<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" style="--tech-color:#${mark.icon.hex}"><path fill="currentColor" d="${mark.icon.path}"></path></svg>`
+      : "";
+  return `${logo}<span>${tool}</span>`;
+}
+
+/** Renders a tool as the same pill used on project cards. */
+function renderTechPill(tool) {
+  return `<span class="tech-chip">${renderTechPillContents(tool)}</span>`;
+}
 
 /** Renders the existing portfolio technology marks as links to the stack story. */
 function renderProfileTechStrip() {
@@ -43,13 +72,13 @@ function renderCreatorGrid() {
 /** Emits concise project stories and a direct professional/personal technology profile. */
 function renderPostViews() {
   return PORTFOLIO_POSTS.map((post, index) => {
-    const chips = post.tools.map((tool) => `<span class="post-tool-chip">${tool}</span>`).join("");
+    const chips = post.tools.map(renderTechPill).join("");
     const decisions = post.decisions.map((decision) => `<li>${decision}</li>`).join("");
     const links = [
       post.caseStudy ? `<a class="post-action-link" href="${post.caseStudy}">Read the full case study <span aria-hidden="true">↗</span></a>` : "",
       post.source ? `<a class="post-action-link" href="${post.source}" target="_blank" rel="noopener noreferrer">Inspect source <span aria-hidden="true">↗</span></a>` : "",
     ].filter(Boolean).join("");
-    const groupedStack = post.stackGroups ? `<section class="stack-groups" aria-label="Technology groups">${post.stackGroups.map((group) => `<div class="stack-group"><h4>${group.label}</h4><div>${group.items.map((item) => item.href || item.postSlug ? `<a href="${item.href ?? `#post/${item.postSlug}`}"${item.postSlug ? ` data-post-link="${item.postSlug}"` : ""}>${item.label}<span aria-hidden="true"> ↗</span></a>` : `<span>${item.label}</span>`).join("")}</div></div>`).join("")}</section>` : "";
+    const groupedStack = post.stackGroups ? `<section class="stack-groups" aria-label="Technology groups">${post.stackGroups.map((group) => `<div class="stack-group"><h4>${group.label}</h4><div>${group.items.map((item) => item.href || item.postSlug ? `<a class="tech-chip" href="${item.href ?? `#post/${item.postSlug}`}"${item.postSlug ? ` data-post-link="${item.postSlug}"` : ""}>${renderTechPillContents(item.label)}<span aria-hidden="true"> ↗</span></a>` : `<span class="tech-chip">${renderTechPillContents(item.label)}</span>`).join("")}</div></div>`).join("")}</section>` : "";
     const techContent = post.stackGroups ? groupedStack : `<div class="post-tool-list">${chips}</div>`;
     const facts = post.role && post.evidence ? `<dl class="post-facts"><div><dt>My role</dt><dd>${post.role}</dd></div><div><dt>Evidence &amp; status</dt><dd>${post.evidence}</dd></div></dl>` : "";
     const techSection = post.category === "tech-stack" ? `<section class="post-tools stack-profile">${techContent}</section>` : `<section class="post-tools"><h3>Tech</h3>${techContent}</section>`;

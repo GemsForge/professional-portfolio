@@ -83,10 +83,13 @@ test("generated post viewer retains project routes, source links, and the one-pa
   const auraPost = html.slice(html.indexOf('data-post-view="auralogbook"'), html.indexOf('</article>', html.indexOf('data-post-view="auralogbook"')));
   assert.ok(auraPost.indexOf('<dl class="post-facts">') < auraPost.indexOf('<section class="post-tools"><h3>Tech</h3>') && auraPost.indexOf('<section class="post-tools"><h3>Tech</h3>') < auraPost.indexOf('<section class="walkthrough"') && auraPost.indexOf('<section class="walkthrough"') < auraPost.indexOf('<section class="post-decisions">'), "Tech and the prototype should follow the role and evidence table");
   assert.match(auraPost, /<img src="\/assets\/aura-logbook\.png" alt="Open reflection journal with mood markers"/);
+  assert.match(auraPost, /class="tech-chip"/);
+  assert.match(auraPost, /\/assets\/auralogbook-stack\/react\.png/);
   assert.doesNotMatch(auraPost, /<figcaption>/, "post artwork should not have a visible caption below it");
   const stackPost = html.slice(html.indexOf('data-post-view="tech-stack"'), html.indexOf('</article>', html.indexOf('data-post-view="tech-stack"')));
   assert.match(stackPost, /The tools I’ve worked with professionally and in personal projects over the past four years/);
   assert.match(stackPost, /<section class="post-tools stack-profile"><section class="stack-groups"/);
+  assert.match(stackPost, /<a class="tech-chip" href="#post\/auralogbook"/);
   assert.doesNotMatch(stackPost, /post-facts|post-decisions|Illustrative prototype|class="post-tool-list"/, "the Tech Stack story should read as a profile, not a project case study");
   assert.match(script, /history\.pushState/);
   assert.match(script, /window\.addEventListener\("popstate"/);
@@ -105,6 +108,7 @@ test("generated post viewer retains project routes, source links, and the one-pa
   assert.doesNotMatch(css, /\.creator-page[^}]*font-family:Arial/);
   assert.match(css, /\.creator-nav-ready\.creator-nav-visible \.creator-topbar/);
   assert.match(css, /\.post-story>\.post-tools,\.post-story>\.post-decisions\{margin:0;padding:0;border:0\}/);
+  assert.match(css, /\.tech-chip img\{width:15px;height:15px;flex:none;object-fit:contain\}/);
   assert.match(css, /\.post-close\{width:32px;height:32px;font-size:20px\}/);
   assert.match(css, /@media\(min-width:651px\)\{\.post-view-story\{overflow:auto\}\}/);
   assert.match(css, /\.creator-shell\{margin-top:0\}/);
