@@ -48,6 +48,7 @@ test("creator catalog opens with the agreed nine-post social grid order", async 
   assert.match(html, /data-filter="process" aria-pressed="false">Process <span>02<\/span>/);
   assert.match(html, /data-filter="tech-stack" aria-pressed="false">Tech Stack <span>01<\/span>/);
   assert.doesNotMatch(html, /PROJECTS &amp; PROCESS|Selected work|01—09|App development, project planning, and design decisions from work I’ve built/);
+  assert.match(html, /id="post-stories">[\s\S]*?data-post-view="auralogbook"/);
 });
 
 test("project posts identify evidence and provide guided prototype steps", () => {
@@ -77,6 +78,7 @@ test("generated post viewer retains project routes, source links, and the one-pa
   assert.match(script, /window\.addEventListener\("hashchange"/);
   assert.match(script, /IntersectionObserver/);
   assert.match(script, /creator-nav-visible/);
+  assert.match(script, /button\.addEventListener\("click", \(\) => applyFilter\(button\.dataset\.filter\)\)/);
   assert.match(script, /portfolioScroll/);
   assert.match(script, /opener\.focus/);
   assert.match(css, /\.creator-post-grid\{display:grid;grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/);

@@ -60,10 +60,8 @@ async function visit(directory) {
           /<div id="creator-post-grid" class="creator-post-grid" aria-label="Portfolio posts"><\/div>/,
           `<div id="creator-post-grid" class="creator-post-grid" aria-label="Portfolio posts">${renderCreatorGrid()}</div>`,
         );
-        text = text.replace(
-          '<div class="post-view-story" id="post-story" tabindex="-1"></div>',
-          `<div class="post-view-story" id="post-story" tabindex="-1">${renderPostViews()}</div>`,
-        );
+        // Keep the full story catalog mounted separately so filtering and the dialog can move one story without losing the others.
+        text = text.replace('<div id="post-stories"></div>', `<div id="post-stories">${renderPostViews()}</div>`);
         if (!text.includes('data-post-view="auralogbook"') || !text.includes("creator-profile.js")) {
           throw new Error("Creator posts were not rendered into the profile page.");
         }
