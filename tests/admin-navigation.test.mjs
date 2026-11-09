@@ -32,19 +32,26 @@ test('Manage Project Assets remains protected and does not expose identity data'
   assert.equal(await owner.text(), manager);
 });
 
-test('Manage Project Assets exposes separate project and Wiki upload steps', async () => {
-  const [manager, workflow] = await Promise.all([
+test('Manage Project Assets gives both upload steps the same panel and a clear Wiki file note', async () => {
+  const [manager, workflow, directory] = await Promise.all([
     readFile(new URL('../lib/image-manager.html', import.meta.url), 'utf8'),
     readFile(new URL('../public/assets/manage-project-assets.js', import.meta.url), 'utf8'),
+    readFile(new URL('../components/knowledge-directory.tsx', import.meta.url), 'utf8'),
   ]);
 
   assert.match(manager, /<title>Manage Project Assets/);
   assert.match(manager, /<h1>Manage Project Assets<\/h1>/);
   assert.match(manager, /Project Assets Manager/);
   assert.match(manager, /Wiki Page Uploader/);
+  assert.equal((manager.match(/class="workspace-panel"/g) || []).length, 2);
+  assert.match(manager, /class="accepted-file-callout"[^>]*role="note"/);
+  assert.match(manager, /Accepted files · Up to 20 MB/);
   assert.match(manager, /id="upload-form"/);
   assert.match(manager, /id="wiki-uploader-frame"/);
+  assert.match(manager, /<h2 id="wiki-uploader-heading">Wiki Page Uploader<\/h2>/);
   assert.doesNotMatch(manager, /separate tab/);
+  const uploaderView = directory.split('if (uploaderOnly) {')[1]?.split('async function deleteReference')[0] ?? '';
+  assert.doesNotMatch(uploaderView, /className="eyebrow"|<h1\b|Accepted files:/);
   assert.match(workflow, /\/admin\/knowledge\/uploader/);
   assert.match(workflow, /new URLSearchParams\(window\.location\.search\)\.get\("folder"\)/);
   assert.match(workflow, /uploader\.searchParams\.set\("folder", selectedFolder\)/);

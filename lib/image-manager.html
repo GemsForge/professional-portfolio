@@ -34,6 +34,8 @@
       .workspace-panel h2{margin:0 0 8px;font:clamp(25px,3vw,34px)/1.2 var(--serif);letter-spacing:-.4px}
       .workspace-panel h3{margin:28px 0 10px;font-size:20px}
       .workspace-panel>p{max-width:760px;color:var(--muted)}
+      .accepted-file-callout{display:grid;gap:2px;margin:14px 0 8px;padding:12px 16px;border-left:4px solid var(--green);border-radius:0 8px 8px 0;background:rgba(228,232,219,.78);color:var(--ink);font-size:14px;line-height:1.5}
+      .accepted-file-callout strong{font-size:12px;letter-spacing:.04em;text-transform:uppercase}
       #project-assets-step form{max-width:720px}
       #wiki-uploader-frame{display:block;width:100%;min-height:600px;border:0;background:transparent}
       @media(max-width:650px){
@@ -41,6 +43,7 @@
         .workspace-steps{grid-template-columns:1fr;gap:9px}
         .workspace-step{min-height:72px;padding:13px 14px}
         .workspace-panel{padding:20px 16px;border-radius:8px}
+        .accepted-file-callout{padding:11px 13px}
         #wiki-uploader-frame{min-height:760px}
         .admin-links{gap:12px}
       }
@@ -67,7 +70,7 @@
       <div class="pagehero workspace-intro">
         <div class="eyebrow">Admin - Owner Workspace</div>
         <h1>Manage Project Assets</h1>
-        <p class="lead">Manage portfolio attachments and add reference documents to your private Developer Wiki.</p>
+        <p class="lead">Manage portfolio attachments and add reference documents to your Developer Wiki.</p>
         <nav class="admin-links" aria-label="Owner workspace links">
           <!-- The owner workspace opens the shared Developer Wiki. -->
           <a href="/admin/knowledge/">Developer Wiki</a>
@@ -87,7 +90,6 @@
           <span class="step-number" aria-hidden="true">1</span>
           <span class="step-copy">
             <strong>Project Assets Manager</strong>
-            <span>Upload, edit, publish, or remove portfolio attachments.</span>
           </span>
         </button>
         <button
@@ -98,7 +100,6 @@
           <span class="step-number" aria-hidden="true">2</span>
           <span class="step-copy">
             <strong>Wiki Page Uploader</strong>
-            <span>Add a document to your private Developer Wiki.</span>
           </span>
         </button>
       </nav>
@@ -109,6 +110,7 @@
         data-workspace-panel="project-assets"
         aria-labelledby="project-assets-heading">
         <h2 id="project-assets-heading">Project Assets Manager</h2>
+        <p id="wiki-uploader-description">Upload, edit, publish, or remove portfolio attachments.</p>
         <p id="message" role="status" aria-live="polite"></p>
         <form id="upload-form">
           <label for="project">Project</label>
@@ -134,14 +136,19 @@
         id="wiki-uploader-step"
         class="workspace-panel"
         data-workspace-panel="wiki-uploader"
-        aria-label="Wiki Page Uploader"
+        aria-labelledby="wiki-uploader-heading"
         hidden>
+        <h2 id="wiki-uploader-heading">Wiki Page Uploader</h2>
+        <p id="wiki-uploader-description">Uploads are saved to your owner-only Developer Wiki.</p>
+        <aside class="accepted-file-callout" id="wiki-uploader-help" role="note" aria-label="Accepted Wiki file types">
+          <strong>Accepted files · Up to 20 MB</strong>
+          <span>PDF, DOCX, Markdown, HTML, UTF-8 text, PNG, JPEG, WebP, or TIFF. HTML previews are isolated, and Markdown files are formatted for reading.</span>
+        </aside>
         <iframe
           id="wiki-uploader-frame"
-          title="Wiki Page Uploader"
-          aria-describedby="wiki-uploader-help"
+          title="Wiki Page Uploader form and saved references"
+          aria-describedby="wiki-uploader-description wiki-uploader-help"
           loading="lazy"></iframe>
-        <p id="wiki-uploader-help">Uploads are saved to your owner-only Developer Wiki.</p>
       </section>
     </main>
     <footer class="footer">

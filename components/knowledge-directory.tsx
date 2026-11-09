@@ -677,20 +677,7 @@ export function KnowledgeDirectory({
         <section
           id="manage-references"
           className="library-management"
-          aria-labelledby="knowledge-uploader-heading">
-          <div className="uploader-heading">
-            <div className="eyebrow">Developer Wiki</div>
-            <h1 id="knowledge-uploader-heading">Wiki Page Uploader</h1>
-            <p>
-              Add a document to your Developer Wiki and choose the folder where
-              you want to keep it.
-            </p>
-          </div>
-          <p>
-            Accepted files: PDF, DOCX, Markdown, HTML, UTF-8 text, PNG, JPEG,
-            WebP, or TIFF. Maximum size: 20 MB. HTML previews run in an isolated
-            frame, and Markdown references are formatted for reading.
-          </p>
+          aria-label="Add a document to the Developer Wiki">
           <form className="knowledge-form" onSubmit={addReference}>
             <label htmlFor="knowledge-title">Title</label>
             <input
