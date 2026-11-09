@@ -422,7 +422,7 @@ const shelfReferences: {
   },
 ];
 
-/** Sends public and owner directory cards to the matching authorization-gated wiki reader. */
+/** Sends public and owner readers to their matching shells; private document APIs still require the owner identity. */
 function readerHref(resourceId: string, publicMode = false) {
   return publicMode
     ? `/knowledge/${encodeURIComponent(resourceId)}`
@@ -653,7 +653,7 @@ export function KnowledgeDirectory({
       await loadResources();
       if (data.resource?.contentType === "text/markdown") {
         const target = uploaderOnly && window.parent !== window ? window.parent : window;
-        target.location.assign(readerHref(data.resource.id));
+        target.location.assign(readerHref(data.resource.id, true));
         return;
       }
       setMessage("Reference added to your library.");
@@ -810,7 +810,11 @@ export function KnowledgeDirectory({
                         <td className="knowledge-table-actions">
                           {(resource.contentType === "text/html" ||
                             resource.contentType === "text/markdown") && (
-                            <a href={readerHref(resource.id)}>View</a>
+                            <a
+                              href={readerHref(resource.id, true)}
+                              target="_top">
+                              View
+                            </a>
                           )}
                           <a
                             href={`/api/knowledge/${encodeURIComponent(resource.id)}`}>

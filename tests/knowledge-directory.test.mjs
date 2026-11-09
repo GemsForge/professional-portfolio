@@ -310,6 +310,8 @@ test('public and owner directories share the existing reader while keeping owner
   assert.match(worker, /url\.pathname\.startsWith\('\/admin\/knowledge\/'\)/);
   assert.match(directory, /aria-label="Saved reference documents table"/);
   assert.match(directory, /onClick=\{\(\) => void deleteReference\(resource\)\}/);
+  assert.match(directory, /href=\{readerHref\(resource\.id, true\)\}[\s\S]*?target="_top"[\s\S]*?View/);
+  assert.match(directory, /target\.location\.assign\(readerHref\(data\.resource\.id, true\)\)/);
   assert.doesNotMatch(directory, /id="saved-references"/);
   assert.match(directory, /MY DEVELOPER NOTES/);
   assert.match(directory, /Developer Wiki/);
