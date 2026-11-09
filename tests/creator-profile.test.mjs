@@ -47,6 +47,7 @@ test("creator catalog opens with the agreed nine-post social grid order", async 
   assert.match(html, /data-filter="project" aria-pressed="false">Projects <span>06<\/span>/);
   assert.match(html, /data-filter="process" aria-pressed="false">Process <span>02<\/span>/);
   assert.match(html, /data-filter="tech-stack" aria-pressed="false">Tech Stack <span>01<\/span>/);
+  assert.doesNotMatch(html, /PROJECTS &amp; PROCESS|Selected work|01—09|App development, project planning, and design decisions from work I’ve built/);
 });
 
 test("project posts identify evidence and provide guided prototype steps", () => {
