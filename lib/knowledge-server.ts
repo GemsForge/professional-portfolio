@@ -271,11 +271,15 @@ async function knowledgeBackup(bucket: R2Bucket, resources: KnowledgeRecord[]) {
   });
 }
 
-/** Exposes only directory metadata publicly; document bodies and body-derived search data stay private. */
+/** Exposes public directory metadata and supports read-only public document requests. */
 export async function publicKnowledgeRequest(request: Request, env: Cloudflare.Env): Promise<Response> {
   if (request.method !== 'GET') return json({ error: 'Method not allowed.' }, 405);
   const bucket = env.BUCKET;
   if (!bucket) return json({ error: 'Knowledge storage is unavailable.' }, 503);
+  const url = new URL(request.url);
+  const id = url.pathname.slice('/api/public/knowledge'.length).replace(/^\//, '');
+  if (id) return knowledgeFileResponse(request, bucket, id, true);
+
   const resources = (await listRecords(bucket)).map(({ id, title, folder, filename, contentType, size, createdAt, tags }) => ({
     id,
     title,
@@ -293,6 +297,53 @@ function contentDisposition(filename: string) {
   const ascii = filename.replace(/[^\x20-\x7e]/g, '_').replace(/["\\]/g, '_');
   const encoded = encodeURIComponent(filename).replace(/[!'()*]/g, (character) => `%${character.charCodeAt(0).toString(16).toUpperCase()}`);
   return `attachment; filename="${ascii}"; filename*=UTF-8''${encoded}`;
+}
+
+/** Serves one document through the public reader or the owner-only management API. */
+async function knowledgeFileResponse(request: Request, bucket: R2Bucket, id: string, publicAccess: boolean): Promise<Response> {
+  if (!ID_PATTERN.test(id)) return json({ error: 'Resource not found.' }, 404);
+  const url = new URL(request.url);
+  const metadata = await bucket.get(`${RECORD_PREFIX}${id}.json`);
+  if (!metadata) return json({ error: 'Resource not found.' }, 404);
+  const record = await metadata.json<KnowledgeRecord>();
+  // Inline HTML is reserved for the reader's restrictive, sandboxed preview frame.
+  const renderHtml = url.searchParams.get('render') === 'html';
+  if (renderHtml && record.contentType !== 'text/html') {
+    return json({ error: 'Only HTML references can be previewed this way.' }, 415);
+  }
+  const file = await bucket.get(`${FILE_PREFIX}${id}`);
+  if (!file) return json({ error: 'Resource not found.' }, 404);
+  const cacheControl = publicAccess ? 'public, max-age=60' : 'private, no-store';
+  if (url.searchParams.get('format') === 'html' && record.contentType === 'text/markdown') {
+    const source = await file.text();
+    const filename = `${record.filename.replace(/\.(md|markdown)$/i, '')}.html`;
+    return new Response(buildKnowledgeBooklet(source, record.title, record.filename, record.tags, {
+      logoUrl: `${url.origin}/assets/gemsforge-logo.png`,
+      backHref: publicAccess
+        ? `${url.origin}/knowledge/${encodeURIComponent(record.id)}`
+        : `${url.origin}/admin/knowledge/read?id=${encodeURIComponent(record.id)}`,
+    }), {
+      headers: {
+        'Content-Type': 'text/html; charset=utf-8',
+        'Content-Disposition': contentDisposition(filename),
+        'Cache-Control': cacheControl,
+        'X-Robots-Tag': 'noindex, nofollow',
+        'X-Content-Type-Options': 'nosniff',
+      },
+    });
+  }
+  return new Response(file.body, {
+    headers: {
+      'Content-Type': record.contentType,
+      'Content-Disposition': renderHtml ? 'inline' : contentDisposition(record.filename),
+      'Cache-Control': cacheControl,
+      'X-Robots-Tag': 'noindex, nofollow',
+      'X-Content-Type-Options': 'nosniff',
+      ...(renderHtml ? {
+        'Content-Security-Policy': "default-src 'none'; img-src data:; style-src 'unsafe-inline'; font-src data:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'self'",
+      } : {}),
+    },
+  });
 }
 
 /** Serves private directory metadata and files only after server-side owner checks. */
@@ -313,46 +364,7 @@ export async function knowledgeRequest(request: Request, env: Cloudflare.Env): P
 
   if (id && !ID_PATTERN.test(id)) return json({ error: 'Resource not found.' }, 404);
 
-  if (request.method === 'GET' && id) {
-    const metadata = await bucket.get(`${RECORD_PREFIX}${id}.json`);
-    if (!metadata) return json({ error: 'Resource not found.' }, 404);
-    const record = await metadata.json<KnowledgeRecord>();
-    // Inline HTML is reserved for the reader's restrictive, sandboxed preview frame.
-    const renderHtml = url.searchParams.get('render') === 'html';
-    if (renderHtml && record.contentType !== 'text/html') {
-      return json({ error: 'Only HTML references can be previewed this way.' }, 415);
-    }
-    const file = await bucket.get(`${FILE_PREFIX}${id}`);
-    if (!file) return json({ error: 'Resource not found.' }, 404);
-    if (url.searchParams.get('format') === 'html' && record.contentType === 'text/markdown') {
-      const source = await file.text();
-      const filename = `${record.filename.replace(/\.(md|markdown)$/i, '')}.html`;
-      return new Response(buildKnowledgeBooklet(source, record.title, record.filename, record.tags, {
-        logoUrl: `${url.origin}/assets/gemsforge-logo.png`,
-        backHref: `${url.origin}/admin/knowledge/read?id=${encodeURIComponent(record.id)}`,
-      }), {
-        headers: {
-          'Content-Type': 'text/html; charset=utf-8',
-          'Content-Disposition': contentDisposition(filename),
-          'Cache-Control': 'private, no-store',
-          'X-Robots-Tag': 'noindex, nofollow',
-          'X-Content-Type-Options': 'nosniff',
-        },
-      });
-    }
-    return new Response(file.body, {
-      headers: {
-        'Content-Type': record.contentType,
-        'Content-Disposition': renderHtml ? 'inline' : contentDisposition(record.filename),
-        'Cache-Control': 'private, no-store',
-        'X-Robots-Tag': 'noindex, nofollow',
-        'X-Content-Type-Options': 'nosniff',
-        ...(renderHtml ? {
-          'Content-Security-Policy': "default-src 'none'; img-src data:; style-src 'unsafe-inline'; font-src data:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'self'",
-        } : {}),
-      },
-    });
-  }
+  if (request.method === 'GET' && id) return knowledgeFileResponse(request, bucket, id, false);
 
   /** Deletes one private reference and its stored file after the owner confirms the request. */
   if (request.method === 'DELETE' && id) {

@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-/** Renders a wiki through the existing reader after the worker verifies the owner. */
+/** Renders a public Wiki document through the shared reader; management remains owner-gated. */
 export default async function DeveloperWikiDocumentPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   return <KnowledgeReader id={id} publicMode />;

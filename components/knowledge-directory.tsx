@@ -925,15 +925,9 @@ export function KnowledgeDirectory({
               <div className="section-heading">
                 <div>
                   <h2 id="handbooks-heading">Handbooks</h2>
-                  <p>
-                    {publicMode
-                      ? "Choose a handbook to open its wiki. Document access requires owner sign-in."
-                      : "Choose a handbook to open and read."}
-                  </p>
+                  <p>Choose a handbook to open its wiki.</p>
                 </div>
-                <a href={publicMode ? "#all-references" : "/admin/handbooks"}>
-                  {publicMode ? "All documents →" : "All handbooks →"}
-                </a>
+                {!publicMode && <a href="/admin/handbooks">All handbooks →</a>}
               </div>
               <div className="handbook-controls">
                 <label className="handbook-search">
@@ -1089,87 +1083,6 @@ export function KnowledgeDirectory({
               ))}
             </section>
 
-            {publicMode && (
-              <section
-                className="library-section"
-                id="all-references"
-                aria-labelledby="all-references-heading">
-                <div className="section-heading">
-                  <div>
-                    <h2 id="all-references-heading">All documents</h2>
-                    <p>
-                      Choose a title to open its wiki. Document access requires
-                      owner sign-in.
-                    </p>
-                  </div>
-                </div>
-                {isLoading && (
-                  <p
-                    className="handbook-status"
-                    role="status"
-                    aria-live="polite">
-                    Loading documents…
-                  </p>
-                )}
-                {isError && (
-                  <p className="note" role="alert">
-                    {message}
-                  </p>
-                )}
-                {!isLoading && !visibleResources.length && !isError && (
-                  <p className="handbook-empty" role="status">
-                    No documents are available.
-                  </p>
-                )}
-                {visibleResources.length > 0 && (
-                  <div
-                    className="knowledge-table-scroll"
-                    tabIndex={0}
-                    role="region"
-                    aria-label="Developer Wiki documents">
-                    <table className="knowledge-resource-table">
-                      <caption className="sr-only">
-                        Developer Wiki documents
-                      </caption>
-                      <thead>
-                        <tr>
-                          <th scope="col">Document</th>
-                          <th scope="col">Type</th>
-                          <th scope="col">Area</th>
-                          <th scope="col">Wiki</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {visibleResources.map((resource) => {
-                          const folder = folders.find(
-                            (entry) => entry.path === resource.folder,
-                          );
-                          return (
-                            <tr key={resource.id}>
-                              <th scope="row">
-                                <span>{resource.title}</span>
-                                <small>{resource.filename}</small>
-                              </th>
-                              <td>
-                                {resource.contentType
-                                  .replace("text/", "")
-                                  .replace("application/", "")}
-                              </td>
-                              <td>{folder?.label || resource.folder}</td>
-                              <td className="knowledge-table-actions">
-                                <a href={readerHref(resource.id, true)}>
-                                  Open wiki
-                                </a>
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </section>
-            )}
           </>
         ) : (
           <section
