@@ -131,7 +131,11 @@ export const PORTFOLIO_POSTS: PortfolioPostDefinition[] = [
     slug: "auralogbook", title: "Aura Logbook", category: "project", eyebrow: "Full-stack application · In development",
     caption: "A mood-reflection journal shaped around the way you make meaning.", image: "/assets/aura-logbook.png", imageAlt: "Open reflection journal with mood markers",
     role: "Build the React and TypeScript app alongside its .NET API.",
-    decisions: ["Keep entries to a date, moods, and an optional note.", "Separate the interface, API, authentication, and data sources."],
+    decisions: [
+      "Keep check-ins to a date and moods; make notes optional so logging stays quick while entries remain useful for history and trends.",
+      "Offer Mindful Living, Astrology & Energy, and Faith & Religion as user-chosen paths instead of assuming one worldview.",
+      "Fetch weather for dashboard context, not as part of a mood entry; conditions change independently of a person’s reflection.",
+    ],
     evidence: "Architecture, schemas, source, and tests are documented; the app is in development.",
     tools: ["React", "TypeScript", ".NET", "MUI", "Redux Toolkit", "REST API"], caseStudy: "/portfolio/projects/auralogbook/", source: "https://github.com/GemsForge/aura-logbook-api",
     walkthrough: [
@@ -227,19 +231,6 @@ export const PORTFOLIO_POSTS: PortfolioPostDefinition[] = [
       { title: "Name the parent", detail: "Create and store the parent folder.", hotspot: { x: 40, y: 28, label: "Parent folder" } },
       { title: "Choose a count", detail: "Set how many subfolders to create.", hotspot: { x: 60, y: 49, label: "Repeat count" } },
       { title: "Create child folders", detail: "Add each new folder under the stored parent.", hotspot: { x: 50, y: 72, label: "Nested folders" } },
-    ],
-  },
-  {
-    slug: "project-management", title: "Make the work legible", category: "process", eyebrow: "Project management · Scope to evidence",
-    caption: "Turn a broad idea into a sequence people can understand, contribute to, and review.", image: "/assets/collaboration.png", imageAlt: "Three people assembling pieces of a shared system",
-    role: "Plan scope, dependencies, implementation, and verification.",
-    decisions: ["Define the user outcome and acceptance criteria first.", "Track risks, dependencies, and evidence as work progresses.", "Keep the next decision and owner visible."],
-    evidence: "Project stories show the approach; this post makes no delivery-metric claims.",
-    tools: ["Scope definition", "Acceptance criteria", "Issue tracking", "Dependency mapping", "Verification planning"],
-    walkthrough: [
-      { title: "Name the outcome", detail: "State who the work serves and what changes.", hotspot: { x: 50, y: 28, label: "User outcome" } },
-      { title: "Set the scope", detail: "List deliverables, non-goals, dependencies, and risks.", hotspot: { x: 34, y: 53, label: "Scope and dependencies" } },
-      { title: "Check with evidence", detail: "Choose verification before implementation begins.", hotspot: { x: 67, y: 75, label: "Verification" } },
     ],
   },
 ];

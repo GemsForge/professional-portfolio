@@ -15,18 +15,19 @@ async function readGeneratedHome() {
   return pages["/"];
 }
 
-test("creator catalog keeps eight posts in the grid and a separate technology shortcut", async () => {
+test("creator catalog keeps seven posts in the grid and a separate technology shortcut", async () => {
   const html = await readGeneratedHome();
   const slugs = PORTFOLIO_POSTS.map(({ slug }) => slug);
   assert.deepEqual(slugs.slice(0, 4), ["auralogbook", "notion-api-shortcuts", "portfolio-direction", "tech-stack"]);
-  assert.equal(PORTFOLIO_POSTS.length, 9);
+  assert.equal(PORTFOLIO_POSTS.length, 8);
   assert.equal(PORTFOLIO_POSTS.filter(({ category }) => category === "project").length, 6);
-  assert.equal(PORTFOLIO_POSTS.filter(({ category }) => category === "process").length, 2);
+  assert.equal(PORTFOLIO_POSTS.filter(({ category }) => category === "process").length, 1);
   assert.equal(PORTFOLIO_POSTS.filter(({ category }) => category === "tech-stack").length, 1);
   const tileOrder = [...html.matchAll(/class="creator-post-tile tile-[^"]+" href="[^"]+" data-post-link="([^"]+)"/g)].map((match) => match[1]);
   assert.deepEqual(tileOrder, slugs.filter((slug) => slug !== "tech-stack"));
-  assert.equal(tileOrder.length, 8);
-  assert.equal((html.match(/data-post-view="[^"]+"/g) ?? []).length, 9);
+  assert.equal(tileOrder.length, 7);
+  assert.equal((html.match(/data-post-view="[^"]+"/g) ?? []).length, 8);
+  assert.doesNotMatch(html, /Make the work legible|project-management/);
   assert.ok(html.indexOf('class="profile-header"') < html.indexOf('class="creator-main-column"'), "the profile header should sit above the feed");
   assert.match(html, /class="profile-summary"/);
   assert.doesNotMatch(html, /class="profile-stats"|<strong>09<\/strong> posts/);
@@ -44,9 +45,9 @@ test("creator catalog keeps eight posts in the grid and a separate technology sh
   assert.doesNotMatch(html, /Software\s*[·.]\s*Systems\s*[·.]\s*Direction/i);
   assert.match(html, /I build apps, organize the work behind them, and shape how people use them\./);
   assert.doesNotMatch(html, /A developer’s precision|practical point of view|FIELD NOTE/);
-  assert.match(html, /data-filter="all" aria-pressed="true">All <span>08<\/span>/);
+  assert.match(html, /data-filter="all" aria-pressed="true">All <span>07<\/span>/);
   assert.match(html, /data-filter="project" aria-pressed="false">Projects <span>06<\/span>/);
-  assert.match(html, /data-filter="process" aria-pressed="false">Process <span>02<\/span>/);
+  assert.match(html, /data-filter="process" aria-pressed="false">Process <span>01<\/span>/);
   assert.doesNotMatch(html, /data-filter="tech-stack"/);
   const techStrip = html.slice(html.indexOf('class="profile-tech-strip"'), html.indexOf("</nav>", html.indexOf('class="profile-tech-strip"')));
   assert.equal((techStrip.match(/data-post-link="tech-stack"/g) ?? []).length, 8);
@@ -86,6 +87,9 @@ test("generated post viewer retains project routes, source links, and the one-pa
   assert.match(auraPost, /class="tech-chip"/);
   assert.match(auraPost, /\/assets\/auralogbook-stack\/react\.png/);
   assert.doesNotMatch(auraPost, /<figcaption>/, "post artwork should not have a visible caption below it");
+  assert.match(auraPost, /so logging stays quick while entries remain useful for history and trends/);
+  assert.match(auraPost, /instead of assuming one worldview/);
+  assert.match(auraPost, /conditions change independently of a person’s reflection/);
   const stackPost = html.slice(html.indexOf('data-post-view="tech-stack"'), html.indexOf('</article>', html.indexOf('data-post-view="tech-stack"')));
   assert.match(stackPost, /The tools I’ve worked with professionally and in personal projects over the past four years/);
   assert.match(stackPost, /<section class="post-tools stack-profile"><section class="stack-groups"/);
