@@ -166,3 +166,5 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid #90
 .feed-filter button{min-height:52px;padding:11px 2px;font-size:16px;font-weight:500}
 .feed-filter button span{font-size:12px}
 @media(max-width:650px){.feed-filter button{min-height:50px;margin-right:18px;padding:10px 2px;font-size:15px}.feed-filter button span{font-size:11px}}
+/* Bound the desktop post view to the viewport so its artwork and scrollable story stay aligned. */
+@media(min-width:651px){.post-dialog{height:min(850px,calc(100dvh - 44px));overflow:hidden}.post-dialog-shell{height:100%;min-height:0;grid-template-rows:minmax(0,1fr)}.post-view-media,.post-view-story{min-height:0}.post-main-visual{width:min(100%,580px,calc(100dvh - 150px))}.post-visual-stage{max-height:calc(100dvh - 150px)}}
