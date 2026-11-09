@@ -82,6 +82,8 @@ test("generated post viewer retains project routes, source links, and the one-pa
   assert.match(html, /href="\/knowledge\/">Dev Wiki<\/a>/);
   const auraPost = html.slice(html.indexOf('data-post-view="auralogbook"'), html.indexOf('</article>', html.indexOf('data-post-view="auralogbook"')));
   assert.ok(auraPost.indexOf('<dl class="post-facts">') < auraPost.indexOf('<section class="post-tools"><h3>Tech</h3>') && auraPost.indexOf('<section class="post-tools"><h3>Tech</h3>') < auraPost.indexOf('<section class="walkthrough"') && auraPost.indexOf('<section class="walkthrough"') < auraPost.indexOf('<section class="post-decisions">'), "Tech and the prototype should follow the role and evidence table");
+  assert.match(auraPost, /<img src="\/assets\/aura-logbook\.png" alt="Open reflection journal with mood markers"/);
+  assert.doesNotMatch(auraPost, /<figcaption>/, "post artwork should not have a visible caption below it");
   assert.match(script, /history\.pushState/);
   assert.match(script, /window\.addEventListener\("popstate"/);
   assert.match(script, /window\.addEventListener\("hashchange"/);
