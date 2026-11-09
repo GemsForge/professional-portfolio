@@ -91,6 +91,9 @@ test("generated post viewer retains project routes, source links, and the one-pa
   assert.match(css, /\.creator-post-grid\{display:grid;grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/);
   assert.match(css, /--font:'Avenir Next',Avenir/);
   assert.match(css, /\.creator-page\{font-family:var\(--font\)\}/);
+  assert.match(css, /\.profile-intro h1\{margin:0;font:500 28px\/1\.2 var\(--font\)/);
+  assert.match(css, /\.profile-intro \.profile-kicker\{[^}]*font-family:var\(--font\)/);
+  assert.match(css, /\.profile-intro \.profile-bio\{[^}]*font:14px\/1\.5 var\(--font\)/);
   assert.doesNotMatch(css, /\.creator-page[^}]*font-family:Arial/);
   assert.match(css, /\.creator-nav-ready\.creator-nav-visible \.creator-topbar/);
   assert.match(css, /\.creator-shell\{margin-top:0\}/);
