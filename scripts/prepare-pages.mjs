@@ -14,7 +14,7 @@ function renderCreatorGrid() {
     const fallback = post.caseStudy ?? (post.slug === "tech-stack" ? "/about/" : "#about");
     const category = post.category === "tech-stack" ? "Tech Stack" : post.category === "process" ? "Process" : "Project";
     const label = `${post.title}. ${category}. ${post.eyebrow}`;
-    return `<a class="creator-post-tile tile-${post.slug}" href="${fallback}" data-post-link="${post.slug}" data-category="${post.category}" aria-label="Open post: ${label}"><span class="tile-art"><img src="${post.image}" alt="" width="720" height="720" loading="${index < 3 ? "eager" : "lazy"}"><span class="tile-overline">${category} <span aria-hidden="true">✳</span></span><span class="tile-title">${post.title}</span><span class="tile-caption">${post.caption}</span><span class="tile-open" aria-hidden="true">↗</span></span><span class="tile-social-cues" aria-hidden="true"><span class="tile-social-icons">♡　▤　↗</span><span>◉ Field note</span></span></a>`;
+    return `<a class="creator-post-tile tile-${post.slug}" href="${fallback}" data-post-link="${post.slug}" data-category="${post.category}" aria-label="Open post: ${label}"><span class="tile-art"><img src="${post.image}" alt="" width="720" height="720" loading="${index < 3 ? "eager" : "lazy"}"><span class="tile-overline">${category} <span aria-hidden="true">✳</span></span><span class="tile-title">${post.title}</span><span class="tile-caption">${post.caption}</span><span class="tile-open" aria-hidden="true">↗</span></span></a>`;
   }).join("");
 }
 

@@ -27,6 +27,20 @@ test("creator catalog opens with the agreed nine-post social grid order", async 
   assert.deepEqual(tileOrder, slugs);
   assert.equal((html.match(/data-post-view="[^"]+"/g) ?? []).length, 9);
   assert.ok(html.indexOf('class="profile-header"') < html.indexOf('class="creator-main-column"'), "the profile header should sit above the feed");
+  assert.match(html, /class="profile-summary"/);
+  assert.match(html, /<strong>09<\/strong> posts/);
+  assert.doesNotMatch(html, /tile-social-cues/);
+  const profile = html.slice(html.indexOf('<section class="profile-header"'), html.indexOf('<div class="creator-main-column">'));
+  const profileName = profile.indexOf('<h1 id="creator-name">Diamond Brown</h1>');
+  const profileRole = profile.indexOf('class="profile-kicker">Full-stack developer</p>');
+  const profileLocation = profile.indexOf('class="profile-location"><svg');
+  const profileBio = profile.indexOf('class="profile-bio">I build apps, organize the work behind them, and shape how people use them.</p>');
+  const profileActions = profile.indexOf('class="profile-links profile-actions"');
+  assert.ok(profileName >= 0 && profileName < profileRole && profileRole < profileLocation && profileLocation < profileBio && profileBio < profileActions, "profile details should follow the requested hierarchy");
+  assert.match(profile.slice(profileActions), /profile-button-icon/);
+  assert.doesNotMatch(profile.slice(profileActions, profile.indexOf("</div>", profileActions)), /↗|→/);
+  assert.doesNotMatch(profile, /SOFTWARE\s*[·.]\s*SYSTEMS\s*[·.]\s*DIRECTION/i);
+  assert.doesNotMatch(html, /Software\s*[·.]\s*Systems\s*[·.]\s*Direction/i);
   assert.match(html, /I build apps, organize the work behind them, and shape how people use them\./);
   assert.doesNotMatch(html, /A developer’s precision|practical point of view|FIELD NOTE/);
   assert.match(html, /data-filter="all" aria-pressed="true">All <span>09<\/span>/);
@@ -60,9 +74,16 @@ test("generated post viewer retains project routes, source links, and the one-pa
   assert.match(script, /history\.pushState/);
   assert.match(script, /window\.addEventListener\("popstate"/);
   assert.match(script, /window\.addEventListener\("hashchange"/);
+  assert.match(script, /IntersectionObserver/);
+  assert.match(script, /creator-nav-visible/);
   assert.match(script, /portfolioScroll/);
   assert.match(script, /opener\.focus/);
   assert.match(css, /\.creator-post-grid\{display:grid;grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/);
+  assert.match(css, /--font:'Avenir Next',Avenir/);
+  assert.match(css, /\.creator-page\{font-family:var\(--font\)\}/);
+  assert.doesNotMatch(css, /\.creator-page[^}]*font-family:Arial/);
+  assert.match(css, /\.creator-nav-ready\.creator-nav-visible \.creator-topbar/);
+  assert.match(css, /\.creator-post-grid\{gap:3px\}/);
   assert.match(css, /@media\(max-width:650px\)\{[\s\S]*?\.creator-post-grid\{grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/);
 });
 

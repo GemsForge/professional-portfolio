@@ -4,6 +4,17 @@
  */
 (() => {
   const grid = document.querySelector("#creator-post-grid");
+  const profileHeader = document.querySelector(".profile-header");
+  const creatorTopbar = document.querySelector(".creator-topbar");
+
+  // Reveal the compact navigation only after the full profile header has left the viewport.
+  if (profileHeader && creatorTopbar && "IntersectionObserver" in window) {
+    document.body.classList.add("creator-nav-ready");
+    const profileObserver = new IntersectionObserver(([entry]) => {
+      document.body.classList.toggle("creator-nav-visible", !entry.isIntersecting && entry.boundingClientRect.bottom <= 74);
+    }, { rootMargin: "-74px 0px 0px 0px", threshold: 0 });
+    profileObserver.observe(profileHeader);
+  }
   const dialog = document.querySelector("#post-dialog");
   const media = document.querySelector("#post-media");
   const storyHost = document.querySelector("#post-story");
