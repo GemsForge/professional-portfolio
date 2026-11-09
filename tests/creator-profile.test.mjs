@@ -28,7 +28,7 @@ test("creator catalog opens with the agreed nine-post social grid order", async 
   assert.equal((html.match(/data-post-view="[^"]+"/g) ?? []).length, 9);
   assert.ok(html.indexOf('class="profile-header"') < html.indexOf('class="creator-main-column"'), "the profile header should sit above the feed");
   assert.match(html, /class="profile-summary"/);
-  assert.match(html, /<strong>09<\/strong> posts/);
+  assert.doesNotMatch(html, /class="profile-stats"|<strong>09<\/strong> posts/);
   assert.doesNotMatch(html, /tile-social-cues/);
   const profile = html.slice(html.indexOf('<section class="profile-header"'), html.indexOf('<div class="creator-main-column">'));
   const profileName = profile.indexOf('<h1 id="creator-name">Diamond Brown</h1>');
