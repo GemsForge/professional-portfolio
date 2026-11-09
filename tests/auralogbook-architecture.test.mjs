@@ -124,7 +124,7 @@ test("AuraLogbook dependency badges come from the typed registry with inline bra
   assert.match(heroBadges, /data-dependency="dotnet"[^>]*data-status="active"/);
   assert.match(heroBadges, /data-dependency="dapper"[^>]*data-status="declared-not-wired"/);
   assert.match(heroBadges, /Dapper · declared, not wired/);
-  assert.match(heroBadges, /data-dependency="sqlite"[^>]*data-status="activ"/);
+  assert.match(heroBadges, /data-dependency="sqlite"[^>]*data-status="active"/);
   assert.match(heroBadges, /data-dependency="swagger"[^>]*data-status="active"/);
   assert.match(heroBadges, /src="\/assets\/auralogbook-stack\/swagger\.png"/);
   assert.match(heroBadges, /href="https:\/\/react\.dev\/"[^>]*target="_blank"[^>]*rel="noopener noreferrer"/);

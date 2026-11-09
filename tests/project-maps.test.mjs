@@ -13,7 +13,7 @@ test("Aura Logbook architecture distinguishes active storage from declared packa
   assert.match(svg, /Open-Meteo API/);
   assert.doesNotMatch(svg, /Weatherbit/);
   assert.match(svg, /aria-labelledby="title desc"/);
-  assert.match(architecturePage, /SQLite and Dapper are declared dependencies and are wired to storage/);
+  assert.match(architecturePage, /SQLite and Dapper are declared dependencies and wired to storage/);
   assert.match(architecturePage, /Open-Meteo weather/);
   assert.match(architecturePage, /aria-describedby="architecture-tech-list"/);
   assert.match(architecturePage, /id="architecture-tech-list"/);
