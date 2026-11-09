@@ -56,7 +56,7 @@ function HandbookTechnologyIcon({ tag }: { tag: string }) {
     SQLite: siSqlite,
     TypeScript: siTypescript,
   };
-  const icon = icons[tag];
+  const icon = tag in icons ? icons[tag as keyof typeof icons] : undefined;
   return icon ? (
     <svg aria-hidden="true" className="dependency-chip-logo" focusable="false" role="img" viewBox="0 0 24 24">
       <path d={icon.path} />
@@ -205,21 +205,33 @@ const shelfReferences: {
   },
 ];
 
-/** Builds the owner-gated route used to read stored HTML and Markdown references. */
-function readerHref(resourceId: string) {
-  return `/admin/knowledge/read?id=${encodeURIComponent(resourceId)}`;
+/** Sends public and owner directory cards to the matching authorization-gated wiki reader. */
+function readerHref(resourceId: string, publicMode = false) {
+  return publicMode
+    ? `/knowledge/${encodeURIComponent(resourceId)}`
+    : `/admin/knowledge/read?id=${encodeURIComponent(resourceId)}`;
+}
+
+/** Formats the stored creation time for the owner's reference tools. */
+function formatCreatedAt(createdAt: string) {
+  const date = new Date(createdAt);
+  return Number.isNaN(date.getTime())
+    ? "Date unavailable"
+    : new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" }).format(date);
 }
 
 /**
- * Owns a private library module page, its folder filtering, search, and upload
- * interaction. Native anchors keep route changes reliable without client-side
- * router hydration while server authorization protects each destination.
+ * Renders the existing directory view for public read-only browsing and owner
+ * management and backup export. Native anchors preserve route behavior; owner
+ * routes and APIs enforce authorization independently of this presentation mode.
  */
-export function KnowledgeDirectory({ initialModule, initialFolder }: {
+export function KnowledgeDirectory({ initialModule, initialFolder, publicMode = false }: {
   /** Selects a dedicated module page; omit it to render the module index. */
   initialModule?: KnowledgeModule;
   /** Optionally narrows a module page to one of its folders. */
   initialFolder?: string;
+  /** Loads public-safe metadata and omits every owner mutation or download action. */
+  publicMode?: boolean;
 }) {
   const [resources, setResources] = useState<KnowledgeResource[]>([]);
   const [activeFolder] = useState<string | null>(
@@ -236,14 +248,16 @@ export function KnowledgeDirectory({ initialModule, initialFolder }: {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const loadResources = useCallback(async () => {
-    const response = await fetch("/api/knowledge", {
+    const response = await fetch(publicMode ? "/api/public/knowledge" : "/api/knowledge", {
       headers: { Accept: "application/json" },
       cache: "no-store",
     });
-    if (!response.ok) throw new Error("Could not load your references. Refresh the page and try again.");
+    if (!response.ok) throw new Error(publicMode
+      ? "Could not load the Developer Wiki. Refresh the page and try again."
+      : "Could not load your references. Refresh the page and try again.");
     const data = (await response.json()) as { resources?: KnowledgeResource[] };
     setResources(Array.isArray(data.resources) ? data.resources : []);
-  }, []);
+  }, [publicMode]);
 
   useEffect(() => {
     async function fetchResources() {
@@ -289,14 +303,14 @@ export function KnowledgeDirectory({ initialModule, initialFolder }: {
           title: resource.title,
           category,
           categoryLabel,
-          description: resource.description ?? "Private Markdown handbook added to the developer library.",
+          description: resource.description ?? (publicMode ? "Published Markdown handbook in the Developer Wiki." : "Private Markdown handbook added to the developer library."),
           tags: resource.tags ?? [],
           searchText: resource.searchText ?? `${resource.title} ${resource.filename} ${resource.folder}`,
           markdown: { folder: resource.folder, filename: resource.filename },
         };
       });
     return [...seededHandbooks, ...uploaded];
-  }, [resources]);
+  }, [publicMode, resources]);
   const visibleHandbooks = useMemo(() => {
     const query = handbookSearch.trim().toLocaleLowerCase();
     return libraryHandbooks.filter((handbook) =>
@@ -364,53 +378,98 @@ export function KnowledgeDirectory({ initialModule, initialFolder }: {
 
   return (
     <>
-      <SiteHeader pathname="/admin/knowledge/" />
+      <SiteHeader pathname={publicMode ? "/knowledge/" : "/admin/knowledge/"} />
       <main id="main" className="wrap knowledge-page">
         <div className="pagehero library-intro">
-          <div className="eyebrow">Owner workspace · Private library</div>
-          <h1>{activeModule ? activeModule.title : "GemsForge Developer Library"}</h1>
-          <p className="lead">{activeModule ? activeModule.description : "Build with intention. Keep the map. A private home for the handbooks, standards, and delivery references that support your work."}</p>
+          <div className="eyebrow">MY DEVELOPER NOTES</div>
+          <h1>{activeModule ? activeModule.title : "Developer Wiki"}</h1>
+          <p className="lead">
+            {activeModule
+              ? activeModule.description
+              : "An evolving reference of my notes, examples, and hard-won fixes for building software. I keep the details I’ve had to dig out of documentation, Stack Overflow, or conversations with other developers, so I can find and use them again."}
+          </p>
           {activeModule ? (
             <nav className="library-links" aria-label="Module navigation">
-              <a className="button secondary" href="/admin/knowledge/">← All modules</a>
-              <a className="button" href="#saved-references">Browse saved references</a>
-              <a className="button secondary" href="#manage-references">Add a reference</a>
+              <a className="button secondary" href="/admin/knowledge/">
+                ← All modules
+              </a>
+              <a className="button" href="#saved-references">
+                Browse saved references
+              </a>
+              <a className="button secondary" href="#manage-references">
+                Add a reference
+              </a>
             </nav>
           ) : (
             <nav className="library-links" aria-label="Library sections">
-              <a className="button" href="#handbooks">📖 Browse handbooks</a>
-              <a className="button secondary" href="#governance">🧭 Open governance shelf</a>
-              <a className="button secondary" href="#delivery">✅ Delivery references</a>
-              <a className="button secondary" href="/admin/knowledge/assets/">Tool assets</a>
+              <a className="button" href="#handbooks">
+                Browse handbooks
+              </a>
+              <a className="button secondary" href="#governance">
+                Open governance shelf
+              </a>
+              <a className="button secondary" href="#delivery">
+                Delivery references
+              </a>
+              {!publicMode && (
+                <a className="button secondary" href="/admin/knowledge/assets/">
+                  Tool assets
+                </a>
+              )}
+              {!publicMode && (
+                <a className="button secondary" href="/api/knowledge/export">
+                  Download document backup
+                </a>
+              )}
             </nav>
           )}
         </div>
 
         {!activeModule ? (
           <>
-            <section className="library-section" id="handbooks" aria-labelledby="handbooks-heading">
+            <section
+              className="library-section"
+              id="handbooks"
+              aria-labelledby="handbooks-heading">
               <div className="section-heading">
                 <div>
-                  <h2 id="handbooks-heading">📚 Handbooks</h2>
-                  <p>Download the HTML editions or Markdown source files.</p>
+                  <h2 id="handbooks-heading">Handbooks</h2>
+                  <p>
+                    {publicMode
+                      ? "Choose a handbook to open its wiki. Document access requires owner sign-in."
+                      : "Choose a handbook to open and read."}
+                  </p>
                 </div>
-                <a href="/admin/knowledge/handbooks/">All handbooks →</a>
+                <a href={publicMode ? "#all-references" : "/admin/handbooks"}>
+                  {publicMode ? "All documents →" : "All handbooks →"}
+                </a>
               </div>
               <div className="handbook-controls">
                 <label className="handbook-search">
                   <span>Search handbooks</span>
-                  <input type="search" placeholder="Search by topic or technology…" value={handbookSearch} onChange={(event) => setHandbookSearch(event.target.value)} />
+                  <input
+                    type="search"
+                    placeholder="Search by topic or technology…"
+                    value={handbookSearch}
+                    onChange={(event) => setHandbookSearch(event.target.value)}
+                  />
                 </label>
-                <div className="handbook-filters" role="group" aria-label="Handbook category filters">
+                <div
+                  className="handbook-filters"
+                  role="group"
+                  aria-label="Handbook category filters">
                   {handbookCategories.map((category) => (
                     <button
                       aria-pressed={activeHandbookCategory === category.id}
                       aria-controls="handbook-grid"
-                      className={activeHandbookCategory === category.id ? "handbook-filter is-active" : "handbook-filter"}
+                      className={
+                        activeHandbookCategory === category.id
+                          ? "handbook-filter is-active"
+                          : "handbook-filter"
+                      }
                       key={category.id}
                       onClick={() => setActiveHandbookCategory(category.id)}
-                      type="button"
-                    >
+                      type="button">
                       {category.label}
                     </button>
                   ))}
@@ -419,19 +478,31 @@ export function KnowledgeDirectory({ initialModule, initialFolder }: {
               <div className="handbook-grid" id="handbook-grid">
                 {visibleHandbooks.map((handbook) => {
                   const htmlReference = findHandbookReference(handbook.html);
-                  const markdownReference = findHandbookReference(handbook.markdown);
-                  const cardHref = markdownReference ? readerHref(markdownReference.id) : htmlReference ? readerHref(htmlReference.id) : undefined;
+                  const markdownReference = findHandbookReference(
+                    handbook.markdown,
+                  );
+                  const cardHref = markdownReference
+                    ? readerHref(markdownReference.id, publicMode)
+                    : htmlReference
+                      ? readerHref(htmlReference.id, publicMode)
+                      : undefined;
                   const cardContent = (
                     <>
-                      <div className="handbook-kicker">{handbook.categoryLabel}</div>
+                      <div className="handbook-kicker">
+                        {handbook.categoryLabel}
+                      </div>
                       <h3>{handbook.title}</h3>
                       <p>{handbook.description}</p>
-                      <ul className="dependency-chip-list handbook-tags" aria-label={`${handbook.title} technologies`}>
+                      <ul
+                        className="dependency-chip-list handbook-tags"
+                        aria-label={`${handbook.title} technologies`}>
                         {handbook.tags.map((tag) => (
                           <li key={tag}>
                             <span className="dependency-chip">
                               <HandbookTechnologyIcon tag={tag} />
-                              <span className="dependency-chip-label">{tag}</span>
+                              <span className="dependency-chip-label">
+                                {tag}
+                              </span>
                             </span>
                           </li>
                         ))}
@@ -439,114 +510,385 @@ export function KnowledgeDirectory({ initialModule, initialFolder }: {
                     </>
                   );
                   // Plain anchors preserve browser navigation, context menus, and assistive-technology discovery.
-                  return cardHref
-                    ? <a className="handbook-card handbook-card-link" href={cardHref} key={handbook.title}>{cardContent}</a>
-                    : <article className="handbook-card" key={handbook.title}>{cardContent}</article>;
+                  return cardHref ? (
+                    <a
+                      className="handbook-card handbook-card-link"
+                      href={cardHref}
+                      key={handbook.title}>
+                      {cardContent}
+                    </a>
+                  ) : (
+                    <article className="handbook-card" key={handbook.title}>
+                      {cardContent}
+                    </article>
+                  );
                 })}
               </div>
-              {visibleHandbooks.length === 0 && <p className="handbook-empty" role="status">No handbook matches that search yet.</p>}
-              {isLoading && <p className="handbook-status" aria-live="polite">Loading handbook references…</p>}
-              {isError && <p className="note" role="alert">{message}</p>}
+              {visibleHandbooks.length === 0 && (
+                <p className="handbook-empty" role="status">
+                  No handbook matches that search yet.
+                </p>
+              )}
+              {isLoading && (
+                <p className="handbook-status" aria-live="polite">
+                  Loading handbook references…
+                </p>
+              )}
+              {isError && (
+                <p className="note" role="alert">
+                  {message}
+                </p>
+              )}
             </section>
 
-            <div className="note reading-path"><strong>💡 Reading path:</strong> Start with Console architecture for UI boundaries, then Backend API for service boundaries, then Database Engineering for persistence decisions.</div>
+            <div className="note reading-path">
+              <strong>💡 Reading path:</strong> Start with Console architecture
+              for UI boundaries, then Backend API for service boundaries, then
+              Database Engineering for persistence decisions.
+            </div>
 
-            <section className="library-shelves" aria-label="Governance and delivery references">
+            <section
+              className="library-shelves"
+              aria-label="Governance and delivery references">
               {shelfReferences.map((shelf) => (
                 <div className="library-panel" id={shelf.id} key={shelf.id}>
                   <h2>{shelf.title}</h2>
                   <p>{shelf.description}</p>
                   <ul>
                     {shelf.items.map((item) => {
-                      const resource = resources.find((entry) => entry.title === item.resourceTitle);
-                      return <li key={item.resourceTitle}>{resource
-                        ? <><a href={readerHref(resource.id)}>{item.title}</a> · <a href={`/api/knowledge/${encodeURIComponent(resource.id)}`}>Download</a></>
-                        : <span>{item.title}{isLoading ? " (loading)" : " (not added yet)"}</span>}
-                      </li>;
+                      const resource = resources.find(
+                        (entry) => entry.title === item.resourceTitle,
+                      );
+                      return (
+                        <li key={item.resourceTitle}>
+                          {resource ? (
+                            <>
+                              <a href={readerHref(resource.id, publicMode)}>
+                                {item.title}
+                              </a>
+                              {!publicMode && (
+                                <>
+                                  {" "}
+                                  ·{" "}
+                                  <a
+                                    href={`/api/knowledge/${encodeURIComponent(resource.id)}`}>
+                                    Download
+                                  </a>
+                                </>
+                              )}
+                            </>
+                          ) : (
+                            <span>
+                              {item.title}
+                              {isLoading ? " (loading)" : " (not added yet)"}
+                            </span>
+                          )}
+                        </li>
+                      );
                     })}
                   </ul>
-                  <a className="shelf-module-link" href={`/admin/knowledge/${shelf.id}/`}>Open {shelf.id} module →</a>
+                  {!publicMode && (
+                    <a
+                      className="shelf-module-link"
+                      href={`/admin/knowledge/${shelf.id}/`}>
+                      Open {shelf.id} module →
+                    </a>
+                  )}
                 </div>
               ))}
             </section>
+
+            {publicMode && (
+              <section
+                className="library-section"
+                id="all-references"
+                aria-labelledby="all-references-heading">
+                <div className="section-heading">
+                  <div>
+                    <h2 id="all-references-heading">All documents</h2>
+                    <p>
+                      Choose a title to open its wiki. Document access requires
+                      owner sign-in.
+                    </p>
+                  </div>
+                </div>
+                {isLoading && (
+                  <p
+                    className="handbook-status"
+                    role="status"
+                    aria-live="polite">
+                    Loading documents…
+                  </p>
+                )}
+                {isError && (
+                  <p className="note" role="alert">
+                    {message}
+                  </p>
+                )}
+                {!isLoading && !visibleResources.length && !isError && (
+                  <p className="handbook-empty" role="status">
+                    No documents are available.
+                  </p>
+                )}
+                {visibleResources.length > 0 && (
+                  <div
+                    className="knowledge-table-scroll"
+                    tabIndex={0}
+                    role="region"
+                    aria-label="Developer Wiki documents">
+                    <table className="knowledge-resource-table">
+                      <caption className="sr-only">
+                        Developer Wiki documents
+                      </caption>
+                      <thead>
+                        <tr>
+                          <th scope="col">Document</th>
+                          <th scope="col">Type</th>
+                          <th scope="col">Area</th>
+                          <th scope="col">Wiki</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {visibleResources.map((resource) => {
+                          const folder = folders.find(
+                            (entry) => entry.path === resource.folder,
+                          );
+                          return (
+                            <tr key={resource.id}>
+                              <th scope="row">
+                                <span>{resource.title}</span>
+                                <small>{resource.filename}</small>
+                              </th>
+                              <td>
+                                {resource.contentType
+                                  .replace("text/", "")
+                                  .replace("application/", "")}
+                              </td>
+                              <td>{folder?.label || resource.folder}</td>
+                              <td className="knowledge-table-actions">
+                                <a href={readerHref(resource.id, true)}>
+                                  Open wiki
+                                </a>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </section>
+            )}
           </>
         ) : (
-          <section className="library-section" aria-labelledby="module-folders-heading">
+          <section
+            className="library-section"
+            aria-labelledby="module-folders-heading">
             <h2 id="module-folders-heading">{activeModule.title} folders</h2>
             <div className="library-grid">
               {moduleFolders.map((folder) => {
-                const count = resources.filter((resource) => resource.folder === folder.path).length;
-                return <a className="library-card" href={`?folder=${encodeURIComponent(folder.path)}#saved-references`} key={folder.path}>
-                  <h3>{folder.label}</h3>
-                  <p>{folder.description}</p>
-                  <span>{count} {count === 1 ? "reference" : "references"}</span>
-                </a>;
+                const count = resources.filter(
+                  (resource) => resource.folder === folder.path,
+                ).length;
+                return (
+                  <a
+                    className="library-card"
+                    href={`?folder=${encodeURIComponent(folder.path)}#saved-references`}
+                    key={folder.path}>
+                    <h3>{folder.label}</h3>
+                    <p>{folder.description}</p>
+                    <span>
+                      {count} {count === 1 ? "reference" : "references"}
+                    </span>
+                  </a>
+                );
               })}
             </div>
           </section>
         )}
 
-        {initialModule ? <section className="library-section" id="saved-references" aria-labelledby="references-heading">
-          <div className="directory-toolbar">
-            <div>
-              <nav className="library-location" aria-label="Library location">
-                {selectedFolder && <a href={`/admin/knowledge/${initialModule}/`}>All {activeModule?.title.toLocaleLowerCase()}</a>}
-                <span className="eyebrow">{selectedFolder?.label ?? `All ${activeModule?.title.toLocaleLowerCase()}`}</span>
-              </nav>
-              <h2 id="references-heading">Saved references</h2>
-              <p aria-live="polite">{isLoading ? "Loading references…" : folderResources.length ? `Showing ${visibleResources.length} of ${folderResources.length} references${selectedFolder ? ` in ${selectedFolder.label}` : ""}.` : ""}</p>
+        {initialModule ? (
+          <section
+            className="library-section"
+            id="saved-references"
+            aria-labelledby="references-heading">
+            <div className="directory-toolbar">
+              <div>
+                <nav className="library-location" aria-label="Library location">
+                  {selectedFolder && (
+                    <a href={`/admin/knowledge/${initialModule}/`}>
+                      All {activeModule?.title.toLocaleLowerCase()}
+                    </a>
+                  )}
+                  <span className="eyebrow">
+                    {selectedFolder?.label ??
+                      `All ${activeModule?.title.toLocaleLowerCase()}`}
+                  </span>
+                </nav>
+                <h2 id="references-heading">Saved references</h2>
+                <p aria-live="polite">
+                  {isLoading
+                    ? "Loading references…"
+                    : folderResources.length
+                      ? `Showing ${visibleResources.length} of ${folderResources.length} references${selectedFolder ? ` in ${selectedFolder.label}` : ""}.`
+                      : ""}
+                </p>
+              </div>
+              <div className="directory-search">
+                <label htmlFor="knowledge-search">Filter references</label>
+                <input
+                  id="knowledge-search"
+                  type="search"
+                  autoComplete="off"
+                  value={search}
+                  onChange={(event) => setSearch(event.target.value)}
+                />
+              </div>
             </div>
-            <div className="directory-search">
-              <label htmlFor="knowledge-search">Filter references</label>
-              <input id="knowledge-search" type="search" autoComplete="off" value={search} onChange={(event) => setSearch(event.target.value)} />
+            {!isLoading && folderResources.length === 0 && (
+              <p className="note">
+                {selectedFolder
+                  ? `No references in ${selectedFolder.label} yet.`
+                  : `No references in ${activeModule?.title.toLocaleLowerCase()} yet.`}
+              </p>
+            )}
+            {isError && (
+              <p className="note" role="alert">
+                {message}
+              </p>
+            )}
+            <div
+              className="knowledge-table-scroll"
+              tabIndex={0}
+              role="region"
+              aria-label="Saved reference documents table">
+              <table className="knowledge-resource-table">
+                <caption className="sr-only">
+                  Saved knowledge references
+                </caption>
+                <thead>
+                  <tr>
+                    <th scope="col">File name</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Area</th>
+                    <th scope="col">Date created</th>
+                    <th scope="col">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {visibleResources.map((resource) => {
+                    const folder = folders.find(
+                      (entry) => entry.path === resource.folder,
+                    );
+                    return (
+                      <tr key={resource.id}>
+                        <th scope="row">
+                          <span>{resource.filename}</span>
+                          <small>{resource.title}</small>
+                        </th>
+                        <td>
+                          {resource.contentType
+                            .replace("text/", "")
+                            .replace("application/", "")}
+                        </td>
+                        <td>{folder?.label || resource.folder}</td>
+                        <td>
+                          <time dateTime={resource.createdAt}>
+                            {formatCreatedAt(resource.createdAt)}
+                          </time>
+                        </td>
+                        <td className="knowledge-table-actions">
+                          {(resource.contentType === "text/html" ||
+                            resource.contentType === "text/markdown") && (
+                            <a href={readerHref(resource.id)}>View</a>
+                          )}
+                          <a
+                            href={`/api/knowledge/${encodeURIComponent(resource.id)}`}>
+                            Download
+                          </a>
+                          <button
+                            className="link-button"
+                            type="button"
+                            onClick={() => void deleteReference(resource)}>
+                            Remove
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
-          </div>
-          {!isLoading && folderResources.length === 0 && (
-            <p className="note">{selectedFolder ? `No references in ${selectedFolder.label} yet.` : `No references in ${activeModule?.title.toLocaleLowerCase()} yet.`}</p>
-          )}
-          {isError && <p className="note" role="alert">{message}</p>}
-          <div className="knowledge-table-scroll" tabIndex={0} role="region" aria-label="Saved reference documents table">
-            <table className="knowledge-resource-table">
-              <caption className="sr-only">Saved knowledge references</caption>
-              <thead><tr><th scope="col">File name</th><th scope="col">Type</th><th scope="col">Area</th><th scope="col">Download</th></tr></thead>
-              <tbody>{visibleResources.map((resource) => {
-              const folder = folders.find((entry) => entry.path === resource.folder);
-              return <tr key={resource.id}>
-                <th scope="row"><span>{resource.filename}</span><small>{resource.title}</small></th>
-                <td>{resource.contentType.replace("text/", "").replace("application/", "")}</td>
-                <td>{folder?.label || resource.folder}</td>
-                <td className="knowledge-table-actions">
-                  {(resource.contentType === "text/html" || resource.contentType === "text/markdown") && <a href={readerHref(resource.id)}>View</a>}
-                  <a href={`/api/knowledge/${encodeURIComponent(resource.id)}`}>Download</a>
-                  <button className="link-button" type="button" onClick={() => void deleteReference(resource)}>Remove</button>
-                </td>
-              </tr>;
-            })}</tbody>
-            </table>
-          </div>
-        </section> : null}
+          </section>
+        ) : null}
 
-        {initialModule ? <section id="manage-references" className="library-management" aria-label="Manage library references">
-          <details>
-            <summary>Add a reference to this library</summary>
-            <p>Accepted files: PDF, DOCX, Markdown, HTML, UTF-8 text, PNG, JPEG, WebP, or TIFF. Maximum size: 20 MB. HTML previews run in an isolated frame, and Markdown references are formatted for reading.</p>
-            <form className="knowledge-form" onSubmit={addReference}>
-              <label htmlFor="knowledge-title">Title</label>
-              <input id="knowledge-title" name="title" type="text" maxLength={160} required autoComplete="off" />
-              <label htmlFor="knowledge-folder">Library folder</label>
-              <select id="knowledge-folder" name="folder" required defaultValue={selectedFolder?.path ?? (moduleFolders.length === 1 ? moduleFolders[0].path : "")}>
-                <option value="" disabled>Select a folder</option>
-                {moduleFolders.map((folder) => <option value={folder.path} key={folder.path}>{folder.label}</option>)}
-              </select>
-              <label htmlFor="knowledge-file">Reference file</label>
-              <input id="knowledge-file" name="file" type="file" accept=".pdf,.docx,.md,.markdown,.txt,.html,.htm,.png,.jpg,.jpeg,.webp,.tif,.tiff,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/markdown,text/plain,text/html,image/png,image/jpeg,image/webp,image/tiff" required />
-              <button className="button" type="submit" disabled={isSubmitting}>{isSubmitting ? "Adding…" : "Add to directory"}</button>
-            </form>
-            <p className="knowledge-message" role={isError ? "alert" : "status"} aria-live="polite">{message}</p>
-          </details>
-        </section> : null}
+        {initialModule && !publicMode ? (
+          <section
+            id="manage-references"
+            className="library-management"
+            aria-label="Manage library references">
+            <details>
+              <summary>Add a reference to this library</summary>
+              <p>
+                Accepted files: PDF, DOCX, Markdown, HTML, UTF-8 text, PNG,
+                JPEG, WebP, or TIFF. Maximum size: 20 MB. HTML previews run in
+                an isolated frame, and Markdown references are formatted for
+                reading.
+              </p>
+              <form className="knowledge-form" onSubmit={addReference}>
+                <label htmlFor="knowledge-title">Title</label>
+                <input
+                  id="knowledge-title"
+                  name="title"
+                  type="text"
+                  maxLength={160}
+                  required
+                  autoComplete="off"
+                />
+                <label htmlFor="knowledge-folder">Library folder</label>
+                <select
+                  id="knowledge-folder"
+                  name="folder"
+                  required
+                  defaultValue={
+                    selectedFolder?.path ??
+                    (moduleFolders.length === 1 ? moduleFolders[0].path : "")
+                  }>
+                  <option value="" disabled>
+                    Select a folder
+                  </option>
+                  {moduleFolders.map((folder) => (
+                    <option value={folder.path} key={folder.path}>
+                      {folder.label}
+                    </option>
+                  ))}
+                </select>
+                <label htmlFor="knowledge-file">Reference file</label>
+                <input
+                  id="knowledge-file"
+                  name="file"
+                  type="file"
+                  accept=".pdf,.docx,.md,.markdown,.txt,.html,.htm,.png,.jpg,.jpeg,.webp,.tif,.tiff,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/markdown,text/plain,text/html,image/png,image/jpeg,image/webp,image/tiff"
+                  required
+                />
+                <button
+                  className="button"
+                  type="submit"
+                  disabled={isSubmitting}>
+                  {isSubmitting ? "Adding…" : "Add to directory"}
+                </button>
+              </form>
+              <p
+                className="knowledge-message"
+                role={isError ? "alert" : "status"}
+                aria-live="polite">
+                {message}
+              </p>
+            </details>
+          </section>
+        ) : null}
       </main>
-      <SiteFooter />
+      <SiteFooter wikiMode />
     </>
   );
 }

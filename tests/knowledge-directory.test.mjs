@@ -2,17 +2,22 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import { ownerPageGate } from '../lib/media-server.ts';
-import { knowledgeRequest } from '../lib/knowledge-server.ts';
+import { knowledgeRequest, publicKnowledgeRequest } from '../lib/knowledge-server.ts';
 
 class Bucket {
   data = new Map();
+  textReads = 0;
   async put(key, value) {
     const bytes = typeof value === 'string' ? new TextEncoder().encode(value) : value;
     this.data.set(key, bytes);
   }
   async get(key) {
     const bytes = this.data.get(key);
-    return bytes ? { body: bytes, text: async () => new TextDecoder().decode(bytes), json: async () => JSON.parse(new TextDecoder().decode(bytes)) } : null;
+    return bytes ? { body: bytes, text: async () => { this.textReads += 1; return new TextDecoder().decode(bytes); }, json: async () => JSON.parse(new TextDecoder().decode(bytes)) } : null;
+  }
+  async head(key) {
+    const bytes = this.data.get(key);
+    return bytes ? { size: bytes.length } : null;
   }
   async list({ prefix }) {
     return { objects: [...this.data.keys()].filter((key) => key.startsWith(prefix)).map((key) => ({ key })), truncated: false };
@@ -88,6 +93,101 @@ test('owner can upload, list, and download a private reference', async () => {
   assert.equal((await knowledgeRequest(request(`/api/knowledge/${resource.id}`), env)).status, 404);
 });
 
+test('owner can download a TAR backup containing original documents and metadata', async () => {
+  const env = { BUCKET: new Bucket() };
+  const created = await knowledgeRequest(request('/api/knowledge', 'POST', pdfUpload('Backup guide')), env);
+  const { resource } = await created.json();
+
+  const anonymous = await knowledgeRequest(request('/api/knowledge/export', 'GET', undefined, {}), env);
+  assert.equal(anonymous.status, 401);
+  const otherUser = { 'oai-authenticated-user-id': 'another-user', 'oai-authenticated-user-email': 'other@example.com' };
+  assert.equal((await knowledgeRequest(request('/api/knowledge/export', 'GET', undefined, otherUser), env)).status, 403);
+
+  const backup = await knowledgeRequest(request('/api/knowledge/export'), env);
+  assert.equal(backup.status, 200);
+  assert.equal(backup.headers.get('content-type'), 'application/x-tar');
+  assert.match(backup.headers.get('content-disposition'), /developer-wiki-backup-\d{4}-\d{2}-\d{2}\.tar/);
+  assert.equal(backup.headers.get('cache-control'), 'private, no-store');
+
+  const archive = new Uint8Array(await backup.arrayBuffer());
+  const decoder = new TextDecoder();
+  assert.equal(decoder.decode(archive.slice(257, 262)), 'ustar');
+  const manifestSize = Number.parseInt(decoder.decode(archive.slice(124, 135)).replace(/\0.*$/, ''), 8);
+  const manifestStart = 512;
+  const manifest = JSON.parse(decoder.decode(archive.slice(manifestStart, manifestStart + manifestSize)));
+  assert.equal(manifest.files[0].id, resource.id);
+  assert.equal(manifest.files[0].filename, 'guide.pdf');
+  assert.equal(manifest.files[0].archivePath, `documents/handbooks/backend/${resource.id}/guide.pdf`);
+
+  const documentHeader = Math.ceil((manifestStart + manifestSize) / 512) * 512;
+  const documentName = decoder.decode(archive.slice(documentHeader, documentHeader + 100)).replace(/\0.*$/, '');
+  const documentPrefix = decoder.decode(archive.slice(documentHeader + 345, documentHeader + 500)).replace(/\0.*$/, '');
+  const documentSize = Number.parseInt(decoder.decode(archive.slice(documentHeader + 124, documentHeader + 135)).replace(/\0.*$/, ''), 8);
+  assert.equal([documentPrefix, documentName].filter(Boolean).join('/'), manifest.files[0].archivePath);
+  assert.equal(decoder.decode(archive.slice(documentHeader + 512, documentHeader + 512 + documentSize)), '%PDF-1.7 sample');
+});
+
+test('backup paths stay unique when separate uploads share a filename', async () => {
+  const env = { BUCKET: new Bucket() };
+  await knowledgeRequest(request('/api/knowledge', 'POST', pdfUpload('First guide')), env);
+  await knowledgeRequest(request('/api/knowledge', 'POST', pdfUpload('Second guide')), env);
+  const backup = await knowledgeRequest(request('/api/knowledge/export'), env);
+  const archive = new Uint8Array(await backup.arrayBuffer());
+  const manifestSize = Number.parseInt(new TextDecoder().decode(archive.slice(124, 135)).replace(/\0.*$/, ''), 8);
+  const manifest = JSON.parse(new TextDecoder().decode(archive.slice(512, 512 + manifestSize)));
+  assert.equal(manifest.files.length, 2);
+  assert.deepEqual(manifest.files.map((file) => file.filename), ['guide.pdf', 'guide.pdf']);
+  assert.equal(new Set(manifest.files.map((file) => file.archivePath)).size, 2);
+});
+
+test('public directory metadata excludes document bodies and body-derived search fields', async () => {
+  const env = { BUCKET: new Bucket() };
+  const form = new FormData();
+  form.set('title', 'Personal query notes');
+  form.set('folder', 'handbooks/backend');
+  form.set('file', new File(['# Private heading\n\nprivate-body-sentinel'], 'notes.md', { type: 'text/markdown' }));
+  const created = await knowledgeRequest(request('/api/knowledge', 'POST', form), env);
+  const { resource } = await created.json();
+
+  const response = await publicKnowledgeRequest(request('/api/public/knowledge', 'GET', undefined, {}), env);
+  const data = await response.json();
+  const serialized = JSON.stringify(data);
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get('cache-control'), 'private, no-store');
+  assert.equal(data.resources[0].id, resource.id);
+  assert.equal(data.resources[0].title, 'Personal query notes');
+  assert.equal('searchText' in data.resources[0], false);
+  assert.equal('description' in data.resources[0], false);
+  assert.deepEqual(data.resources[0].tags, []);
+  assert.doesNotMatch(serialized, /private-body-sentinel|Private heading/);
+  assert.equal((await knowledgeRequest(request(`/api/knowledge/${resource.id}`, 'GET', undefined, {}), env)).status, 401);
+  assert.equal((await publicKnowledgeRequest(request('/api/public/knowledge', 'POST', undefined, {}), env)).status, 405);
+});
+
+test('public directory derives tags for older Markdown records without exposing their bodies', async () => {
+  const bucket = new Bucket();
+  const id = '1a8ef5e2-03b7-4e5c-9f82-888e55dc6c80';
+  bucket.data.set(`owner-knowledge/files/${id}`, new TextEncoder().encode('# React reference\n\nUseful TypeScript patterns. private-body-sentinel'));
+  bucket.data.set(`owner-knowledge/records/${id}.json`, new TextEncoder().encode(JSON.stringify({
+    id,
+    title: 'React notes',
+    folder: 'handbooks/architecture',
+    filename: 'react-notes.md',
+    contentType: 'text/markdown',
+    size: 73,
+    createdAt: '2026-11-07T12:00:00.000Z',
+  })));
+
+  const response = await publicKnowledgeRequest(request('/api/public/knowledge', 'GET', undefined, {}), { BUCKET: bucket });
+  const data = await response.json();
+  assert.deepEqual(data.resources[0].tags, ['React', 'TypeScript']);
+  assert.doesNotMatch(JSON.stringify(data), /private-body-sentinel|Useful TypeScript patterns/);
+  assert.equal(bucket.textReads, 1);
+
+  await publicKnowledgeRequest(request('/api/public/knowledge', 'GET', undefined, {}), { BUCKET: bucket });
+  assert.equal(bucket.textReads, 1, 'the migrated tags prevent subsequent Markdown body reads');
+});
+
 test('uploads reject cross-origin and unsupported or invalid files', async () => {
   const bucket = new Bucket();
   const env = { BUCKET: bucket };
@@ -151,6 +251,9 @@ test('knowledge page gate redirects anonymous users and denies non-owners', asyn
   };
   assert.equal(ownerPageGate(request('/admin/knowledge', 'GET', undefined, otherUser), '/admin/knowledge').status, 403);
   assert.equal(ownerPageGate(request('/admin/knowledge'), '/admin/knowledge'), null);
+  const wikiReaderGate = ownerPageGate(request('/knowledge/private-wiki', 'GET', undefined, {}), '/knowledge/private-wiki');
+  assert.equal(wikiReaderGate.status, 302);
+  assert.equal(new URL(wikiReaderGate.headers.get('location')).searchParams.get('return_to'), '/knowledge/private-wiki');
 
   const [pages, home, worker, route, component, reader] = await Promise.all([
     readFile(new URL('../lib/static-pages.json', import.meta.url), 'utf8'),
@@ -163,6 +266,7 @@ test('knowledge page gate redirects anonymous users and denies non-owners', asyn
   assert.doesNotMatch(pages, /Knowledge directory|owner-knowledge/);
   assert.doesNotMatch(home, /href="\/admin\/knowledge\/?"/);
   assert.match(worker, /ownerPageGate\(request, '\/admin\/knowledge'\)/);
+  assert.match(worker, /url\.pathname\.startsWith\('\/knowledge\/'\)/);
   assert.match(worker, /handler\.fetch\(request, env, ctx\)/);
   assert.match(route, /robots: \{ index: false, follow: false \}/);
   assert.match(component, /export function KnowledgeDirectory/);
@@ -173,4 +277,34 @@ test('knowledge page gate redirects anonymous users and denies non-owners', asyn
   assert.match(reader, /Markdown source/);
   assert.match(reader, /Download Markdown/);
   assert.match(worker, /knowledgeRequest\(request,env\)/);
+});
+
+test('public and owner directories share the existing reader while keeping owner tools gated', async () => {
+  const [worker, publicPage, publicReader, ownerHandbooks, directory, reader, footer, generator, adminPage] = await Promise.all([
+    readFile(new URL('../build/sites-worker.ts', import.meta.url), 'utf8'),
+    readFile(new URL('../app/knowledge/page.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../app/knowledge/[id]/page.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../app/admin/handbooks/page.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../components/knowledge-directory.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../components/knowledge-reader.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../components/site-footer.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../scripts/prepare-pages.mjs', import.meta.url), 'utf8'),
+    readFile(new URL('../lib/image-manager.html', import.meta.url), 'utf8'),
+  ]);
+  assert.match(publicPage, /<KnowledgeDirectory publicMode \/>/);
+  assert.match(publicReader, /<KnowledgeReader id=\{id\} publicMode \/>/);
+  assert.match(ownerHandbooks, /initialModule="handbooks"/);
+  assert.match(worker, /ownerPageGate\(request, `\$\{url\.pathname\}\$\{url\.search\}`\)/);
+  assert.match(worker, /ownerPageGate\(request, '\/admin\/handbooks'\)/);
+  assert.match(directory, /fetch\(publicMode \? "\/api\/public\/knowledge" : "\/api\/knowledge"/);
+  assert.match(directory, /initialModule && !publicMode/);
+  assert.match(directory, /MY DEVELOPER NOTES/);
+  assert.match(directory, /Developer Wiki/);
+  assert.match(directory, /<time dateTime=\{resource\.createdAt\}>/);
+  assert.match(directory, /href="\/api\/knowledge\/export"[\s\S]*?Download document backup/);
+  assert.match(directory, /<th scope="col">Date created<\/th>/);
+  assert.match(reader, /publicMode \? "\/knowledge\/" : "\/admin\/knowledge\/"/);
+  assert.match(footer, /wikiMode \? "Portfolio" : "Dev Wiki"/);
+  assert.match(generator, /href="\/knowledge\/">Dev Wiki/);
+  assert.match(adminPage, /Developer Wiki/);
 });

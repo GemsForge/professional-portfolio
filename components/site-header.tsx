@@ -14,9 +14,14 @@ const links = [
  * anchors so route changes do not depend on client-side router hydration.
  *
  * The pathname is supplied by the catch-all route so nested project pages can
- * keep Projects active without duplicating navigation markup in each view.
+ * keep Projects active and wiki pages can return to the portfolio.
  */
-export function SiteHeader({ pathname }: { pathname: string }) {
+export function SiteHeader({ pathname, handbookReader = false }: {
+  /** Route used to determine the active primary navigation item. */
+  pathname: string;
+  /** Shows a Portfolio return link on public knowledge pages. */
+  handbookReader?: boolean;
+}) {
   const isActive = (href: string) =>
     href === "/portfolio/projects/"
       ? pathname.startsWith("/portfolio/projects/")
@@ -37,6 +42,9 @@ export function SiteHeader({ pathname }: { pathname: string }) {
                 {label}
               </a>
             ))}
+            <a href={handbookReader || pathname.startsWith("/knowledge") ? "/" : "/knowledge"}>
+              {handbookReader || pathname.startsWith("/knowledge") ? "Portfolio" : "Dev Wiki"}
+            </a>
           </nav>
         </div>
       </header>

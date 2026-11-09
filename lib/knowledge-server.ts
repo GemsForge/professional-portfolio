@@ -114,12 +114,179 @@ async function listRecords(bucket: R2Bucket) {
     const page = await bucket.list({ prefix: RECORD_PREFIX, cursor });
     const records = await Promise.all(page.objects.map(async (object) => {
       const stored = await bucket.get(object.key);
-      return stored ? stored.json<KnowledgeRecord>() : null;
+      if (!stored) return null;
+      const record = await stored.json<KnowledgeRecord>();
+      // Migrate only legacy records with no tag field, then keep listings from rereading their bodies.
+      if (record.contentType === 'text/markdown' && record.tags === undefined) {
+        const file = await bucket.get(`${FILE_PREFIX}${record.id}`);
+        record.tags = file ? inferMarkdownMetadata(await file.text(), record.title).tags : [];
+        await bucket.put(object.key, JSON.stringify(record));
+      }
+      return record;
     }));
     found.push(...records.filter((record): record is KnowledgeRecord => record !== null));
     cursor = page.truncated ? page.cursor : undefined;
   } while (cursor);
   return found.sort((left, right) => right.createdAt.localeCompare(left.createdAt));
+}
+
+/** Builds a UTF-8 USTAR header, splitting long paths into the name and prefix fields when possible. */
+function tarHeader(path: string, size: number, modifiedAt: string, type: '0' | 'x' = '0') {
+  const encoder = new TextEncoder();
+  const bytes = new Uint8Array(512);
+  const write = (offset: number, width: number, value: string) => bytes.set(encoder.encode(value).subarray(0, width), offset);
+  const octal = (offset: number, width: number, value: number) => {
+    const safeValue = Number.isFinite(value) ? Math.max(0, Math.floor(value)) : 0;
+    write(offset, width, `${safeValue.toString(8).padStart(width - 1, '0')}\0`);
+  };
+  const pathBytes = encoder.encode(path);
+  let name = path;
+  let prefix = '';
+  if (pathBytes.length > 100) {
+    for (let index = path.lastIndexOf('/'); index > 0; index = path.lastIndexOf('/', index - 1)) {
+      const candidatePrefix = path.slice(0, index);
+      const candidateName = path.slice(index + 1);
+      if (encoder.encode(candidatePrefix).length <= 155 && encoder.encode(candidateName).length <= 100) {
+        prefix = candidatePrefix;
+        name = candidateName;
+        break;
+      }
+    }
+  }
+  write(0, 100, name);
+  octal(100, 8, 0o644);
+  octal(108, 8, 0);
+  octal(116, 8, 0);
+  octal(124, 12, size);
+  octal(136, 12, Math.floor(new Date(modifiedAt).getTime() / 1000));
+  bytes.fill(0x20, 148, 156);
+  write(156, 1, type);
+  write(257, 6, 'ustar\0');
+  write(263, 2, '00');
+  write(265, 32, '');
+  write(297, 32, '');
+  write(345, 155, prefix);
+  const checksum = bytes.reduce((total, byte) => total + byte, 0);
+  write(148, 8, `${checksum.toString(8).padStart(6, '0')}\0 `);
+  return bytes;
+}
+
+/** Adds one file to a streaming TAR archive without buffering its full contents in memory. */
+async function* tarFile(path: string, source: ReadableStream<Uint8Array> | Uint8Array, size: number, modifiedAt: string) {
+  const encoder = new TextEncoder();
+  let archivePath = path;
+  const pathBytes = encoder.encode(path);
+  const splitPath = pathBytes.length <= 100 || (() => {
+    for (let index = path.lastIndexOf('/'); index > 0; index = path.lastIndexOf('/', index - 1)) {
+      if (encoder.encode(path.slice(0, index)).length <= 155 && encoder.encode(path.slice(index + 1)).length <= 100) return true;
+    }
+    return false;
+  })();
+  if (!splitPath) {
+    const paxLength = (body: string) => {
+      let length = encoder.encode(body).length + 2;
+      for (;;) {
+        const next = encoder.encode(`${length} ${body}`).length;
+        if (next === length) return next;
+        length = next;
+      }
+    };
+    const body = `path=${path}\n`;
+    const record = encoder.encode(`${paxLength(body)} ${body}`);
+    yield tarHeader(`PaxHeaders/${crypto.randomUUID()}`, record.length, modifiedAt, 'x');
+    yield record;
+    if (record.length % 512) yield new Uint8Array(512 - record.length % 512);
+    archivePath = `file-${crypto.randomUUID()}`;
+  }
+  yield tarHeader(archivePath, size, modifiedAt);
+  let written = 0;
+  if (source instanceof Uint8Array) {
+    written = source.length;
+    yield source;
+  } else {
+    const reader = source.getReader();
+    try {
+      for (;;) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        written += value.length;
+        yield value;
+      }
+    } finally {
+      reader.releaseLock();
+    }
+  }
+  if (written !== size) throw new Error(`Archive source size mismatch for ${path}.`);
+  if (written % 512) yield new Uint8Array(512 - written % 512);
+}
+
+/** Streams an owner-only backup with original files and a metadata manifest. */
+async function knowledgeBackup(bucket: R2Bucket, resources: KnowledgeRecord[]) {
+  const encoder = new TextEncoder();
+  const generatedAt = new Date().toISOString();
+  const entries = resources.map((record) => ({
+    ...record,
+    archivePath: `documents/${FOLDERS.has(record.folder) ? record.folder : 'uncategorized'}/${record.id}/${safeFilename(record.filename) || record.id}`,
+  }));
+  for (let start = 0; start < entries.length; start += 50) {
+    const batch = entries.slice(start, start + 50);
+    const sourceChecks = await Promise.all(batch.map((record) => bucket.head(`${FILE_PREFIX}${record.id}`)));
+    if (sourceChecks.some((source, index) => !source || source.size !== batch[index].size)) {
+      return json({ error: 'A stored reference is missing or incomplete, so a complete backup cannot be created.' }, 409);
+    }
+  }
+  const manifest = encoder.encode(JSON.stringify({ generatedAt, files: entries }, null, 2));
+  const files = (async function* () {
+    yield* tarFile('manifest.json', manifest, manifest.length, generatedAt);
+    for (const record of entries) {
+      const file = await bucket.get(`${FILE_PREFIX}${record.id}`);
+      if (!file) throw new Error(`Missing backup source for ${record.id}.`);
+      yield* tarFile(record.archivePath, file.body, record.size, record.createdAt);
+    }
+    yield new Uint8Array(1024);
+  })();
+  const stream = new ReadableStream<Uint8Array>({
+    async pull(controller) {
+      try {
+        const next = await files.next();
+        if (next.done) controller.close();
+        else controller.enqueue(next.value);
+      } catch (error) {
+        controller.error(error);
+      }
+    },
+    cancel() {
+      void files.return(undefined);
+    },
+  });
+  const date = generatedAt.slice(0, 10);
+  return new Response(stream, {
+    headers: {
+      'Content-Type': 'application/x-tar',
+      'Content-Disposition': `attachment; filename="developer-wiki-backup-${date}.tar"`,
+      'Cache-Control': 'private, no-store',
+      'X-Robots-Tag': 'noindex, nofollow',
+      'X-Content-Type-Options': 'nosniff',
+    },
+  });
+}
+
+/** Exposes only directory metadata publicly; document bodies and body-derived search data stay private. */
+export async function publicKnowledgeRequest(request: Request, env: Cloudflare.Env): Promise<Response> {
+  if (request.method !== 'GET') return json({ error: 'Method not allowed.' }, 405);
+  const bucket = env.BUCKET;
+  if (!bucket) return json({ error: 'Knowledge storage is unavailable.' }, 503);
+  const resources = (await listRecords(bucket)).map(({ id, title, folder, filename, contentType, size, createdAt, tags }) => ({
+    id,
+    title,
+    folder,
+    filename,
+    contentType,
+    size,
+    createdAt,
+    tags: tags ?? [],
+  }));
+  return json({ resources });
 }
 
 function contentDisposition(filename: string) {
@@ -135,6 +302,9 @@ export async function knowledgeRequest(request: Request, env: Cloudflare.Env): P
   if (!bucket) return json({ error: 'Knowledge storage is unavailable.' }, 503);
 
   const url = new URL(request.url);
+  if (request.method === 'GET' && url.pathname === '/api/knowledge/export') {
+    return knowledgeBackup(bucket, await listRecords(bucket));
+  }
   const id = url.pathname.slice('/api/knowledge'.length).replace(/^\//, '');
 
   if (request.method === 'GET' && !id) {

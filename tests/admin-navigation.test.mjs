@@ -47,6 +47,7 @@ test('generated footer always exposes a plain Admin sign-in entry without client
       const footer = page.match(/<nav aria-label="Footer navigation">([\s\S]*?)<\/nav>/)?.[1];
       assert.ok(footer, 'generated footer navigation exists');
       assert.match(footer, /<a href="\/admin\/">Admin<\/a>/);
+      assert.match(footer, /<a href="\/knowledge\/">Dev Wiki<\/a>/);
       assert.equal((footer.match(/>Admin<\/a>/g) || []).length, 1);
       assert.doesNotMatch(page, /admin-navigation\.js/);
     }

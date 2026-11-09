@@ -10,7 +10,7 @@ export type KnowledgeContentType =
   | "image/webp"
   | "image/tiff";
 
-/** Describes one owner-only reference returned by the knowledge library API. */
+/** Describes a library reference; the public index returns metadata without body-derived fields. */
 export type KnowledgeResource = {
   id: string;
   title: string;

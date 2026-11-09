@@ -35,7 +35,15 @@ test("shared navigation exposes accessible active state for nested project route
   assert.match(header, /aria-label="Portfolio navigation"/);
   assert.match(header, /pathname\.startsWith\("\/portfolio\/projects\/"\)/);
   assert.match(header, /aria-current=\{isActive\(href\) \? "page"/);
+  assert.match(header, /handbookReader\?: boolean/);
+  assert.match(header, /handbookReader \|\| pathname\.startsWith\("\/knowledge"\) \? "Portfolio" : "Dev Wiki"/);
+  assert.match(header, /href=\{handbookReader \|\| pathname\.startsWith\("\/knowledge"\) \? "\/" : "\/knowledge"\}/);
+  assert.match(knowledgeReader, /<SiteHeader pathname=\{publicMode \? "\/knowledge\/" : "\/admin\/knowledge\/"\} handbookReader \/>/);
+  assert.match(knowledgeReader, /<SiteHeader pathname=\{publicMode \? "\/knowledge\/" : "\/admin\/knowledge\/"\} handbookReader \/>/);
   assert.match(footer, /aria-label="Footer navigation"/);
+  assert.match(footer, /wikiMode \? "Portfolio" : "Dev Wiki"/);
+  assert.match(knowledgeDirectory, /<SiteFooter wikiMode \/>/);
+  assert.match(knowledgeReader, /<SiteFooter wikiMode \/>/);
   assert.match(renderer, /href="#main"|id="main"/);
 });
 
@@ -45,7 +53,8 @@ test("site and owner navigation use native anchors for reliable full-page routin
     assert.match(component, /<a\b[^>]*href=/);
   }
   assert.match(footer, /<a href="\/admin\/">Admin<\/a>/);
-  assert.match(knowledgeDirectory, /<a[^>]+href="\/admin\/knowledge\/handbooks\/"/);
+  assert.match(footer, /href=\{wikiMode \? "\/" : "\/knowledge\/"\}/);
+  assert.match(knowledgeDirectory, /href=\{publicMode \? "#all-references" : "\/admin\/handbooks"\}/);
 });
 
 test("normal-click destinations remain present in the generated portfolio route map", async () => {
@@ -55,7 +64,7 @@ test("normal-click destinations remain present in the generated portfolio route 
   }
   assert.match(worker, /url\.pathname === ['"]\/admin['"] \|\| url\.pathname === ['"]\/admin\/['"]/);
   assert.match(worker, /adminPageRequest\(request,managerPage\)/);
-  for (const pathname of ["/admin/knowledge/", "/admin/knowledge/handbooks/"]) {
+  for (const pathname of ["/admin/knowledge/"]) {
     assert.match(knowledgeDirectory, new RegExp(`href=[\"']${pathname.replaceAll("/", "\\/")}`));
   }
 });

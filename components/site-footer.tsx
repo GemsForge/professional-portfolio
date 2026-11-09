@@ -6,10 +6,10 @@ import Image from "next/image";
  * Renders the single site-wide footer navigation with native anchors so
  * navigation remains reliable without client-side router hydration.
  *
- * Keeping this in the shared shell ensures every generated view exposes the
- * same project, resume, contact, admin, and back-to-top links.
+ * Keeping this in the shared shell ensures every React view exposes the same
+ * project, resume, contact, admin, contextual Portfolio/Wiki, and back-to-top links.
  */
-export function SiteFooter() {
+export function SiteFooter({ wikiMode = false }: { /** Marks Wiki views that link back to the Portfolio. */ wikiMode?: boolean }) {
   return (
     <footer className="footer">
       <div className="wrap">
@@ -22,6 +22,7 @@ export function SiteFooter() {
           <a href="/assets/diamond-brown-resume.pdf">Resume</a>
           <a href="/contact/">Contact</a>
           <a href="/admin/">Admin</a>
+          <a href={wikiMode ? "/" : "/knowledge/"}>{wikiMode ? "Portfolio" : "Dev Wiki"}</a>
           <a href="#main">Back to top ↑</a>
         </nav>
       </div>
