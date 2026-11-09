@@ -162,3 +162,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid #90
 .profile-tech-strip svg{color:var(--tech-color)}
 .profile-tech-strip a:hover .profile-tech-mark,.profile-tech-strip a:focus-visible .profile-tech-mark{transform:translateY(-3px) scale(1.08) rotate(-2deg);border-color:#8ba187;box-shadow:0 0 0 4px rgba(92,125,91,.18)}
 @media(prefers-reduced-motion:reduce){.profile-tech-mark{transition:none}.profile-tech-strip a:hover .profile-tech-mark,.profile-tech-strip a:focus-visible .profile-tech-mark{transform:none}}
+/* Make the category tabs comfortable to read and tap while preserving the profile-grid underline style. */
+.feed-filter button{min-height:52px;padding:11px 2px;font-size:16px;font-weight:500}
+.feed-filter button span{font-size:12px}
+@media(max-width:650px){.feed-filter button{min-height:50px;margin-right:18px;padding:10px 2px;font-size:15px}.feed-filter button span{font-size:11px}}
