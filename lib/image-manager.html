@@ -110,16 +110,18 @@
         data-workspace-panel="project-assets"
         aria-labelledby="project-assets-heading">
         <h2 id="project-assets-heading">Project Assets Manager</h2>
-        <p id="wiki-uploader-description">Upload, edit, publish, or remove portfolio attachments.</p>
-           <aside class="accepted-file-callout" id="media-uploader-help" role="note" aria-label="Accepted Media file types">
+        <p id="project-assets-description">Upload, edit, publish, or remove portfolio attachments.</p>
+        <aside class="accepted-file-callout" id="media-uploader-help" role="note" aria-label="Accepted Media file types">
           <strong>Attachment · up to 50 MB</strong>
           <span>PNG, JPEG, WebP, PDF, MP4, WebM</span>
         </aside>
-        <!-- <p id="message" role="status" aria-live="polite"></p> -->
+        <!-- The media uploader reports file selection, progress, and errors here. -->
+        <p id="message" role="status" aria-live="polite"></p>
         <form id="upload-form">
           <label for="project">Project</label>
           <select id="project" name="project"><!--PROJECT_OPTIONS--></select>
-          <input type="file" id="image" name="file" accept="image/png,image/jpeg,image/webp,application/pdf,video/mp4,video/webm" required aria-describedby="paste-help">
+          <label for="image">Attachment</label>
+          <input type="file" id="image" name="file" accept="image/png,image/jpeg,image/webp,application/pdf,video/mp4,video/webm" required aria-describedby="media-uploader-help paste-help">
           <p id="paste-help">Choose a file or paste one supported attachment while this page is open. Pasted files use the same upload form and are not uploaded until you submit.</p>
           <img id="preview" alt="Selected image preview" hidden>
           <label for="alt">Alt text (required)</label>

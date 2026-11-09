@@ -49,6 +49,13 @@ test('Manage Project Assets gives both upload steps the same panel and a clear W
   assert.match(manager, /id="upload-form"/);
   assert.match(manager, /id="wiki-uploader-frame"/);
   assert.match(manager, /<h2 id="wiki-uploader-heading">Wiki Page Uploader<\/h2>/);
+  assert.match(manager, /<p id="message" role="status" aria-live="polite"><\/p>/);
+  assert.match(manager, /<label for="image">Attachment<\/label>\s*<input type="file" id="image"[^>]*aria-describedby="media-uploader-help paste-help"/);
+  assert.match(manager, /<p id="project-assets-description">Upload, edit, publish, or remove portfolio attachments\.<\/p>/);
+  assert.match(manager, /<p id="wiki-uploader-description">Uploads are saved to your owner-only Developer Wiki\.<\/p>/);
+  assert.match(manager, /aria-describedby="wiki-uploader-description wiki-uploader-help"/);
+  const ids = [...manager.matchAll(/\bid="([^"]+)"/g)].map(([, id]) => id);
+  assert.equal(new Set(ids).size, ids.length, 'admin workspace IDs must remain unique for label and description references');
   assert.doesNotMatch(manager, /separate tab/);
   const uploaderView = directory.split('if (uploaderOnly) {')[1]?.split('async function deleteReference')[0] ?? '';
   assert.doesNotMatch(uploaderView, /className="eyebrow"|<h1\b|Accepted files:/);
