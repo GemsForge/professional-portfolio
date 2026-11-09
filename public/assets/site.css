@@ -146,9 +146,10 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid #90
 .creator-page.creator-nav-ready .creator-topbar{position:fixed;inset:0 0 auto;transform:translateY(-110%);visibility:hidden;pointer-events:none;transition:transform .22s ease,visibility .22s ease}
 .creator-page.creator-nav-ready.creator-nav-visible .creator-topbar{transform:translateY(0);visibility:visible;pointer-events:auto}
 @media(prefers-reduced-motion:reduce){.creator-page.creator-nav-ready .creator-topbar{transition:none}}
-/* The hidden scroll-reveal masthead is fixed, so start the profile near the top edge. */
+/* Keep the profile close to the top edge while the scroll-reveal masthead is hidden. */
 .creator-shell{margin-top:0}
-.profile-header{margin-top:18px}
+.creator-page .profile-header{margin-top:0}
+.creator-page .profile-avatar{margin-top:0}
 /* Frame each technology mark like a story highlight while keeping the row scrollable on narrow screens. */
 .profile-tech-strip{max-width:935px;margin:10px auto 0}
 .profile-tech-strip ul{display:flex;flex-wrap:nowrap;justify-content:center;gap:18px;overflow-x:auto;overscroll-behavior-inline:contain;scrollbar-width:thin;margin:0;padding:4px 3px 12px;list-style:none}

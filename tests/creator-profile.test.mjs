@@ -97,7 +97,7 @@ test("generated post viewer retains project routes, source links, and the one-pa
   assert.doesNotMatch(css, /\.creator-page[^}]*font-family:Arial/);
   assert.match(css, /\.creator-nav-ready\.creator-nav-visible \.creator-topbar/);
   assert.match(css, /\.creator-shell\{margin-top:0\}/);
-  assert.match(css, /\.profile-header\{margin-top:18px\}/);
+  assert.match(css, /\.profile-header\{margin-top:0\}/);
   assert.match(css, /\.profile-tech-strip ul\{display:flex;flex-wrap:nowrap;[^}]*overflow-x:auto/);
   assert.match(css, /\.profile-tech-mark\{display:grid;width:44px;height:44px/);
   assert.match(css, /\.profile-tech-strip img,\.profile-tech-strip svg\{display:block;width:30px;height:30px/);
