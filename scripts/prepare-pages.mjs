@@ -25,7 +25,7 @@ function renderProfileTechStrip() {
     const logo = technology.image
       ? `<img src="${technology.image}" alt="" loading="lazy" decoding="async">`
       : `<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" style="--tech-color:#${technology.icon.hex}"><path fill="currentColor" d="${technology.icon.path}"></path></svg>`;
-    return `<li><a href="/about/" data-post-link="tech-stack" aria-label="Open ${technology.label} in the Tech Stack story">${logo}<span>${technology.label}</span></a></li>`;
+    return `<li><a href="/about/" data-post-link="tech-stack" aria-label="Open ${technology.label} in the Tech Stack story"><span class="profile-tech-mark">${logo}</span><span>${technology.label}</span></a></li>`;
   }).join("");
   return `<nav class="profile-tech-strip" aria-label="Technology stack"><ul>${items}</ul></nav>`;
 }

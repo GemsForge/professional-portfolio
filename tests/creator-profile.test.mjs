@@ -50,6 +50,7 @@ test("creator catalog keeps eight posts in the grid and a separate technology sh
   assert.doesNotMatch(html, /data-filter="tech-stack"/);
   const techStrip = html.slice(html.indexOf('class="profile-tech-strip"'), html.indexOf("</nav>", html.indexOf('class="profile-tech-strip"')));
   assert.equal((techStrip.match(/data-post-link="tech-stack"/g) ?? []).length, 8);
+  assert.equal((techStrip.match(/class="profile-tech-mark"/g) ?? []).length, 8);
   for (const technology of ["C#", ".NET", "React", "TypeScript", "Redux", "PostgreSQL", "Java", "Notion"]) {
     assert.ok(techStrip.includes(technology), `${technology} should appear in the technology strip`);
   }
@@ -95,7 +96,10 @@ test("generated post viewer retains project routes, source links, and the one-pa
   assert.match(css, /\.creator-shell\{margin-top:0\}/);
   assert.match(css, /\.profile-header\{margin-top:18px\}/);
   assert.match(css, /\.profile-tech-strip ul\{display:flex;flex-wrap:nowrap;[^}]*overflow-x:auto/);
-  assert.match(css, /\.profile-tech-strip img,\.profile-tech-strip svg\{[^}]*border-radius:50%/);
+  assert.match(css, /\.profile-tech-mark\{display:grid;width:44px;height:44px/);
+  assert.match(css, /\.profile-tech-strip img,\.profile-tech-strip svg\{display:block;width:30px;height:30px/);
+  assert.match(css, /\.profile-tech-strip a:hover \.profile-tech-mark[^}]*transform:translateY\(-3px\) scale\(1\.08\)/);
+  assert.match(css, /@media\(prefers-reduced-motion:reduce\)\{\.profile-tech-mark\{transition:none\}/);
   assert.match(css, /\.creator-post-grid\{gap:3px\}/);
   assert.match(css, /@media\(max-width:650px\)\{[\s\S]*?\.creator-post-grid\{grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/);
 });
