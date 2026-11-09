@@ -86,6 +86,8 @@ test("generated post viewer retains project routes, source links, and the one-pa
   assert.match(css, /\.creator-page\{font-family:var\(--font\)\}/);
   assert.doesNotMatch(css, /\.creator-page[^}]*font-family:Arial/);
   assert.match(css, /\.creator-nav-ready\.creator-nav-visible \.creator-topbar/);
+  assert.match(css, /\.creator-shell\{margin-top:0\}/);
+  assert.match(css, /\.profile-header\{margin-top:18px\}/);
   assert.match(css, /\.creator-post-grid\{gap:3px\}/);
   assert.match(css, /@media\(max-width:650px\)\{[\s\S]*?\.creator-post-grid\{grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/);
 });

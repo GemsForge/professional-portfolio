@@ -146,3 +146,6 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid #90
 .creator-page.creator-nav-ready .creator-topbar{position:fixed;inset:0 0 auto;transform:translateY(-110%);visibility:hidden;pointer-events:none;transition:transform .22s ease,visibility .22s ease}
 .creator-page.creator-nav-ready.creator-nav-visible .creator-topbar{transform:translateY(0);visibility:visible;pointer-events:auto}
 @media(prefers-reduced-motion:reduce){.creator-page.creator-nav-ready .creator-topbar{transition:none}}
+/* The hidden scroll-reveal masthead is fixed, so start the profile near the top edge. */
+.creator-shell{margin-top:0}
+.profile-header{margin-top:18px}
