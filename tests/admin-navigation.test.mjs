@@ -11,7 +11,7 @@ const ownerHeaders = {
 const ownerRequest = (path, headers = ownerHeaders, method = 'GET') =>
   new Request(`${site}${path}`, { method, headers });
 
-test('direct Admin access remains protected and does not expose identity data', async () => {
+test('Manage Project Assets remains protected and does not expose identity data', async () => {
   const manager = '<main>private owner workspace</main>';
   const anonymous = adminPageRequest(ownerRequest('/admin/', {}), manager);
   assert.equal(anonymous.status, 302);
@@ -32,7 +32,26 @@ test('direct Admin access remains protected and does not expose identity data', 
   assert.equal(await owner.text(), manager);
 });
 
-test('generated footer always exposes a plain Admin sign-in entry without client-side identity checks', async () => {
+test('Manage Project Assets exposes separate project and Wiki upload steps', async () => {
+  const [manager, workflow] = await Promise.all([
+    readFile(new URL('../lib/image-manager.html', import.meta.url), 'utf8'),
+    readFile(new URL('../public/assets/manage-project-assets.js', import.meta.url), 'utf8'),
+  ]);
+
+  assert.match(manager, /<title>Manage Project Assets/);
+  assert.match(manager, /<h1>Manage Project Assets<\/h1>/);
+  assert.match(manager, /Project Assets Manager/);
+  assert.match(manager, /Wiki Page Uploader/);
+  assert.match(manager, /id="upload-form"/);
+  assert.match(manager, /id="wiki-uploader-frame"/);
+  assert.doesNotMatch(manager, /separate tab/);
+  assert.match(workflow, /\/admin\/knowledge\/uploader/);
+  assert.match(workflow, /new URLSearchParams\(window\.location\.search\)\.get\("folder"\)/);
+  assert.match(workflow, /uploader\.searchParams\.set\("folder", selectedFolder\)/);
+  assert.match(workflow, /event\.origin !== window\.location\.origin/);
+});
+
+test('generated footer links to Admin without client-side identity checks', async () => {
   const [home, generatedPages, stylesheet] = await Promise.all([
     readFile(new URL('../static-source/index.html', import.meta.url), 'utf8'),
     readFile(new URL('../lib/static-pages.json', import.meta.url), 'utf8'),

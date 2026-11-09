@@ -66,6 +66,14 @@
 .library-management{border-top:1px solid var(--line);padding:28px 0 55px}
 .library-management summary{cursor:pointer;font-weight:700;min-height:44px;padding:10px 0}
 .library-management summary:focus-visible{outline:3px solid #90671d;outline-offset:4px}
+/* Keep the owner-only uploader compact inside the Manage Project Assets step. */
+.knowledge-uploader-embed{padding-top:8px;padding-bottom:20px}
+.knowledge-uploader-embed .library-management{border-top:0;padding:10px 0 18px}
+.knowledge-uploader-embed .uploader-heading{padding-bottom:10px}
+.knowledge-uploader-embed .uploader-heading h1{font-size:clamp(32px,4vw,46px);letter-spacing:-1.4px;margin:8px 0 12px}
+.knowledge-uploader-embed .uploader-heading p{max-width:68ch;color:var(--muted)}
+.knowledge-uploader-embed .knowledge-form{max-width:760px}
+.knowledge-uploader-embed .knowledge-form button{min-height:48px}
 /* Give private documents a responsive reading surface without changing library cards. */
 .knowledge-reader{padding-top:32px;padding-bottom:64px}
 .knowledge-reader .library-location{gap:12px;align-items:center;margin-bottom:22px}

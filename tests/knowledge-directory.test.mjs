@@ -251,6 +251,11 @@ test('knowledge page gate redirects anonymous users and denies non-owners', asyn
   };
   assert.equal(ownerPageGate(request('/admin/knowledge', 'GET', undefined, otherUser), '/admin/knowledge').status, 403);
   assert.equal(ownerPageGate(request('/admin/knowledge'), '/admin/knowledge'), null);
+  const uploaderGate = ownerPageGate(request('/admin/knowledge/uploader', 'GET', undefined, {}), '/admin/knowledge/uploader');
+  assert.equal(uploaderGate.status, 302);
+  assert.equal(new URL(uploaderGate.headers.get('location')).searchParams.get('return_to'), '/admin/knowledge/uploader');
+  assert.equal(ownerPageGate(request('/admin/knowledge/uploader', 'GET', undefined, otherUser), '/admin/knowledge/uploader').status, 403);
+  assert.equal(ownerPageGate(request('/admin/knowledge/uploader'), '/admin/knowledge/uploader'), null);
   const wikiReaderGate = ownerPageGate(request('/knowledge/private-wiki', 'GET', undefined, {}), '/knowledge/private-wiki');
   assert.equal(wikiReaderGate.status, 302);
   assert.equal(new URL(wikiReaderGate.headers.get('location')).searchParams.get('return_to'), '/knowledge/private-wiki');
@@ -280,7 +285,7 @@ test('knowledge page gate redirects anonymous users and denies non-owners', asyn
 });
 
 test('public and owner directories share the existing reader while keeping owner tools gated', async () => {
-  const [worker, publicPage, publicReader, ownerHandbooks, directory, reader, footer, generator, adminPage] = await Promise.all([
+  const [worker, publicPage, publicReader, ownerHandbooks, directory, reader, footer, generator, adminPage, uploaderPage] = await Promise.all([
     readFile(new URL('../build/sites-worker.ts', import.meta.url), 'utf8'),
     readFile(new URL('../app/knowledge/page.tsx', import.meta.url), 'utf8'),
     readFile(new URL('../app/knowledge/[id]/page.tsx', import.meta.url), 'utf8'),
@@ -290,14 +295,22 @@ test('public and owner directories share the existing reader while keeping owner
     readFile(new URL('../components/site-footer.tsx', import.meta.url), 'utf8'),
     readFile(new URL('../scripts/prepare-pages.mjs', import.meta.url), 'utf8'),
     readFile(new URL('../lib/image-manager.html', import.meta.url), 'utf8'),
+    readFile(new URL('../app/admin/knowledge/uploader/page.tsx', import.meta.url), 'utf8'),
   ]);
   assert.match(publicPage, /<KnowledgeDirectory publicMode \/>/);
   assert.match(publicReader, /<KnowledgeReader id=\{id\} publicMode \/>/);
   assert.match(ownerHandbooks, /initialModule="handbooks"/);
   assert.match(worker, /ownerPageGate\(request, `\$\{url\.pathname\}\$\{url\.search\}`\)/);
   assert.match(worker, /ownerPageGate\(request, '\/admin\/handbooks'\)/);
-  assert.match(directory, /fetch\(publicMode \? "\/api\/public\/knowledge" : "\/api\/knowledge"/);
-  assert.match(directory, /initialModule && !publicMode/);
+  assert.match(directory, /publicMode \? "\/api\/public\/knowledge" : "\/api\/knowledge"/);
+  assert.match(directory, /if \(uploaderOnly\)/);
+  assert.doesNotMatch(directory, /initialModule && !publicMode/);
+  assert.match(directory, /href="\/admin\/\?step=wiki-uploader"/);
+  assert.match(uploaderPage, /<KnowledgeDirectory initialFolder=\{folder\} uploaderOnly \/>/);
+  assert.match(worker, /url\.pathname\.startsWith\('\/admin\/knowledge\/'\)/);
+  assert.match(directory, /aria-label="Saved reference documents table"/);
+  assert.match(directory, /onClick=\{\(\) => void deleteReference\(resource\)\}/);
+  assert.doesNotMatch(directory, /id="saved-references"/);
   assert.match(directory, /MY DEVELOPER NOTES/);
   assert.match(directory, /Developer Wiki/);
   assert.match(directory, /<time dateTime=\{resource\.createdAt\}>/);
@@ -306,5 +319,7 @@ test('public and owner directories share the existing reader while keeping owner
   assert.match(reader, /publicMode \? "\/knowledge\/" : "\/admin\/knowledge\/"/);
   assert.match(footer, /wikiMode \? "Portfolio" : "Dev Wiki"/);
   assert.match(generator, /href="\/knowledge\/">Dev Wiki/);
-  assert.match(adminPage, /Developer Wiki/);
+  assert.match(adminPage, /Manage Project Assets/);
+  assert.match(adminPage, /Project Assets Manager/);
+  assert.match(adminPage, /Wiki Page Uploader/);
 });
