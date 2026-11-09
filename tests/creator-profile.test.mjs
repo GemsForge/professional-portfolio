@@ -84,6 +84,9 @@ test("generated post viewer retains project routes, source links, and the one-pa
   assert.ok(auraPost.indexOf('<dl class="post-facts">') < auraPost.indexOf('<section class="post-tools"><h3>Tech</h3>') && auraPost.indexOf('<section class="post-tools"><h3>Tech</h3>') < auraPost.indexOf('<section class="walkthrough"') && auraPost.indexOf('<section class="walkthrough"') < auraPost.indexOf('<section class="post-decisions">'), "Tech and the prototype should follow the role and evidence table");
   assert.match(auraPost, /<img src="\/assets\/aura-logbook\.png" alt="Open reflection journal with mood markers"/);
   assert.doesNotMatch(auraPost, /<figcaption>/, "post artwork should not have a visible caption below it");
+  const stackPost = html.slice(html.indexOf('data-post-view="tech-stack"'), html.indexOf('</article>', html.indexOf('data-post-view="tech-stack"')));
+  assert.match(stackPost, /<section class="post-tools"><h3>Tech<\/h3><section class="stack-groups"/);
+  assert.doesNotMatch(stackPost, /class="post-tool-list"/, "the grouped Tech evidence should replace duplicated tool chips");
   assert.match(script, /history\.pushState/);
   assert.match(script, /window\.addEventListener\("popstate"/);
   assert.match(script, /window\.addEventListener\("hashchange"/);
@@ -102,7 +105,7 @@ test("generated post viewer retains project routes, source links, and the one-pa
   assert.match(css, /\.creator-nav-ready\.creator-nav-visible \.creator-topbar/);
   assert.match(css, /\.post-story>\.post-tools,\.post-story>\.post-decisions\{margin:0;padding:0;border:0\}/);
   assert.match(css, /\.post-close\{width:32px;height:32px;font-size:20px\}/);
-  assert.match(css, /@media\(min-width:651px\)\{\.post-view-story\{overflow:hidden\}\}/);
+  assert.match(css, /@media\(min-width:651px\)\{\.post-view-story\{overflow:auto\}\}/);
   assert.match(css, /\.creator-shell\{margin-top:0\}/);
   assert.match(css, /\.profile-header\{margin-top:0\}/);
   assert.match(css, /\.profile-tech-strip ul\{display:flex;flex-wrap:nowrap;[^}]*overflow-x:auto/);

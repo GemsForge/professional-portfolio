@@ -173,5 +173,5 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid #90
 .post-story-topline{padding-right:46px}
 .post-close{width:32px;height:32px;font-size:20px}
 @media(max-width:650px){.post-story-topline{padding-right:42px}.post-close{width:34px;height:34px;font-size:21px}}
-/* The shortened desktop story is designed to fit in the modal without a separate scroll pane. */
-@media(min-width:651px){.post-view-story{overflow:hidden}}
+/* Keep any content beyond the modal viewport reachable; stories without overflow remain scroll-free. */
+@media(min-width:651px){.post-view-story{overflow:auto}}
