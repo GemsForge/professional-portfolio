@@ -1,5 +1,6 @@
 import { cp, readFile, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { siDotnet, siOpenjdk, siPostgresql } from "simple-icons";
 // Node 22.13+ strips the catalog's TypeScript types at import time; no runtime
 // transpiler or JSX dependency is needed for this build-time-only module.
 import { renderDependencyGroup } from "./auralogbook-dependencies.mts";
@@ -7,10 +8,31 @@ import { applyProjectPageMetadata, HOME_PROJECT_SLUGS, PORTFOLIO_POSTS, PROJECTS
 
 const source = path.resolve("static-source");
 const pages = {};
+const PROFILE_TECHNOLOGIES = [
+  { label: "C#", image: "/assets/auralogbook-stack/csharp.png" },
+  { label: ".NET", icon: siDotnet },
+  { label: "React", image: "/assets/auralogbook-stack/react.png" },
+  { label: "TypeScript", image: "/assets/auralogbook-stack/typescript.png" },
+  { label: "Redux", image: "/assets/auralogbook-stack/redux.png" },
+  { label: "PostgreSQL", icon: siPostgresql },
+  { label: "Java", icon: siOpenjdk },
+  { label: "Notion", image: "/assets/auralogbook-stack/notion.png" },
+];
+
+/** Renders the existing portfolio technology marks as links to the stack story. */
+function renderProfileTechStrip() {
+  const items = PROFILE_TECHNOLOGIES.map((technology) => {
+    const logo = technology.image
+      ? `<img src="${technology.image}" alt="" loading="lazy" decoding="async">`
+      : `<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" style="--tech-color:#${technology.icon.hex}"><path fill="currentColor" d="${technology.icon.path}"></path></svg>`;
+    return `<li><a href="/about/" data-post-link="tech-stack" aria-label="Open ${technology.label} in the Tech Stack story">${logo}<span>${technology.label}</span></a></li>`;
+  }).join("");
+  return `<nav class="profile-tech-strip" aria-label="Technology stack"><ul>${items}</ul></nav>`;
+}
 
 /** Emits the image-led, progressive-enhancement post grid from the typed catalog. */
 function renderCreatorGrid() {
-  return PORTFOLIO_POSTS.map((post, index) => {
+  return PORTFOLIO_POSTS.filter((post) => post.category !== "tech-stack").map((post, index) => {
     const fallback = post.caseStudy ?? (post.slug === "tech-stack" ? "/about/" : "#about");
     const category = post.category === "tech-stack" ? "Tech Stack" : post.category === "process" ? "Process" : "Project";
     const label = `${post.title}. ${category}. ${post.eyebrow}`;
@@ -56,6 +78,7 @@ async function visit(directory) {
         : Object.values(PROJECTS);
 
       if (route === "/" || route === "/portfolio/") {
+        text = text.replace('<div id="profile-tech-strip-slot"></div>', renderProfileTechStrip());
         text = text.replace(
           /<div id="creator-post-grid" class="creator-post-grid" aria-label="Portfolio posts"><\/div>/,
           `<div id="creator-post-grid" class="creator-post-grid" aria-label="Portfolio posts">${renderCreatorGrid()}</div>`,

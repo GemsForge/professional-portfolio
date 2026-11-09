@@ -149,3 +149,11 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid #90
 /* The hidden scroll-reveal masthead is fixed, so start the profile near the top edge. */
 .creator-shell{margin-top:0}
 .profile-header{margin-top:18px}
+/* Keep technology marks on one line so smaller screens can scroll the strip sideways. */
+.profile-tech-strip{max-width:935px;margin:10px auto 0}
+.profile-tech-strip ul{display:flex;flex-wrap:nowrap;justify-content:center;gap:18px;overflow-x:auto;overscroll-behavior-inline:contain;scrollbar-width:thin;margin:0;padding:4px 3px 12px;list-style:none}
+.profile-tech-strip li{flex:0 0 auto}
+.profile-tech-strip a{display:flex;min-width:52px;min-height:54px;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#536158;font-size:9px;line-height:1.2;text-decoration:none}
+.profile-tech-strip a:hover{color:var(--forest)}
+.profile-tech-strip img,.profile-tech-strip svg{display:block;width:23px;height:23px;object-fit:contain}
+.profile-tech-strip svg{color:var(--tech-color)}

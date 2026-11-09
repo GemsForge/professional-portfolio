@@ -15,7 +15,7 @@ async function readGeneratedHome() {
   return pages["/"];
 }
 
-test("creator catalog opens with the agreed nine-post social grid order", async () => {
+test("creator catalog keeps eight posts in the grid and a separate technology shortcut", async () => {
   const html = await readGeneratedHome();
   const slugs = PORTFOLIO_POSTS.map(({ slug }) => slug);
   assert.deepEqual(slugs.slice(0, 4), ["auralogbook", "notion-api-shortcuts", "portfolio-direction", "tech-stack"]);
@@ -24,7 +24,8 @@ test("creator catalog opens with the agreed nine-post social grid order", async 
   assert.equal(PORTFOLIO_POSTS.filter(({ category }) => category === "process").length, 2);
   assert.equal(PORTFOLIO_POSTS.filter(({ category }) => category === "tech-stack").length, 1);
   const tileOrder = [...html.matchAll(/class="creator-post-tile tile-[^"]+" href="[^"]+" data-post-link="([^"]+)"/g)].map((match) => match[1]);
-  assert.deepEqual(tileOrder, slugs);
+  assert.deepEqual(tileOrder, slugs.filter((slug) => slug !== "tech-stack"));
+  assert.equal(tileOrder.length, 8);
   assert.equal((html.match(/data-post-view="[^"]+"/g) ?? []).length, 9);
   assert.ok(html.indexOf('class="profile-header"') < html.indexOf('class="creator-main-column"'), "the profile header should sit above the feed");
   assert.match(html, /class="profile-summary"/);
@@ -43,10 +44,15 @@ test("creator catalog opens with the agreed nine-post social grid order", async 
   assert.doesNotMatch(html, /Software\s*[·.]\s*Systems\s*[·.]\s*Direction/i);
   assert.match(html, /I build apps, organize the work behind them, and shape how people use them\./);
   assert.doesNotMatch(html, /A developer’s precision|practical point of view|FIELD NOTE/);
-  assert.match(html, /data-filter="all" aria-pressed="true">All <span>09<\/span>/);
+  assert.match(html, /data-filter="all" aria-pressed="true">All <span>08<\/span>/);
   assert.match(html, /data-filter="project" aria-pressed="false">Projects <span>06<\/span>/);
   assert.match(html, /data-filter="process" aria-pressed="false">Process <span>02<\/span>/);
-  assert.match(html, /data-filter="tech-stack" aria-pressed="false">Tech Stack <span>01<\/span>/);
+  assert.doesNotMatch(html, /data-filter="tech-stack"/);
+  const techStrip = html.slice(html.indexOf('class="profile-tech-strip"'), html.indexOf("</nav>", html.indexOf('class="profile-tech-strip"')));
+  assert.equal((techStrip.match(/data-post-link="tech-stack"/g) ?? []).length, 8);
+  for (const technology of ["C#", ".NET", "React", "TypeScript", "Redux", "PostgreSQL", "Java", "Notion"]) {
+    assert.ok(techStrip.includes(technology), `${technology} should appear in the technology strip`);
+  }
   assert.doesNotMatch(html, /PROJECTS &amp; PROCESS|Selected work|01—09|App development, project planning, and design decisions from work I’ve built/);
   assert.match(html, /id="post-stories">[\s\S]*?data-post-view="auralogbook"/);
 });
@@ -88,6 +94,7 @@ test("generated post viewer retains project routes, source links, and the one-pa
   assert.match(css, /\.creator-nav-ready\.creator-nav-visible \.creator-topbar/);
   assert.match(css, /\.creator-shell\{margin-top:0\}/);
   assert.match(css, /\.profile-header\{margin-top:18px\}/);
+  assert.match(css, /\.profile-tech-strip ul\{display:flex;flex-wrap:nowrap;[^}]*overflow-x:auto/);
   assert.match(css, /\.creator-post-grid\{gap:3px\}/);
   assert.match(css, /@media\(max-width:650px\)\{[\s\S]*?\.creator-post-grid\{grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/);
 });
