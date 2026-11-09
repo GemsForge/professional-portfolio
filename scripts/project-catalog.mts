@@ -28,13 +28,13 @@ export interface PortfolioPostDefinition {
   caption: string;
   image: string;
   imageAlt: string;
-  role: string;
+  role?: string;
   decisions: string[];
-  evidence: string;
+  evidence?: string;
   tools: string[];
   caseStudy?: string;
   source?: string;
-  /** Technology groups link each item to the project post that demonstrates it. */
+  /** Technology groups optionally link to a related project story when one is relevant. */
   stackGroups?: { label: string; items: { label: string; postSlug?: string; href?: string }[] }[];
   /** Each step narrates a documented interaction; it does not claim a live application. */
   walkthrough?: { title: string; detail: string; hotspot: { x: number; y: number; label: string } }[];
@@ -167,17 +167,14 @@ export const PORTFOLIO_POSTS: PortfolioPostDefinition[] = [
     ],
   },
   {
-    slug: "tech-stack", title: "Tech Stack", category: "tech-stack", eyebrow: "Tools in context · No proficiency scores",
-    caption: "Technologies shown beside the projects and responsibilities where they appear.", image: "/assets/auralogbook-stack/react.png", imageAlt: "React mark, representing technologies used across documented projects",
-    role: "Work across application development, APIs, automation, and documentation.",
-    decisions: ["Group tools by the work they support.", "Link tools to project evidence instead of ratings."],
-    evidence: "Each listed technology or skill appears in existing project or career materials.",
-    tools: ["React", "TypeScript", "C#/.NET", "REST APIs", "SQL", "QA automation", "Systems analysis", "Java / Spring Boot"],
+    slug: "tech-stack", title: "Tech Stack", category: "tech-stack", eyebrow: "Professional & personal · 4 years",
+    caption: "The tools I’ve worked with professionally and in personal projects over the past four years.", image: "/assets/auralogbook-stack/react.png", imageAlt: "React logo, one of the technologies in Diamond’s professional and personal project stack",
+    decisions: [],
+    tools: ["C#", ".NET", "React", "TypeScript", "Redux", "PostgreSQL", "Java", "Notion"],
     stackGroups: [
-      { label: "Interface & application", items: [{ label: "React", postSlug: "auralogbook" }, { label: "TypeScript", postSlug: "auralogbook" }, { label: "MUI", postSlug: "auralogbook" }, { label: "Redux Toolkit", postSlug: "auralogbook" }] },
-      { label: "API & data", items: [{ label: "C# / .NET", postSlug: "auralogbook" }, { label: "REST APIs", postSlug: "notion-api-shortcuts" }, { label: "SQL (declared dependency)", postSlug: "auralogbook" }] },
-      { label: "Workflow & systems", items: [{ label: "Apple Shortcuts", postSlug: "hair-log" }, { label: "Notion API", postSlug: "notion-api-shortcuts" }, { label: "Systems analysis", postSlug: "apple-ecosystem" }] },
-      { label: "Quality & learning", items: [{ label: "QA automation", postSlug: "auralogbook" }, { label: "Java / Spring Boot training", href: "/about/" }] },
+      { label: "Languages & frameworks", items: [{ label: "C# / .NET", postSlug: "auralogbook" }, { label: "React", postSlug: "auralogbook" }, { label: "TypeScript", postSlug: "auralogbook" }, { label: "Redux", postSlug: "auralogbook" }, { label: "Java" }] },
+      { label: "Data & APIs", items: [{ label: "PostgreSQL" }, { label: "REST APIs", postSlug: "notion-api-shortcuts" }, { label: "SQL" }, { label: "JSON", postSlug: "notion-api-shortcuts" }] },
+      { label: "Personal projects & tools", items: [{ label: "Notion", postSlug: "notion-api-shortcuts" }, { label: "Apple Shortcuts", postSlug: "hair-log" }, { label: "MUI", postSlug: "auralogbook" }] },
     ],
   },
   {

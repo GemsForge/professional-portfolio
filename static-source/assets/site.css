@@ -175,3 +175,11 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid #90
 @media(max-width:650px){.post-story-topline{padding-right:42px}.post-close{width:34px;height:34px;font-size:21px}}
 /* Keep any content beyond the modal viewport reachable; stories without overflow remain scroll-free. */
 @media(min-width:651px){.post-view-story{overflow:auto}}
+/* Present the Tech Stack as a practical toolkit instead of another project case study. */
+.stack-profile{margin-top:8px}
+.stack-profile .stack-groups{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:0}
+.stack-profile .stack-group{padding:10px}
+.stack-profile .stack-group h4{margin-bottom:6px;font:600 13px/1.25 var(--font)}
+.stack-profile .stack-group>div{gap:5px}
+.stack-profile .stack-group a,.stack-profile .stack-group span{display:inline-flex;align-items:center;padding:4px 6px;background:#fbfaf4;color:#37543a;font-size:10px;line-height:1.3;text-decoration:none}
+.stack-profile .stack-group a:hover{text-decoration:underline}

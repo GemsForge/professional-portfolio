@@ -85,8 +85,9 @@ test("generated post viewer retains project routes, source links, and the one-pa
   assert.match(auraPost, /<img src="\/assets\/aura-logbook\.png" alt="Open reflection journal with mood markers"/);
   assert.doesNotMatch(auraPost, /<figcaption>/, "post artwork should not have a visible caption below it");
   const stackPost = html.slice(html.indexOf('data-post-view="tech-stack"'), html.indexOf('</article>', html.indexOf('data-post-view="tech-stack"')));
-  assert.match(stackPost, /<section class="post-tools"><h3>Tech<\/h3><section class="stack-groups"/);
-  assert.doesNotMatch(stackPost, /class="post-tool-list"/, "the grouped Tech evidence should replace duplicated tool chips");
+  assert.match(stackPost, /The tools I’ve worked with professionally and in personal projects over the past four years/);
+  assert.match(stackPost, /<section class="post-tools stack-profile"><section class="stack-groups"/);
+  assert.doesNotMatch(stackPost, /post-facts|post-decisions|Illustrative prototype|class="post-tool-list"/, "the Tech Stack story should read as a profile, not a project case study");
   assert.match(script, /history\.pushState/);
   assert.match(script, /window\.addEventListener\("popstate"/);
   assert.match(script, /window\.addEventListener\("hashchange"/);
@@ -117,11 +118,12 @@ test("generated post viewer retains project routes, source links, and the one-pa
   assert.match(css, /@media\(max-width:650px\)\{[\s\S]*?\.creator-post-grid\{grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/);
 });
 
-test("technology groups link to project evidence and mark undeployed SQL accurately", () => {
+test("Tech Stack summarizes professional and personal tools with relevant project links", () => {
   const stack = PORTFOLIO_POSTS.find(({ slug }) => slug === "tech-stack");
   assert.ok(stack?.stackGroups?.length);
   const evidenceLinks = stack.stackGroups.flatMap(({ items }) => items);
   assert.ok(evidenceLinks.some(({ label, postSlug }) => label === "React" && postSlug === "auralogbook"));
-  assert.ok(evidenceLinks.some(({ label }) => label === "SQL (declared dependency)"));
-  assert.ok(evidenceLinks.some(({ label, href }) => label === "Java / Spring Boot training" && href === "/about/"));
+  assert.ok(evidenceLinks.some(({ label }) => label === "PostgreSQL"));
+  assert.ok(evidenceLinks.some(({ label }) => label === "Java"));
+  assert.ok(evidenceLinks.some(({ label, postSlug }) => label === "Notion" && postSlug === "notion-api-shortcuts"));
 });
