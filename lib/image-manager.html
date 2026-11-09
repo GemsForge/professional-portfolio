@@ -1,1 +1,176 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Image manager · GemsForge</title><link rel="stylesheet" href="/assets/site.css"><style>form{max-width:720px}label{display:block;font-weight:600;margin:18px 0 7px}input,select,textarea{display:block;width:100%;font:inherit;padding:12px;border:1px solid #7a8a78;border-radius:4px;background:#fff;color:#1e2823}textarea{min-height:100px}#preview{max-width:360px;max-height:260px;object-fit:contain;margin-top:20px}.managed-image{border:1px solid #aebbab;padding:24px;margin:25px 0;max-width:800px}.managed-image>img{max-height:350px;object-fit:contain;width:auto}button{cursor:pointer}button:disabled{opacity:.6}#message{min-height:2em;font-weight:600}.admin-links{display:flex;gap:24px;flex-wrap:wrap}</style></head><body><a class="skip" href="#main">Skip to content</a><header><div class="wrap nav"><a class="brand" href="/" aria-label="Diamond Brown portfolio home"><img src="/assets/brandmark.png" alt="" width="66" height="66"><span>Diamond Brown<small>Software Development &amp; Systems</small></span></a><nav class="links" aria-label="Portfolio navigation"><a href="/portfolio/projects/">Projects</a><a href="/about/">About</a><a href="/assets/diamond-brown-resume.pdf">Resume</a><a href="/contact/">Contact</a></nav></div></header><main id="main" class="wrap"><div class="pagehero"><div class="eyebrow">Owner workspace</div><h1>Project attachment manager</h1><p class="lead">Upload an image, document, or video, add a description, and publish it to your portfolio. Drafts are visible only here.</p><nav class="admin-links"><!-- The owner workspace opens the shared Developer Wiki. --><a href="/admin/knowledge/">Developer Wiki</a><a href="/portfolio/projects/">View portfolio</a><a href="/signout-with-chatgpt?return_to=%2F">Sign out</a></nav></div><p id="message" role="status" aria-live="polite"></p><form id="upload-form"><label for="project">Project</label><select id="project" name="project"><!--PROJECT_OPTIONS--></select><label for="image">Attachment · PNG, JPEG, WebP, PDF, MP4, WebM · up to 50 MB</label><input type="file" id="image" name="file" accept="image/png,image/jpeg,image/webp,application/pdf,video/mp4,video/webm" required aria-describedby="paste-help"><p id="paste-help">Choose a file or paste one supported attachment while this page is open. Pasted files use the same upload form and are not uploaded until you submit.</p><img id="preview" alt="Selected image preview" hidden><label for="alt">Alt text (required)</label><input id="alt" name="alt" maxlength="500" required aria-describedby="alt-help"><p id="alt-help">Describe what the screenshot demonstrates. Do not include private information.</p><label for="caption">Caption (optional)</label><textarea id="caption" name="caption" maxlength="2000"></textarea><button class="button" type="submit">Upload as draft</button></form><section><h2>Attachments in this project</h2><div id="image-list"></div></section></main><footer class="footer"><div class="wrap"><div class="footer-brand"><img src="/assets/brandmark.png" alt="" width="45" height="45"><span>© 2026 Diamond Brown · GemsForge</span></div><nav aria-label="Footer navigation"><a href="/portfolio/projects/">Projects</a><a href="/assets/diamond-brown-resume.pdf">Resume</a><a href="/contact/">Contact</a><a href="#main">Back to top ↑</a></nav></div></footer><script type="module" src="/assets/image-manager.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="robots" content="noindex,nofollow">
+    <title>Manage Project Assets · GemsForge</title>
+    <link rel="stylesheet" href="/assets/site.css">
+    <style>
+      form{max-width:720px}
+      label{display:block;font-weight:600;margin:18px 0 7px}
+      input,select,textarea{display:block;width:100%;font:inherit;padding:12px;border:1px solid #7a8a78;border-radius:4px;background:#fff;color:#1e2823}
+      textarea{min-height:100px}
+      #preview{max-width:360px;max-height:260px;object-fit:contain;margin-top:20px}
+      .managed-image{border:1px solid #aebbab;padding:24px;margin:25px 0;max-width:800px}
+      .managed-image>img{max-height:350px;object-fit:contain;width:auto}
+      button{cursor:pointer}
+      button:disabled{opacity:.6}
+      #message{min-height:2em;font-weight:600}
+      .admin-links{display:flex;gap:24px;flex-wrap:wrap}
+      .workspace-intro{padding-bottom:30px}
+      .workspace-intro h1{font-size:clamp(38px,5.5vw,68px);letter-spacing:-2.5px}
+      .workspace-intro .lead{max-width:760px}
+      .workspace-steps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:26px 0 34px}
+      .workspace-step{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:start;gap:12px;min-height:82px;padding:16px 18px;border:1px solid var(--line);border-radius:8px;background:rgba(255,255,255,.48);color:var(--ink);text-align:left;cursor:pointer;transition:background-color .15s ease,border-color .15s ease,box-shadow .15s ease}
+      .workspace-step:hover{border-color:#829b84;background:rgba(255,255,255,.78)}
+      .workspace-step[aria-current="step"]{border-color:var(--green);background:rgba(181,215,182,.3);box-shadow:inset 0 0 0 1px var(--green)}
+      .step-number{display:grid;place-items:center;width:32px;height:32px;border:1px solid currentColor;border-radius:50%;font-weight:700}
+      .step-copy{display:grid;gap:3px}
+      .step-copy strong{font-size:15px}
+      .step-copy span{font-size:13px;line-height:1.45;color:var(--muted)}
+      .workspace-panel{padding:clamp(20px,4vw,38px);border:1px solid var(--line);border-radius:12px;background:linear-gradient(145deg,rgba(255,255,255,.76),rgba(232,235,223,.7));box-shadow:0 10px 30px rgba(30,40,35,.06)}
+      .workspace-panel[hidden]{display:none}
+      .workspace-panel h2{margin:0 0 8px;font:clamp(25px,3vw,34px)/1.2 var(--serif);letter-spacing:-.4px}
+      .workspace-panel h3{margin:28px 0 10px;font-size:20px}
+      .workspace-panel>p{max-width:760px;color:var(--muted)}
+      .accepted-file-callout{display:grid;gap:2px;margin:14px 0 8px;padding:12px 16px;border-left:4px solid var(--green);border-radius:0 8px 8px 0;background:rgba(228,232,219,.78);color:var(--ink);font-size:14px;line-height:1.5}
+      .accepted-file-callout strong{font-size:12px;letter-spacing:.04em;text-transform:uppercase}
+      #project-assets-step form{max-width:720px}
+      #wiki-uploader-frame{display:block;width:100%;min-height:600px;border:0;background:transparent}
+      @media(max-width:650px){
+        .workspace-intro h1{font-size:clamp(36px,11vw,52px);letter-spacing:-1.8px}
+        .workspace-steps{grid-template-columns:1fr;gap:9px}
+        .workspace-step{min-height:72px;padding:13px 14px}
+        .workspace-panel{padding:20px 16px;border-radius:8px}
+        .accepted-file-callout{padding:11px 13px}
+        #wiki-uploader-frame{min-height:760px}
+        .admin-links{gap:12px}
+      }
+      @media(prefers-reduced-motion:reduce){.workspace-step{transition:none}}
+    </style>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header>
+      <div class="wrap nav">
+        <a class="brand" href="/" aria-label="Diamond Brown portfolio home">
+          <img src="/assets/brandmark.png" alt="" width="66" height="66">
+          <span>Diamond Brown<small>Software Development &amp; Systems</small></span>
+        </a>
+        <nav class="links" aria-label="Portfolio navigation">
+          <a href="/portfolio/projects/">Projects</a>
+          <a href="/about/">About</a>
+          <a href="/assets/diamond-brown-resume.pdf">Resume</a>
+          <a href="/contact/">Contact</a>
+        </nav>
+      </div>
+    </header>
+    <main id="main" class="wrap">
+      <div class="pagehero workspace-intro">
+        <div class="eyebrow">Admin - Owner Workspace</div>
+        <h1>Manage Project Assets</h1>
+        <p class="lead">Manage portfolio attachments and add reference documents to your Developer Wiki.</p>
+        <nav class="admin-links" aria-label="Owner workspace links">
+          <!-- The owner workspace opens the shared Developer Wiki. -->
+          <a href="/admin/knowledge/">Developer Wiki</a>
+          <a href="/portfolio/projects/">View portfolio</a>
+          <a href="/signout-with-chatgpt?return_to=%2F">Sign out</a>
+        </nav>
+      </div>
+
+      <!-- The two owner workflows stay separate while sharing one owner-gated page. -->
+      <nav id="workspace-steps" class="workspace-steps" aria-label="Manage Project Assets steps">
+        <button
+          class="workspace-step"
+          type="button"
+          data-workspace-step="project-assets"
+          aria-controls="project-assets-step"
+          aria-current="step">
+          <span class="step-number" aria-hidden="true">1</span>
+          <span class="step-copy">
+            <strong>Project Assets Manager</strong>
+          </span>
+        </button>
+        <button
+          class="workspace-step"
+          type="button"
+          data-workspace-step="wiki-uploader"
+          aria-controls="wiki-uploader-step">
+          <span class="step-number" aria-hidden="true">2</span>
+          <span class="step-copy">
+            <strong>Wiki Page Uploader</strong>
+          </span>
+        </button>
+      </nav>
+
+      <section
+        id="project-assets-step"
+        class="workspace-panel"
+        data-workspace-panel="project-assets"
+        aria-labelledby="project-assets-heading">
+        <h2 id="project-assets-heading">Project Assets Manager</h2>
+        <p id="project-assets-description">Upload, edit, publish, or remove portfolio attachments.</p>
+        <aside class="accepted-file-callout" id="media-uploader-help" role="note" aria-label="Accepted Media file types">
+          <strong>Attachment · up to 50 MB</strong>
+          <span>PNG, JPEG, WebP, PDF, MP4, WebM</span>
+        </aside>
+        <!-- The media uploader reports file selection, progress, and errors here. -->
+        <p id="message" role="status" aria-live="polite"></p>
+        <form id="upload-form">
+          <label for="project">Project</label>
+          <select id="project" name="project"><!--PROJECT_OPTIONS--></select>
+          <label for="image">Attachment</label>
+          <input type="file" id="image" name="file" accept="image/png,image/jpeg,image/webp,application/pdf,video/mp4,video/webm" required aria-describedby="media-uploader-help paste-help">
+          <p id="paste-help">Choose a file or paste one supported attachment while this page is open. Pasted files use the same upload form and are not uploaded until you submit.</p>
+          <img id="preview" alt="Selected image preview" hidden>
+          <label for="alt">Alt text (required)</label>
+          <input id="alt" name="alt" maxlength="500" required aria-describedby="alt-help">
+          <p id="alt-help">Describe what the screenshot demonstrates. Do not include private information.</p>
+          <label for="caption">Caption (optional)</label>
+          <textarea id="caption" name="caption" maxlength="2000"></textarea>
+          <button class="button" type="submit">Upload as draft</button>
+        </form>
+        <section aria-labelledby="attachments-heading">
+          <h3 id="attachments-heading">Attachments in this project</h3>
+          <div id="image-list"></div>
+        </section>
+      </section>
+
+      <section
+        id="wiki-uploader-step"
+        class="workspace-panel"
+        data-workspace-panel="wiki-uploader"
+        aria-labelledby="wiki-uploader-heading"
+        hidden>
+        <h2 id="wiki-uploader-heading">Wiki Page Uploader</h2>
+        <p id="wiki-uploader-description">Uploads are saved to your owner-only Developer Wiki.</p>
+        <aside class="accepted-file-callout" id="wiki-uploader-help" role="note" aria-label="Accepted Wiki file types">
+          <strong>Accepted files · Up to 20 MB</strong>
+          <span>PDF, DOCX, Markdown, HTML, UTF-8 text, PNG, JPEG, WebP, or TIFF. HTML previews are isolated, and Markdown files are formatted for reading.</span>
+        </aside>
+        <iframe
+          id="wiki-uploader-frame"
+          title="Wiki Page Uploader form and saved references"
+          aria-describedby="wiki-uploader-description wiki-uploader-help"
+          loading="lazy"></iframe>
+      </section>
+    </main>
+    <footer class="footer">
+      <div class="wrap">
+        <div class="footer-brand">
+          <img src="/assets/brandmark.png" alt="" width="45" height="45">
+          <span>© 2026 Diamond Brown · GemsForge</span>
+        </div>
+        <nav aria-label="Footer navigation">
+          <a href="/portfolio/projects/">Projects</a>
+          <a href="/assets/diamond-brown-resume.pdf">Resume</a>
+          <a href="/contact/">Contact</a>
+          <a href="#main">Back to top ↑</a>
+        </nav>
+      </div>
+    </footer>
+    <script type="module" src="/assets/image-manager.js"></script>
+    <script type="module" src="/assets/manage-project-assets.js"></script>
+  </body>
+</html>

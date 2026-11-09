@@ -1,7 +1,7 @@
 # GemsForge Portfolio
 
 Public portfolio: https://www.gemsforge.com  
-Owner image manager: https://www.gemsforge.com/admin/
+Manage Project Assets: https://www.gemsforge.com/admin/
 
 ## Source
 
@@ -9,7 +9,7 @@ Owner image manager: https://www.gemsforge.com/admin/
 - `scripts/prepare-pages.mjs`: generates the server's HTML map and adds project gallery hooks.
 - `build/sites-worker.ts`: preserves Sites/Vinext hosting integration and serves the portfolio and owner workspace.
 - `lib/media-server.ts`: server-side owner authorization and persistent image APIs.
-- `lib/image-manager.html`: owner upload/edit interface.
+- `lib/image-manager.html`: owner-only Manage Project Assets workflow shell.
 - `app/admin/knowledge/page.tsx` and `components/knowledge-directory.tsx`: React/TypeScript owner-only library homepage and reference controls.
 - `lib/knowledge-server.ts`: private R2 storage API for the owner library.
 - `public/assets/image-manager.js`: owner image actions.
@@ -18,7 +18,7 @@ Owner image manager: https://www.gemsforge.com/admin/
 
 ## Image workflow
 
-Visit `/admin/` and sign in with the ChatGPT account that owns this Site. Server authorization allows only the owner email verified for this project. Visitors can browse all public pages and published images without signing in.
+Visit `/admin/` (labeled **Admin** in the footer) and sign in with the ChatGPT account that owns this Site. Server authorization allows only the owner email verified for this project. The page separates portfolio attachments and the Wiki Page Uploader into two steps. Visitors can browse all public pages and published images without signing in.
 
 Choose a project, upload a PNG/JPEG/WebP image (10 MB maximum), and add alt text and an optional caption. Uploads start as drafts. Review and select **Publish image** to make them visible in the project's gallery. **Unpublish** removes them from the gallery; previously cached image responses may remain available for up to 60 seconds. **Delete image** permanently deletes its stored data.
 
@@ -26,7 +26,7 @@ Images and metadata are stored in the provisioned R2 `BUCKET`, independently of 
 
 ## Developer Wiki
 
-The public `/knowledge/` page lists document metadata and reuses the existing Developer Wiki directory view. The shared footer link is labeled **Dev Wiki**. Opening a wiki, downloading its original file, or loading an HTML preview requires the portfolio owner's authenticated identity; the public index never returns document bodies or body-derived search text. The owner workspace links to the same directory at `/admin/knowledge/`, with upload and management tools available only on owner-gated module pages. `/admin/handbooks` opens the owner handbook tools and shows when each reference was added. The owner directory can download a TAR backup containing every original document and a `manifest.json` with its metadata. Files and titles are stored under a separate `owner-knowledge/` prefix in the existing R2 `BUCKET`. Uploaded knowledge files are not part of this source export.
+The public `/knowledge/` page lists document metadata and reuses the existing Developer Wiki directory view. Wiki readers, original document downloads, and HTML previews are public read-only routes under `/knowledge/` and `/api/public/knowledge/`. Uploading, the saved-reference table, removal, and backups remain owner-only in the **Wiki Page Uploader** step on `/admin/`; `/admin/knowledge/` and `/admin/handbooks` remain owner-gated. The shared footer link is labeled **Dev Wiki**. Files and titles are stored under a separate `owner-knowledge/` prefix in the existing R2 `BUCKET`. Uploaded knowledge files are not part of this source export.
 
 ## Development and publishing
 

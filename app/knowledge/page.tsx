@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: "Diamond's personal development notes, working examples, and hard-to-find fixes.",
 };
 
-/** Renders the existing directory as a public, read-only index of private wikis. */
+/** Renders the public, read-only Developer Wiki directory. */
 export default function DeveloperWikiPage() {
   return <KnowledgeDirectory publicMode />;
 }

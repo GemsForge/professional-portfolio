@@ -140,7 +140,7 @@ test('backup paths stay unique when separate uploads share a filename', async ()
   assert.equal(new Set(manifest.files.map((file) => file.archivePath)).size, 2);
 });
 
-test('public directory metadata excludes document bodies and body-derived search fields', async () => {
+test('public Wiki exposes document bodies through read-only routes, not its index metadata', async () => {
   const env = { BUCKET: new Bucket() };
   const form = new FormData();
   form.set('title', 'Personal query notes');
@@ -161,7 +161,15 @@ test('public directory metadata excludes document bodies and body-derived search
   assert.deepEqual(data.resources[0].tags, []);
   assert.doesNotMatch(serialized, /private-body-sentinel|Private heading/);
   assert.equal((await knowledgeRequest(request(`/api/knowledge/${resource.id}`, 'GET', undefined, {}), env)).status, 401);
+  const publicDocument = await publicKnowledgeRequest(request(`/api/public/knowledge/${resource.id}`, 'GET', undefined, {}), env);
+  assert.equal(publicDocument.status, 200);
+  assert.equal(publicDocument.headers.get('cache-control'), 'public, max-age=60');
+  assert.match(await publicDocument.text(), /private-body-sentinel/);
+  const publicBooklet = await publicKnowledgeRequest(request(`/api/public/knowledge/${resource.id}?format=html`, 'GET', undefined, {}), env);
+  assert.equal(publicBooklet.status, 200);
+  assert.match(await publicBooklet.text(), /private-body-sentinel/);
   assert.equal((await publicKnowledgeRequest(request('/api/public/knowledge', 'POST', undefined, {}), env)).status, 405);
+  assert.equal((await publicKnowledgeRequest(request(`/api/public/knowledge/${resource.id}`, 'DELETE', undefined, {}), env)).status, 405);
 });
 
 test('public directory derives tags for older Markdown records without exposing their bodies', async () => {
@@ -251,10 +259,11 @@ test('knowledge page gate redirects anonymous users and denies non-owners', asyn
   };
   assert.equal(ownerPageGate(request('/admin/knowledge', 'GET', undefined, otherUser), '/admin/knowledge').status, 403);
   assert.equal(ownerPageGate(request('/admin/knowledge'), '/admin/knowledge'), null);
-  const wikiReaderGate = ownerPageGate(request('/knowledge/private-wiki', 'GET', undefined, {}), '/knowledge/private-wiki');
-  assert.equal(wikiReaderGate.status, 302);
-  assert.equal(new URL(wikiReaderGate.headers.get('location')).searchParams.get('return_to'), '/knowledge/private-wiki');
-
+  const uploaderGate = ownerPageGate(request('/admin/knowledge/uploader', 'GET', undefined, {}), '/admin/knowledge/uploader');
+  assert.equal(uploaderGate.status, 302);
+  assert.equal(new URL(uploaderGate.headers.get('location')).searchParams.get('return_to'), '/admin/knowledge/uploader');
+  assert.equal(ownerPageGate(request('/admin/knowledge/uploader', 'GET', undefined, otherUser), '/admin/knowledge/uploader').status, 403);
+  assert.equal(ownerPageGate(request('/admin/knowledge/uploader'), '/admin/knowledge/uploader'), null);
   const [pages, home, worker, route, component, reader] = await Promise.all([
     readFile(new URL('../lib/static-pages.json', import.meta.url), 'utf8'),
     readFile(new URL('../static-source/index.html', import.meta.url), 'utf8'),
@@ -267,20 +276,23 @@ test('knowledge page gate redirects anonymous users and denies non-owners', asyn
   assert.doesNotMatch(home, /href="\/admin\/knowledge\/?"/);
   assert.match(worker, /ownerPageGate\(request, '\/admin\/knowledge'\)/);
   assert.match(worker, /url\.pathname\.startsWith\('\/knowledge\/'\)/);
-  assert.match(worker, /handler\.fetch\(request, env, ctx\)/);
+  const publicReaderRoute = worker.split('// Wiki documents are public')[1]?.split('const route')[0] ?? '';
+  assert.doesNotMatch(publicReaderRoute, /ownerPageGate|privateOwnerPage/);
+  assert.match(worker, /publicKnowledgeRequest\(request,env\)/);
   assert.match(route, /robots: \{ index: false, follow: false \}/);
   assert.match(component, /export function KnowledgeDirectory/);
-  assert.match(component, /fetch\("\/api\/knowledge"/);
+  assert.match(component, /publicMode \? "\/api\/public\/knowledge" : "\/api\/knowledge"/);
   assert.match(component, /File name/);
   assert.match(component, /Download/);
   assert.match(reader, /Render Markdown/);
   assert.match(reader, /Markdown source/);
   assert.match(reader, /Download Markdown/);
+  assert.match(reader, /publicMode \? "\/api\/public\/knowledge" : "\/api\/knowledge"/);
   assert.match(worker, /knowledgeRequest\(request,env\)/);
 });
 
 test('public and owner directories share the existing reader while keeping owner tools gated', async () => {
-  const [worker, publicPage, publicReader, ownerHandbooks, directory, reader, footer, generator, adminPage] = await Promise.all([
+  const [worker, publicPage, publicReader, ownerHandbooks, directory, reader, footer, generator, adminPage, uploaderPage] = await Promise.all([
     readFile(new URL('../build/sites-worker.ts', import.meta.url), 'utf8'),
     readFile(new URL('../app/knowledge/page.tsx', import.meta.url), 'utf8'),
     readFile(new URL('../app/knowledge/[id]/page.tsx', import.meta.url), 'utf8'),
@@ -290,21 +302,34 @@ test('public and owner directories share the existing reader while keeping owner
     readFile(new URL('../components/site-footer.tsx', import.meta.url), 'utf8'),
     readFile(new URL('../scripts/prepare-pages.mjs', import.meta.url), 'utf8'),
     readFile(new URL('../lib/image-manager.html', import.meta.url), 'utf8'),
+    readFile(new URL('../app/admin/knowledge/uploader/page.tsx', import.meta.url), 'utf8'),
   ]);
   assert.match(publicPage, /<KnowledgeDirectory publicMode \/>/);
   assert.match(publicReader, /<KnowledgeReader id=\{id\} publicMode \/>/);
   assert.match(ownerHandbooks, /initialModule="handbooks"/);
-  assert.match(worker, /ownerPageGate\(request, `\$\{url\.pathname\}\$\{url\.search\}`\)/);
   assert.match(worker, /ownerPageGate\(request, '\/admin\/handbooks'\)/);
-  assert.match(directory, /fetch\(publicMode \? "\/api\/public\/knowledge" : "\/api\/knowledge"/);
-  assert.match(directory, /initialModule && !publicMode/);
+  assert.match(directory, /publicMode \? "\/api\/public\/knowledge" : "\/api\/knowledge"/);
+  assert.match(directory, /if \(uploaderOnly\)/);
+  assert.doesNotMatch(directory, /initialModule && !publicMode/);
+  assert.match(directory, /href="\/admin\/\?step=wiki-uploader"/);
+  assert.match(uploaderPage, /<KnowledgeDirectory initialFolder=\{folder\} uploaderOnly \/>/);
+  assert.match(worker, /url\.pathname\.startsWith\('\/admin\/knowledge\/'\)/);
+  assert.match(directory, /aria-label="Saved reference documents table"/);
+  assert.match(directory, /onClick=\{\(\) => void deleteReference\(resource\)\}/);
+  assert.match(directory, /href=\{readerHref\(resource\.id, true\)\}[\s\S]*?target="_top"[\s\S]*?View/);
+  assert.match(directory, /target\.location\.assign\(readerHref\(data\.resource\.id, true\)\)/);
+  assert.doesNotMatch(directory, /id="saved-references"/);
   assert.match(directory, /MY DEVELOPER NOTES/);
   assert.match(directory, /Developer Wiki/);
   assert.match(directory, /<time dateTime=\{resource\.createdAt\}>/);
   assert.match(directory, /href="\/api\/knowledge\/export"[\s\S]*?Download document backup/);
   assert.match(directory, /<th scope="col">Date created<\/th>/);
   assert.match(reader, /publicMode \? "\/knowledge\/" : "\/admin\/knowledge\/"/);
+  assert.match(reader, /className="reader-heading is-collapsed"/);
+  assert.doesNotMatch(reader, /setReaderHeadingCollapsed/);
   assert.match(footer, /wikiMode \? "Portfolio" : "Dev Wiki"/);
   assert.match(generator, /href="\/knowledge\/">Dev Wiki/);
-  assert.match(adminPage, /Developer Wiki/);
+  assert.match(adminPage, /Manage Project Assets/);
+  assert.match(adminPage, /Project Assets Manager/);
+  assert.match(adminPage, /Wiki Page Uploader/);
 });

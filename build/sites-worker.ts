@@ -20,8 +20,8 @@ function privateOwnerPage(response: Response) {
 export default {
   fetch(request: Request, env: Cloudflare.Env, ctx: ExecutionContext<{ CONNECTORS?: ConnectorBinding }>) {
     const url = new URL(request.url);
-    // This read-only endpoint publishes document labels only, never stored content or search text.
-    if(url.pathname === '/api/public/knowledge') {
+    // Public Wiki reads share a read-only endpoint; uploads and mutations stay on the owner API.
+    if(url.pathname === '/api/public/knowledge' || url.pathname.startsWith('/api/public/knowledge/')) {
       return publicKnowledgeRequest(request,env).catch(()=>Response.json({error:'Unable to complete this action. Please try again.'},{status:500,headers:{'Cache-Control':'no-store','X-Robots-Tag':'noindex, nofollow'}}));
     }
     // Keep the knowledge API out of static routes so authorization runs on every request.
@@ -63,15 +63,13 @@ export default {
       if (gate) return gate;
       return handler.fetch(request, env, ctx).then(privateOwnerPage);
     }
-    // Public visitors can see the directory, but reader routes require the same owner identity as uploads.
+    // Wiki documents are public; owner-only upload and management routes remain under /admin/knowledge/.
     if(url.pathname.startsWith('/knowledge/') && url.pathname !== '/knowledge/') {
       if (url.pathname.endsWith('/')) {
         url.pathname = url.pathname.slice(0, -1);
         return Response.redirect(url.toString(), 308);
       }
-      const gate = ownerPageGate(request, `${url.pathname}${url.search}`);
-      if (gate) return gate;
-      return handler.fetch(request, env, ctx).then(privateOwnerPage);
+      return handler.fetch(request, env, ctx);
     }
     const route = url.pathname.endsWith('/') ? url.pathname : url.pathname + '/';
     const page = (pages as Record<string,string>)[route];

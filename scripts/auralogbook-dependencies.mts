@@ -166,9 +166,9 @@ export const AURALOGBOOK_DEPENDENCIES = Object.freeze({
   },
   sqlite: {
     id: "sqlite",
-    label: "SQLite · declared, not wired",
+    label: "SQLite",
     category: DEPENDENCY_CATEGORY.BACKEND,
-    status: DEPENDENCY_STATUS.DECLARED_NOT_WIRED,
+    status: DEPENDENCY_STATUS.ACTIVE,
     logo: { kind: DEPENDENCY_LOGO_KIND.FILE, symbolId: "sqlite", description: "SQLite logo", src: "/assets/auralogbook-stack/sqlite.png" },
     sourceUrl: "https://sqlite.org/",
   },

@@ -72,7 +72,7 @@ test("AuraLogbook page includes one accessible data-to-API-to-UI architecture di
     "JWT",
     "BCrypt",
     "Redux store (RTK Query)",
-    "SQLite + Dapper: declared, not wired to storage",
+    "SQLite + Dapper",
     "Dependency key",
   ]) {
     assert.ok(diagram.includes(term), `diagram includes ${term}`);
@@ -124,7 +124,7 @@ test("AuraLogbook dependency badges come from the typed registry with inline bra
   assert.match(heroBadges, /data-dependency="dotnet"[^>]*data-status="active"/);
   assert.match(heroBadges, /data-dependency="dapper"[^>]*data-status="declared-not-wired"/);
   assert.match(heroBadges, /Dapper · declared, not wired/);
-  assert.match(heroBadges, /data-dependency="sqlite"[^>]*data-status="declared-not-wired"/);
+  assert.match(heroBadges, /data-dependency="sqlite"[^>]*data-status="active"/);
   assert.match(heroBadges, /data-dependency="swagger"[^>]*data-status="active"/);
   assert.match(heroBadges, /src="\/assets\/auralogbook-stack\/swagger\.png"/);
   assert.match(heroBadges, /href="https:\/\/react\.dev\/"[^>]*target="_blank"[^>]*rel="noopener noreferrer"/);

@@ -7,7 +7,8 @@ import Image from "next/image";
  * navigation remains reliable without client-side router hydration.
  *
  * Keeping this in the shared shell ensures every React view exposes the same
- * project, resume, contact, admin, contextual Portfolio/Wiki, and back-to-top links.
+ * project, resume, contact, Admin, contextual Portfolio/Wiki, and back-to-top
+ * links.
  */
 export function SiteFooter({ wikiMode = false }: { /** Marks Wiki views that link back to the Portfolio. */ wikiMode?: boolean }) {
   return (

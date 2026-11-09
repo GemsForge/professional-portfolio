@@ -117,7 +117,7 @@ async function visit(directory) {
     if (text.includes('<nav aria-label="Footer navigation">')) {
       text = text.replace(
         '<nav aria-label="Footer navigation">',
-        // Keep the public wiki reachable from every generated portfolio footer.
+        // Keep the owner tools and public Wiki reachable from every generated portfolio footer.
         '<nav aria-label="Footer navigation"><a href="/admin/">Admin</a><a href="/knowledge/">Dev Wiki</a>',
       );
     }
