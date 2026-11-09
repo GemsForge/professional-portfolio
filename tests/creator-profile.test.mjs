@@ -80,6 +80,8 @@ test("generated post viewer retains project routes, source links, and the one-pa
   assert.match(html, /href="https:\/\/github\.com\/GemsForge\/aura-logbook-api"/);
   assert.match(html, /href="\/admin\/">Admin<\/a>/);
   assert.match(html, /href="\/knowledge\/">Dev Wiki<\/a>/);
+  const auraPost = html.slice(html.indexOf('data-post-view="auralogbook"'), html.indexOf('</article>', html.indexOf('data-post-view="auralogbook"')));
+  assert.ok(auraPost.indexOf('<dl class="post-facts">') < auraPost.indexOf('<section class="post-tools"><h3>Tech</h3>') && auraPost.indexOf('<section class="post-tools"><h3>Tech</h3>') < auraPost.indexOf('<section class="post-decisions">'), "Tech should follow the role and evidence table");
   assert.match(script, /history\.pushState/);
   assert.match(script, /window\.addEventListener\("popstate"/);
   assert.match(script, /window\.addEventListener\("hashchange"/);
@@ -96,6 +98,8 @@ test("generated post viewer retains project routes, source links, and the one-pa
   assert.match(css, /\.profile-intro \.profile-bio\{[^}]*font:14px\/1\.5 var\(--font\)/);
   assert.doesNotMatch(css, /\.creator-page[^}]*font-family:Arial/);
   assert.match(css, /\.creator-nav-ready\.creator-nav-visible \.creator-topbar/);
+  assert.match(css, /\.post-story>\.post-tools,\.post-story>\.post-decisions\{margin:0;padding:0;border:0\}/);
+  assert.match(css, /\.post-close\{width:32px;height:32px;font-size:20px\}/);
   assert.match(css, /\.creator-shell\{margin-top:0\}/);
   assert.match(css, /\.profile-header\{margin-top:0\}/);
   assert.match(css, /\.profile-tech-strip ul\{display:flex;flex-wrap:nowrap;[^}]*overflow-x:auto/);
