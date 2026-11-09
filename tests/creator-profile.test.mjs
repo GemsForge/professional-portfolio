@@ -27,6 +27,11 @@ test("creator catalog keeps seven posts in the grid and a separate technology sh
   assert.deepEqual(tileOrder, slugs.filter((slug) => slug !== "tech-stack"));
   assert.equal(tileOrder.length, 7);
   assert.equal((html.match(/data-post-view="[^"]+"/g) ?? []).length, 8);
+  assert.match(html, /<nav class="creator-mobile-nav" aria-label="Mobile navigation">/);
+  assert.match(html, /<a href="#feed" aria-label="Work">/);
+  assert.match(html, /<a href="#about" aria-label="About">/);
+  assert.match(html, /<a href="\/assets\/diamond-brown-resume\.pdf" aria-label="Résumé">/);
+  assert.match(html, /<a href="#contact" aria-label="Contact">/);
   assert.doesNotMatch(html, /Make the work legible|project-management/);
   assert.ok(html.indexOf('class="profile-header"') < html.indexOf('class="creator-main-column"'), "the profile header should sit above the feed");
   assert.match(html, /class="profile-summary"/);
