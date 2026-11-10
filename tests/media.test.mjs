@@ -50,3 +50,47 @@ test('ordinary text paste is not intercepted, and unreadable file items get an a
  handler({clipboardData:{files:[],items:[{kind:'file',getAsFile:()=>null}]},preventDefault(){prevented=true}});
  assert.equal(prevented,true);assert.match(rejected,/could not be read/i);
 });
+
+/** Walkthrough placement (issue #117): images can target a step and carry a marker. */
+function stepUpload(fields={}){const f=upload();for(const [k,v] of Object.entries(fields))f.set(k,v);return f;}
+test('an image can be assigned to a walkthrough step with a marker, shown publicly only once published',async()=>{
+ const env={BUCKET:new Bucket()};
+ const created=await mediaRequest(req('/api/media','POST',stepUpload({step:'1',markerX:'62.34',markerY:'40',markerLabel:'Mood chips'})),env);
+ assert.equal(created.status,201);
+ const {attachment}=await created.json();
+ assert.deepEqual(attachment.placement,{step:1,marker:{x:62.3,y:40,label:'Mood chips'}});
+ assert.equal((await (await mediaRequest(req('/api/media?project=dynamic-folder-structures','GET',null,{}),env)).json()).attachments.length,0,'drafts stay private');
+ await mediaRequest(req('/api/media/'+attachment.id,'PATCH',JSON.stringify({published:true})),env);
+ const visible=(await (await mediaRequest(req('/api/media?project=dynamic-folder-structures','GET',null,{}),env)).json()).attachments;
+ assert.deepEqual(visible[0].placement,{step:1,marker:{x:62.3,y:40,label:'Mood chips'}});
+ assert.equal(visible[0].ownerId,undefined);
+});
+test('a step without a marker is allowed, and a blank marker label defaults to Highlight',async()=>{
+ const env={BUCKET:new Bucket()};
+ const plain=await (await mediaRequest(req('/api/media','POST',stepUpload({step:'0'})),env)).json();
+ assert.deepEqual(plain.attachment.placement,{step:0});
+ const labelled=await (await mediaRequest(req('/api/media','POST',stepUpload({step:'2',markerX:'10',markerY:'20',markerLabel:' '})),env)).json();
+ assert.equal(labelled.attachment.placement.marker.label,'Highlight');
+});
+test('invalid placements and placements on non-images are rejected without storing anything',async()=>{
+ const env={BUCKET:new Bucket()};
+ for(const fields of [{step:'-1'},{step:'1.5'},{step:'50'},{step:'1',markerX:'10'},{step:'1',markerX:'101',markerY:'5'},{step:'1',markerX:'5',markerY:'5',markerLabel:'x'.repeat(81)}]){
+  assert.equal((await mediaRequest(req('/api/media','POST',stepUpload(fields)),env)).status,400,JSON.stringify(fields));
+ }
+ const pdf=stepUpload({step:'0'});pdf.set('image',new File([new Uint8Array([0x25,0x50,0x44,0x46,0x2d])],'doc.pdf',{type:'application/pdf'}));
+ const response=await mediaRequest(req('/api/media','POST',pdf),env);
+ assert.equal(response.status,400);assert.match((await response.json()).error,/Only images/);
+ assert.equal(env.BUCKET.data.size,0);
+});
+test('the owner can change or clear a placement, and non-owners cannot',async()=>{
+ const env={BUCKET:new Bucket()};
+ const {attachment}=await (await mediaRequest(req('/api/media','POST',stepUpload({step:'0'})),env)).json();
+ assert.equal((await mediaRequest(req('/api/media/'+attachment.id,'PATCH',JSON.stringify({placement:{step:3,marker:{x:50,y:50,label:'Chart'}}}),{'oai-authenticated-user-id':'other','oai-authenticated-user-email':'other@example.com',Origin:site}),env)).status,403);
+ assert.equal((await mediaRequest(req('/api/media/'+attachment.id,'PATCH',JSON.stringify({placement:{step:3,marker:{x:50,y:50,label:'Chart'}}})),env)).status,200);
+ let stored=await (await env.BUCKET.get('portfolio/records/'+attachment.id+'.json')).json();
+ assert.deepEqual(stored.placement,{step:3,marker:{x:50,y:50,label:'Chart'}});
+ assert.equal((await mediaRequest(req('/api/media/'+attachment.id,'PATCH',JSON.stringify({placement:{step:3,marker:{x:500,y:1}}})),env)).status,400);
+ assert.equal((await mediaRequest(req('/api/media/'+attachment.id,'PATCH',JSON.stringify({placement:null})),env)).status,200);
+ stored=await (await env.BUCKET.get('portfolio/records/'+attachment.id+'.json')).json();
+ assert.equal(stored.placement,undefined);
+});

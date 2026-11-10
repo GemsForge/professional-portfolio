@@ -207,3 +207,13 @@ test("pop-up keeps the walkthrough, swaps in real step screenshots, and meets ty
   assert.match(css, /#post-dialog \.post-close\{width:44px;height:44px/);
   assert.match(css, /#post-dialog \.post-sequence button\{min-height:44px/);
 });
+
+test("pop-up applies published step screenshots from the asset manager, newest first", async () => {
+  const script = await read("../static-source/assets/creator-profile.js");
+  assert.match(script, /fetch\(`\/api\/media\?project=\$\{encodeURIComponent\(slug\)\}`\)/);
+  assert.match(script, /item\.kind === "image" && item\.placement && !byStep\.has\(item\.placement\.step\)/, "the newest published image wins a step");
+  assert.match(script, /\.catch\(\(\) => \[\]\)/, "a failed request keeps the built-in pictures");
+  assert.match(script, /if \(eyebrow\) eyebrow\.textContent = "App tour";/);
+  const steps = JSON.parse(await read("../lib/walkthrough-steps.json"));
+  assert.deepEqual(steps.auralogbook, ["Choose a path", "Log a check-in", "Add a photo", "Connect Spotify", "Look back"]);
+});

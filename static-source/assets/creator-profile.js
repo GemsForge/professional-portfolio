@@ -75,6 +75,64 @@
     if (announcer && announce) announcer.textContent = `Step ${index + 1} of ${steps.length}: ${step.querySelector("h4")?.textContent ?? ""}`;
   }
 
+  const uploadedScreens = new Map();
+
+  /**
+   * Loads a project's published attachments from the owner asset manager once per
+   * project. Any failure (offline, no storage) resolves to an empty list, so the
+   * built-in pictures stay in place.
+   */
+  function loadUploadedScreens(slug) {
+    if (!uploadedScreens.has(slug)) {
+      uploadedScreens.set(slug, fetch(`/api/media?project=${encodeURIComponent(slug)}`)
+        .then((response) => (response.ok ? response.json() : {}))
+        .then(({ attachments = [] }) => attachments)
+        .catch(() => []));
+    }
+    return uploadedScreens.get(slug);
+  }
+
+  /**
+   * Writes uploaded walkthrough screenshots onto the story's step items, overriding any
+   * catalog screenshot for that step. Attachments arrive newest first, so the newest
+   * published image wins a step. When every step has a screen, the section becomes an
+   * "App tour" without the prototype disclaimer. Returns true when anything changed.
+   */
+  function applyUploadedScreens(story, attachments) {
+    const steps = [...story.querySelectorAll("[data-walkthrough-step]")];
+    const byStep = new Map();
+    for (const item of attachments) {
+      if (item.kind === "image" && item.placement && !byStep.has(item.placement.step)) byStep.set(item.placement.step, item);
+    }
+    if (!byStep.size) return false;
+    steps.forEach((step, index) => {
+      const item = byStep.get(index);
+      if (!item) return;
+      step.dataset.stepScreenshot = item.url;
+      step.dataset.stepScreenshotAlt = item.alt;
+      const marker = item.placement.marker;
+      if (marker) {
+        step.dataset.stepHotspotX = String(marker.x);
+        step.dataset.stepHotspotY = String(marker.y);
+        step.dataset.stepHotspotLabel = marker.label;
+      } else {
+        delete step.dataset.stepHotspotX;
+        delete step.dataset.stepHotspotY;
+        delete step.dataset.stepHotspotLabel;
+      }
+    });
+    const withScreens = steps.filter((step) => step.dataset.stepScreenshot).length;
+    const eyebrow = story.querySelector(".walkthrough .eyebrow");
+    const disclaimer = story.querySelector(".walkthrough-disclaimer");
+    if (withScreens === steps.length) {
+      if (eyebrow) eyebrow.textContent = "App tour";
+      disclaimer?.remove();
+    } else if (disclaimer) {
+      disclaimer.textContent = "Illustrated steps follow the documented project flow; screenshots come from the app.";
+    }
+    return true;
+  }
+
   /** Moves the picture above the walkthrough on phones and back to the media column at wider sizes. */
   function placePostVisual() {
     if (!activePost) return;
@@ -103,6 +161,10 @@
     if (!dialog.open) dialog.showModal();
     const position = walkthroughPositions.get(slug) ?? 0;
     setWalkthroughStep(activePost, position);
+    // Owner-uploaded step screenshots arrive asynchronously; re-render the current step if the post is still open.
+    loadUploadedScreens(slug).then((attachments) => {
+      if (activePost === post && applyUploadedScreens(post, attachments)) setWalkthroughStep(post, walkthroughPositions.get(slug) ?? 0);
+    });
     if (focus) activePost.focus({ preventScroll: true });
     return true;
   }

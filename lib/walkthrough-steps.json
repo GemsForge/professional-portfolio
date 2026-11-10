@@ -1,0 +1,34 @@
+{
+  "auralogbook": [
+    "Choose a path",
+    "Log a check-in",
+    "Add a photo",
+    "Connect Spotify",
+    "Look back"
+  ],
+  "notion-api-shortcuts": [
+    "Start with a link",
+    "Prepare the request",
+    "Map the properties"
+  ],
+  "75-hard-automation": [
+    "Check in",
+    "Reuse workflow steps",
+    "Record completion"
+  ],
+  "hair-log": [
+    "Choose an activity",
+    "Add context",
+    "Review history"
+  ],
+  "dynamic-folder-structures": [
+    "Name the parent",
+    "Choose a count",
+    "Create child folders"
+  ],
+  "apple-ecosystem": [
+    "Find overlap",
+    "Set tool roles",
+    "Plan migration"
+  ]
+}
