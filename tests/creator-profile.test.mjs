@@ -15,7 +15,7 @@ async function readGeneratedHome() {
   return pages["/"];
 }
 
-test("creator catalog keeps seven posts in the grid and a separate technology shortcut", async () => {
+test("creator grid features six project stories and keeps the technology shortcut separate", async () => {
   const html = await readGeneratedHome();
   const slugs = PORTFOLIO_POSTS.map(({ slug }) => slug);
   assert.deepEqual(slugs.slice(0, 4), ["auralogbook", "notion-api-shortcuts", "portfolio-direction", "tech-stack"]);
@@ -24,9 +24,11 @@ test("creator catalog keeps seven posts in the grid and a separate technology sh
   assert.equal(PORTFOLIO_POSTS.filter(({ category }) => category === "process").length, 1);
   assert.equal(PORTFOLIO_POSTS.filter(({ category }) => category === "tech-stack").length, 1);
   const tileOrder = [...html.matchAll(/class="creator-post-tile tile-[^"]+" href="[^"]+" data-post-link="([^"]+)"/g)].map((match) => match[1]);
-  assert.deepEqual(tileOrder, slugs.filter((slug) => slug !== "tech-stack"));
-  assert.equal(tileOrder.length, 7);
+  assert.deepEqual(tileOrder, slugs.filter((slug) => !["tech-stack", "portfolio-direction"].includes(slug)));
+  assert.equal(tileOrder.length, 6);
+  assert.doesNotMatch(html, /data-post-link="portfolio-direction"/);
   assert.equal((html.match(/data-post-view="[^"]+"/g) ?? []).length, 8);
+  assert.match(html, /data-post-view="portfolio-direction"/, "the direction story remains available to in-modal navigation");
   assert.match(html, /<nav class="creator-mobile-nav" aria-label="Mobile navigation">/);
   assert.match(html, /<a href="#feed" aria-label="Work">/);
   assert.match(html, /<a href="#about" aria-label="About">/);
@@ -50,10 +52,7 @@ test("creator catalog keeps seven posts in the grid and a separate technology sh
   assert.doesNotMatch(html, /Software\s*[·.]\s*Systems\s*[·.]\s*Direction/i);
   assert.match(html, /I build apps, organize the work behind them, and shape how people use them\./);
   assert.doesNotMatch(html, /A developer’s precision|practical point of view|FIELD NOTE/);
-  assert.match(html, /data-filter="all" aria-pressed="true">All <span>07<\/span>/);
-  assert.match(html, /data-filter="project" aria-pressed="false">Projects <span>06<\/span>/);
-  assert.match(html, /data-filter="process" aria-pressed="false">Process <span>01<\/span>/);
-  assert.doesNotMatch(html, /data-filter="tech-stack"/);
+  assert.doesNotMatch(html, /class="feed-filter"|data-filter=/, "the project-only grid should not show filter controls");
   const techStrip = html.slice(html.indexOf('class="profile-tech-strip"'), html.indexOf("</nav>", html.indexOf('class="profile-tech-strip"')));
   assert.equal((techStrip.match(/data-post-link="tech-stack"/g) ?? []).length, 8);
   assert.equal((techStrip.match(/class="profile-tech-mark"/g) ?? []).length, 8);
@@ -70,7 +69,7 @@ test("project posts identify evidence and provide guided prototype steps", () =>
   for (const post of projects) {
     assert.ok(post.caseStudy, `${post.slug} should retain its full case-study route`);
     assert.ok(post.evidence.length > 30, `${post.slug} should explain evidence or current status`);
-    assert.equal(post.walkthrough?.length, 3, `${post.slug} should have three guided steps`);
+    assert.equal(post.walkthrough?.length, post.slug === "auralogbook" ? 5 : 3, `${post.slug} should have the expected number of guided steps`);
     assert.ok(post.walkthrough.every(({ hotspot }) => hotspot.label), `${post.slug} should label every hotspot`);
   }
 });
@@ -91,10 +90,17 @@ test("generated post viewer retains project routes, source links, and the one-pa
   assert.match(auraPost, /<img src="\/assets\/aura-logbook\.png" alt="Open reflection journal with mood markers"/);
   assert.match(auraPost, /class="tech-chip"/);
   assert.match(auraPost, /\/assets\/auralogbook-stack\/react\.png/);
+  assert.match(auraPost, /\/assets\/auralogbook-stack\/dapper\.png/);
+  assert.match(auraPost, /\/assets\/auralogbook-stack\/jwt-bearer\.png/);
   assert.doesNotMatch(auraPost, /<figcaption>/, "post artwork should not have a visible caption below it");
-  assert.match(auraPost, /so logging stays quick while entries remain useful for history and trends/);
-  assert.match(auraPost, /instead of assuming one worldview/);
-  assert.match(auraPost, /conditions change independently of a person’s reflection/);
+  assert.match(auraPost, /typed forms and RTK Query to JWT-protected endpoints and repository-backed services/);
+  assert.match(auraPost, /<dt>Where it stands<\/dt>/);
+  assert.match(auraPost, /<h3>Technical choices<\/h3>/);
+  assert.match(auraPost, /<h3 id="walkthrough-auralogbook">Walkthrough<\/h3>/);
+  assert.match(auraPost, /A save writes the entry and its mood rows in one transaction/);
+  assert.match(auraPost, /Spotify uses OAuth with PKCE/);
+  assert.match(auraPost, /Photo files stay out of public assets/);
+  assert.match(auraPost, /Spotify tracks are not saved to mood entries/);
   const stackPost = html.slice(html.indexOf('data-post-view="tech-stack"'), html.indexOf('</article>', html.indexOf('data-post-view="tech-stack"')));
   assert.match(stackPost, /The tools I’ve worked with professionally and in personal projects over the past four years/);
   assert.match(stackPost, /<section class="post-tools stack-profile"><section class="stack-groups"/);
@@ -106,7 +112,7 @@ test("generated post viewer retains project routes, source links, and the one-pa
   assert.match(script, /window\.addEventListener\("hashchange"/);
   assert.match(script, /IntersectionObserver/);
   assert.match(script, /creator-nav-visible/);
-  assert.match(script, /button\.addEventListener\("click", \(\) => applyFilter\(button\.dataset\.filter\)\)/);
+  assert.doesNotMatch(script, /applyFilter|portfolioFilter|data-filter/, "the post client should not keep stale filter behavior or URL state");
   assert.match(script, /portfolioScroll/);
   assert.match(script, /opener\.focus/);
   assert.match(css, /\.creator-post-grid\{display:grid;grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/);

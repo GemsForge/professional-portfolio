@@ -1,6 +1,6 @@
 import { cp, readFile, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { siApple, siDotnet, siOpenjdk, siPostgresql } from "simple-icons";
+import { siApple, siDotnet, siMui, siOpenjdk, siPostgresql, siSpotify } from "simple-icons";
 // Node 22.13+ strips the catalog's TypeScript types at import time; no runtime
 // transpiler or JSX dependency is needed for this build-time-only module.
 import { renderDependencyGroup } from "./auralogbook-dependencies.mts";
@@ -25,8 +25,16 @@ const TECH_PILL_MARKS = {
   TypeScript: { image: "/assets/auralogbook-stack/typescript.png" },
   Redux: { image: "/assets/auralogbook-stack/redux.png" },
   "Redux Toolkit": { image: "/assets/auralogbook-stack/redux.png" },
+  "Redux Toolkit · RTK Query": { image: "/assets/auralogbook-stack/redux.png" },
+  "C#": { image: "/assets/auralogbook-stack/csharp.png" },
+  MUI: { icon: siMui },
+  "MUI · Joy UI": { icon: siMui },
   PostgreSQL: { icon: siPostgresql },
   SQLite: { image: "/assets/auralogbook-stack/sqlite.png" },
+  Dapper: { image: "/assets/auralogbook-stack/dapper.png" },
+  JWT: { image: "/assets/auralogbook-stack/jwt-bearer.png" },
+  "Spotify API": { icon: siSpotify },
+  "Spotify Web API · OAuth": { icon: siSpotify },
   Java: { icon: siOpenjdk },
   Notion: { image: "/assets/auralogbook-stack/notion.png" },
   "Notion API": { image: "/assets/auralogbook-stack/notion.png" },
@@ -62,11 +70,12 @@ function renderProfileTechStrip() {
 
 /** Emits the image-led, progressive-enhancement post grid from the typed catalog. */
 function renderCreatorGrid() {
-  return PORTFOLIO_POSTS.filter((post) => post.category !== "tech-stack").map((post, index) => {
+  // Keep the creator-direction story available to post navigation without featuring it as a grid card.
+  return PORTFOLIO_POSTS.filter((post) => post.category !== "tech-stack" && post.slug !== "portfolio-direction").map((post, index) => {
     const fallback = post.caseStudy ?? (post.slug === "tech-stack" ? "/about/" : "#about");
     const category = post.category === "tech-stack" ? "Tech Stack" : post.category === "process" ? "Process" : "Project";
     const label = `${post.title}. ${category}. ${post.eyebrow}`;
-    return `<a class="creator-post-tile tile-${post.slug}" href="${fallback}" data-post-link="${post.slug}" data-category="${post.category}" aria-label="Open post: ${label}"><span class="tile-art"><img src="${post.image}" alt="" width="720" height="720" loading="${index < 3 ? "eager" : "lazy"}"><span class="tile-overline">${category} <span aria-hidden="true">✳</span></span><span class="tile-title">${post.title}</span><span class="tile-caption">${post.caption}</span><span class="tile-open" aria-hidden="true">↗</span></span></a>`;
+    return `<a class="creator-post-tile tile-${post.slug}" href="${fallback}" data-post-link="${post.slug}" aria-label="Open post: ${label}"><span class="tile-art"><img src="${post.image}" alt="" width="720" height="720" loading="${index < 3 ? "eager" : "lazy"}"><span class="tile-overline">${category} <span aria-hidden="true">✳</span></span><span class="tile-title">${post.title}</span><span class="tile-caption">${post.caption}</span><span class="tile-open" aria-hidden="true">↗</span></span></a>`;
   }).join("");
 }
 
@@ -81,12 +90,14 @@ function renderPostViews() {
     ].filter(Boolean).join("");
     const groupedStack = post.stackGroups ? `<section class="stack-groups" aria-label="Technology groups">${post.stackGroups.map((group) => `<div class="stack-group"><h4>${group.label}</h4><div>${group.items.map((item) => item.href || item.postSlug ? `<a class="tech-chip" href="${item.href ?? `#post/${item.postSlug}`}"${item.postSlug ? ` data-post-link="${item.postSlug}"` : ""}>${renderTechPillContents(item.label)}<span aria-hidden="true"> ↗</span></a>` : `<span class="tech-chip">${renderTechPillContents(item.label)}</span>`).join("")}</div></div>`).join("")}</section>` : "";
     const techContent = post.stackGroups ? groupedStack : `<div class="post-tool-list">${chips}</div>`;
-    const facts = post.role && post.evidence ? `<dl class="post-facts"><div><dt>My role</dt><dd>${post.role}</dd></div><div><dt>Evidence &amp; status</dt><dd>${post.evidence}</dd></div></dl>` : "";
+    // Let the story name its status plainly while keeping the shared facts layout unchanged.
+    const facts = post.role && post.evidence ? `<dl class="post-facts"><div><dt>My role</dt><dd>${post.role}</dd></div><div><dt>${post.evidenceLabel ?? "Evidence &amp; status"}</dt><dd>${post.evidence}</dd></div></dl>` : "";
     const techSection = post.category === "tech-stack" ? `<section class="post-tools stack-profile">${techContent}</section>` : `<section class="post-tools"><h3>Tech</h3>${techContent}</section>`;
     // Reserve an in-story mount point so mobile can place the matching visual between Tech and the walkthrough.
     const mobileVisualSlot = `<div class="post-mobile-visual" data-mobile-visual></div>`;
-    const decisionsSection = post.decisions.length ? `<section class="post-decisions"><h3>Decisions that shaped it</h3><ul>${decisions}</ul></section>` : "";
-    const walkthrough = post.walkthrough ? `<section class="walkthrough" aria-labelledby="walkthrough-${post.slug}"><div class="walkthrough-heading"><div><span class="eyebrow">Illustrative prototype</span><h3 id="walkthrough-${post.slug}">Walk through the idea</h3></div><span class="walkthrough-counter" data-step-counter>01 / ${String(post.walkthrough.length).padStart(2, "0")}</span></div><ol class="walkthrough-steps" data-walkthrough="${post.slug}">${post.walkthrough.map((step, stepIndex) => `<li data-walkthrough-step="${stepIndex}"><span class="walkthrough-step-no">${String(stepIndex + 1).padStart(2, "0")}</span><div><h4>${step.title}</h4><p>${step.detail}</p></div></li>`).join("")}</ol><p class="walkthrough-status" data-walkthrough-status aria-live="polite"></p><div class="walkthrough-controls" hidden><button type="button" data-step-prev>← Previous</button><button type="button" data-step-next>Next step →</button></div><p class="walkthrough-disclaimer">A guided prototype based on the documented project flow; not a live production app.</p></section>` : "";
+    // Keep each story heading aligned with the kind of evidence in its decision list.
+    const decisionsSection = post.decisions.length ? `<section class="post-decisions"><h3>${post.decisionsTitle ?? "Decisions that shaped it"}</h3><ul>${decisions}</ul></section>` : "";
+    const walkthrough = post.walkthrough ? `<section class="walkthrough" aria-labelledby="walkthrough-${post.slug}"><div class="walkthrough-heading"><div><span class="eyebrow">Illustrative prototype</span><h3 id="walkthrough-${post.slug}">Walkthrough</h3></div><span class="walkthrough-counter" data-step-counter>01 / ${String(post.walkthrough.length).padStart(2, "0")}</span></div><ol class="walkthrough-steps" data-walkthrough="${post.slug}">${post.walkthrough.map((step, stepIndex) => `<li data-walkthrough-step="${stepIndex}"><span class="walkthrough-step-no">${String(stepIndex + 1).padStart(2, "0")}</span><div><h4>${step.title}</h4><p>${step.detail}</p></div></li>`).join("")}</ol><p class="walkthrough-status" data-walkthrough-status aria-live="polite"></p><div class="walkthrough-controls" hidden><button type="button" data-step-prev>← Previous</button><button type="button" data-step-next>Next step →</button></div><p class="walkthrough-disclaimer">A guided prototype based on the documented project flow; not a live production app.</p></section>` : "";
     const visualHotspots = post.walkthrough ? post.walkthrough.map((step, stepIndex) => `<button type="button" class="visual-hotspot" data-visual-hotspot="${stepIndex}" data-hotspot-label="${step.hotspot.label}" data-hotspot-detail="${step.detail}" style="--hotspot-x:${step.hotspot.x}%;--hotspot-y:${step.hotspot.y}%" aria-label="Explore: ${step.hotspot.label}"><span aria-hidden="true">+</span></button>`).join("") : "";
     return `<article class="post-story" data-post-view="${post.slug}" aria-labelledby="post-title-${post.slug}" hidden><template class="post-visual-template"><figure class="post-main-visual"><div class="post-visual-stage"><img src="${post.image}" alt="${post.imageAlt}" width="960" height="960">${visualHotspots}</div></figure></template><div class="post-story-topline"><span>${post.eyebrow}</span><span>${String(index + 1).padStart(2, "0")} / ${String(PORTFOLIO_POSTS.length).padStart(2, "0")}</span></div><h2 id="post-title-${post.slug}">${post.title}</h2><p class="post-lead">${post.caption}</p>${facts}${techSection}${mobileVisualSlot}${walkthrough}${decisionsSection}${links ? `<nav class="post-actions" aria-label="Related project links">${links}</nav>` : ""}<nav class="post-sequence" aria-label="Browse other posts"><button type="button" data-adjacent-post="previous">← Previous post</button><button type="button" data-adjacent-post="next">Next post →</button></nav></article>`;
   }).join("");

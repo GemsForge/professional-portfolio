@@ -22,21 +22,10 @@
   if (!(grid instanceof HTMLElement) || !(dialog instanceof HTMLDialogElement) || !(media instanceof HTMLElement) || !(storyHost instanceof HTMLElement) || !(stories instanceof HTMLElement)) return;
 
   const posts = [...stories.querySelectorAll("[data-post-view]")];
-  const tiles = [...grid.querySelectorAll("[data-post-link]")];
-  const filters = [...document.querySelectorAll("[data-filter]")];
   const walkthroughPositions = new Map();
-  let activeFilter = "all";
   let activePost = null;
   let opener = null;
   let openedFromGrid = false;
-
-  /** Updates the active category while keeping the same page and URL entry. */
-  function applyFilter(filter, updateHistory = true) {
-    activeFilter = ["all", "project", "process", "tech-stack"].includes(filter) ? filter : "all";
-    for (const tile of tiles) tile.hidden = activeFilter !== "all" && tile.dataset.category !== activeFilter;
-    for (const button of filters) button.setAttribute("aria-pressed", String(button.dataset.filter === activeFilter));
-    if (updateHistory) history.replaceState({ ...history.state, portfolioFilter: activeFilter }, "", location.href);
-  }
 
   /** Sets the visible walkthrough step and its matching image hotspot. */
   function setWalkthroughStep(story, nextIndex) {
@@ -84,7 +73,7 @@
     return true;
   }
 
-  /** Returns the open post to the grid and restores its category and scroll. */
+  /** Returns the open post to the grid and restores the visitor's scroll position. */
   function finishClose(state = history.state) {
     if (dialog.open) dialog.close();
     if (activePost) {
@@ -93,7 +82,6 @@
     }
     activePost = null;
     media.replaceChildren();
-    applyFilter(state?.portfolioFilter ?? activeFilter, false);
     if (typeof state?.portfolioScroll === "number") window.scrollTo({ top: state.portfolioScroll, behavior: "instant" });
     if (opener?.isConnected) opener.focus({ preventScroll: true });
     opener = null;
@@ -106,7 +94,7 @@
       history.back();
       return;
     }
-    if (location.hash.startsWith("#post/")) history.replaceState({ ...history.state, portfolioFilter: activeFilter }, "", `${location.pathname}${location.search}`);
+    if (location.hash.startsWith("#post/")) history.replaceState({ ...history.state }, "", `${location.pathname}${location.search}`);
     finishClose(history.state);
   }
 
@@ -115,7 +103,7 @@
     if (!posts.some((item) => item.dataset.postView === slug)) return;
     if (!dialog.open) opener = trigger instanceof HTMLElement ? trigger : document.activeElement;
     openedFromGrid = true;
-    history.pushState({ portfolioPost: true, portfolioFilter: activeFilter, portfolioScroll: window.scrollY }, "", `#post/${slug}`);
+    history.pushState({ portfolioPost: true, portfolioScroll: window.scrollY }, "", `#post/${slug}`);
     renderPost(slug);
   }
 
@@ -125,15 +113,13 @@
     if (match) {
       const slug = decodeURIComponent(match[1]);
       openedFromGrid = Boolean(history.state?.portfolioPost);
-      applyFilter(history.state?.portfolioFilter ?? activeFilter, false);
       renderPost(slug);
       return;
     }
     if (dialog.open) finishClose(history.state);
-    else if (history.state?.portfolioFilter) applyFilter(history.state.portfolioFilter, false);
   }
 
-  for (const button of filters) button.addEventListener("click", () => applyFilter(button.dataset.filter));
+  // Featured tiles are all projects; grid clicks open stories without category or filter state.
   document.addEventListener("click", (event) => {
     const target = event.target instanceof Element ? event.target : null;
     const link = target?.closest("[data-post-link]");
@@ -170,6 +156,5 @@
   window.addEventListener("popstate", syncHistory);
   window.addEventListener("hashchange", syncHistory);
   window.addEventListener("resize", placePostVisual);
-  applyFilter(history.state?.portfolioFilter ?? "all", false);
   syncHistory();
 })();

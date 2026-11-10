@@ -30,7 +30,11 @@ export interface PortfolioPostDefinition {
   imageAlt: string;
   role?: string;
   decisions: string[];
+  /** Lets each project use a natural, specific label for implementation status. */
+  evidenceLabel?: string;
   evidence?: string;
+  /** Replaces the generic heading when the listed choices are technical implementation details. */
+  decisionsTitle?: string;
   tools: string[];
   caseStudy?: string;
   source?: string;
@@ -127,21 +131,27 @@ export const HOME_PROJECT_SLUGS = [
  * The first three entries preserve the requested opening row; Tech Stack leads row two.
  */
 export const PORTFOLIO_POSTS: PortfolioPostDefinition[] = [
+  // Keep shipped behavior distinct from planned work and tie technical claims to the reviewed app source.
   {
     slug: "auralogbook", title: "Aura Logbook", category: "project", eyebrow: "Full-stack application · In development",
-    caption: "A mood-reflection journal shaped around the way you make meaning.", image: "/assets/aura-logbook.png", imageAlt: "Open reflection journal with mood markers",
-    role: "Build the React and TypeScript app alongside its .NET API.",
+    caption: "A mood journal with three reflection paths, built in React and .NET.", image: "/assets/aura-logbook.png", imageAlt: "Open reflection journal with mood markers",
+    role: "I’m building the React 19/TypeScript client and .NET 9 API, from typed forms and RTK Query to JWT-protected endpoints and repository-backed services.",
+    evidenceLabel: "Where it stands",
+    decisionsTitle: "Technical choices",
     decisions: [
-      "Keep check-ins to a date and moods; make notes optional so logging stays quick while entries remain useful for history and trends.",
-      "Offer Mindful Living, Astrology & Energy, and Faith & Religion as user-chosen paths instead of assuming one worldview.",
-      "Fetch weather for dashboard context, not as part of a mood entry; conditions change independently of a person’s reflection.",
+      "RTK Query attaches the JWT and refreshes mood, history, and dashboard data after writes.",
+      "Development and staging use Dapper with SQLite. A save writes the entry and its mood rows in one transaction; production still uses JSON repositories.",
+      "Spotify uses OAuth with PKCE. The API encrypts tokens; the UI gets playback and playlist metadata, never credentials.",
+      "Photo files stay out of public assets. Authenticated endpoints enforce owner access; SQLite stores the attachment metadata.",
     ],
-    evidence: "Architecture, schemas, source, and tests are documented; the app is in development.",
-    tools: ["React", "TypeScript", ".NET", "MUI", "Redux Toolkit", "REST API"], caseStudy: "/portfolio/projects/auralogbook/", source: "https://github.com/GemsForge/aura-logbook-api",
+    evidence: "I’ve implemented sign-in, mood create/edit/delete, calendar history, dashboard stats and charts, private photo uploads, and Spotify now-playing/playlists. It’s still in development; end-to-end checks remain.",
+    tools: ["React", "TypeScript", "C#", ".NET", "Redux Toolkit · RTK Query", "MUI · Joy UI", "Recharts", "SQLite", "Dapper", "JWT", "Spotify Web API · OAuth", "Private photo API", "Vitest", "Testing Library", "xUnit", "Moq"], caseStudy: "/portfolio/projects/auralogbook/", source: "https://github.com/GemsForge/aura-logbook-api",
     walkthrough: [
-      { title: "Check in", detail: "Sign in and start a focused mood entry.", hotspot: { x: 48, y: 42, label: "Mood check-in" } },
-      { title: "Capture context", detail: "Choose a date and moods; add an optional note.", hotspot: { x: 66, y: 58, label: "Entry context" } },
-      { title: "Review patterns", detail: "Explore history and dashboard summaries in this concept flow.", hotspot: { x: 38, y: 68, label: "Reflection history" } },
+      { title: "Choose a path", detail: "Mindfulness, Energy, or Faith sets the prompts and reflection text for the same check-in flow.", hotspot: { x: 48, y: 42, label: "Reflection path" } },
+      { title: "Log a check-in", detail: "A typed React form validates the date, selected moods, and optional note before RTK Query sends them to the .NET API.", hotspot: { x: 66, y: 58, label: "Mood check-in" } },
+      { title: "Add a photo", detail: "After saving, attach photos from History. Authenticated API endpoints connect each private file to its owner and mood entry.", hotspot: { x: 38, y: 68, label: "Private photo" } },
+      { title: "Connect Spotify", detail: "Server-side OAuth lets the profile request current playback and playlists. Spotify tracks are not saved to mood entries.", hotspot: { x: 57, y: 46, label: "Spotify connection" } },
+      { title: "Look back", detail: "The API supplies calendar history, streaks, and chart data; RTK Query refreshes related data after mood edits.", hotspot: { x: 48, y: 72, label: "History and dashboard" } },
     ],
   },
   {
