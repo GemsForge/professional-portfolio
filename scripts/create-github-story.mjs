@@ -7,9 +7,9 @@ Options:
   --labels a,b             Additional labels
   --assignees a,b          GitHub usernames to assign
   --milestone NUMBER       Milestone number
-  --parent-issue NUMBER    Native parent/sub-issue relationship
-  --blocked-by a,b         Native prerequisite issue numbers
-  --blocking a,b           Native dependent issue numbers
+  --parent-issue NUMBER    Not supported yet; link in GitHub after creation
+  --blocked-by a,b         Not supported yet; link in GitHub after creation
+  --blocking a,b           Not supported yet; link in GitHub after creation
   --repo OWNER/REPOSITORY  Repository (defaults to GITHUB_REPOSITORY)
 `;
 
@@ -53,18 +53,22 @@ const parseArgs = (args) => {
 const runGh = (args) => JSON.parse(execFileSync("gh", args, { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }));
 export function createStory(options, run = runGh) {
   const labels = inferLabels(options.title, options.labels);
+  // The metadata workflow has no inputs for relationships; fail before creating
+  // the issue rather than dropping them silently.
+  if (options.parentIssue || options.blockedBy?.length || options.blocking?.length) {
+    throw new Error("--parent-issue, --blocked-by, and --blocking are not supported by the metadata workflow; link them in GitHub after creation.");
+  }
   const issueArgs = ["api", `repos/${options.repo}/issues`, "--method", "POST", "-f", `title=${options.title}`];
   if (options.body) issueArgs.push("-f", `body=${options.body}`);
   for (const label of labels) issueArgs.push("-f", `labels[]=${label}`);
   for (const assignee of options.assignees) issueArgs.push("-f", `assignees[]=${assignee}`);
   if (options.milestone) issueArgs.push("-f", `milestone=${options.milestone}`);
   const issue = run(issueArgs);
+  const numberedTitle = options.title.replace(/^([^:]+):\s+/, `$1: #${issue.number} `);
+  run(["api", `repos/${options.repo}/issues/${issue.number}`, "--method", "PATCH", "-f", `title=${numberedTitle}`]);
+  // No manual dispatch: the workflow's `issues: opened` trigger syncs metadata
+  // automatically, and its workflow_dispatch only accepts a PR number.
   const metadataWorkflow = options.metadataWorkflow || process.env.GITHUB_METADATA_WORKFLOW || "sync-issue-metadata.yml";
-  const workflowArgs = ["workflow", "run", metadataWorkflow, "--repo", options.repo, "--ref", "master", "-f", `issue_number=${issue.number}`];
-  if (options.parentIssue) workflowArgs.push("-f", `parent_issue=${options.parentIssue}`);
-  if (options.blockedBy.length) workflowArgs.push("-f", `blocked_by=${options.blockedBy.join(",")}`);
-  if (options.blocking.length) workflowArgs.push("-f", `blocking=${options.blocking.join(",")}`);
-  run(workflowArgs);
   return { issueNumber: issue.number, issueURL: issue.html_url, workflow: metadataWorkflow };
 }
 if (process.argv[1]?.endsWith("create-github-story.mjs")) {
