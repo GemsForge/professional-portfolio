@@ -87,7 +87,7 @@ test("generated post viewer retains project routes, source links, and the one-pa
   assert.match(html, /href="\/admin\/">Admin<\/a>/);
   assert.match(html, /href="\/knowledge\/">Dev Wiki<\/a>/);
   const auraPost = html.slice(html.indexOf('data-post-view="auralogbook"'), html.indexOf('</article>', html.indexOf('data-post-view="auralogbook"')));
-  assert.ok(auraPost.indexOf('<dl class="post-facts">') < auraPost.indexOf('<section class="post-tools"><h3>Tech</h3>') && auraPost.indexOf('<section class="post-tools"><h3>Tech</h3>') < auraPost.indexOf('<section class="walkthrough"') && auraPost.indexOf('<section class="walkthrough"') < auraPost.indexOf('<section class="post-decisions">'), "Tech and the prototype should follow the role and evidence table");
+  assert.ok(auraPost.indexOf('<dl class="post-facts">') < auraPost.indexOf('<section class="post-tools"><h3>Tech</h3>') && auraPost.indexOf('<section class="post-tools"><h3>Tech</h3>') < auraPost.indexOf('data-mobile-visual') && auraPost.indexOf('data-mobile-visual') < auraPost.indexOf('<section class="walkthrough"') && auraPost.indexOf('<section class="walkthrough"') < auraPost.indexOf('<section class="post-decisions">'), "Tech, the mobile visual, and the prototype should follow the role and evidence table in order");
   assert.match(auraPost, /<img src="\/assets\/aura-logbook\.png" alt="Open reflection journal with mood markers"/);
   assert.match(auraPost, /class="tech-chip"/);
   assert.match(auraPost, /\/assets\/auralogbook-stack\/react\.png/);

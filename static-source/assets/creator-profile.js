@@ -47,9 +47,19 @@
     steps.forEach((step, stepIndex) => { step.hidden = stepIndex !== index; });
     const counter = story.querySelector("[data-step-counter]");
     if (counter) counter.textContent = `${String(index + 1).padStart(2, "0")} / ${String(steps.length).padStart(2, "0")}`;
-    for (const hotspot of media.querySelectorAll("[data-visual-hotspot]")) hotspot.hidden = Number(hotspot.dataset.visualHotspot) !== index;
+    for (const hotspot of dialog.querySelectorAll("[data-visual-hotspot]")) hotspot.hidden = Number(hotspot.dataset.visualHotspot) !== index;
     const controls = story.querySelector(".walkthrough-controls");
     if (controls) controls.hidden = false;
+  }
+
+  /** Moves the current image after Tech on phones and restores the desktop media column at wider sizes. */
+  function placePostVisual() {
+    if (!activePost) return;
+    const visual = dialog.querySelector(".post-main-visual");
+    const mobileSlot = activePost.querySelector("[data-mobile-visual]");
+    if (!visual || !mobileSlot) return;
+    if (window.matchMedia("(max-width: 650px)").matches) mobileSlot.append(visual);
+    else media.append(visual);
   }
 
   /** Opens the selected generated post and prepares its evidence image. */
@@ -64,6 +74,7 @@
     activePost.hidden = false;
     storyHost.replaceChildren(activePost);
     media.replaceChildren(activePost.querySelector(".post-visual-template").content.cloneNode(true));
+    placePostVisual();
     const heading = activePost.querySelector("h2[id]");
     if (heading) dialog.setAttribute("aria-labelledby", heading.id);
     if (!dialog.open) dialog.showModal();
@@ -158,6 +169,7 @@
   dialog.addEventListener("click", (event) => { if (event.target === dialog) requestClose(); });
   window.addEventListener("popstate", syncHistory);
   window.addEventListener("hashchange", syncHistory);
+  window.addEventListener("resize", placePostVisual);
   applyFilter(history.state?.portfolioFilter ?? "all", false);
   syncHistory();
 })();
