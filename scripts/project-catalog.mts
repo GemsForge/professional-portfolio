@@ -94,11 +94,16 @@ export const PROJECTS = {
   },
 } satisfies Record<string, ProjectDefinition>;
 
-/** Ordered featured-project selection for the home page. */
+/**
+ * Ordered featured-project selection for the home page. Code-backed work leads
+ * so recruiters see full-stack and API evidence first: the React/.NET app, then
+ * the REST/JSON integration, then the Notion API system with its architecture
+ * diagram. The Projects page keeps the full catalog in the same priority.
+ */
 export const HOME_PROJECT_SLUGS = [
   "auralogbook",
+  "notion-api-shortcuts",
   "75-hard-automation",
-  "apple-ecosystem",
 ] as const;
 
 /** Renders the static fallback card used while preparing generated pages. */
