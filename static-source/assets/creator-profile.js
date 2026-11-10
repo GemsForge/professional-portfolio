@@ -34,8 +34,6 @@
     const index = Math.max(0, Math.min(nextIndex, steps.length - 1));
     walkthroughPositions.set(story.dataset.postView, index);
     steps.forEach((step, stepIndex) => { step.hidden = stepIndex !== index; });
-    const counter = story.querySelector("[data-step-counter]");
-    if (counter) counter.textContent = `${String(index + 1).padStart(2, "0")} / ${String(steps.length).padStart(2, "0")}`;
     for (const hotspot of dialog.querySelectorAll("[data-visual-hotspot]")) hotspot.hidden = Number(hotspot.dataset.visualHotspot) !== index;
     const controls = story.querySelector(".walkthrough-controls");
     if (controls) controls.hidden = false;
