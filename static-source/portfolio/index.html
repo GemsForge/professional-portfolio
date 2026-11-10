@@ -3,72 +3,122 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Diamond Brown is a full-stack developer in Atlanta, Georgia. Explore project work, process, and technical evidence.">
+<meta name="description" content="Diamond Brown is a Software Engineer Analyst at ADP and a full-stack developer in Atlanta. Explore experience, projects, and technical evidence.">
 <meta name="theme-color" content="#1e2823">
 <title>Diamond Brown · Full-stack developer &amp; creative technologist</title>
 <link rel="icon" type="image/png" href="/assets/brandmark.png">
 <link rel="canonical" href="https://www.gemsforge.com/">
-<!-- Version responsive profile styles so browsers refresh mobile navigation rules when they change. -->
-<link rel="stylesheet" href="/assets/site.css?v=portfolio-width-cap-20261109">
+<!-- Version the stylesheet so browsers pick up the Direction D social-profile rules. -->
+<link rel="stylesheet" href="/assets/site.css?v=social-profile-d-20261110">
 </head>
 <body class="creator-page">
 <a class="skip" href="#main">Skip to content</a>
-<header class="creator-topbar">
-  <div class="creator-topbar-inner">
-    <a class="brand" href="/" aria-label="Diamond Brown portfolio home"><img src="/assets/brandmark.png" alt="" width="44" height="44"><span>Diamond Brown</span></a>
-    <nav class="links" aria-label="Portfolio navigation">
-      <a href="#feed">Work</a><a href="#about">About</a><a href="/assets/diamond-brown-resume.pdf">Résumé</a><a href="#contact">Contact</a>
-    </nav>
-  </div>
+<header class="sp-topbar">
+  <nav class="sp-topbar-inner" aria-label="Portfolio navigation">
+    <a class="sp-handle" href="/" aria-label="Diamond Brown portfolio home">diamond.brown</a>
+    <div class="sp-topbar-links"><a href="#posts">Posts</a><a href="#highlights">Experience</a><a href="#contact">Contact</a></div>
+  </nav>
 </header>
-<main id="main">
-  <div class="creator-shell">
-    <section class="profile-header" aria-label="Creator profile">
-      <section class="profile-card" aria-labelledby="creator-name">
-        <div class="profile-summary">
-          <img class="profile-avatar" src="/assets/profile-photo.jpg" alt="Diamond Brown smiling at the camera." width="1200" height="1200">
-          <div class="profile-intro">
-            <h1 id="creator-name">Diamond Brown</h1>
-            <p class="profile-kicker">Full-stack developer</p>
-            <p class="profile-location"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"></path><circle cx="12" cy="10" r="2.5"></circle></svg> Atlanta, Georgia · Open to remote &amp; hybrid</p>
-            <p class="profile-bio">I build apps, organize the work behind them, and shape how people use them. Interested in application development, systems analysis, QA automation, or technical enablement? Tell me what your team is working on.</p>
-            <!-- Keep résumé and contact destinations together so visitors can reach them from the profile. -->
-            <div id="contact" class="profile-links profile-actions"><a href="/assets/diamond-brown-resume.pdf"><svg class="profile-button-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"></path><path d="M14 3v5h5M9 13h6M9 17h6"></path></svg>View résumé</a><a href="mailto:diamondbrown.tech@gmail.com"><svg class="profile-button-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m4 7 8 6 8-6"></path></svg>Contact</a><a href="https://www.linkedin.com/in/diamond-brown/" target="_blank" rel="noopener noreferrer"><img class="profile-button-logo" src="/assets/social/linkedin.svg" alt="" aria-hidden="true">LinkedIn</a><a href="https://github.com/GemsForge" target="_blank" rel="noopener noreferrer"><img class="profile-button-logo" src="/assets/social/github.svg" alt="" aria-hidden="true">GitHub</a></div>
-          </div>
-        </div>
-      </section>
-      <!-- Existing technology marks open the stack story; on mobile this row scrolls without wrapping. -->
-      <div id="profile-tech-strip-slot"></div>
-    </section>
-    <div class="creator-main-column">
-      <section id="feed" class="feed-section" aria-label="Portfolio posts">
-        <!-- Build-time generation keeps the profile grid and post stories on the same typed catalog. -->
-        <div id="creator-post-grid" class="creator-post-grid" aria-label="Portfolio posts"></div>
-      </section>
-      <section id="about" class="journal-about" aria-labelledby="about-heading">
-        <div class="eyebrow">ABOUT</div>
-        <h2 id="about-heading">What I work on</h2>
-        <p>I’ve worked on software at ADP, helped small businesses organize their digital tools through GemsForge, and built projects of my own. I like figuring out what people need, building it, and making it simple to use.</p>
-        <div class="about-capabilities">
-          <div><span>01</span><h3>Build software</h3><p>React, TypeScript, C#/.NET, APIs, SQL, and automated tests.</p></div>
-          <div><span>02</span><h3>Plan the work</h3><p>Break projects into steps, track decisions, and make the next task clear.</p></div>
-          <div><span>03</span><h3>Make it easy to use</h3><p>Plan screens and flows so people can figure out what to do.</p></div>
-        </div>
-      </section>
-      <!-- TODO: Remove this process section after its replacement content is approved. Hidden from visitors for now. -->
-      <section class="journal-process" aria-labelledby="process-heading" hidden>
-        <div><div class="eyebrow">PROCESS</div><h2 id="process-heading">How I work</h2><p>I start by understanding the problem, then plan, build, and check the result.</p></div>
-        <ol><li><span>01</span><div><h3>Understand the friction</h3><p>Map the current workflow, clarify requirements, and find where people or information get stuck.</p></div></li><li><span>02</span><div><h3>Build the right structure</h3><p>Choose a maintainable approach, define the data and components, and implement with purpose.</p></div></li><li><span>03</span><div><h3>Test, document, refine</h3><p>Check behavior, make the process repeatable, and automate where it reduces real work.</p></div></li></ol>
-      </section>
+<main id="main" class="sp-main">
+  <!-- Direction D: social-profile header. Every fact here comes from the résumé PDF. -->
+  <section class="sp-profile" aria-labelledby="creator-name">
+    <div class="sp-avatar-ring"><img class="sp-avatar" src="/assets/profile-photo.jpg" alt="Diamond Brown smiling at the camera." width="1200" height="1200"></div>
+    <div class="sp-profile-body">
+      <div class="sp-name-row">
+        <h1 id="creator-name">Diamond Brown</h1>
+        <div id="contact" class="sp-actions"><a class="sp-button sp-button-primary" href="mailto:diamondbrown.tech@gmail.com">Contact</a><a class="sp-button" href="/assets/diamond-brown-resume.pdf">Résumé</a></div>
+      </div>
+      <!-- Stats are counts from the résumé and project catalog, never social engagement. -->
+      <ul class="sp-stats" aria-label="Profile stats">
+        <li><strong>6</strong> projects</li>
+        <li><strong>4</strong> roles</li>
+        <li><strong>13</strong> yrs Army Guard</li>
+      </ul>
+      <div class="sp-bio">
+        <p class="sp-bio-role">Software Engineer Analyst @ ADP</p>
+        <p class="sp-bio-muted">Full-stack · React · TypeScript · C#/.NET · SQL</p>
+        <p>U.S. Secret clearance · Army National Guard Staff Sergeant</p>
+        <p>Cut dev onboarding from two weeks to three days.</p>
+        <p class="sp-bio-muted">Atlanta · open to remote or hybrid</p>
+        <p class="sp-bio-links"><a href="/assets/diamond-brown-resume.pdf">Résumé</a><a href="https://github.com/GemsForge" target="_blank" rel="noopener noreferrer">github.com/GemsForge</a><a href="https://www.linkedin.com/in/diamond-brown/" target="_blank" rel="noopener noreferrer">LinkedIn</a></p>
+      </div>
     </div>
-  </div>
+  </section>
+
+  <!-- Highlights link to real pages; creator-profile.js upgrades them to story cards. -->
+  <section id="highlights" class="sp-highlights" aria-label="Experience highlights">
+    <ul>
+      <li><a href="/work/enterprise-applications/" data-highlight-link="adp"><span class="sp-highlight-ring sp-highlight-dark">ADP</span><span class="sp-highlight-label">ADP</span></a></li>
+      <li><a href="/about/" data-highlight-link="army"><span class="sp-highlight-ring sp-highlight-sage">SSG</span><span class="sp-highlight-label">Army Guard</span></a></li>
+      <li><a href="/work/gemsforge-business-systems/" data-highlight-link="gemsforge"><span class="sp-highlight-ring sp-highlight-light">GF</span><span class="sp-highlight-label">GemsForge</span></a></li>
+      <li><a href="/assets/diamond-brown-resume.pdf" data-highlight-link="apprentice"><span class="sp-highlight-ring sp-highlight-quiet">Java</span><span class="sp-highlight-label">Apprentice</span></a></li>
+      <li><a href="/assets/diamond-brown-resume.pdf"><span class="sp-highlight-ring sp-highlight-quiet"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"></path><path d="M14 3v5h5M9 13h6M9 17h6"></path></svg></span><span class="sp-highlight-label">Résumé</span></a></li>
+    </ul>
+  </section>
+
+  <nav class="sp-sections" aria-label="Profile sections">
+    <a href="#posts" aria-current="true">Posts</a><a href="/portfolio/projects/">Projects</a><a href="#highlights">Experience</a>
+  </nav>
+
+  <section id="posts" class="feed-section" aria-label="Posts">
+    <!-- Build-time generation keeps the grid and post stories on the same typed catalog. -->
+    <div id="creator-post-grid" class="creator-post-grid" aria-label="Portfolio posts"></div>
+  </section>
 </main>
 <footer class="footer creator-footer"><div class="wrap"><div class="footer-brand"><img src="/assets/brandmark.png" alt="" width="45" height="45"><span>© 2026 Diamond Brown · GemsForge</span></div><nav aria-label="Footer navigation"><a href="/portfolio/projects/">All project stories</a><a href="/about/">About</a><a href="/assets/diamond-brown-resume.pdf">Résumé</a></nav></div></footer>
 <dialog id="post-dialog" class="post-dialog"><div class="post-dialog-shell"><button type="button" class="post-close" data-close-post aria-label="Close post">×</button><div class="post-view-media" id="post-media"></div><div class="post-view-story" id="post-story" tabindex="-1"><div id="post-stories"></div></div></div></dialog>
+<!-- Experience stories: one card per role, in highlight order. Facts match the résumé PDF. -->
+<dialog id="highlight-dialog" class="sp-story-dialog" aria-label="Experience highlight">
+  <article class="sp-story" data-highlight-view="adp" aria-labelledby="story-adp" hidden>
+    <div class="sp-story-progress" aria-hidden="true"><span class="is-active"></span><span></span><span></span><span></span></div>
+    <header class="sp-story-head"><span class="sp-story-avatar">ADP</span><div><h2 id="story-adp-org">ADP</h2><p>February 2023 – present</p></div><button type="button" class="sp-story-close" data-close-highlight aria-label="Close highlight">×</button></header>
+    <div class="sp-story-body">
+      <p class="sp-story-eyebrow">Current role</p>
+      <h3 id="story-adp">Software Engineer Analyst</h3>
+      <p>Enterprise benefits-enrollment applications, from React UI to .NET APIs to SQL.</p>
+      <div class="sp-story-metric"><strong>2 weeks → 3 days</strong><span>Developer onboarding, after my Confluence setup guides</span></div>
+      <ul><li>React, TypeScript, Redux, C#/.NET, PostgreSQL, SQL Server</li><li>Reusable Mabl, JavaScript, and NUnit regression tests</li><li>Production debugging with Splunk and SQL</li></ul>
+    </div>
+    <footer class="sp-story-foot"><a class="sp-story-cta" href="/work/enterprise-applications/">Read about the enterprise apps work</a><button type="button" class="sp-story-next" data-highlight-next>Next: Army National Guard <span aria-hidden="true">›</span></button></footer>
+  </article>
+  <article class="sp-story" data-highlight-view="army" aria-labelledby="story-army" hidden>
+    <div class="sp-story-progress" aria-hidden="true"><span></span><span class="is-active"></span><span></span><span></span></div>
+    <header class="sp-story-head"><span class="sp-story-avatar">SSG</span><div><h2 id="story-army-org">Army National Guard</h2><p>May 2013 – present</p></div><button type="button" class="sp-story-close" data-close-highlight aria-label="Close highlight">×</button></header>
+    <div class="sp-story-body">
+      <p class="sp-story-eyebrow">Leadership</p>
+      <h3 id="story-army">Staff Sergeant and Squad Leader</h3>
+      <p>I lead training, personnel accountability, readiness, task coordination, and mission preparation.</p>
+      <div class="sp-story-metric"><strong>U.S. Secret clearance</strong><span>Held through the Army National Guard</span></div>
+    </div>
+    <footer class="sp-story-foot"><a class="sp-story-cta" href="/about/">Read more about me</a><button type="button" class="sp-story-next" data-highlight-next>Next: GemsForge <span aria-hidden="true">›</span></button></footer>
+  </article>
+  <article class="sp-story" data-highlight-view="gemsforge" aria-labelledby="story-gemsforge" hidden>
+    <div class="sp-story-progress" aria-hidden="true"><span></span><span></span><span class="is-active"></span><span></span></div>
+    <header class="sp-story-head"><span class="sp-story-avatar">GF</span><div><h2 id="story-gemsforge-org">GemsForge</h2><p>2024 – present</p></div><button type="button" class="sp-story-close" data-close-highlight aria-label="Close highlight">×</button></header>
+    <div class="sp-story-body">
+      <p class="sp-story-eyebrow">Founder</p>
+      <h3 id="story-gemsforge">Founder and Digital Solutions Analyst</h3>
+      <p>I analyze and improve small-business workflows across account access, file storage, business listings, website tools, and operations.</p>
+      <ul><li>Structured documentation and repeatable workflows</li><li>Technical tools that nontechnical users can adopt and maintain</li></ul>
+    </div>
+    <footer class="sp-story-foot"><a class="sp-story-cta" href="/work/gemsforge-business-systems/">Read about the GemsForge work</a><button type="button" class="sp-story-next" data-highlight-next>Next: Apprenticeship <span aria-hidden="true">›</span></button></footer>
+  </article>
+  <article class="sp-story" data-highlight-view="apprentice" aria-labelledby="story-apprentice" hidden>
+    <div class="sp-story-progress" aria-hidden="true"><span></span><span></span><span></span><span class="is-active"></span></div>
+    <header class="sp-story-head"><span class="sp-story-avatar">Java</span><div><h2 id="story-apprentice-org">Xpanxion / UST Step IT Up</h2><p>September 2022 – February 2023</p></div><button type="button" class="sp-story-close" data-close-highlight aria-label="Close highlight">×</button></header>
+    <div class="sp-story-body">
+      <p class="sp-story-eyebrow">Apprenticeship</p>
+      <h3 id="story-apprentice">Java Full-Stack Developer Apprentice</h3>
+      <p>Intensive Java full-stack training: object-oriented programming, Git, APIs, web development, and Agile workflows.</p>
+      <ul><li>Built a Spring Boot REST API for online I-9 form completion</li><li>Elected team captain</li><li>U.S. Department of Labor apprenticeship certificate, 2023</li></ul>
+    </div>
+    <footer class="sp-story-foot"><a class="sp-story-cta" href="/assets/diamond-brown-resume.pdf">Open the résumé</a><button type="button" class="sp-story-next" data-highlight-next>Back to the start <span aria-hidden="true">›</span></button></footer>
+  </article>
+</dialog>
 <!-- Keep primary destinations within thumb reach on phones; labels are exposed to assistive technology. -->
 <nav class="creator-mobile-nav" aria-label="Mobile navigation">
-  <a href="#feed" aria-label="Work"><svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1"></rect><rect x="13.5" y="3.5" width="7" height="7" rx="1"></rect><rect x="3.5" y="13.5" width="7" height="7" rx="1"></rect><rect x="13.5" y="13.5" width="7" height="7" rx="1"></rect></svg></a>
-  <a href="#about" aria-label="About"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"></circle><path d="M5 20c.5-3.5 3.2-5.5 7-5.5s6.5 2 7 5.5"></path></svg></a>
+  <a href="#posts" aria-label="Posts"><svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1"></rect><rect x="13.5" y="3.5" width="7" height="7" rx="1"></rect><rect x="3.5" y="13.5" width="7" height="7" rx="1"></rect><rect x="13.5" y="13.5" width="7" height="7" rx="1"></rect></svg></a>
+  <a href="#highlights" aria-label="Experience"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"></circle><path d="M5 20c.5-3.5 3.2-5.5 7-5.5s6.5 2 7 5.5"></path></svg></a>
   <a href="/assets/diamond-brown-resume.pdf" aria-label="Résumé"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M6 3.5h8l4 4v13H6z"></path><path d="M14 3.5v4h4M9 12h6M9 16h6"></path></svg></a>
   <a href="#contact" aria-label="Contact"><svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m4 7 8 6 8-6"></path></svg></a>
 </nav>

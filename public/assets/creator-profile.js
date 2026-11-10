@@ -1,20 +1,12 @@
 /**
- * Adds filtering, URL-backed post views, and guided prototype steps to the
- * statically rendered creator profile while keeping case-study links usable.
+ * Adds experience story cards, URL-backed post views, and guided prototype
+ * steps to the statically rendered social profile. Every highlight and tile is
+ * a real link first, so the page still works without JavaScript.
  */
 (() => {
-  const grid = document.querySelector("#creator-post-grid");
-  const profileHeader = document.querySelector(".profile-header");
-  const creatorTopbar = document.querySelector(".creator-topbar");
+  setUpHighlights();
 
-  // Reveal the compact navigation only after the full profile header has left the viewport.
-  if (profileHeader && creatorTopbar && "IntersectionObserver" in window) {
-    document.body.classList.add("creator-nav-ready");
-    const profileObserver = new IntersectionObserver(([entry]) => {
-      document.body.classList.toggle("creator-nav-visible", !entry.isIntersecting && entry.boundingClientRect.bottom <= 74);
-    }, { rootMargin: "-74px 0px 0px 0px", threshold: 0 });
-    profileObserver.observe(profileHeader);
-  }
+  const grid = document.querySelector("#creator-post-grid");
   const dialog = document.querySelector("#post-dialog");
   const media = document.querySelector("#post-media");
   const storyHost = document.querySelector("#post-story");
@@ -117,7 +109,7 @@
     if (dialog.open) finishClose(history.state);
   }
 
-  // Featured tiles are all projects; grid clicks open stories without category or filter state.
+  // Project tiles and the diagram post open project stories; highlight links are handled by setUpHighlights.
   document.addEventListener("click", (event) => {
     const target = event.target instanceof Element ? event.target : null;
     const link = target?.closest("[data-post-link]");
@@ -156,3 +148,47 @@
   window.addEventListener("resize", placePostVisual);
   syncHistory();
 })();
+
+/**
+ * Upgrades experience highlight links into full-screen story cards. Stories
+ * open in highlight order, Next wraps to the first story, and closing returns
+ * focus to the element that opened the dialog.
+ */
+function setUpHighlights() {
+  const dialog = document.querySelector("#highlight-dialog");
+  if (!(dialog instanceof HTMLDialogElement)) return;
+  const stories = [...dialog.querySelectorAll("[data-highlight-view]")];
+  let opener = null;
+
+  /** Shows one story and moves focus to its heading region. */
+  function show(name) {
+    const story = stories.find((item) => item.dataset.highlightView === name);
+    if (!story) return false;
+    for (const item of stories) item.hidden = item !== story;
+    dialog.setAttribute("aria-labelledby", story.getAttribute("aria-labelledby") ?? "");
+    if (!dialog.open) dialog.showModal();
+    story.querySelector("[data-close-highlight]")?.focus({ preventScroll: true });
+    return true;
+  }
+
+  document.addEventListener("click", (event) => {
+    const target = event.target instanceof Element ? event.target : null;
+    const link = target?.closest("[data-highlight-link]");
+    if (link instanceof HTMLAnchorElement && !dialog.open) {
+      opener = link;
+      if (show(link.dataset.highlightLink)) event.preventDefault();
+      return;
+    }
+    if (target?.closest("[data-highlight-next]")) {
+      const current = stories.findIndex((item) => !item.hidden);
+      show(stories[(current + 1) % stories.length].dataset.highlightView);
+      return;
+    }
+    if (target?.closest("[data-close-highlight]") || target === dialog) dialog.close();
+  });
+
+  dialog.addEventListener("close", () => {
+    if (opener?.isConnected) opener.focus({ preventScroll: true });
+    opener = null;
+  });
+}

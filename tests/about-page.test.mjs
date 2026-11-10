@@ -93,7 +93,7 @@ test("About page presents the optimized profile photo accessibly", async () => {
   assert.match(html, /width="1200"\s+height="1200"/);
   const homeHtml = await readFile(homePage, "utf8");
   assert.equal((homeHtml.match(/src="\/assets\/profile-photo\.jpg"/g) ?? []).length, 1, "Home should show the portrait once in the creator profile");
-  assert.match(homeHtml, /<img class="profile-avatar" src="\/assets\/profile-photo\.jpg" alt="Diamond Brown smiling at the camera\."/);
+  assert.match(homeHtml, /<img class="sp-avatar" src="\/assets\/profile-photo\.jpg" alt="Diamond Brown smiling at the camera\."/);
   assert.match(css, /\.about-hero\s*\{[^}]*display:grid/);
   assert.match(css, /\.about-section-portrait\s*\{[^}]*aspect-ratio:4\/5/);
   assert.match(css, /@media\s*\(max-width:\s*650px\)\s*\{\.about-hero\s*\{[^}]*grid-template-columns:1fr/);

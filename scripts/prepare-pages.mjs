@@ -9,17 +9,6 @@ import { applyProjectPageMetadata, HOME_PROJECT_SLUGS, PORTFOLIO_POSTS, PROJECTS
 
 const source = path.resolve("static-source");
 const pages = {};
-/** Official product homepages make the profile's technology highlights external shortcuts. */
-const PROFILE_TECHNOLOGIES = [
-  { label: "C#", href: "https://dotnet.microsoft.com/languages/csharp", image: "/assets/auralogbook-stack/csharp.png" },
-  { label: ".NET", href: "https://dotnet.microsoft.com/", icon: siDotnet },
-  { label: "React", href: "https://react.dev/", image: "/assets/auralogbook-stack/react.png" },
-  { label: "TypeScript", href: "https://www.typescriptlang.org/", image: "/assets/auralogbook-stack/typescript.png" },
-  { label: "Redux", href: "https://redux.js.org/", image: "/assets/auralogbook-stack/redux.png" },
-  { label: "PostgreSQL", href: "https://www.postgresql.org/", icon: siPostgresql },
-  { label: "Java", href: "https://www.java.com/", icon: siOpenjdk },
-  { label: "Notion", href: "https://www.notion.so/", image: "/assets/auralogbook-stack/notion.png" },
-];
 const TECH_PILL_MARKS = {
   "C#": { image: "/assets/auralogbook-stack/csharp.png" },
   ".NET": { icon: siDotnet },
@@ -59,17 +48,6 @@ function renderTechPill(tool) {
   return `<span class="tech-chip">${renderTechPillContents(tool)}</span>`;
 }
 
-/** Renders the existing portfolio technology marks as links to the stack story. */
-function renderProfileTechStrip() {
-  const items = PROFILE_TECHNOLOGIES.map((technology) => {
-    const logo = technology.image
-      ? `<img src="${technology.image}" alt="" loading="lazy" decoding="async">`
-      : `<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" style="--tech-color:#${technology.icon.hex}"><path fill="currentColor" d="${technology.icon.path}"></path></svg>`;
-    return `<li><a href="${technology.href}" target="_blank" rel="noopener noreferrer" aria-label="Visit ${technology.label} official website (opens in a new tab)"><span class="profile-tech-mark">${logo}</span><span>${technology.label}</span></a></li>`;
-  }).join("");
-  return `<nav class="profile-tech-strip" aria-label="Technology stack"><ul>${items}</ul></nav>`;
-}
-
 /**
  * Project posts are the only posts featured on the profile. The grid and the
  * post views both render from this list, so Next/Previous (which cycles through
@@ -78,13 +56,66 @@ function renderProfileTechStrip() {
  */
 const GRID_POSTS = PORTFOLIO_POSTS.filter((post) => post.category === "project");
 
-/** Emits the image-led, progressive-enhancement post grid from the typed catalog. */
+/** Title-bar text for each project tile (Direction D); facts come from the case studies. */
+const TILE_TITLES = {
+  auralogbook: "Aura Logbook · React + .NET",
+  "notion-api-shortcuts": "Notion API integration",
+  "75-hard-automation": "75 Days · 13 Shortcuts",
+  "hair-log": "Hair Care Log · Notion API",
+  "dynamic-folder-structures": "Dynamic Folder Structures",
+  "apple-ecosystem": "Apple-native system",
+};
+
+/** The 75 Days tile uses the real Shortcuts folder screenshot instead of the illustration. */
+const TILE_IMAGES = {
+  "75-hard-automation": { src: "/assets/75-days-shortcuts-overview.png", width: 636, height: 1406, position: "top" },
+};
+
+/**
+ * Non-project posts placed after the named project slug. They open an
+ * experience highlight or an existing project post, so they never add a post
+ * view (Next/Previous still cycles through project posts only).
+ */
+const FEATURE_TILES = {
+  auralogbook: [
+    `<a class="sp-feature-tile sp-tile-quote" href="/work/enterprise-applications/" data-highlight-link="adp" aria-label="Quote post: at ADP, developer onboarding went from two weeks to three days. Open the ADP highlight."><span class="sp-tile-eyebrow">ADP · Developer enablement</span><span class="sp-tile-quote-text">Onboarding: two weeks <span aria-hidden="true">→</span> three days.</span><span class="sp-tile-note">Setup guides new developers actually used.</span></a>`,
+  ],
+  "75-hard-automation": [
+    `<a class="sp-feature-tile sp-tile-diagram" href="/portfolio/projects/75-hard-automation/" data-post-link="75-hard-automation" aria-label="Diagram post: how a 75 Days check-in flows from Shortcut prompts to a Notion record. Open the 75 Days of Discipline post."><span class="sp-tile-eyebrow">How a check-in flows</span><span class="sp-flow-step">Shortcut prompts</span><span class="sp-flow-arrow" aria-hidden="true">↓</span><span class="sp-flow-step">Response dictionary</span><span class="sp-flow-arrow" aria-hidden="true">↓</span><span class="sp-flow-step sp-flow-end">Notion API → daily record</span></a>`,
+    `<a class="sp-feature-tile sp-tile-text" href="/about/" data-highlight-link="army" aria-label="Text post: Army National Guard Staff Sergeant and Squad Leader since 2013. Open the Army Guard highlight."><span class="sp-tile-eyebrow">Army National Guard</span><span class="sp-tile-quote-text">Staff Sergeant. Squad Leader. Since 2013.</span><span class="sp-tile-note">Training, readiness, accountability.</span></a>`,
+  ],
+};
+
+/** A simplified, labeled request body; it shows the payload shape, never real IDs or secrets. */
+const NOTION_CODE = `{
+  "parent": {
+    "database_id": "<span class="sp-code-mark">…</span>"
+  },
+  "properties": {
+    "Name": { "title": [ … ] },
+    "Status": { "select": … }
+  }
+}`;
+
+/** Renders the visual inside a project tile: pinned art, a code block, or an image. */
+function renderTileVisual(post, index) {
+  if (post.slug === "notion-api-shortcuts") {
+    return `<span class="sp-code" aria-hidden="true"><span class="sp-code-head"><span>POST /v1/pages</span><span>Simplified</span></span><span class="sp-code-body">${NOTION_CODE}</span></span>`;
+  }
+  const image = TILE_IMAGES[post.slug] ?? { src: post.image, width: 720, height: 720 };
+  const position = image.position ? ` style="object-position:center ${image.position}"` : "";
+  const pin = index === 0 ? `<span class="sp-tile-pin" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M16 3H8l1 2v5l-3 4h5v7l1 1 1-1v-7h5l-3-4V5z"></path></svg></span>` : "";
+  return `<img src="${image.src}" alt="" width="${image.width}" height="${image.height}"${position} loading="${index < 3 ? "eager" : "lazy"}">${pin}`;
+}
+
+/** Emits the 3 × 3 profile grid: project tiles in catalog order with feature posts between them. */
 function renderCreatorGrid() {
   return GRID_POSTS.map((post, index) => {
-    const fallback = post.caseStudy ?? (post.slug === "tech-stack" ? "/about/" : "#about");
-    const category = post.category === "tech-stack" ? "Tech Stack" : post.category === "process" ? "Process" : "Project";
-    const label = `${post.title}. ${category}. ${post.eyebrow}`;
-    return `<a class="creator-post-tile tile-${post.slug}" href="${fallback}" data-post-link="${post.slug}" aria-label="Open post: ${label}"><span class="tile-art"><img src="${post.image}" alt="" width="720" height="720" loading="${index < 3 ? "eager" : "lazy"}"><span class="tile-overline">${category} <span aria-hidden="true">✳</span></span><span class="tile-title">${post.title}</span><span class="tile-caption">${post.caption}</span><span class="tile-open" aria-hidden="true">↗</span></span></a>`;
+    const fallback = post.caseStudy ?? "#posts";
+    const pinned = index === 0 ? "Pinned. " : "";
+    const label = `${pinned}${post.title}. ${post.eyebrow}. ${post.caption}`;
+    const tile = `<a class="creator-post-tile tile-${post.slug}" href="${fallback}" data-post-link="${post.slug}" aria-label="Open post: ${label}">${renderTileVisual(post, index)}<span class="sp-tile-bar">${TILE_TITLES[post.slug] ?? post.title}</span></a>`;
+    return tile + (FEATURE_TILES[post.slug] ?? []).join("");
   }).join("");
 }
 
@@ -136,7 +167,6 @@ async function visit(directory) {
         : Object.values(PROJECTS);
 
       if (route === "/" || route === "/portfolio/") {
-        text = text.replace('<div id="profile-tech-strip-slot"></div>', renderProfileTechStrip());
         text = text.replace(
           /<div id="creator-post-grid" class="creator-post-grid" aria-label="Portfolio posts"><\/div>/,
           `<div id="creator-post-grid" class="creator-post-grid" aria-label="Portfolio posts">${renderCreatorGrid()}</div>`,

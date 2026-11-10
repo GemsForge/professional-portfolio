@@ -15,73 +15,66 @@ async function readGeneratedHome() {
   return pages["/"];
 }
 
-test("creator grid features six project stories and keeps the technology shortcut separate", async () => {
+/** Direction D (issue #108): the social-profile header, highlights, and mixed 3 × 3 grid. */
+test("social profile shows the résumé-backed header, experience highlights, and a nine-tile grid", async () => {
   const html = await readGeneratedHome();
   const slugs = PORTFOLIO_POSTS.map(({ slug }) => slug);
   assert.deepEqual(slugs.slice(0, 4), ["auralogbook", "notion-api-shortcuts", "portfolio-direction", "tech-stack"]);
-  assert.equal(PORTFOLIO_POSTS.length, 8);
   assert.equal(PORTFOLIO_POSTS.filter(({ category }) => category === "project").length, 6);
-  assert.equal(PORTFOLIO_POSTS.filter(({ category }) => category === "process").length, 1);
-  assert.equal(PORTFOLIO_POSTS.filter(({ category }) => category === "tech-stack").length, 1);
-  const tileOrder = [...html.matchAll(/class="creator-post-tile tile-[^"]+" href="[^"]+" data-post-link="([^"]+)"/g)].map((match) => match[1]);
+
+  const profile = html.slice(html.indexOf('<section class="sp-profile"'), html.indexOf('<section id="highlights"'));
+  assert.match(profile, /<h1 id="creator-name">Diamond Brown<\/h1>/);
+  assert.match(profile, /<a class="sp-button sp-button-primary" href="mailto:diamondbrown\.tech@gmail\.com">Contact<\/a>/);
+  assert.match(profile, /<a class="sp-button" href="\/assets\/diamond-brown-resume\.pdf">Résumé<\/a>/);
+  assert.match(profile, /<li><strong>6<\/strong> projects<\/li>\s*<li><strong>4<\/strong> roles<\/li>\s*<li><strong>13<\/strong> yrs Army Guard<\/li>/);
+  assert.doesNotMatch(html, /followers|likes|following/i, "stats must be résumé counts, not social engagement");
+  for (const line of ["Software Engineer Analyst @ ADP", "U.S. Secret clearance · Army National Guard Staff Sergeant", "Cut dev onboarding from two weeks to three days.", "Atlanta · open to remote or hybrid"]) {
+    assert.ok(profile.includes(line), `bio should include: ${line}`);
+  }
+  assert.match(profile, /href="https:\/\/github\.com\/GemsForge"/);
+  assert.match(profile, /href="https:\/\/www\.linkedin\.com\/in\/diamond-brown\/"/);
+
+  const highlights = [...html.matchAll(/<a href="([^"]+)" data-highlight-link="([a-z]+)"><span class="sp-highlight-ring/g)].map((match) => [match[2], match[1]]);
+  assert.deepEqual(highlights, [["adp", "/work/enterprise-applications/"], ["army", "/about/"], ["gemsforge", "/work/gemsforge-business-systems/"], ["apprentice", "/assets/diamond-brown-resume.pdf"]], "each highlight is a working link before JavaScript upgrades it");
+  const views = [...html.matchAll(/data-highlight-view="([a-z]+)"/g)].map((match) => match[1]);
+  assert.deepEqual(views, ["adp", "army", "gemsforge", "apprentice"]);
+  assert.match(html, /February 2023 – present[\s\S]*?2 weeks → 3 days/);
+  assert.match(html, /May 2013 – present[\s\S]*?Staff Sergeant and Squad Leader/);
+  assert.equal((html.match(/data-close-highlight aria-label="Close highlight"/g) ?? []).length, 4);
+
+  const grid = html.slice(html.indexOf('id="creator-post-grid"'), html.indexOf("</section>", html.indexOf('id="creator-post-grid"')));
+  const tiles = [...grid.matchAll(/<a class="(creator-post-tile tile-[a-z0-9-]+|sp-feature-tile sp-tile-[a-z]+)"/g)].map((match) => match[1].split(" ")[1]);
+  assert.deepEqual(tiles, ["tile-auralogbook", "sp-tile-quote", "tile-notion-api-shortcuts", "tile-75-hard-automation", "sp-tile-diagram", "sp-tile-text", "tile-hair-log", "tile-dynamic-folder-structures", "tile-apple-ecosystem"]);
+  const tileOrder = [...grid.matchAll(/class="creator-post-tile tile-[^"]+" href="[^"]+" data-post-link="([^"]+)"/g)].map((match) => match[1]);
   assert.deepEqual(tileOrder, slugs.filter((slug) => !["tech-stack", "portfolio-direction"].includes(slug)));
-  assert.equal(tileOrder.length, 6);
-  assert.doesNotMatch(html, /data-post-link="portfolio-direction"/);
+  assert.equal((grid.match(/class="sp-tile-bar"/g) ?? []).length, 6, "every project tile has a title bar");
+  assert.match(grid, /aria-label="Open post: Pinned\. Aura Logbook\./);
+  assert.match(grid, /<span>POST \/v1\/pages<\/span><span>Simplified<\/span>/);
+  assert.match(grid, /src="\/assets\/75-days-shortcuts-overview\.png"/);
+
   const viewOrder = [...html.matchAll(/data-post-view="([^"]+)"/g)].map((match) => match[1]);
-  assert.deepEqual(viewOrder, tileOrder, "Next/Previous cycles through post views, so they must match the grid exactly");
-  assert.doesNotMatch(html, /data-post-view="(?:portfolio-direction|tech-stack)"/, "posts without a grid tile must not be reachable from the post flow");
-  assert.doesNotMatch(html, /<div class="post-story-topline"><span>[^<]*<\/span><span>\d{2} \/ \d{2}<\/span><\/div>/, "no post position counter should appear in any modal header");
-  assert.doesNotMatch(html, /walkthrough-counter|data-step-counter|walkthrough-step-no|\d{2} \/ \d{2}/, "modals should not show post or walkthrough counts");
+  assert.deepEqual(viewOrder, tileOrder, "Next/Previous cycles through post views, so they must match the project tiles exactly");
+  assert.doesNotMatch(html, /\d{2} \/ \d{2}/, "modals should not show post or walkthrough counts");
+
+  const main = html.slice(html.indexOf('<main id="main"'), html.indexOf("</main>"));
+  assert.doesNotMatch(main, /href="https:\/\/(?:react\.dev|redux\.js\.org|www\.typescriptlang\.org|dotnet\.microsoft\.com|www\.postgresql\.org|www\.java\.com|www\.notion\.so)/, "nothing on the profile links to a technology vendor");
   assert.match(html, /<nav class="creator-mobile-nav" aria-label="Mobile navigation">/);
-  assert.match(html, /<a href="#feed" aria-label="Work">/);
-  assert.match(html, /<a href="#about" aria-label="About">/);
-  assert.match(html, /<a href="\/assets\/diamond-brown-resume\.pdf" aria-label="Résumé">/);
-  assert.match(html, /<a href="#contact" aria-label="Contact">/);
-  assert.doesNotMatch(html, /Make the work legible|project-management/);
-  assert.ok(html.indexOf('class="profile-header"') < html.indexOf('class="creator-main-column"'), "the profile header should sit above the feed");
-  assert.match(html, /class="profile-summary"/);
-  assert.doesNotMatch(html, /class="profile-stats"|<strong>09<\/strong> posts/);
-  assert.doesNotMatch(html, /tile-social-cues/);
-  const profile = html.slice(html.indexOf('<section class="profile-header"'), html.indexOf('<div class="creator-main-column">'));
-  const profileName = profile.indexOf('<h1 id="creator-name">Diamond Brown</h1>');
-  const profileRole = profile.indexOf('class="profile-kicker">Full-stack developer</p>');
-  const profileLocation = profile.indexOf('class="profile-location"><svg');
-  const profileBio = profile.indexOf('class="profile-bio">I build apps, organize the work behind them, and shape how people use them. Interested in application development, systems analysis, QA automation, or technical enablement? Tell me what your team is working on.</p>');
-  const profileActions = profile.indexOf('class="profile-links profile-actions"');
-  assert.ok(profileName >= 0 && profileName < profileRole && profileRole < profileLocation && profileLocation < profileBio && profileBio < profileActions, "profile details should follow the requested hierarchy");
-  assert.match(profile.slice(profileActions), /profile-button-icon/);
-  assert.doesNotMatch(profile.slice(profileActions, profile.indexOf("</div>", profileActions)), /↗|→/);
-  assert.doesNotMatch(profile, /SOFTWARE\s*[·.]\s*SYSTEMS\s*[·.]\s*DIRECTION/i);
-  assert.doesNotMatch(html, /Software\s*[·.]\s*Systems\s*[·.]\s*Direction/i);
-  assert.match(html, /I build apps, organize the work behind them, and shape how people use them\./);
-  assert.doesNotMatch(html, /A developer’s precision|practical point of view|FIELD NOTE/);
-  assert.doesNotMatch(html, /class="feed-filter"|data-filter=/, "the project-only grid should not show filter controls");
-  const techStrip = html.slice(html.indexOf('class="profile-tech-strip"'), html.indexOf("</nav>", html.indexOf('class="profile-tech-strip"')));
-  assert.doesNotMatch(techStrip, /data-post-link=/, "technology highlights should link to their official websites rather than the Tech Stack post");
-  for (const [label, href] of [
-    ["C#", "https://dotnet.microsoft.com/languages/csharp"],
-    [".NET", "https://dotnet.microsoft.com/"],
-    ["React", "https://react.dev/"],
-    ["TypeScript", "https://www.typescriptlang.org/"],
-    ["Redux", "https://redux.js.org/"],
-    ["PostgreSQL", "https://www.postgresql.org/"],
-    ["Java", "https://www.java.com/"],
-    ["Notion", "https://www.notion.so/"],
-  ]) {
-    assert.match(techStrip, new RegExp(`<a href="${href.replaceAll("/", "\\/")}" target="_blank" rel="noopener noreferrer" aria-label="Visit ${label.replace("#", "\\#")} official website`));
+  for (const [href, label] of [["#posts", "Posts"], ["#highlights", "Experience"], ["\/assets\/diamond-brown-resume\.pdf", "Résumé"], ["#contact", "Contact"]]) {
+    assert.match(html, new RegExp(`<a href="${href}" aria-label="${label}">`));
   }
-  assert.equal((techStrip.match(/class="profile-tech-mark"/g) ?? []).length, 8);
-  for (const technology of ["C#", ".NET", "React", "TypeScript", "Redux", "PostgreSQL", "Java", "Notion"]) {
-    assert.ok(techStrip.includes(technology), `${technology} should appear in the technology strip`);
-  }
-  assert.doesNotMatch(html, /PROJECTS &amp; PROCESS|Selected work|01—09|App development, project planning, and design decisions from work I’ve built/);
-  assert.match(html, /id="post-stories">[\s\S]*?data-post-view="auralogbook"/);
 });
 
-test("creator profile uses a centered maximum canvas that stays fluid on smaller viewports", async () => {
+test("the /portfolio/ alias renders the same social profile as the homepage", async () => {
+  await readGeneratedHome();
+  const pages = JSON.parse(await readFile(generated, "utf8"));
+  const grid = (html) => html.slice(html.indexOf('id="creator-post-grid"'), html.indexOf("</section>", html.indexOf('id="creator-post-grid"')));
+  assert.equal(grid(pages["/portfolio/"]), grid(pages["/"]));
+  assert.match(pages["/portfolio/"], /id="highlight-dialog"/);
+});
+
+test("social profile uses a 935px centered column", async () => {
   const css = await read("../static-source/assets/site.css");
-  assert.match(css, /\.creator-shell\{width:min\(100%,1120px\);margin-inline:auto\}/);
-  assert.match(css, /\.profile-header,\.creator-main-column\{width:min\(100%,980px\);margin-inline:auto\}/);
+  assert.match(css, /\.sp-main\{max-width:935px;margin:0 auto/);
 });
 
 test("project posts identify evidence and provide guided prototype steps", () => {
@@ -125,32 +118,13 @@ test("generated post viewer retains project routes, source links, and the one-pa
   assert.match(script, /history\.pushState/);
   assert.match(script, /window\.addEventListener\("popstate"/);
   assert.match(script, /window\.addEventListener\("hashchange"/);
-  assert.match(script, /IntersectionObserver/);
-  assert.match(script, /creator-nav-visible/);
   assert.doesNotMatch(script, /applyFilter|portfolioFilter|data-filter/, "the post client should not keep stale filter behavior or URL state");
   assert.match(script, /portfolioScroll/);
   assert.match(script, /opener\.focus/);
-  assert.match(css, /\.creator-post-grid\{display:grid;grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/);
-  assert.match(css, /--font:'Avenir Next',Avenir/);
-  assert.match(css, /\.creator-page\{font-family:var\(--font\)\}/);
-  assert.match(css, /\.profile-intro h1\{margin:0;font:500 28px\/1\.2 var\(--font\)/);
-  assert.match(css, /\.profile-intro \.profile-kicker\{[^}]*font-family:var\(--font\)/);
-  assert.match(css, /\.profile-intro \.profile-bio\{[^}]*font:14px\/1\.5 var\(--font\)/);
-  assert.doesNotMatch(css, /\.creator-page[^}]*font-family:Arial/);
-  assert.match(css, /\.creator-nav-ready\.creator-nav-visible \.creator-topbar/);
   assert.match(css, /\.post-story>\.post-tools,\.post-story>\.post-decisions\{margin:0;padding:0;border:0\}/);
   assert.match(css, /\.tech-chip img\{width:15px;height:15px;flex:none;object-fit:contain\}/);
   assert.match(css, /\.post-close\{width:32px;height:32px;font-size:20px\}/);
   assert.match(css, /@media\(min-width:651px\)\{\.post-view-story\{overflow:auto\}\}/);
-  assert.match(css, /\.creator-shell\{margin-top:0\}/);
-  assert.match(css, /\.profile-header\{margin-top:0\}/);
-  assert.match(css, /\.profile-tech-strip ul\{display:flex;flex-wrap:nowrap;[^}]*overflow-x:auto/);
-  assert.match(css, /\.profile-tech-mark\{display:grid;width:44px;height:44px/);
-  assert.match(css, /\.profile-tech-strip img,\.profile-tech-strip svg\{display:block;width:30px;height:30px/);
-  assert.match(css, /\.profile-tech-strip a:hover \.profile-tech-mark[^}]*transform:translateY\(-3px\) scale\(1\.08\)/);
-  assert.match(css, /@media\(prefers-reduced-motion:reduce\)\{\.profile-tech-mark\{transition:none\}/);
-  assert.match(css, /\.creator-post-grid\{gap:3px\}/);
-  assert.match(css, /@media\(max-width:650px\)\{[\s\S]*?\.creator-post-grid\{grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/);
 });
 
 test("Tech Stack summarizes professional and personal tools with relevant project links", () => {
@@ -164,9 +138,9 @@ test("Tech Stack summarizes professional and personal tools with relevant projec
   assert.ok(evidenceLinks.some(({ label, postSlug }) => label === "Notion" && postSlug === "notion-api-shortcuts"));
 });
 
-test("tile captions are visible without hover above phone widths", async () => {
-  const css = await read("../static-source/assets/site.css");
-  assert.doesNotMatch(css, /\.creator-post-tile:hover \.tile-caption/, "captions must not depend on hover");
-  assert.doesNotMatch(css, /@media\(hover:none\)\{\.tile-caption\{display:none/, "touch tablets must still show captions");
-  assert.match(css, /\.tile-caption\{display:-webkit-box;padding:0 10px 12px;margin-top:-6px\}/);
+test("highlight stories return focus and wrap from the last story to the first", async () => {
+  const script = await read("../static-source/assets/creator-profile.js");
+  assert.match(script, /function setUpHighlights\(\)/);
+  assert.match(script, /\(current \+ 1\) % stories\.length/);
+  assert.match(script, /dialog\.addEventListener\("close"[\s\S]*?opener\.focus/);
 });
