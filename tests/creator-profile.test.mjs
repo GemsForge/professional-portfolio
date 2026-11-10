@@ -119,7 +119,9 @@ test("generated post viewer retains project routes, source links, and the one-pa
   assert.match(auraPost, /Spotify tracks are not saved to mood entries/);
   assert.match(script, /history\.pushState/);
   assert.match(script, /window\.addEventListener\("popstate"/);
-  assert.match(script, /window\.addEventListener\("hashchange"/);
+  assert.doesNotMatch(script, /window\.addEventListener\("hashchange"/, "popstate alone handles fragment navigation; a second listener rendered posts twice");
+  assert.match(script, /history\.replaceState\(\{ \.\.\.history\.state, portfolioPost: openedFromGrid \}, "", `#post\/\$\{slug\}`\)/, "Next/Previous replaces the history entry so Close returns to the grid");
+  assert.match(script, /if \(focused === next && next\.disabled && !previous\.disabled\) previous\.focus/, "focus moves to the other arrow at either end");
   assert.doesNotMatch(script, /applyFilter|portfolioFilter|data-filter/, "the post client should not keep stale filter behavior or URL state");
   assert.match(script, /portfolioScroll/);
   assert.match(script, /opener\.focus/);
@@ -206,4 +208,17 @@ test("pop-up keeps the walkthrough, swaps in real step screenshots, and meets ty
   assert.match(css, /#post-dialog \.visual-hotspot\{width:44px;height:44px\}/);
   assert.match(css, /#post-dialog \.post-close\{width:44px;height:44px/);
   assert.match(css, /#post-dialog \.post-sequence button\{min-height:44px/);
+});
+
+test("catalog text is escaped inside generated attributes, and /portfolio/ renders from the homepage source", async () => {
+  const builder = await read("../scripts/prepare-pages.mjs");
+  assert.match(builder, /function attr\(value\)/);
+  assert.match(builder, /data-step-screenshot-alt="\$\{attr\(shot\.alt\)\}"/);
+  assert.match(builder, /aria-label="Open post: \$\{attr\(label\)\}"/);
+  assert.match(builder, /for \(const route of baseRoute === "\/" \? \["\/", "\/portfolio\/"\] : \[baseRoute\]\)/);
+  const html = await readGeneratedHome();
+  assert.match(html, /aria-label="Open post: Dynamic Folder Structures\. Automation &amp; technical guide/, "ampersands in labels are encoded");
+  const css = await read("../static-source/assets/site.css");
+  assert.match(css, /\.sp-main \.creator-post-tile:focus-visible,\.sp-main \.sp-feature-tile:focus-visible\{outline:3px solid #f4f2e8;outline-offset:-6px/);
+  assert.doesNotMatch(css, /\.profile-tech-strip|\.creator-shell|\.tile-caption/, "legacy creator-profile rules are removed");
 });

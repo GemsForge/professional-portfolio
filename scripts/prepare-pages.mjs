@@ -32,6 +32,14 @@ const TECH_PILL_MARKS = {
   "Apple Shortcuts": { icon: siApple },
 };
 
+/**
+ * Escapes catalog text for use inside a double-quoted HTML attribute, so alt text or
+ * labels containing quotes, ampersands, or angle brackets cannot break the markup.
+ */
+function attr(value) {
+  return String(value).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
 /** Renders a tool label and any available brand mark using the project-card pill assets. */
 function renderTechPillContents(tool) {
   const mark = TECH_PILL_MARKS[tool];
@@ -122,7 +130,7 @@ function renderCreatorGrid() {
     const fallback = post.caseStudy ?? "#posts";
     const pinned = index === 0 ? "Pinned. " : "";
     const label = `${pinned}${post.title}. ${post.eyebrow}. ${post.caption}`;
-    const tile = `<a class="creator-post-tile tile-${post.slug}" href="${fallback}" data-post-link="${post.slug}" aria-label="Open post: ${label}">${renderTileVisual(post, index)}<span class="sp-tile-bar">${TILE_TITLES[post.slug] ?? post.title}</span></a>`;
+    const tile = `<a class="creator-post-tile tile-${post.slug}" href="${fallback}" data-post-link="${post.slug}" aria-label="Open post: ${attr(label)}">${renderTileVisual(post, index)}<span class="sp-tile-bar">${TILE_TITLES[post.slug] ?? post.title}</span></a>`;
     return tile + (FEATURE_TILES[post.slug] ?? []).join("");
   }).join("");
 }
@@ -153,7 +161,7 @@ function renderPostViews() {
     const someReal = steps.some((step) => step.screenshot);
     const stepItem = (step, stepIndex) => {
       const shot = step.screenshot;
-      const data = shot ? ` data-step-screenshot="${shot.src}" data-step-screenshot-alt="${shot.alt}"${shot.hotspot ? ` data-step-hotspot-x="${shot.hotspot.x}" data-step-hotspot-y="${shot.hotspot.y}" data-step-hotspot-label="${shot.hotspot.label}"` : ""}` : "";
+      const data = shot ? ` data-step-screenshot="${attr(shot.src)}" data-step-screenshot-alt="${attr(shot.alt)}"${shot.hotspot ? ` data-step-hotspot-x="${shot.hotspot.x}" data-step-hotspot-y="${shot.hotspot.y}" data-step-hotspot-label="${attr(shot.hotspot.label)}"` : ""}` : "";
       return `<li data-walkthrough-step="${stepIndex}"${data}><div><h4>${step.title}</h4><p>${step.detail}</p></div></li>`;
     };
     const eyebrow = allReal ? "App tour" : "Illustrative prototype";
@@ -162,12 +170,12 @@ function renderPostViews() {
       : `<p class="walkthrough-disclaimer">A guided prototype based on the documented project flow; not a live production app.</p>`;
     // Step controls live on the picture (see the visual below); this region announces step changes.
     const walkthrough = steps.length ? `<section class="walkthrough" aria-labelledby="walkthrough-${post.slug}"><div class="walkthrough-heading"><div><span class="eyebrow">${eyebrow}</span><h3 id="walkthrough-${post.slug}">Walkthrough</h3></div></div><ol class="walkthrough-steps" data-walkthrough="${post.slug}">${steps.map(stepItem).join("")}</ol><p class="walkthrough-status" data-walkthrough-status aria-live="polite"></p><p class="visually-hidden" data-step-announce aria-live="polite"></p>${disclaimer}</section>` : "";
-    const visualHotspots = steps.map((step, stepIndex) => `<button type="button" class="visual-hotspot" data-visual-hotspot="${stepIndex}" data-hotspot-label="${step.hotspot.label}" data-hotspot-detail="${step.detail}" style="--hotspot-x:${step.hotspot.x}%;--hotspot-y:${step.hotspot.y}%" aria-label="Explore: ${step.hotspot.label}"><span aria-hidden="true">+</span></button>`).join("");
+    const visualHotspots = steps.map((step, stepIndex) => `<button type="button" class="visual-hotspot" data-visual-hotspot="${stepIndex}" data-hotspot-label="${attr(step.hotspot.label)}" data-hotspot-detail="${attr(step.detail)}" style="--hotspot-x:${step.hotspot.x}%;--hotspot-y:${step.hotspot.y}%" aria-label="Explore: ${attr(step.hotspot.label)}"><span aria-hidden="true">+</span></button>`).join("");
     // Carousel controls: arrows on the picture, progress dots beneath it (no numeric counter).
     const stepNav = steps.length > 1 ? `<button type="button" class="post-step-arrow post-step-prev" data-step-prev aria-label="Previous step"><span aria-hidden="true">‹</span></button><button type="button" class="post-step-arrow post-step-next" data-step-next aria-label="Next step"><span aria-hidden="true">›</span></button>` : "";
     const dots = steps.length > 1 ? `<div class="post-step-dots" aria-hidden="true">${steps.map(() => "<span></span>").join("")}</div>` : "";
     const opening = allReal ? { src: steps[0].screenshot.src, alt: steps[0].screenshot.alt } : { src: post.image, alt: post.imageAlt };
-    const visual = `<figure class="post-main-visual${allReal ? " is-step-screenshot" : ""}"><div class="post-visual-stage"><img src="${opening.src}" alt="${opening.alt}" width="960" height="960">${visualHotspots}${stepNav}</div>${dots}</figure>`;
+    const visual = `<figure class="post-main-visual${allReal ? " is-step-screenshot" : ""}"><div class="post-visual-stage"><img src="${attr(opening.src)}" alt="${attr(opening.alt)}" width="960" height="960">${visualHotspots}${stepNav}</div>${dots}</figure>`;
     return `<article class="post-story" data-post-view="${post.slug}" aria-labelledby="post-title-${post.slug}" hidden><template class="post-visual-template">${visual}</template><div class="post-story-topline"><span>${post.eyebrow}</span></div><h2 id="post-title-${post.slug}">${post.title}</h2><p class="post-lead">${post.caption}</p>${actions}${facts}${mobileVisualSlot}${walkthrough}${decisionsSection}${techSection}<nav class="post-sequence" aria-label="Browse other posts"><button type="button" data-adjacent-post="previous">← Previous post</button><button type="button" data-adjacent-post="next">Next post →</button></nav></article>`;
   }).join("");
 }
@@ -181,8 +189,10 @@ async function visit(directory) {
     }
     if (entry.name !== "index.html") continue;
 
-    let route = `/${path.relative(source, directory).split(path.sep).filter(Boolean).join("/")}`;
-    route = route === "/" ? route : `${route}/`;
+    let baseRoute = `/${path.relative(source, directory).split(path.sep).filter(Boolean).join("/")}`;
+    baseRoute = baseRoute === "/" ? baseRoute : `${baseRoute}/`;
+    // The homepage source also renders the /portfolio/ alias, so the two pages cannot drift apart.
+    for (const route of baseRoute === "/" ? ["/", "/portfolio/"] : [baseRoute]) {
     let text = await readFile(file, "utf8");
 
     const project = PROJECTS[route.split("/").filter(Boolean).at(-1) ?? ""];
@@ -295,6 +305,7 @@ async function visit(directory) {
     text = applySocialMetadata(text, route);
 
     pages[route] = text;
+    }
   }
 }
 

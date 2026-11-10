@@ -66,8 +66,14 @@
     }
     const previous = dialog.querySelector("[data-step-prev]");
     const next = dialog.querySelector("[data-step-next]");
-    if (previous instanceof HTMLButtonElement) previous.disabled = index === 0;
-    if (next instanceof HTMLButtonElement) next.disabled = index === steps.length - 1;
+    if (previous instanceof HTMLButtonElement && next instanceof HTMLButtonElement) {
+      const focused = document.activeElement;
+      previous.disabled = index === 0;
+      next.disabled = index === steps.length - 1;
+      // A disabled arrow is hidden; move focus to the other arrow instead of losing it.
+      if (focused === next && next.disabled && !previous.disabled) previous.focus({ preventScroll: true });
+      if (focused === previous && previous.disabled && !next.disabled) next.focus({ preventScroll: true });
+    }
     dialog.querySelectorAll(".post-step-dots span").forEach((dot, dotIndex) => dot.classList.toggle("is-active", dotIndex === index));
     const status = story.querySelector("[data-walkthrough-status]");
     if (status) status.textContent = "";
@@ -132,12 +138,21 @@
     finishClose(history.state);
   }
 
-  /** Opens a post with a history entry and preserves the visitor's grid position. */
+  /**
+   * Opens a post and preserves the visitor's grid position. Opening from the grid adds
+   * one history entry; moving between posts with Next/Previous replaces it, so Close
+   * (history.back) always returns to the grid in a single step.
+   */
   function navigateToPost(slug, trigger) {
     if (!posts.some((item) => item.dataset.postView === slug)) return;
+    const browsing = dialog.open && location.hash.startsWith("#post/");
     if (!dialog.open) opener = trigger instanceof HTMLElement ? trigger : document.activeElement;
-    openedFromGrid = true;
-    history.pushState({ portfolioPost: true, portfolioScroll: window.scrollY }, "", `#post/${slug}`);
+    if (browsing) {
+      history.replaceState({ ...history.state, portfolioPost: openedFromGrid }, "", `#post/${slug}`);
+    } else {
+      openedFromGrid = true;
+      history.pushState({ portfolioPost: true, portfolioScroll: window.scrollY }, "", `#post/${slug}`);
+    }
     renderPost(slug);
   }
 
@@ -187,8 +202,8 @@
 
   dialog.addEventListener("cancel", (event) => { event.preventDefault(); requestClose(); });
   dialog.addEventListener("click", (event) => { if (event.target === dialog) requestClose(); });
+  // popstate fires for Back/Forward and for fragment navigation, so it is the only history listener.
   window.addEventListener("popstate", syncHistory);
-  window.addEventListener("hashchange", syncHistory);
   window.addEventListener("resize", placePostVisual);
   syncHistory();
 })();
