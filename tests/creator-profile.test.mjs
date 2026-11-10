@@ -49,7 +49,7 @@ test("social profile shows the résumé-backed header, experience highlights, an
   assert.deepEqual(tileOrder, slugs.filter((slug) => !["tech-stack", "portfolio-direction"].includes(slug)));
   assert.equal((grid.match(/class="sp-tile-bar"/g) ?? []).length, 6, "every project tile has a title bar");
   assert.match(grid, /aria-label="Open post: Pinned\. Aura Logbook\./);
-  assert.match(grid, /<span>POST \/v1\/pages<\/span><span>Simplified<\/span>/);
+  assert.match(grid, /<span>POST \/v1\/pages<\/span><span class="sp-wide">Simplified<\/span>/);
   assert.match(grid, /src="\/assets\/75-days-shortcuts-overview\.png"/);
 
   const viewOrder = [...html.matchAll(/data-post-view="([^"]+)"/g)].map((match) => match[1]);
@@ -143,4 +143,19 @@ test("highlight stories return focus and wrap from the last story to the first",
   assert.match(script, /function setUpHighlights\(\)/);
   assert.match(script, /\(current \+ 1\) % stories\.length/);
   assert.match(script, /dialog\.addEventListener\("close"[\s\S]*?opener\.focus/);
+});
+
+test("phones get a compact header, five fitting highlights, and short tile text", async () => {
+  const html = await readGeneratedHome();
+  const css = await read("../static-source/assets/site.css");
+  // The photo sits beside the name and stats on phones instead of above them.
+  assert.match(css, /\.sp-profile\{display:grid;grid-template-columns:auto minmax\(0,1fr\)/);
+  assert.match(css, /\.sp-profile-body,\.sp-name-row\{display:contents\}/);
+  // Every feature tile and the Notion code tile carry a phone-length version of their text.
+  for (const short of ["ADP onboarding", "2 weeks <span aria-hidden=\"true\">→</span> 3 days", "Check-in flow", "SSG since 2013"]) {
+    assert.ok(html.includes(`<span class="sp-narrow">${short}</span>`), `missing phone text: ${short}`);
+  }
+  assert.match(html, /<span class="sp-narrow">\{\n  "parent": \{…\},\n  "properties": \{…\}\n\}<\/span>/);
+  assert.match(css, /\.sp-narrow\{display:none\}/);
+  assert.match(css, /@media\(max-width:650px\)\{[\s\S]*?\.sp-wide\{display:none\}[\s\S]*?\.sp-narrow\{display:inline\}/);
 });

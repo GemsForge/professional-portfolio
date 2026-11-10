@@ -271,32 +271,54 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid #90
 .sp-flow-step{padding:2.6cqw 4cqw;border:1.5px solid #2f4e39;border-radius:6px;font-size:max(13px,4.6cqw);font-weight:600}
 .sp-flow-end{background:#2f4e39;color:#fff}
 .sp-flow-arrow{align-self:center;font-size:max(13px,4.6cqw);color:#4d5d50}
-/* Phone tiles are about 125px wide: keep title bars, drop secondary tile text that would not fit. */
+/* Feature tiles carry a full and a short version of their text; phones show the short one. */
+.sp-narrow{display:none}
+/*
+ * Phones (issue #108 follow-up): the photo sits beside the name and stats so the grid starts
+ * sooner, all five highlights fit at 375px, and tiles swap to short text that fits ~125px.
+ * The header uses display:contents so its children join one grid without changing DOM or
+ * focus order (name, Contact/Résumé, stats, bio).
+ */
 @media(max-width:650px){
-  .sp-main{padding:20px 0 48px}
+  .sp-main{padding:16px 0 40px}
   .sp-profile,.sp-highlights,.sp-sections{margin-inline:16px}
-  .sp-profile{gap:16px 20px;padding:0}
-  .sp-avatar{width:86px;height:86px}
-  .sp-profile-body{flex-basis:100%}
+  .sp-profile{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px 18px;align-items:center;padding:0}
+  .sp-avatar-ring{grid-column:1;grid-row:1 / span 2;padding:3px;border-width:2px}
+  .sp-avatar{width:78px;height:78px}
+  .sp-profile-body,.sp-name-row{display:contents}
+  .sp-name-row h1{grid-column:2;grid-row:1;align-self:end;font-size:20px}
+  .sp-stats{grid-column:2;grid-row:2;align-self:start;display:grid;grid-template-columns:repeat(3,auto);justify-content:start;gap:0 18px;font-size:13px;line-height:1.25;color:#3a4a3e}
+  .sp-stats li{display:flex;flex-direction:column}
+  .sp-stats strong{font-size:17px;color:#1e2823}
+  .sp-actions{grid-column:1 / -1;grid-row:3;display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+  .sp-button{justify-content:center}
+  .sp-bio{grid-column:1 / -1;grid-row:4}
+  .sp-highlights{margin-top:24px}
+  .sp-sections{margin-top:20px}
   .sp-topbar-links{display:none}
-  .sp-highlights ul{flex-wrap:nowrap;gap:14px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+  .sp-highlights ul{flex-wrap:nowrap;justify-content:space-between;gap:4px;overflow-x:auto;scrollbar-width:none}
   .sp-highlights ul::-webkit-scrollbar{display:none}
-  .sp-highlight-label{white-space:nowrap}
-  .sp-highlight-ring{width:64px;height:64px;font-size:14px}
+  .sp-highlights a{gap:6px}
+  .sp-highlight-label{font-size:12px;white-space:nowrap}
+  .sp-highlight-ring{width:58px;height:58px;font-size:14px}
+  .sp-highlight-ring svg{width:24px;height:24px}
   .sp-main .creator-post-grid{gap:2px}
-  .sp-tile-bar{font-size:11px;padding:4px 6px}
-  .sp-code-head,.sp-tile-note,.sp-flow-arrow{display:none}
-  .sp-code-body{font-size:6.5cqw;padding:6cqw}
-  .sp-feature-tile{padding:7%}
-  .sp-tile-diagram{gap:3px}
-  .sp-tile-eyebrow{display:none}
-  .sp-feature-tile{justify-content:center}
-  .sp-tile-quote-text{font-size:12.5cqw}
-  .sp-tile-diagram{justify-content:center}
-  .sp-tile-diagram .sp-flow-step{font-size:11px;line-height:1.2;padding:4px 6px}
+  .sp-wide{display:none}
+  .sp-narrow{display:inline}
+  .sp-tile-bar{font-size:11px;line-height:1.25;padding:4px 6px}
   .sp-tile-pin{width:24px;height:24px}
   .sp-tile-pin svg{width:14px;height:14px}
+  .sp-feature-tile{justify-content:center;gap:6px;padding:9%}
+  .sp-tile-eyebrow{font-size:10.5px;letter-spacing:.06em}
+  .sp-tile-quote-text{font-size:15cqw;line-height:1.05}
+  .sp-tile-note,.sp-flow-arrow{display:none}
+  .sp-tile-diagram{gap:4px;padding:9% 8%}
+  .sp-tile-diagram .sp-flow-step{font-size:11px;line-height:1.2;padding:4px 6px}
+  .sp-code-head{padding:5px 7px;font-size:10.5px}
+  .sp-code-body{display:block;padding:6px 7px;font-size:9.5px;line-height:1.45}
 }
+/* Small phones (320–360px): shrink the highlights so all five still fit without scrolling. */
+@media(max-width:360px){.sp-highlights ul{gap:0}.sp-highlight-ring{width:48px;height:48px;font-size:13px}.sp-highlight-label{font-size:10.5px;letter-spacing:-.1px}}
 @media(prefers-reduced-motion:reduce){.sp-main .creator-post-tile:hover>img,.sp-highlights a:hover .sp-highlight-ring{transform:none}}
 /* Experience story cards: a dark full-height card that mirrors a social "story". */
 .sp-story-dialog{width:min(420px,100vw);max-width:100vw;height:min(844px,100dvh);max-height:100dvh;margin:auto;padding:0;border:0;border-radius:16px;background:#1e2823;color:#f4f2e8}

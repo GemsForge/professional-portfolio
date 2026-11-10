@@ -78,11 +78,11 @@ const TILE_IMAGES = {
  */
 const FEATURE_TILES = {
   auralogbook: [
-    `<a class="sp-feature-tile sp-tile-quote" href="/work/enterprise-applications/" data-highlight-link="adp" aria-label="Quote post: at ADP, developer onboarding went from two weeks to three days. Open the ADP highlight."><span class="sp-tile-eyebrow">ADP · Developer enablement</span><span class="sp-tile-quote-text">Onboarding: two weeks <span aria-hidden="true">→</span> three days.</span><span class="sp-tile-note">Setup guides new developers actually used.</span></a>`,
+    `<a class="sp-feature-tile sp-tile-quote" href="/work/enterprise-applications/" data-highlight-link="adp" aria-label="Quote post: at ADP, developer onboarding went from two weeks to three days. Open the ADP highlight."><span class="sp-tile-eyebrow"><span class="sp-wide">ADP · Developer enablement</span><span class="sp-narrow">ADP onboarding</span></span><span class="sp-tile-quote-text"><span class="sp-wide">Onboarding: two weeks <span aria-hidden="true">→</span> three days.</span><span class="sp-narrow">2 weeks <span aria-hidden="true">→</span> 3 days</span></span><span class="sp-tile-note">Setup guides new developers actually used.</span></a>`,
   ],
   "75-hard-automation": [
-    `<a class="sp-feature-tile sp-tile-diagram" href="/portfolio/projects/75-hard-automation/" data-post-link="75-hard-automation" aria-label="Diagram post: how a 75 Days check-in flows from Shortcut prompts to a Notion record. Open the 75 Days of Discipline post."><span class="sp-tile-eyebrow">How a check-in flows</span><span class="sp-flow-step">Shortcut prompts</span><span class="sp-flow-arrow" aria-hidden="true">↓</span><span class="sp-flow-step">Response dictionary</span><span class="sp-flow-arrow" aria-hidden="true">↓</span><span class="sp-flow-step sp-flow-end">Notion API → daily record</span></a>`,
-    `<a class="sp-feature-tile sp-tile-text" href="/about/" data-highlight-link="army" aria-label="Text post: Army National Guard Staff Sergeant and Squad Leader since 2013. Open the Army Guard highlight."><span class="sp-tile-eyebrow">Army National Guard</span><span class="sp-tile-quote-text">Staff Sergeant. Squad Leader. Since 2013.</span><span class="sp-tile-note">Training, readiness, accountability.</span></a>`,
+    `<a class="sp-feature-tile sp-tile-diagram" href="/portfolio/projects/75-hard-automation/" data-post-link="75-hard-automation" aria-label="Diagram post: how a 75 Days check-in flows from Shortcut prompts to a Notion record. Open the 75 Days of Discipline post."><span class="sp-tile-eyebrow"><span class="sp-wide">How a check-in flows</span><span class="sp-narrow">Check-in flow</span></span><span class="sp-flow-step"><span class="sp-wide">Shortcut prompts</span><span class="sp-narrow">Prompts</span></span><span class="sp-flow-arrow" aria-hidden="true">↓</span><span class="sp-flow-step"><span class="sp-wide">Response dictionary</span><span class="sp-narrow">Dictionary</span></span><span class="sp-flow-arrow" aria-hidden="true">↓</span><span class="sp-flow-step sp-flow-end"><span class="sp-wide">Notion API → daily record</span><span class="sp-narrow">Notion record</span></span></a>`,
+    `<a class="sp-feature-tile sp-tile-text" href="/about/" data-highlight-link="army" aria-label="Text post: Army National Guard Staff Sergeant and Squad Leader since 2013. Open the Army Guard highlight."><span class="sp-tile-eyebrow"><span class="sp-wide">Army National Guard</span><span class="sp-narrow">Army Guard</span></span><span class="sp-tile-quote-text"><span class="sp-wide">Staff Sergeant. Squad Leader. Since 2013.</span><span class="sp-narrow">SSG since 2013</span></span><span class="sp-tile-note">Training, readiness, accountability.</span></a>`,
   ],
 };
 
@@ -97,10 +97,16 @@ const NOTION_CODE = `{
   }
 }`;
 
+/** Phone-width version of the request body: the same shape, collapsed to fit a ~125px tile. */
+const NOTION_CODE_SHORT = `{
+  "parent": {…},
+  "properties": {…}
+}`;
+
 /** Renders the visual inside a project tile: pinned art, a code block, or an image. */
 function renderTileVisual(post, index) {
   if (post.slug === "notion-api-shortcuts") {
-    return `<span class="sp-code" aria-hidden="true"><span class="sp-code-head"><span>POST /v1/pages</span><span>Simplified</span></span><span class="sp-code-body">${NOTION_CODE}</span></span>`;
+    return `<span class="sp-code" aria-hidden="true"><span class="sp-code-head"><span>POST /v1/pages</span><span class="sp-wide">Simplified</span></span><span class="sp-code-body"><span class="sp-wide">${NOTION_CODE}</span><span class="sp-narrow">${NOTION_CODE_SHORT}</span></span></span>`;
   }
   const image = TILE_IMAGES[post.slug] ?? { src: post.image, width: 720, height: 720 };
   const position = image.position ? ` style="object-position:center ${image.position}"` : "";
