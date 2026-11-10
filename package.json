@@ -18,7 +18,8 @@
     "test:media": "node --test tests/media.test.mjs",
     "test:contact": "node --test tests/contact-page.test.mjs",
     "test:portfolio": "node --test tests/project-maps.test.mjs tests/auralogbook-architecture.test.mjs tests/notion-project-responsibilities.test.mjs tests/shared-shell.test.mjs",
-    "test:about": "node --test tests/about-page.test.mjs"
+    "test:about": "node --test tests/about-page.test.mjs",
+    "test:metadata": "node --test tests/site-metadata.test.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
