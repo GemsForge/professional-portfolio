@@ -189,3 +189,11 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid #90
 /* Keep primary page destinations within thumb reach and out of the way of open post dialogs. */
 .creator-mobile-nav{display:none}
 @media(max-width:1024px){body.creator-page{padding-bottom:calc(82px + env(safe-area-inset-bottom))}.creator-mobile-nav{position:fixed;z-index:20;right:12px;bottom:calc(8px + env(safe-area-inset-bottom));left:12px;display:flex;min-height:58px;align-items:center;justify-content:space-around;padding:4px 8px;border:1px solid rgba(41,77,56,.18);border-radius:999px;background:rgba(250,249,242,.92);backdrop-filter:blur(18px);box-shadow:0 8px 28px rgba(30,40,35,.16)}.creator-mobile-nav a{display:grid;width:46px;height:46px;place-items:center;border-radius:50%;color:var(--forest);text-decoration:none}.creator-mobile-nav a:hover,.creator-mobile-nav a:focus-visible{background:rgba(41,77,56,.1)}.creator-mobile-nav svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.post-dialog[open]+.creator-mobile-nav{display:none}}
+
+/* Constrain profile content to the viewport while retaining deliberate horizontal scrolling for highlights and filters. */
+.creator-page{max-width:100%;overflow-x:clip}
+.creator-shell,.profile-header,.profile-card,.profile-summary,.profile-intro,.creator-main-column,.feed-section,.creator-post-grid,.creator-post-tile,.tile-art,.journal-about,.post-dialog-shell,.post-view-media,.post-view-story{min-width:0;max-width:100%}
+.profile-actions{max-width:100%}
+.profile-actions a{max-width:100%;white-space:normal;overflow-wrap:anywhere}
+.tile-title,.tile-caption,.post-story{overflow-wrap:anywhere}
+@media(max-width:650px){.creator-topbar .links{display:none}.creator-shell{width:100%;padding-right:12px;padding-left:12px}.profile-summary{grid-template-columns:clamp(64px,22vw,82px) minmax(0,1fr);gap:clamp(8px,3vw,14px)}.profile-avatar{width:100%;height:auto;aspect-ratio:1}.creator-post-grid{width:100%;grid-template-columns:repeat(3,minmax(0,1fr));gap:2px}.tile-title{font-size:clamp(9px,3vw,14px);line-height:1.15}.creator-mobile-nav{max-width:calc(100vw - 24px)}}
