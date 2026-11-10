@@ -1,6 +1,6 @@
 /**
- * Adds experience story cards, URL-backed post views, and guided prototype
- * steps to the statically rendered social profile. Every highlight and tile is
+ * Adds experience story cards, URL-backed post views, and the avatar greeting
+ * to the statically rendered social profile. Every highlight and tile is
  * a real link first, so the page still works without JavaScript.
  */
 (() => {
@@ -15,24 +15,11 @@
   if (!(grid instanceof HTMLElement) || !(dialog instanceof HTMLDialogElement) || !(media instanceof HTMLElement) || !(storyHost instanceof HTMLElement) || !(stories instanceof HTMLElement)) return;
 
   const posts = [...stories.querySelectorAll("[data-post-view]")];
-  const walkthroughPositions = new Map();
   let activePost = null;
   let opener = null;
   let openedFromGrid = false;
 
-  /** Sets the visible walkthrough step and its matching image hotspot. */
-  function setWalkthroughStep(story, nextIndex) {
-    const steps = [...story.querySelectorAll("[data-walkthrough-step]")];
-    if (!steps.length) return;
-    const index = Math.max(0, Math.min(nextIndex, steps.length - 1));
-    walkthroughPositions.set(story.dataset.postView, index);
-    steps.forEach((step, stepIndex) => { step.hidden = stepIndex !== index; });
-    for (const hotspot of dialog.querySelectorAll("[data-visual-hotspot]")) hotspot.hidden = Number(hotspot.dataset.visualHotspot) !== index;
-    const controls = story.querySelector(".walkthrough-controls");
-    if (controls) controls.hidden = false;
-  }
-
-  /** Moves the current image after Tech on phones and restores the desktop media column at wider sizes. */
+  /** Moves the picture to the top of the story on phones and back to the media column at wider sizes. */
   function placePostVisual() {
     if (!activePost) return;
     const visual = dialog.querySelector(".post-main-visual");
@@ -58,8 +45,6 @@
     const heading = activePost.querySelector("h2[id]");
     if (heading) dialog.setAttribute("aria-labelledby", heading.id);
     if (!dialog.open) dialog.showModal();
-    const position = walkthroughPositions.get(slug) ?? 0;
-    setWalkthroughStep(activePost, position);
     if (focus) activePost.focus({ preventScroll: true });
     return true;
   }
@@ -128,18 +113,6 @@
       return;
     }
     if (target?.closest("[data-close-post]")) requestClose();
-
-    const stepButton = target?.closest("[data-step-prev], [data-step-next]");
-    if (stepButton && activePost) {
-      const current = walkthroughPositions.get(activePost.dataset.postView) ?? 0;
-      setWalkthroughStep(activePost, current + (stepButton.matches("[data-step-next]") ? 1 : -1));
-      return;
-    }
-    const hotspot = target?.closest("[data-visual-hotspot]");
-    if (hotspot && activePost) {
-      const status = activePost.querySelector("[data-walkthrough-status]");
-      if (status) status.textContent = `${hotspot.dataset.hotspotLabel}: ${hotspot.dataset.hotspotDetail}`;
-    }
   });
 
   dialog.addEventListener("cancel", (event) => { event.preventDefault(); requestClose(); });

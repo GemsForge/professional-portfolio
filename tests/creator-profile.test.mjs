@@ -77,14 +77,13 @@ test("social profile uses a 935px centered column", async () => {
   assert.match(css, /\.sp-main\{max-width:935px;margin:0 auto/);
 });
 
-test("project posts identify evidence and provide guided prototype steps", () => {
+test("project posts identify evidence and list how each project works", () => {
   const projects = PORTFOLIO_POSTS.filter(({ category }) => category === "project");
   assert.equal(projects.length, 6);
   for (const post of projects) {
     assert.ok(post.caseStudy, `${post.slug} should retain its full case-study route`);
     assert.ok(post.evidence.length > 30, `${post.slug} should explain evidence or current status`);
-    assert.equal(post.walkthrough?.length, post.slug === "auralogbook" ? 5 : 3, `${post.slug} should have the expected number of guided steps`);
-    assert.ok(post.walkthrough.every(({ hotspot }) => hotspot.label), `${post.slug} should label every hotspot`);
+    assert.equal(post.walkthrough?.length, post.slug === "auralogbook" ? 5 : 3, `${post.slug} should have the expected number of "How it works" steps`);
   }
 });
 
@@ -94,13 +93,15 @@ test("generated post viewer retains project routes, source links, and the one-pa
   const css = await read("../static-source/assets/site.css");
   assert.match(html, /id="creator-post-grid" class="creator-post-grid"/);
   assert.match(html, /id="post-dialog" class="post-dialog"/);
-  assert.match(html, /aria-live="polite"/);
-  assert.match(html, /href="\/portfolio\/projects\/auralogbook\/"[^>]*>Read the full case study/);
+  assert.match(html, /<a class="post-action-link post-action-primary" href="\/portfolio\/projects\/auralogbook\/">Read the case study<\/a>/);
   assert.match(html, /href="https:\/\/github\.com\/GemsForge\/aura-logbook-api"/);
   assert.match(html, /href="\/admin\/">Admin<\/a>/);
   assert.match(html, /href="\/knowledge\/">Dev Wiki<\/a>/);
   const auraPost = html.slice(html.indexOf('data-post-view="auralogbook"'), html.indexOf('</article>', html.indexOf('data-post-view="auralogbook"')));
-  assert.ok(auraPost.indexOf('<dl class="post-facts">') < auraPost.indexOf('<section class="post-tools"><h3>Tech</h3>') && auraPost.indexOf('<section class="post-tools"><h3>Tech</h3>') < auraPost.indexOf('data-mobile-visual') && auraPost.indexOf('data-mobile-visual') < auraPost.indexOf('<section class="walkthrough"') && auraPost.indexOf('<section class="walkthrough"') < auraPost.indexOf('<section class="post-decisions">'), "Tech, the mobile visual, and the prototype should follow the role and evidence table in order");
+  // Evidence first: picture slot, summary, links, role/status, technical choices, How it works, then tools.
+  const order = ['data-mobile-visual', 'class="post-lead"', 'class="post-actions"', '<dl class="post-facts">', '<section class="post-decisions">', '<section class="post-how"', '<section class="post-tools"><h3>Tech</h3>', 'class="post-sequence"'].map((marker) => auraPost.indexOf(marker));
+  assert.ok(order.every((position, index) => position >= 0 && (index === 0 || position > order[index - 1])), `pop-up sections are out of order: ${order}`);
+  assert.doesNotMatch(html, /visual-hotspot|data-walkthrough|data-step-next|Illustrative prototype/, "the hotspot walkthrough is replaced by a plain list");
   assert.match(auraPost, /<img src="\/assets\/aura-logbook\.png" alt="Open reflection journal with mood markers"/);
   assert.match(auraPost, /class="tech-chip"/);
   assert.match(auraPost, /\/assets\/auralogbook-stack\/react\.png/);
@@ -110,7 +111,7 @@ test("generated post viewer retains project routes, source links, and the one-pa
   assert.match(auraPost, /typed forms and RTK Query to JWT-protected endpoints and repository-backed services/);
   assert.match(auraPost, /<dt>Where it stands<\/dt>/);
   assert.match(auraPost, /<h3>Technical choices<\/h3>/);
-  assert.match(auraPost, /<h3 id="walkthrough-auralogbook">Walkthrough<\/h3>/);
+  assert.match(auraPost, /<h3 id="how-auralogbook">How it works<\/h3><ol><li><strong>Choose a path<\/strong>/);
   assert.match(auraPost, /A save writes the entry and its mood rows in one transaction/);
   assert.match(auraPost, /Spotify uses OAuth with PKCE/);
   assert.match(auraPost, /Photo files stay out of public assets/);
@@ -121,7 +122,6 @@ test("generated post viewer retains project routes, source links, and the one-pa
   assert.doesNotMatch(script, /applyFilter|portfolioFilter|data-filter/, "the post client should not keep stale filter behavior or URL state");
   assert.match(script, /portfolioScroll/);
   assert.match(script, /opener\.focus/);
-  assert.match(css, /\.post-story>\.post-tools,\.post-story>\.post-decisions\{margin:0;padding:0;border:0\}/);
   assert.match(css, /\.tech-chip img\{width:15px;height:15px;flex:none;object-fit:contain\}/);
   assert.match(css, /\.post-close\{width:32px;height:32px;font-size:20px\}/);
   assert.match(css, /@media\(min-width:651px\)\{\.post-view-story\{overflow:auto\}\}/);
@@ -174,4 +174,18 @@ test("avatar greeting is decorative, cued, and respects reduced motion", async (
   assert.match(script, /function setUpAvatarGreeting\(\)/);
   assert.match(script, /if \(reducedMotion\.matches\) output\.textContent = message;/);
   assert.match(script, /event\.pointerType !== "mouse"/, "touch and pen taps toggle the greeting");
+});
+
+test("project pop-ups match their cards and meet type and target sizes", async () => {
+  const html = await readGeneratedHome();
+  const css = await read("../static-source/assets/site.css");
+  const view = (slug) => html.slice(html.indexOf(`data-post-view="${slug}"`), html.indexOf("</article>", html.indexOf(`data-post-view="${slug}"`)));
+  assert.match(view("notion-api-shortcuts"), /<figcaption class="post-code-head"><span>POST \/v1\/pages<\/span><span>Simplified request body<\/span><\/figcaption><pre class="post-code"><code>/);
+  assert.match(view("75-hard-automation"), /<img src="\/assets\/75-days-shortcuts-overview\.png" alt="iPhone Shortcuts folder/);
+  assert.match(view("auralogbook"), /View source <span class="visually-hidden">\(opens in a new tab\)<\/span>/);
+  assert.match(css, /#post-dialog \.post-story\{font-size:15px/);
+  assert.match(css, /#post-dialog \.post-facts dt\{font:600 13px/);
+  assert.match(css, /#post-dialog \.post-close\{width:44px;height:44px/);
+  assert.match(css, /#post-dialog \.post-sequence button\{min-height:44px/);
+  assert.match(css, /#post-dialog \.post-action-link\{[^}]*min-height:44px/);
 });

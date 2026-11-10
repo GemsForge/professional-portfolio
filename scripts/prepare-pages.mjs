@@ -125,29 +125,49 @@ function renderCreatorGrid() {
   }).join("");
 }
 
-/** Emits one concise story view per grid post, in grid order. */
+/** Alt text for card pictures that replace the catalog image (the 75 Days screenshot). */
+const TILE_IMAGE_ALTS = {
+  "75-hard-automation": "iPhone Shortcuts folder for the 75 Days of Discipline daily log, showing its check-in shortcuts.",
+};
+
+/**
+ * The pop-up opens with the same picture as the card that opened it: the Notion
+ * request body as readable code, the real 75 Days screenshot, or the project image.
+ */
+function renderPostVisual(post) {
+  if (post.slug === "notion-api-shortcuts") {
+    return `<figure class="post-main-visual post-visual-code"><figcaption class="post-code-head"><span>POST /v1/pages</span><span>Simplified request body</span></figcaption><pre class="post-code"><code>${NOTION_CODE}</code></pre></figure>`;
+  }
+  const image = TILE_IMAGES[post.slug] ?? { src: post.image, width: 960, height: 960 };
+  const alt = TILE_IMAGE_ALTS[post.slug] ?? post.imageAlt;
+  const fit = image.position ? " post-visual-screenshot" : "";
+  return `<figure class="post-main-visual${fit}"><div class="post-visual-stage"><img src="${image.src}" alt="${alt}" width="${image.width}" height="${image.height}"></div></figure>`;
+}
+
+/**
+ * Emits one story view per grid post, in grid order. Reading order puts evidence
+ * first: picture (phones), title and summary, case-study/source links, role and
+ * status, technical choices, a plain "How it works" list, then the tool chips.
+ * "How it works" replaces the old hotspot walkthrough: its markers sat on
+ * decorative illustrations, so the steps are now listed as text until real
+ * per-step screenshots exist.
+ */
 function renderPostViews() {
-  // Keep every post header focused on its title; post navigation already supplies previous/next movement.
   return GRID_POSTS.map((post) => {
     const chips = post.tools.map(renderTechPill).join("");
     const decisions = post.decisions.map((decision) => `<li>${decision}</li>`).join("");
     const links = [
-      post.caseStudy ? `<a class="post-action-link" href="${post.caseStudy}">Read the full case study <span aria-hidden="true">↗</span></a>` : "",
-      post.source ? `<a class="post-action-link" href="${post.source}" target="_blank" rel="noopener noreferrer">Inspect source <span aria-hidden="true">↗</span></a>` : "",
+      post.caseStudy ? `<a class="post-action-link post-action-primary" href="${post.caseStudy}">Read the case study</a>` : "",
+      post.source ? `<a class="post-action-link" href="${post.source}" target="_blank" rel="noopener noreferrer">View source <span class="visually-hidden">(opens in a new tab)</span><span aria-hidden="true">↗</span></a>` : "",
     ].filter(Boolean).join("");
-    const groupedStack = post.stackGroups ? `<section class="stack-groups" aria-label="Technology groups">${post.stackGroups.map((group) => `<div class="stack-group"><h4>${group.label}</h4><div>${group.items.map((item) => item.href || item.postSlug ? `<a class="tech-chip" href="${item.href ?? `#post/${item.postSlug}`}"${item.postSlug ? ` data-post-link="${item.postSlug}"` : ""}>${renderTechPillContents(item.label)}<span aria-hidden="true"> ↗</span></a>` : `<span class="tech-chip">${renderTechPillContents(item.label)}</span>`).join("")}</div></div>`).join("")}</section>` : "";
-    const techContent = post.stackGroups ? groupedStack : `<div class="post-tool-list">${chips}</div>`;
-    // Let the story name its status plainly while keeping the shared facts layout unchanged.
+    const actions = links ? `<nav class="post-actions" aria-label="Project links">${links}</nav>` : "";
     const facts = post.role && post.evidence ? `<dl class="post-facts"><div><dt>My role</dt><dd>${post.role}</dd></div><div><dt>${post.evidenceLabel ?? "Evidence &amp; status"}</dt><dd>${post.evidence}</dd></div></dl>` : "";
-    const techSection = post.category === "tech-stack" ? `<section class="post-tools stack-profile">${techContent}</section>` : `<section class="post-tools"><h3>Tech</h3>${techContent}</section>`;
-    // Reserve an in-story mount point so mobile can place the matching visual between Tech and the walkthrough.
-    const mobileVisualSlot = `<div class="post-mobile-visual" data-mobile-visual></div>`;
-    // Keep each story heading aligned with the kind of evidence in its decision list.
     const decisionsSection = post.decisions.length ? `<section class="post-decisions"><h3>${post.decisionsTitle ?? "Decisions that shaped it"}</h3><ul>${decisions}</ul></section>` : "";
-    // Step titles and previous/next controls give sequence context without modal progress counts.
-    const walkthrough = post.walkthrough ? `<section class="walkthrough" aria-labelledby="walkthrough-${post.slug}"><div class="walkthrough-heading"><div><span class="eyebrow">Illustrative prototype</span><h3 id="walkthrough-${post.slug}">Walkthrough</h3></div></div><ol class="walkthrough-steps" data-walkthrough="${post.slug}">${post.walkthrough.map((step, stepIndex) => `<li data-walkthrough-step="${stepIndex}"><div><h4>${step.title}</h4><p>${step.detail}</p></div></li>`).join("")}</ol><p class="walkthrough-status" data-walkthrough-status aria-live="polite"></p><div class="walkthrough-controls" hidden><button type="button" data-step-prev>← Previous</button><button type="button" data-step-next>Next step →</button></div><p class="walkthrough-disclaimer">A guided prototype based on the documented project flow; not a live production app.</p></section>` : "";
-    const visualHotspots = post.walkthrough ? post.walkthrough.map((step, stepIndex) => `<button type="button" class="visual-hotspot" data-visual-hotspot="${stepIndex}" data-hotspot-label="${step.hotspot.label}" data-hotspot-detail="${step.detail}" style="--hotspot-x:${step.hotspot.x}%;--hotspot-y:${step.hotspot.y}%" aria-label="Explore: ${step.hotspot.label}"><span aria-hidden="true">+</span></button>`).join("") : "";
-    return `<article class="post-story" data-post-view="${post.slug}" aria-labelledby="post-title-${post.slug}" hidden><template class="post-visual-template"><figure class="post-main-visual"><div class="post-visual-stage"><img src="${post.image}" alt="${post.imageAlt}" width="960" height="960">${visualHotspots}</div></figure></template><div class="post-story-topline"><span>${post.eyebrow}</span></div><h2 id="post-title-${post.slug}">${post.title}</h2><p class="post-lead">${post.caption}</p>${facts}${techSection}${mobileVisualSlot}${walkthrough}${decisionsSection}${links ? `<nav class="post-actions" aria-label="Related project links">${links}</nav>` : ""}<nav class="post-sequence" aria-label="Browse other posts"><button type="button" data-adjacent-post="previous">← Previous post</button><button type="button" data-adjacent-post="next">Next post →</button></nav></article>`;
+    const howItWorks = post.walkthrough ? `<section class="post-how" aria-labelledby="how-${post.slug}"><h3 id="how-${post.slug}">How it works</h3><ol>${post.walkthrough.map((step) => `<li><strong>${step.title}</strong><span>${step.detail}</span></li>`).join("")}</ol></section>` : "";
+    const techSection = `<section class="post-tools"><h3>Tech</h3><div class="post-tool-list">${chips}</div></section>`;
+    // Phones move the picture into this slot at the top of the story (see creator-profile.js).
+    const mobileVisualSlot = `<div class="post-mobile-visual" data-mobile-visual></div>`;
+    return `<article class="post-story" data-post-view="${post.slug}" aria-labelledby="post-title-${post.slug}" hidden><template class="post-visual-template">${renderPostVisual(post)}</template>${mobileVisualSlot}<div class="post-story-topline"><span>${post.eyebrow}</span></div><h2 id="post-title-${post.slug}">${post.title}</h2><p class="post-lead">${post.caption}</p>${actions}${facts}${decisionsSection}${howItWorks}${techSection}<nav class="post-sequence" aria-label="Browse other posts"><button type="button" data-adjacent-post="previous">← Previous post</button><button type="button" data-adjacent-post="next">Next post →</button></nav></article>`;
   }).join("");
 }
 

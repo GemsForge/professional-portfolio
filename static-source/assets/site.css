@@ -369,3 +369,45 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid #90
 .sp-story-dialog :focus-visible{outline-color:#f4f2e8}
 @media(max-width:650px){.sp-story-dialog{width:100vw;height:100dvh;border-radius:0}}
 .post-dialog[open]~.creator-mobile-nav,.sp-story-dialog[open]~.creator-mobile-nav{display:none}
+
+/*
+ * Project pop-up (design critique, PR #109). Scoped to #post-dialog so it overrides the
+ * earlier post layers: 15px body text, 13px labels at 4.5:1 or better, 44px controls,
+ * evidence links near the top, and a plain "How it works" list instead of hotspots.
+ */
+.visually-hidden{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+#post-dialog .post-story{font-size:15px;line-height:1.6;color:#1e2823}
+#post-dialog .post-story-topline span{font:600 13px/1.4 var(--font);letter-spacing:.06em;text-transform:uppercase;color:#4d5d50}
+#post-dialog .post-lead{font-size:18px;line-height:1.5}
+#post-dialog .post-actions{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 24px;padding:0;border:0}
+#post-dialog .post-action-link{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 16px;border-radius:8px;background:#e4e1d3;color:#1e2823;font-size:15px;font-weight:600;text-decoration:none}
+#post-dialog .post-action-primary{background:#2f4e39;color:#fff}
+#post-dialog .post-action-link:hover{filter:brightness(.95)}
+#post-dialog .post-facts dt{font:600 13px/1.4 var(--font);letter-spacing:.04em;text-transform:uppercase;color:#4d5d50}
+#post-dialog .post-facts dd{font-size:15px;line-height:1.55;color:#1e2823}
+#post-dialog .post-story h3{margin:0 0 10px;font:600 18px/1.3 var(--font);letter-spacing:0;color:#1e2823}
+#post-dialog .post-decisions,#post-dialog .post-how,#post-dialog .post-tools{margin:24px 0 0;padding:0;border:0}
+#post-dialog .post-decisions li{font-size:15px;line-height:1.55;color:#1e2823}
+#post-dialog .post-how ol{margin:0;padding:0;list-style:none;counter-reset:how;display:flex;flex-direction:column;gap:12px}
+#post-dialog .post-how li{position:relative;padding-left:38px;counter-increment:how;display:flex;flex-direction:column;gap:2px;font-size:15px;line-height:1.55}
+#post-dialog .post-how li::before{content:counter(how);position:absolute;top:0;left:0;display:grid;width:26px;height:26px;place-items:center;border-radius:50%;background:#dfe6dc;color:#1e2823;font-size:13px;font-weight:700}
+#post-dialog .post-how strong{font-weight:600}
+#post-dialog .post-how span{color:#3a4a3e}
+#post-dialog .tech-chip{font-size:13px}
+#post-dialog .post-close{width:44px;height:44px;font-size:26px}
+#post-dialog .post-sequence{margin-top:28px}
+#post-dialog .post-sequence button{min-height:44px;padding:0 16px;font-size:14px}
+/* Pop-up pictures match their grid cards: readable code for Notion, the full 75 Days screenshot. */
+#post-dialog .post-visual-code{width:100%;max-width:520px;margin:auto;border-radius:12px;overflow:hidden;background:#172019}
+#post-dialog .post-code-head{display:flex;justify-content:space-between;gap:12px;padding:12px 18px;border-bottom:1px solid #2c3a30;font:13px/1.4 var(--font);letter-spacing:0;text-transform:none;color:#b8cdb4}
+#post-dialog .post-code{margin:0;padding:18px;background:none;border:0;color:#dfe6dc;font:14px/1.6 'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre;overflow:auto}
+#post-dialog .sp-code-mark{color:#e3c48a}
+#post-dialog .post-visual-screenshot .post-visual-stage{aspect-ratio:auto;max-height:100%}
+#post-dialog .post-visual-screenshot img{width:auto;max-width:100%;height:auto;max-height:min(680px,calc(100dvh - 120px));object-fit:contain;border-radius:18px}
+@media(max-width:650px){
+  #post-dialog .post-mobile-visual{margin:0 0 18px}
+  #post-dialog .post-mobile-visual .post-visual-stage{aspect-ratio:auto;height:240px;overflow:hidden;border-radius:12px}
+  #post-dialog .post-mobile-visual .post-visual-stage img{width:100%;height:100%;max-height:none;object-fit:cover;object-position:center top;border-radius:0}
+  #post-dialog .post-mobile-visual .post-visual-code{max-width:none}
+  #post-dialog .post-code{font-size:12.5px;padding:14px}
+}

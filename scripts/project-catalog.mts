@@ -40,7 +40,11 @@ export interface PortfolioPostDefinition {
   source?: string;
   /** Technology groups optionally link to a related project story when one is relevant. */
   stackGroups?: { label: string; items: { label: string; postSlug?: string; href?: string }[] }[];
-  /** Each step narrates a documented interaction; it does not claim a live application. */
+  /**
+   * Rendered as the pop-up's numbered "How it works" list. Each step narrates a documented
+   * interaction and does not claim a live application. `hotspot` is no longer rendered
+   * (the markers sat on decorative art); keep it until real per-step screenshots replace it.
+   */
   walkthrough?: { title: string; detail: string; hotspot: { x: number; y: number; label: string } }[];
 }
 
