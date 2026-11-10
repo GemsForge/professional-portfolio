@@ -184,15 +184,25 @@ test("pop-up keeps the walkthrough, swaps in real step screenshots, and meets ty
   const auraPost = html.slice(html.indexOf('data-post-view="auralogbook"'), html.indexOf("</article>", html.indexOf('data-post-view="auralogbook"')));
   assert.equal((auraPost.match(/data-walkthrough-step="\d"/g) ?? []).length, 5);
   assert.equal((auraPost.match(/class="visual-hotspot"/g) ?? []).length, 5);
-  assert.match(auraPost, /<button type="button" data-step-prev>← Previous step<\/button><button type="button" data-step-next>Next step →<\/button>/);
+  // Step arrows sit on the picture, with dots beneath it and a screen-reader announcer; no numeric counter.
+  assert.match(auraPost, /<button type="button" class="post-step-arrow post-step-prev" data-step-prev aria-label="Previous step">/);
+  assert.match(auraPost, /<button type="button" class="post-step-arrow post-step-next" data-step-next aria-label="Next step">/);
+  assert.match(auraPost, /<div class="post-step-dots" aria-hidden="true">(?:<span><\/span>){5}<\/div>/);
+  assert.match(auraPost, /<p class="visually-hidden" data-step-announce aria-live="polite"><\/p>/);
+  assert.match(auraPost, /<span class="eyebrow">Illustrative prototype<\/span>/, "without screenshots the walkthrough stays labeled as a prototype");
+  assert.doesNotMatch(auraPost, /walkthrough-controls/);
   assert.match(auraPost, /View source <span class="visually-hidden">\(opens in a new tab\)<\/span>/);
   // A catalog step with `screenshot` shows that real screen and hides its hotspot.
-  assert.match(script, /const screenshot = steps\[index\]\.dataset\.stepScreenshot;/);
-  assert.match(script, /hotspot\.hidden = Boolean\(screenshot\) \|\|/);
+  assert.match(script, /const screenshot = step\.dataset\.stepScreenshot;/);
+  assert.match(script, /const onScreen = screenshot && step\.dataset\.stepHotspotX;/, "a screenshot's own hotspot moves the marker onto the real UI");
+  assert.match(script, /previous\.disabled = index === 0;/);
+  assert.match(script, /next\.disabled = index === steps\.length - 1;/);
+  assert.match(css, /#post-dialog \.is-step-screenshot \.post-visual-stage\{width:fit-content;max-width:100%;max-height:none;aspect-ratio:auto/, "screenshots keep their own shape");
+  assert.match(css, /@media\(prefers-reduced-motion:reduce\)\{#post-dialog \.post-visual-stage>img\.is-fading\{animation:none\}\}/);
+  assert.match(css, /#post-dialog \.post-step-arrow\{[^}]*width:44px;height:44px/);
   assert.match(css, /#post-dialog \.post-story\{font-size:15px/);
   assert.match(css, /#post-dialog \.walkthrough-steps p,#post-dialog \.walkthrough-status\{font-size:15px/);
   assert.match(css, /#post-dialog \.walkthrough-disclaimer\{font-size:13px;line-height:1\.45;color:#4d5d50\}/);
-  assert.match(css, /#post-dialog \.walkthrough-controls button\{min-height:44px/);
   assert.match(css, /#post-dialog \.visual-hotspot\{width:44px;height:44px\}/);
   assert.match(css, /#post-dialog \.post-close\{width:44px;height:44px/);
   assert.match(css, /#post-dialog \.post-sequence button\{min-height:44px/);

@@ -42,11 +42,19 @@ export interface PortfolioPostDefinition {
   stackGroups?: { label: string; items: { label: string; postSlug?: string; href?: string }[] }[];
   /**
    * Each step narrates a documented interaction; it does not claim a live application.
-   * `hotspot` marks the step on the project illustration. Add `screenshot` (a path under
-   * /assets/ plus alt text) when a real app screen exists: the pop-up then shows that
-   * screen for the step and hides the illustration hotspot.
+   * `hotspot` marks the step on the project illustration. Add `screenshot` when a real
+   * app screen exists: `src` under /assets/, `alt` describing what the screen shows, and an
+   * optional `hotspot` (percent of the screenshot) that points at the UI element the step
+   * describes. When every step has a screenshot, the walkthrough becomes an "App tour":
+   * it opens on the first screen, drops the prototype disclaimer, and the grid card uses
+   * that first screen too.
    */
-  walkthrough?: { title: string; detail: string; hotspot: { x: number; y: number; label: string }; screenshot?: { src: string; alt: string } }[];
+  walkthrough?: {
+    title: string;
+    detail: string;
+    hotspot: { x: number; y: number; label: string };
+    screenshot?: { src: string; alt: string; hotspot?: { x: number; y: number; label: string } };
+  }[];
 }
 
 export const PROJECTS = {

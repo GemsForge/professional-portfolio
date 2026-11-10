@@ -22,27 +22,57 @@
 
   /**
    * Sets the visible walkthrough step. A step with data-step-screenshot shows that real
-   * app screen in place of the illustration (and hides the hotspot); other steps restore
-   * the illustration and show their hotspot.
+   * app screen (crossfading in) and moves its hotspot to data-step-hotspot-x/y, or hides
+   * it when the screenshot has none; other steps restore the illustration and its
+   * hotspot. Arrows disable at each end, dots track progress, and `announce` reads the
+   * new step to screen readers after a button press.
    */
-  function setWalkthroughStep(story, nextIndex) {
+  function setWalkthroughStep(story, nextIndex, { announce = false } = {}) {
     const steps = [...story.querySelectorAll("[data-walkthrough-step]")];
     if (!steps.length) return;
     const index = Math.max(0, Math.min(nextIndex, steps.length - 1));
+    const step = steps[index];
     walkthroughPositions.set(story.dataset.postView, index);
-    steps.forEach((step, stepIndex) => { step.hidden = stepIndex !== index; });
-    const screenshot = steps[index].dataset.stepScreenshot;
+    steps.forEach((item, stepIndex) => { item.hidden = stepIndex !== index; });
+    const screenshot = step.dataset.stepScreenshot;
     const image = dialog.querySelector(".post-visual-stage img");
     if (image instanceof HTMLImageElement) {
       image.dataset.defaultSrc ??= image.getAttribute("src") ?? "";
       image.dataset.defaultAlt ??= image.alt;
-      image.src = screenshot ?? image.dataset.defaultSrc;
-      image.alt = screenshot ? steps[index].dataset.stepScreenshotAlt ?? "" : image.dataset.defaultAlt;
+      const nextSrc = screenshot ?? image.dataset.defaultSrc;
+      if (image.getAttribute("src") !== nextSrc) {
+        image.src = nextSrc;
+        image.classList.remove("is-fading");
+        void image.offsetWidth; // restart the crossfade animation
+        image.classList.add("is-fading");
+      }
+      image.alt = screenshot ? step.dataset.stepScreenshotAlt ?? "" : image.dataset.defaultAlt;
       image.closest(".post-main-visual")?.classList.toggle("is-step-screenshot", Boolean(screenshot));
     }
-    for (const hotspot of dialog.querySelectorAll("[data-visual-hotspot]")) hotspot.hidden = Boolean(screenshot) || Number(hotspot.dataset.visualHotspot) !== index;
-    const controls = story.querySelector(".walkthrough-controls");
-    if (controls) controls.hidden = false;
+    for (const hotspot of dialog.querySelectorAll("[data-visual-hotspot]")) {
+      hotspot.dataset.defaultX ??= hotspot.style.getPropertyValue("--hotspot-x");
+      hotspot.dataset.defaultY ??= hotspot.style.getPropertyValue("--hotspot-y");
+      hotspot.dataset.defaultLabel ??= hotspot.dataset.hotspotLabel ?? "";
+      const own = Number(hotspot.dataset.visualHotspot) === index;
+      const onScreen = screenshot && step.dataset.stepHotspotX;
+      const x = onScreen ? `${step.dataset.stepHotspotX}%` : hotspot.dataset.defaultX;
+      const y = onScreen ? `${step.dataset.stepHotspotY}%` : hotspot.dataset.defaultY;
+      const label = onScreen ? step.dataset.stepHotspotLabel ?? "" : hotspot.dataset.defaultLabel;
+      hotspot.style.setProperty("--hotspot-x", x);
+      hotspot.style.setProperty("--hotspot-y", y);
+      hotspot.dataset.hotspotLabel = label;
+      hotspot.setAttribute("aria-label", `Explore: ${label}`);
+      hotspot.hidden = !own || Boolean(screenshot && !onScreen);
+    }
+    const previous = dialog.querySelector("[data-step-prev]");
+    const next = dialog.querySelector("[data-step-next]");
+    if (previous instanceof HTMLButtonElement) previous.disabled = index === 0;
+    if (next instanceof HTMLButtonElement) next.disabled = index === steps.length - 1;
+    dialog.querySelectorAll(".post-step-dots span").forEach((dot, dotIndex) => dot.classList.toggle("is-active", dotIndex === index));
+    const status = story.querySelector("[data-walkthrough-status]");
+    if (status) status.textContent = "";
+    const announcer = story.querySelector("[data-step-announce]");
+    if (announcer && announce) announcer.textContent = `Step ${index + 1} of ${steps.length}: ${step.querySelector("h4")?.textContent ?? ""}`;
   }
 
   /** Moves the picture above the walkthrough on phones and back to the media column at wider sizes. */
@@ -145,7 +175,7 @@
     const stepButton = target?.closest("[data-step-prev], [data-step-next]");
     if (stepButton && activePost) {
       const current = walkthroughPositions.get(activePost.dataset.postView) ?? 0;
-      setWalkthroughStep(activePost, current + (stepButton.matches("[data-step-next]") ? 1 : -1));
+      setWalkthroughStep(activePost, current + (stepButton.matches("[data-step-next]") ? 1 : -1), { announce: true });
       return;
     }
     const hotspot = target?.closest("[data-visual-hotspot]");

@@ -392,11 +392,27 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid #90
 #post-dialog .walkthrough .eyebrow{font-size:13px;letter-spacing:.06em;color:#2f4e39}
 #post-dialog .walkthrough-steps h4{margin:0 0 4px;font:600 16px/1.35 var(--font);color:#1e2823}
 #post-dialog .walkthrough-steps p,#post-dialog .walkthrough-status{font-size:15px;line-height:1.55;color:#3a4a3e}
-#post-dialog .walkthrough-controls button{min-height:44px;padding:0 16px;font-size:14px}
 #post-dialog .walkthrough-disclaimer{font-size:13px;line-height:1.45;color:#4d5d50}
 #post-dialog .visual-hotspot{width:44px;height:44px}
-/* A step with a real app screen shows it whole instead of cropping it to the illustration's square. */
-#post-dialog .is-step-screenshot img{object-fit:contain}
+/*
+ * Walkthrough carousel: 44px arrows sit on the picture (hidden at either end) and dots
+ * beneath it track progress. Real screenshots set .is-step-screenshot, so the stage takes
+ * the screenshot's own shape instead of a letterboxed square; hotspot percentages then
+ * map onto the screenshot itself.
+ */
+#post-dialog .post-step-arrow{position:absolute;top:50%;z-index:2;display:grid;width:44px;height:44px;place-items:center;padding:0;transform:translateY(-50%);border:0;border-radius:50%;background:rgba(251,250,244,.94);color:#1e2823;font-size:28px;line-height:1;box-shadow:0 2px 10px rgba(30,40,35,.2);cursor:pointer}
+#post-dialog .post-step-prev{left:10px}
+#post-dialog .post-step-next{right:10px}
+#post-dialog .post-step-arrow:disabled{visibility:hidden}
+#post-dialog .post-step-dots{display:flex;justify-content:center;gap:7px;margin-top:14px}
+#post-dialog .post-step-dots span{width:7px;height:7px;border-radius:50%;background:#b9b6a6}
+#post-dialog .post-step-dots .is-active{background:#2f4e39}
+#post-dialog .is-step-screenshot .post-visual-stage{width:fit-content;max-width:100%;max-height:none;aspect-ratio:auto;margin-inline:auto;border-radius:12px;background:#fff;box-shadow:0 10px 30px rgba(30,40,35,.14)}
+#post-dialog .is-step-screenshot .post-visual-stage>img{width:auto;height:auto;max-width:100%;max-height:min(640px,calc(100dvh - 190px));padding:0;object-fit:contain;filter:none}
+#post-dialog .post-visual-stage>img.is-fading{animation:post-step-fade .28s ease}
+@keyframes post-step-fade{from{opacity:.2}}
+@media(prefers-reduced-motion:reduce){#post-dialog .post-visual-stage>img.is-fading{animation:none}}
+@media(max-width:650px){#post-dialog .is-step-screenshot .post-visual-stage>img{max-height:62dvh}}
 #post-dialog .tech-chip{font-size:13px}
 #post-dialog .post-close{width:44px;height:44px;font-size:26px}
 #post-dialog .post-sequence{margin-top:28px}
