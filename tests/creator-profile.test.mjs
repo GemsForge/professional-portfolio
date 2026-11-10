@@ -163,3 +163,10 @@ test("Tech Stack summarizes professional and personal tools with relevant projec
   assert.ok(evidenceLinks.some(({ label }) => label === "Java"));
   assert.ok(evidenceLinks.some(({ label, postSlug }) => label === "Notion" && postSlug === "notion-api-shortcuts"));
 });
+
+test("tile captions are visible without hover above phone widths", async () => {
+  const css = await read("../static-source/assets/site.css");
+  assert.doesNotMatch(css, /\.creator-post-tile:hover \.tile-caption/, "captions must not depend on hover");
+  assert.doesNotMatch(css, /@media\(hover:none\)\{\.tile-caption\{display:none/, "touch tablets must still show captions");
+  assert.match(css, /\.tile-caption\{display:-webkit-box;padding:0 10px 12px;margin-top:-6px\}/);
+});
