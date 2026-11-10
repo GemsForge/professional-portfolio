@@ -63,6 +63,12 @@ test("creator grid features six project stories and keeps the technology shortcu
   assert.match(html, /id="post-stories">[\s\S]*?data-post-view="auralogbook"/);
 });
 
+test("creator profile uses a centered maximum canvas that stays fluid on smaller viewports", async () => {
+  const css = await read("../static-source/assets/site.css");
+  assert.match(css, /\.creator-shell\{width:min\(100%,1120px\);margin-inline:auto\}/);
+  assert.match(css, /\.profile-header,\.creator-main-column\{width:min\(100%,980px\);margin-inline:auto\}/);
+});
+
 test("project posts identify evidence and provide guided prototype steps", () => {
   const projects = PORTFOLIO_POSTS.filter(({ category }) => category === "project");
   assert.equal(projects.length, 6);
