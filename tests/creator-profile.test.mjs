@@ -29,6 +29,8 @@ test("creator grid features six project stories and keeps the technology shortcu
   assert.doesNotMatch(html, /data-post-link="portfolio-direction"/);
   assert.equal((html.match(/data-post-view="[^"]+"/g) ?? []).length, 8);
   assert.match(html, /data-post-view="portfolio-direction"/, "the direction story remains available to in-modal navigation");
+  assert.doesNotMatch(html, /<div class="post-story-topline"><span>[^<]*<\/span><span>\d{2} \/ \d{2}<\/span><\/div>/, "no post position counter should appear in any modal header");
+  assert.match(html, /class="walkthrough-counter" data-step-counter>01 \/ 05/, "guided walkthrough step position remains visible");
   assert.match(html, /<nav class="creator-mobile-nav" aria-label="Mobile navigation">/);
   assert.match(html, /<a href="#feed" aria-label="Work">/);
   assert.match(html, /<a href="#about" aria-label="About">/);
