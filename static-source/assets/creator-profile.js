@@ -5,6 +5,7 @@
  */
 (() => {
   setUpHighlights();
+  setUpAvatarGreeting();
 
   const grid = document.querySelector("#creator-post-grid");
   const dialog = document.querySelector("#post-dialog");
@@ -190,5 +191,45 @@ function setUpHighlights() {
   dialog.addEventListener("close", () => {
     if (opener?.isConnected) opener.focus({ preventScroll: true });
     opener = null;
+  });
+}
+
+/**
+ * Decorative avatar greeting. A mouse hover (or a tap/pen press, which toggles it)
+ * adds .is-greeting so CSS draws the ring, then types the tag's data-hello-text one
+ * character at a time. Leaving resets it. With reduced motion the message appears at
+ * once. The whole effect is aria-hidden; the photo keeps its own alt text.
+ */
+function setUpAvatarGreeting() {
+  const ring = document.querySelector("[data-avatar-greeting]");
+  const output = ring?.querySelector("[data-hello-text]");
+  if (!(ring instanceof HTMLElement) || !(output instanceof HTMLElement)) return;
+  const message = output.dataset.helloText ?? "";
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let timer = 0;
+
+  /** Writes the first `count` characters, then schedules the next one. */
+  function type(count) {
+    output.textContent = message.slice(0, count);
+    if (count < message.length) timer = window.setTimeout(() => type(count + 1), 75);
+  }
+
+  function greet() {
+    window.clearTimeout(timer);
+    ring.classList.add("is-greeting");
+    if (reducedMotion.matches) output.textContent = message;
+    else timer = window.setTimeout(() => type(1), 300); // let the ring start drawing first
+  }
+
+  function reset() {
+    window.clearTimeout(timer);
+    ring.classList.remove("is-greeting");
+    output.textContent = "";
+  }
+
+  ring.addEventListener("pointerenter", (event) => { if (event.pointerType === "mouse") greet(); });
+  ring.addEventListener("pointerleave", (event) => { if (event.pointerType === "mouse") reset(); });
+  ring.addEventListener("pointerup", (event) => {
+    if (event.pointerType !== "mouse") (ring.classList.contains("is-greeting") ? reset : greet)();
   });
 }

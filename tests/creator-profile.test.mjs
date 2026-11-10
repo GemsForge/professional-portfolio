@@ -159,3 +159,19 @@ test("phones get a compact header, five fitting highlights, and short tile text"
   assert.match(css, /\.sp-narrow\{display:none\}/);
   assert.match(css, /@media\(max-width:650px\)\{[\s\S]*?\.sp-wide\{display:none\}[\s\S]*?\.sp-narrow\{display:inline\}/);
 });
+
+test("avatar greeting is decorative, cued, and respects reduced motion", async () => {
+  const html = await readGeneratedHome();
+  const css = await read("../static-source/assets/site.css");
+  const script = await read("../static-source/assets/creator-profile.js");
+  const ring = html.slice(html.indexOf("data-avatar-greeting"), html.indexOf("</div>", html.indexOf("data-avatar-greeting")));
+  // The photo keeps its alt text; the drawn ring and the typed tag are hidden from assistive technology.
+  assert.match(ring, /alt="Diamond Brown smiling at the camera\."/);
+  assert.match(ring, /<svg class="sp-avatar-draw" aria-hidden="true"/);
+  assert.match(ring, /<span class="sp-hello" aria-hidden="true"><span class="sp-hello-prompt">&gt;<\/span><span class="sp-hello-text" data-hello-text="Hello World"><\/span><span class="sp-hello-caret">_<\/span><\/span>/);
+  assert.match(css, /\.is-greeting \.sp-avatar-progress\{stroke-dashoffset:0\}/);
+  assert.match(css, /@media\(prefers-reduced-motion:reduce\)\{\.sp-avatar-progress\{transition:none\}\.sp-hello-caret\{animation:none\}\}/);
+  assert.match(script, /function setUpAvatarGreeting\(\)/);
+  assert.match(script, /if \(reducedMotion\.matches\) output\.textContent = message;/);
+  assert.match(script, /event\.pointerType !== "mouse"/, "touch and pen taps toggle the greeting");
+});
