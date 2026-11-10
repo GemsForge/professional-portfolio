@@ -8,15 +8,16 @@ import { applyProjectPageMetadata, HOME_PROJECT_SLUGS, PORTFOLIO_POSTS, PROJECTS
 
 const source = path.resolve("static-source");
 const pages = {};
+/** Official product homepages make the profile's technology highlights external shortcuts. */
 const PROFILE_TECHNOLOGIES = [
-  { label: "C#", image: "/assets/auralogbook-stack/csharp.png" },
-  { label: ".NET", icon: siDotnet },
-  { label: "React", image: "/assets/auralogbook-stack/react.png" },
-  { label: "TypeScript", image: "/assets/auralogbook-stack/typescript.png" },
-  { label: "Redux", image: "/assets/auralogbook-stack/redux.png" },
-  { label: "PostgreSQL", icon: siPostgresql },
-  { label: "Java", icon: siOpenjdk },
-  { label: "Notion", image: "/assets/auralogbook-stack/notion.png" },
+  { label: "C#", href: "https://dotnet.microsoft.com/languages/csharp", image: "/assets/auralogbook-stack/csharp.png" },
+  { label: ".NET", href: "https://dotnet.microsoft.com/", icon: siDotnet },
+  { label: "React", href: "https://react.dev/", image: "/assets/auralogbook-stack/react.png" },
+  { label: "TypeScript", href: "https://www.typescriptlang.org/", image: "/assets/auralogbook-stack/typescript.png" },
+  { label: "Redux", href: "https://redux.js.org/", image: "/assets/auralogbook-stack/redux.png" },
+  { label: "PostgreSQL", href: "https://www.postgresql.org/", icon: siPostgresql },
+  { label: "Java", href: "https://www.java.com/", icon: siOpenjdk },
+  { label: "Notion", href: "https://www.notion.so/", image: "/assets/auralogbook-stack/notion.png" },
 ];
 const TECH_PILL_MARKS = {
   "C#": { image: "/assets/auralogbook-stack/csharp.png" },
@@ -63,7 +64,7 @@ function renderProfileTechStrip() {
     const logo = technology.image
       ? `<img src="${technology.image}" alt="" loading="lazy" decoding="async">`
       : `<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" style="--tech-color:#${technology.icon.hex}"><path fill="currentColor" d="${technology.icon.path}"></path></svg>`;
-    return `<li><a href="/about/" data-post-link="tech-stack" aria-label="Open ${technology.label} in the Tech Stack story"><span class="profile-tech-mark">${logo}</span><span>${technology.label}</span></a></li>`;
+    return `<li><a href="${technology.href}" target="_blank" rel="noopener noreferrer" aria-label="Visit ${technology.label} official website (opens in a new tab)"><span class="profile-tech-mark">${logo}</span><span>${technology.label}</span></a></li>`;
   }).join("");
   return `<nav class="profile-tech-strip" aria-label="Technology stack"><ul>${items}</ul></nav>`;
 }

@@ -54,7 +54,19 @@ test("creator grid features six project stories and keeps the technology shortcu
   assert.doesNotMatch(html, /A developer’s precision|practical point of view|FIELD NOTE/);
   assert.doesNotMatch(html, /class="feed-filter"|data-filter=/, "the project-only grid should not show filter controls");
   const techStrip = html.slice(html.indexOf('class="profile-tech-strip"'), html.indexOf("</nav>", html.indexOf('class="profile-tech-strip"')));
-  assert.equal((techStrip.match(/data-post-link="tech-stack"/g) ?? []).length, 8);
+  assert.doesNotMatch(techStrip, /data-post-link=/, "technology highlights should link to their official websites rather than the Tech Stack post");
+  for (const [label, href] of [
+    ["C#", "https://dotnet.microsoft.com/languages/csharp"],
+    [".NET", "https://dotnet.microsoft.com/"],
+    ["React", "https://react.dev/"],
+    ["TypeScript", "https://www.typescriptlang.org/"],
+    ["Redux", "https://redux.js.org/"],
+    ["PostgreSQL", "https://www.postgresql.org/"],
+    ["Java", "https://www.java.com/"],
+    ["Notion", "https://www.notion.so/"],
+  ]) {
+    assert.match(techStrip, new RegExp(`<a href="${href.replaceAll("/", "\\/")}" target="_blank" rel="noopener noreferrer" aria-label="Visit ${label.replace("#", "\\#")} official website`));
+  }
   assert.equal((techStrip.match(/class="profile-tech-mark"/g) ?? []).length, 8);
   for (const technology of ["C#", ".NET", "React", "TypeScript", "Redux", "PostgreSQL", "Java", "Notion"]) {
     assert.ok(techStrip.includes(technology), `${technology} should appear in the technology strip`);
