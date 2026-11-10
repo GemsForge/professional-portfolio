@@ -133,7 +133,8 @@ export const HOME_PROJECT_SLUGS = [
 
 /**
  * Curated posts define both the visible profile grid and same-page post views.
- * The first three entries preserve the requested opening row; Tech Stack leads row two.
+ * Project posts follow the Projects page order (most to least code-heavy); the
+ * process and Tech Stack entries are kept as data but are not rendered.
  */
 export const PORTFOLIO_POSTS: PortfolioPostDefinition[] = [
   // Keep shipped behavior distinct from planned work and tie technical claims to the reviewed app source.
@@ -197,19 +198,6 @@ export const PORTFOLIO_POSTS: PortfolioPostDefinition[] = [
     ],
   },
   {
-    slug: "hair-log", title: "Hair Care Log", category: "project", eyebrow: "Personal workflow automation · 18 Shortcuts",
-    caption: "A structured memory for hair-care decisions, products, routines, and results.", image: "/assets/hair-care-log.png", imageAlt: "Hair-care journal illustration with routine and progress markers",
-    role: "Mapped the workflow and built modular Shortcuts with Notion integration.",
-    decisions: ["Store recurring care activities as structured records.", "Use Shortcuts to capture and retrieve connected notes."],
-    evidence: "The case study documents 18 Shortcuts, Notion records, and Calendar context.",
-    tools: ["Apple Shortcuts", "Notion API", "Apple Calendar", "Structured records"], caseStudy: "/portfolio/projects/hair-log/",
-    walkthrough: [
-      { title: "Choose an activity", detail: "Start with the care action or observation.", hotspot: { x: 48, y: 31, label: "Activity" } },
-      { title: "Add context", detail: "Connect products, styles, conditions, and outcomes.", hotspot: { x: 58, y: 52, label: "Record context" } },
-      { title: "Review history", detail: "Use Notion records to revisit earlier entries.", hotspot: { x: 43, y: 72, label: "History" } },
-    ],
-  },
-  {
     slug: "75-hard-automation", title: "75 Days of Discipline", category: "project", eyebrow: "Personal accountability system · 75 Soft",
     caption: "An accountability workflow that makes a repeated daily check-in easier to follow.", image: "/assets/75-hard-calendar.png", imageAlt: "Calendar illustration with daily check marks",
     role: "Designed the daily workflow and built its Apple Shortcuts.",
@@ -223,16 +211,16 @@ export const PORTFOLIO_POSTS: PortfolioPostDefinition[] = [
     ],
   },
   {
-    slug: "apple-ecosystem", title: "Apple-native Operating System", category: "project", eyebrow: "Independent systems design · Evolving",
-    caption: "Give each tool a clear responsibility so information can move through the system.", image: "/assets/apple-native-system.png", imageAlt: "Connected Apple tools organized around a central system hub",
-    role: "Mapped tool responsibilities, data, migration, and automation.",
-    decisions: ["Give notes, records, tasks, and automation distinct roles.", "Preserve relationships and metadata during migration."],
-    evidence: "The case study documents the system map; sample registries are not published.",
-    tools: ["Information architecture", "Migration", "Apple Notes", "Numbers", "Reminders", "Shortcuts"], caseStudy: "/portfolio/projects/apple-ecosystem/",
+    slug: "hair-log", title: "Hair Care Log", category: "project", eyebrow: "Personal workflow automation · 18 Shortcuts",
+    caption: "A structured memory for hair-care decisions, products, routines, and results.", image: "/assets/hair-care-log.png", imageAlt: "Hair-care journal illustration with routine and progress markers",
+    role: "Mapped the workflow and built modular Shortcuts with Notion integration.",
+    decisions: ["Store recurring care activities as structured records.", "Use Shortcuts to capture and retrieve connected notes."],
+    evidence: "The case study documents 18 Shortcuts, Notion records, and Calendar context.",
+    tools: ["Apple Shortcuts", "Notion API", "Apple Calendar", "Structured records"], caseStudy: "/portfolio/projects/hair-log/",
     walkthrough: [
-      { title: "Find overlap", detail: "Identify tools doing similar jobs.", hotspot: { x: 48, y: 28, label: "Current landscape" } },
-      { title: "Set tool roles", detail: "Separate notes, records, tasks, and automation.", hotspot: { x: 62, y: 49, label: "Tool responsibilities" } },
-      { title: "Plan migration", detail: "Carry relationships and metadata with the content.", hotspot: { x: 43, y: 73, label: "Migration plan" } },
+      { title: "Choose an activity", detail: "Start with the care action or observation.", hotspot: { x: 48, y: 31, label: "Activity" } },
+      { title: "Add context", detail: "Connect products, styles, conditions, and outcomes.", hotspot: { x: 58, y: 52, label: "Record context" } },
+      { title: "Review history", detail: "Use Notion records to revisit earlier entries.", hotspot: { x: 43, y: 72, label: "History" } },
     ],
   },
   {
@@ -246,6 +234,19 @@ export const PORTFOLIO_POSTS: PortfolioPostDefinition[] = [
       { title: "Name the parent", detail: "Create and store the parent folder.", hotspot: { x: 40, y: 28, label: "Parent folder" } },
       { title: "Choose a count", detail: "Set how many subfolders to create.", hotspot: { x: 60, y: 49, label: "Repeat count" } },
       { title: "Create child folders", detail: "Add each new folder under the stored parent.", hotspot: { x: 50, y: 72, label: "Nested folders" } },
+    ],
+  },
+  {
+    slug: "apple-ecosystem", title: "Apple-native Operating System", category: "project", eyebrow: "Independent systems design · Evolving",
+    caption: "Give each tool a clear responsibility so information can move through the system.", image: "/assets/apple-native-system.png", imageAlt: "Connected Apple tools organized around a central system hub",
+    role: "Mapped tool responsibilities, data, migration, and automation.",
+    decisions: ["Give notes, records, tasks, and automation distinct roles.", "Preserve relationships and metadata during migration."],
+    evidence: "The case study documents the system map; sample registries are not published.",
+    tools: ["Information architecture", "Migration", "Apple Notes", "Numbers", "Reminders", "Shortcuts"], caseStudy: "/portfolio/projects/apple-ecosystem/",
+    walkthrough: [
+      { title: "Find overlap", detail: "Identify tools doing similar jobs.", hotspot: { x: 48, y: 28, label: "Current landscape" } },
+      { title: "Set tool roles", detail: "Separate notes, records, tasks, and automation.", hotspot: { x: 62, y: 49, label: "Tool responsibilities" } },
+      { title: "Plan migration", detail: "Carry relationships and metadata with the content.", hotspot: { x: 43, y: 73, label: "Migration plan" } },
     ],
   },
 ];

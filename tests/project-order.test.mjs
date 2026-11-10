@@ -26,10 +26,8 @@ const pages = JSON.parse(
 const gridSlugs = (html) =>
   [...html.matchAll(/<a class="creator-post-tile tile-([a-z0-9-]+)"/g)].map(([, slug]) => slug);
 
-test("home profile grid opens with code-backed projects and keeps every project", () => {
-  const tiles = gridSlugs(pages["/"]);
-  assert.deepEqual(tiles.slice(0, LEAD_PROJECTS.length), LEAD_PROJECTS);
-  for (const slug of CATALOG_ORDER) assert.ok(tiles.includes(slug), `missing ${slug} tile`);
+test("home profile grid matches the Projects page order", () => {
+  assert.deepEqual(gridSlugs(pages["/"]), CATALOG_ORDER);
 });
 
 test("projects page lists the full catalog from most to least code-heavy", () => {
