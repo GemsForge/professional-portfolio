@@ -41,11 +41,12 @@ export interface PortfolioPostDefinition {
   /** Technology groups optionally link to a related project story when one is relevant. */
   stackGroups?: { label: string; items: { label: string; postSlug?: string; href?: string }[] }[];
   /**
-   * Rendered as the pop-up's numbered "How it works" list. Each step narrates a documented
-   * interaction and does not claim a live application. `hotspot` is no longer rendered
-   * (the markers sat on decorative art); keep it until real per-step screenshots replace it.
+   * Each step narrates a documented interaction; it does not claim a live application.
+   * `hotspot` marks the step on the project illustration. Add `screenshot` (a path under
+   * /assets/ plus alt text) when a real app screen exists: the pop-up then shows that
+   * screen for the step and hides the illustration hotspot.
    */
-  walkthrough?: { title: string; detail: string; hotspot: { x: number; y: number; label: string } }[];
+  walkthrough?: { title: string; detail: string; hotspot: { x: number; y: number; label: string }; screenshot?: { src: string; alt: string } }[];
 }
 
 export const PROJECTS = {

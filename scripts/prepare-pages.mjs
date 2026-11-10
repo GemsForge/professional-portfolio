@@ -125,32 +125,11 @@ function renderCreatorGrid() {
   }).join("");
 }
 
-/** Alt text for card pictures that replace the catalog image (the 75 Days screenshot). */
-const TILE_IMAGE_ALTS = {
-  "75-hard-automation": "iPhone Shortcuts folder for the 75 Days of Discipline daily log, showing its check-in shortcuts.",
-};
-
-/**
- * The pop-up opens with the same picture as the card that opened it: the Notion
- * request body as readable code, the real 75 Days screenshot, or the project image.
- */
-function renderPostVisual(post) {
-  if (post.slug === "notion-api-shortcuts") {
-    return `<figure class="post-main-visual post-visual-code"><figcaption class="post-code-head"><span>POST /v1/pages</span><span>Simplified request body</span></figcaption><pre class="post-code"><code>${NOTION_CODE}</code></pre></figure>`;
-  }
-  const image = TILE_IMAGES[post.slug] ?? { src: post.image, width: 960, height: 960 };
-  const alt = TILE_IMAGE_ALTS[post.slug] ?? post.imageAlt;
-  const fit = image.position ? " post-visual-screenshot" : "";
-  return `<figure class="post-main-visual${fit}"><div class="post-visual-stage"><img src="${image.src}" alt="${alt}" width="${image.width}" height="${image.height}"></div></figure>`;
-}
-
 /**
  * Emits one story view per grid post, in grid order. Reading order puts evidence
- * first: picture (phones), title and summary, case-study/source links, role and
- * status, technical choices, a plain "How it works" list, then the tool chips.
- * "How it works" replaces the old hotspot walkthrough: its markers sat on
- * decorative illustrations, so the steps are now listed as text until real
- * per-step screenshots exist.
+ * first: title and summary, case-study/source links, role and status, then the
+ * walkthrough (phones place the picture directly above it so its hotspots stay
+ * next to the steps), technical choices, and the tool chips.
  */
 function renderPostViews() {
   return GRID_POSTS.map((post) => {
@@ -163,11 +142,18 @@ function renderPostViews() {
     const actions = links ? `<nav class="post-actions" aria-label="Project links">${links}</nav>` : "";
     const facts = post.role && post.evidence ? `<dl class="post-facts"><div><dt>My role</dt><dd>${post.role}</dd></div><div><dt>${post.evidenceLabel ?? "Evidence &amp; status"}</dt><dd>${post.evidence}</dd></div></dl>` : "";
     const decisionsSection = post.decisions.length ? `<section class="post-decisions"><h3>${post.decisionsTitle ?? "Decisions that shaped it"}</h3><ul>${decisions}</ul></section>` : "";
-    const howItWorks = post.walkthrough ? `<section class="post-how" aria-labelledby="how-${post.slug}"><h3 id="how-${post.slug}">How it works</h3><ol>${post.walkthrough.map((step) => `<li><strong>${step.title}</strong><span>${step.detail}</span></li>`).join("")}</ol></section>` : "";
     const techSection = `<section class="post-tools"><h3>Tech</h3><div class="post-tool-list">${chips}</div></section>`;
-    // Phones move the picture into this slot at the top of the story (see creator-profile.js).
+    // Phones move the picture into this slot, directly above the walkthrough (see creator-profile.js).
     const mobileVisualSlot = `<div class="post-mobile-visual" data-mobile-visual></div>`;
-    return `<article class="post-story" data-post-view="${post.slug}" aria-labelledby="post-title-${post.slug}" hidden><template class="post-visual-template">${renderPostVisual(post)}</template>${mobileVisualSlot}<div class="post-story-topline"><span>${post.eyebrow}</span></div><h2 id="post-title-${post.slug}">${post.title}</h2><p class="post-lead">${post.caption}</p>${actions}${facts}${decisionsSection}${howItWorks}${techSection}<nav class="post-sequence" aria-label="Browse other posts"><button type="button" data-adjacent-post="previous">← Previous post</button><button type="button" data-adjacent-post="next">Next post →</button></nav></article>`;
+    // A step with a real screenshot carries it as data; the script swaps it in for that step.
+    const stepItem = (step, stepIndex) => {
+      const shot = step.screenshot ? ` data-step-screenshot="${step.screenshot.src}" data-step-screenshot-alt="${step.screenshot.alt}"` : "";
+      return `<li data-walkthrough-step="${stepIndex}"${shot}><div><h4>${step.title}</h4><p>${step.detail}</p></div></li>`;
+    };
+    const walkthrough = post.walkthrough ? `<section class="walkthrough" aria-labelledby="walkthrough-${post.slug}"><div class="walkthrough-heading"><div><span class="eyebrow">Illustrative prototype</span><h3 id="walkthrough-${post.slug}">Walkthrough</h3></div></div><ol class="walkthrough-steps" data-walkthrough="${post.slug}">${post.walkthrough.map(stepItem).join("")}</ol><p class="walkthrough-status" data-walkthrough-status aria-live="polite"></p><div class="walkthrough-controls" hidden><button type="button" data-step-prev>← Previous step</button><button type="button" data-step-next>Next step →</button></div><p class="walkthrough-disclaimer">A guided prototype based on the documented project flow; not a live production app.</p></section>` : "";
+    const visualHotspots = post.walkthrough ? post.walkthrough.map((step, stepIndex) => `<button type="button" class="visual-hotspot" data-visual-hotspot="${stepIndex}" data-hotspot-label="${step.hotspot.label}" data-hotspot-detail="${step.detail}" style="--hotspot-x:${step.hotspot.x}%;--hotspot-y:${step.hotspot.y}%" aria-label="Explore: ${step.hotspot.label}"><span aria-hidden="true">+</span></button>`).join("") : "";
+    const visual = `<figure class="post-main-visual"><div class="post-visual-stage"><img src="${post.image}" alt="${post.imageAlt}" width="960" height="960">${visualHotspots}</div></figure>`;
+    return `<article class="post-story" data-post-view="${post.slug}" aria-labelledby="post-title-${post.slug}" hidden><template class="post-visual-template">${visual}</template><div class="post-story-topline"><span>${post.eyebrow}</span></div><h2 id="post-title-${post.slug}">${post.title}</h2><p class="post-lead">${post.caption}</p>${actions}${facts}${mobileVisualSlot}${walkthrough}${decisionsSection}${techSection}<nav class="post-sequence" aria-label="Browse other posts"><button type="button" data-adjacent-post="previous">← Previous post</button><button type="button" data-adjacent-post="next">Next post →</button></nav></article>`;
   }).join("");
 }
 
