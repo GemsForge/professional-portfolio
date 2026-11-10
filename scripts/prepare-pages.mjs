@@ -70,10 +70,17 @@ function renderProfileTechStrip() {
   return `<nav class="profile-tech-strip" aria-label="Technology stack"><ul>${items}</ul></nav>`;
 }
 
+/**
+ * Project posts are the only posts featured on the profile. The grid and the
+ * post views both render from this list, so Next/Previous (which cycles through
+ * every rendered post view) can never reach a post without a grid tile. The
+ * catalog's process and Tech Stack entries stay as data but are not rendered.
+ */
+const GRID_POSTS = PORTFOLIO_POSTS.filter((post) => post.category === "project");
+
 /** Emits the image-led, progressive-enhancement post grid from the typed catalog. */
 function renderCreatorGrid() {
-  // Keep the creator-direction story available to post navigation without featuring it as a grid card.
-  return PORTFOLIO_POSTS.filter((post) => post.category !== "tech-stack" && post.slug !== "portfolio-direction").map((post, index) => {
+  return GRID_POSTS.map((post, index) => {
     const fallback = post.caseStudy ?? (post.slug === "tech-stack" ? "/about/" : "#about");
     const category = post.category === "tech-stack" ? "Tech Stack" : post.category === "process" ? "Process" : "Project";
     const label = `${post.title}. ${category}. ${post.eyebrow}`;
@@ -81,10 +88,10 @@ function renderCreatorGrid() {
   }).join("");
 }
 
-/** Emits concise project stories and a direct professional/personal technology profile. */
+/** Emits one concise story view per grid post, in grid order. */
 function renderPostViews() {
   // Keep every post header focused on its title; post navigation already supplies previous/next movement.
-  return PORTFOLIO_POSTS.map((post) => {
+  return GRID_POSTS.map((post) => {
     const chips = post.tools.map(renderTechPill).join("");
     const decisions = post.decisions.map((decision) => `<li>${decision}</li>`).join("");
     const links = [

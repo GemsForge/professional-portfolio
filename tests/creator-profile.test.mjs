@@ -27,8 +27,9 @@ test("creator grid features six project stories and keeps the technology shortcu
   assert.deepEqual(tileOrder, slugs.filter((slug) => !["tech-stack", "portfolio-direction"].includes(slug)));
   assert.equal(tileOrder.length, 6);
   assert.doesNotMatch(html, /data-post-link="portfolio-direction"/);
-  assert.equal((html.match(/data-post-view="[^"]+"/g) ?? []).length, 8);
-  assert.match(html, /data-post-view="portfolio-direction"/, "the direction story remains available to in-modal navigation");
+  const viewOrder = [...html.matchAll(/data-post-view="([^"]+)"/g)].map((match) => match[1]);
+  assert.deepEqual(viewOrder, tileOrder, "Next/Previous cycles through post views, so they must match the grid exactly");
+  assert.doesNotMatch(html, /data-post-view="(?:portfolio-direction|tech-stack)"/, "posts without a grid tile must not be reachable from the post flow");
   assert.doesNotMatch(html, /<div class="post-story-topline"><span>[^<]*<\/span><span>\d{2} \/ \d{2}<\/span><\/div>/, "no post position counter should appear in any modal header");
   assert.doesNotMatch(html, /walkthrough-counter|data-step-counter|walkthrough-step-no|\d{2} \/ \d{2}/, "modals should not show post or walkthrough counts");
   assert.match(html, /<nav class="creator-mobile-nav" aria-label="Mobile navigation">/);
@@ -121,12 +122,6 @@ test("generated post viewer retains project routes, source links, and the one-pa
   assert.match(auraPost, /Spotify uses OAuth with PKCE/);
   assert.match(auraPost, /Photo files stay out of public assets/);
   assert.match(auraPost, /Spotify tracks are not saved to mood entries/);
-  const stackPost = html.slice(html.indexOf('data-post-view="tech-stack"'), html.indexOf('</article>', html.indexOf('data-post-view="tech-stack"')));
-  assert.match(stackPost, /The tools I’ve worked with professionally and in personal projects over the past four years/);
-  assert.match(stackPost, /<section class="post-tools stack-profile"><section class="stack-groups"/);
-  assert.match(stackPost, /<a class="tech-chip" href="#post\/auralogbook"/);
-  assert.match(stackPost, /<img src="\/assets\/auralogbook-stack\/sqlite\.png" alt=""/);
-  assert.doesNotMatch(stackPost, /post-facts|post-decisions|Illustrative prototype|class="post-tool-list"/, "the Tech Stack story should read as a profile, not a project case study");
   assert.match(script, /history\.pushState/);
   assert.match(script, /window\.addEventListener\("popstate"/);
   assert.match(script, /window\.addEventListener\("hashchange"/);
