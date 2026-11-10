@@ -1,0 +1,37 @@
+import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+import { test } from "node:test";
+
+/** Code-backed projects lead so recruiters see full-stack and API work first. */
+const LEAD_PROJECTS = ["auralogbook", "notion-api-shortcuts"];
+const CATALOG_ORDER = [
+  ...LEAD_PROJECTS,
+  "75-hard-automation",
+  "hair-log",
+  "dynamic-folder-structures",
+  "apple-ecosystem",
+];
+
+/** Lists project card slugs in the order the cards appear in a page. */
+const cardSlugs = (html) =>
+  [...html.matchAll(/<article class="project"><a href="\/portfolio\/projects\/([a-z0-9-]+)\//g)].map(
+    ([, slug]) => slug,
+  );
+
+const pages = JSON.parse(
+  await readFile(new URL("../lib/static-pages.json", import.meta.url), "utf8"),
+);
+
+/** Lists profile-grid tile slugs in display order. */
+const gridSlugs = (html) =>
+  [...html.matchAll(/<a class="creator-post-tile tile-([a-z0-9-]+)"/g)].map(([, slug]) => slug);
+
+test("home profile grid opens with code-backed projects and keeps every project", () => {
+  const tiles = gridSlugs(pages["/"]);
+  assert.deepEqual(tiles.slice(0, LEAD_PROJECTS.length), LEAD_PROJECTS);
+  for (const slug of CATALOG_ORDER) assert.ok(tiles.includes(slug), `missing ${slug} tile`);
+});
+
+test("projects page lists the full catalog from most to least code-heavy", () => {
+  assert.deepEqual(cardSlugs(pages["/portfolio/projects/"]), CATALOG_ORDER);
+});

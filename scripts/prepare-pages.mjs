@@ -4,6 +4,7 @@ import { siApple, siDotnet, siMui, siOpenjdk, siPostgresql, siSpotify } from "si
 // Node 22.13+ strips the catalog's TypeScript types at import time; no runtime
 // transpiler or JSX dependency is needed for this build-time-only module.
 import { renderDependencyGroup } from "./auralogbook-dependencies.mts";
+import { applySocialMetadata, renderRobots, renderSitemap } from "./site-metadata.mjs";
 import { applyProjectPageMetadata, HOME_PROJECT_SLUGS, PORTFOLIO_POSTS, PROJECTS, renderProjectCard } from "./project-catalog.mts";
 
 const source = path.resolve("static-source");
@@ -226,6 +227,9 @@ async function visit(directory) {
       );
     }
 
+    // Social previews run last so they read the final title and description.
+    text = applySocialMetadata(text, route);
+
     pages[route] = text;
   }
 }
@@ -233,4 +237,7 @@ async function visit(directory) {
 await visit(source);
 await writeFile("lib/static-pages.json", JSON.stringify(pages));
 await cp("static-source/assets", "public/assets", { recursive: true });
+// Static crawler files are served from public/ ahead of the page fallback.
+await writeFile("public/robots.txt", renderRobots());
+await writeFile("public/sitemap.xml", renderSitemap(Object.keys(pages)));
 console.log(`Prepared ${Object.keys(pages).length} portfolio pages.`);

@@ -1,4 +1,5 @@
 import pages from "../lib/static-pages.json";
+import { LEGACY_REDIRECTS } from "../scripts/site-metadata.mjs";
 import manager from "../lib/image-manager.html?raw";
 import {adminPageRequest,mediaRequest,ownerPageGate} from "../lib/media-server";
 import {knowledgeRequest,publicKnowledgeRequest} from "../lib/knowledge-server";
@@ -72,6 +73,9 @@ export default {
       return handler.fetch(request, env, ctx);
     }
     const route = url.pathname.endsWith('/') ? url.pathname : url.pathname + '/';
+    // Retired public routes keep inbound links working via a permanent redirect.
+    const legacyTarget = (LEGACY_REDIRECTS as Record<string,string>)[route];
+    if (legacyTarget) return Response.redirect(new URL(legacyTarget, url).toString(), 301);
     const page = (pages as Record<string,string>)[route];
     if(page && (request.method==='GET'||request.method==='HEAD')) return new Response(request.method==='HEAD'?null:page,{headers:{'Content-Type':'text/html; charset=utf-8','Cache-Control':'public, max-age=0, must-revalidate'}});
     let binding = ctx.props?.CONNECTORS;
