@@ -4,11 +4,16 @@ import manager from "../lib/image-manager.html?raw";
 import {adminPageRequest,mediaRequest,ownerPageGate} from "../lib/media-server";
 import {knowledgeRequest,publicKnowledgeRequest} from "../lib/knowledge-server";
 import {PROJECT_OPTIONS_HTML} from "../lib/project-registry.ts";
+import walkthroughSteps from "../lib/walkthrough-steps.json";
 import handler from "vinext/server/fetch-handler";
 import { runWithConnectorBinding } from "../lib/connector-context";
 import type { ConnectorBinding } from "../lib/connector-contract.mjs";
 
-const managerPage = manager.replace("<!--PROJECT_OPTIONS-->", PROJECT_OPTIONS_HTML);
+// Step titles come from the build; "<" is escaped so the JSON cannot close its script tag.
+const WALKTHROUGH_STEPS_JSON = JSON.stringify(walkthroughSteps).replace(/</g, "\\u003c");
+const managerPage = manager
+  .replace("<!--PROJECT_OPTIONS-->", PROJECT_OPTIONS_HTML)
+  .replace("<!--WALKTHROUGH_STEPS-->", `<script id="walkthrough-steps" type="application/json">${WALKTHROUGH_STEPS_JSON}</script>`);
 
 /** Prevents owner-only HTML from being cached or indexed after the identity gate. */
 function privateOwnerPage(response: Response) {

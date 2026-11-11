@@ -38,7 +38,19 @@
       .accepted-file-callout strong{font-size:12px;letter-spacing:.04em;text-transform:uppercase}
       #project-assets-step form{max-width:720px}
       #wiki-uploader-frame{display:block;width:100%;min-height:600px;border:0;background:transparent}
+      /* Walkthrough placement: a step picker plus a marker placed by clicking the image. */
+      fieldset.walkthrough-fields{margin:24px 0 8px;padding:16px 18px 18px;border:1px solid var(--line);border-radius:8px}
+      fieldset.walkthrough-fields legend{padding:0 6px;font-weight:700}
+      .walkthrough-fields p{margin:6px 0 0;font-size:14px;color:var(--muted)}
+      .marker-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px}
+      .marker-stage{position:relative;display:inline-block;max-width:100%;margin-top:20px;line-height:0;cursor:crosshair}
+      .marker-stage img{display:block;max-width:100%}
+      #preview{margin-top:0}
+      .marker-dot{position:absolute;display:grid;width:34px;height:34px;place-items:center;transform:translate(-50%,-50%);border:2px solid #fbfaf4;border-radius:50%;background:#2f4e39;color:#fff;font:700 20px/1 var(--font);box-shadow:0 2px 8px rgba(30,40,35,.3);pointer-events:none}
+      .marker-dot[hidden]{display:none}
+      .placement-status{font-weight:600}
       @media(max-width:650px){
+        .marker-row{grid-template-columns:1fr}
         .workspace-intro h1{font-size:clamp(36px,11vw,52px);letter-spacing:-1.8px}
         .workspace-steps{grid-template-columns:1fr;gap:9px}
         .workspace-step{min-height:72px;padding:13px 14px}
@@ -123,12 +135,28 @@
           <label for="image">Attachment</label>
           <input type="file" id="image" name="file" accept="image/png,image/jpeg,image/webp,application/pdf,video/mp4,video/webm" required aria-describedby="media-uploader-help paste-help">
           <p id="paste-help">Choose a file or paste one supported attachment while this page is open. Pasted files use the same upload form and are not uploaded until you submit.</p>
-          <img id="preview" alt="Selected image preview" hidden>
+          <!-- Clicking the preview places the walkthrough marker when a step is chosen. -->
+          <span class="marker-stage" data-marker-stage><img id="preview" alt="Selected image preview" hidden><span class="marker-dot" data-marker-dot aria-hidden="true" hidden>+</span></span>
           <label for="alt">Alt text (required)</label>
           <input id="alt" name="alt" maxlength="500" required aria-describedby="alt-help">
           <p id="alt-help">Describe what the screenshot demonstrates. Do not include private information.</p>
           <label for="caption">Caption (optional)</label>
           <textarea id="caption" name="caption" maxlength="2000"></textarea>
+          <fieldset class="walkthrough-fields" data-walkthrough-fields>
+            <legend>Walkthrough (optional, images only)</legend>
+            <label for="step">Walkthrough step</label>
+            <select id="step" name="step" data-step-select aria-describedby="step-help"><option value="">Not in the walkthrough</option></select>
+            <p id="step-help">Once published, this image replaces the illustration for that step in the project pop-up. The newest published image wins if two share a step.</p>
+            <div data-marker-fields hidden>
+              <p id="marker-help">Click the preview where the step's marker should point, or type the position. Leave both blank for no marker.</p>
+              <div class="marker-row">
+                <div><label for="markerX">Marker across (%)</label><input id="markerX" name="markerX" type="number" min="0" max="100" step="0.1" inputmode="decimal" data-marker-x aria-describedby="marker-help"></div>
+                <div><label for="markerY">Marker down (%)</label><input id="markerY" name="markerY" type="number" min="0" max="100" step="0.1" inputmode="decimal" data-marker-y aria-describedby="marker-help"></div>
+              </div>
+              <label for="markerLabel">Marker label</label>
+              <input id="markerLabel" name="markerLabel" maxlength="80" placeholder="Highlight" data-marker-label>
+            </div>
+          </fieldset>
           <button class="button" type="submit">Upload as draft</button>
         </form>
         <section aria-labelledby="attachments-heading">
@@ -170,6 +198,7 @@
         </nav>
       </div>
     </footer>
+    <!--WALKTHROUGH_STEPS-->
     <script type="module" src="/assets/image-manager.js"></script>
     <script type="module" src="/assets/manage-project-assets.js"></script>
   </body>

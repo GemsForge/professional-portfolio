@@ -311,6 +311,9 @@ async function visit(directory) {
 
 await visit(source);
 await writeFile("lib/static-pages.json", JSON.stringify(pages));
+// The owner asset manager lists these step titles so an upload can target a walkthrough step.
+const walkthroughSteps = Object.fromEntries(GRID_POSTS.filter((post) => post.walkthrough?.length).map((post) => [post.slug, post.walkthrough.map((step) => step.title)]));
+await writeFile("lib/walkthrough-steps.json", `${JSON.stringify(walkthroughSteps, null, 2)}\n`);
 await cp("static-source/assets", "public/assets", { recursive: true });
 // Static crawler files are served from public/ ahead of the page fallback.
 await writeFile("public/robots.txt", renderRobots());

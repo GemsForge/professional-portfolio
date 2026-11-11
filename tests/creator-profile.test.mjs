@@ -222,3 +222,13 @@ test("catalog text is escaped inside generated attributes, and /portfolio/ rende
   assert.match(css, /\.sp-main \.creator-post-tile:focus-visible,\.sp-main \.sp-feature-tile:focus-visible\{outline:3px solid #f4f2e8;outline-offset:-6px/);
   assert.doesNotMatch(css, /\.profile-tech-strip|\.creator-shell|\.tile-caption/, "legacy creator-profile rules are removed");
 });
+
+test("pop-up applies published step screenshots from the asset manager, newest first", async () => {
+  const script = await read("../static-source/assets/creator-profile.js");
+  assert.match(script, /fetch\(`\/api\/media\?project=\$\{encodeURIComponent\(slug\)\}`\)/);
+  assert.match(script, /item\.kind === "image" && item\.placement && !byStep\.has\(item\.placement\.step\)/, "the newest published image wins a step");
+  assert.match(script, /\.catch\(\(\) => \[\]\)/, "a failed request keeps the built-in pictures");
+  assert.match(script, /if \(eyebrow\) eyebrow\.textContent = "App tour";/);
+  const steps = JSON.parse(await read("../lib/walkthrough-steps.json"));
+  assert.deepEqual(steps.auralogbook, ["Choose a path", "Log a check-in", "Add a photo", "Connect Spotify", "Look back"]);
+});
