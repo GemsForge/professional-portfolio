@@ -6,12 +6,14 @@
  *
  * The snapshot keeps the source layout so links between copied files stay
  * relative. Every other link is rewritten by `rewriteLinks`:
- * - internal or missing targets are unlinked (or their index bullet dropped),
- *   so the snapshot never points readers at excluded or 404 pages;
+ * - internal or missing targets are unlinked (or a list item that only
+ *   pointed to them is dropped, along with a heading left empty), so the
+ *   snapshot never points readers at excluded or 404 pages;
  * - images point to raw.githubusercontent.com so they render;
- * - all other targets point to github.com, pinned to the copied commit.
+ * - folders point to github.com/…/tree/<sha>, files to …/blob/<sha>.
  * The copied README gets a snapshot banner, and SOURCE.md records the commit.
  */
+import { realpathSync } from "node:fs";
 import { mkdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -57,43 +59,90 @@ export const INTERNAL_DOCS = [
 ];
 
 const isInternal = (target) => INTERNAL_DOCS.some((entry) => (entry.endsWith("/") ? target.startsWith(entry) : target === entry));
-const LINK = /(!?)\[([^\]]*)\]\(([^)\s]+)\)/g;
-const LIST_ITEM = /^\s*[-*]\s+(?:!?\[[^\]]*\]\([^)\s]+\))/;
+
+/**
+ * Inline Markdown link or image: optional "!", text that may hold one level of
+ * nested brackets (so badge-in-link works), a target that is either <angled> or
+ * whitespace-free, and an optional "title".
+ */
+export const LINK = /(!?)\[((?:[^[\]]|\[[^\]]*\])*)\]\(\s*(<[^>]+>|[^)\s]+)(\s+"[^"]*")?\s*\)/g;
+const LIST_ITEM = /^\s*(?:[-*+]|\d+[.)])\s+/;
+const HEADING = /^(#{1,6})\s/;
+
+/**
+ * Resolves a link target written in `file` to a source-repository path.
+ * Returns null for external, absolute, and same-page (#anchor) targets.
+ * Angle brackets are removed and percent-encoding is decoded, so "My%20Doc.md"
+ * and "<My Doc.md>" both resolve to "My Doc.md".
+ * @returns {{path: string, fragment: string, folder: boolean} | null}
+ */
+export function resolveLink(file, target) {
+  const bare = target.replace(/^<|>$/g, "");
+  if (/^[a-z][a-z0-9+.-]*:|^#|^\//i.test(bare)) return null;
+  const [rawPath, ...rest] = bare.split("#");
+  let decoded = rawPath;
+  try { decoded = decodeURI(rawPath); } catch { /* keep malformed targets as written */ }
+  const resolved = path.posix.normalize(path.posix.join(path.posix.dirname(file), decoded));
+  return { path: resolved.replace(/\/$/, ""), fragment: rest.join("#"), folder: decoded.endsWith("/") };
+}
+
+/** Encodes each path segment for use in a URL, keeping the slashes. */
+const encodePath = (value) => value.split("/").map(encodeURIComponent).join("/");
 
 /**
  * Rewrites the links in one copied Markdown file.
  * @param {string} markdown file contents
  * @param {string} file the file's source path (e.g. "docs/README.md")
- * @param {{sha: string, copied: Set<string>, exists: (target: string) => boolean}} context
- *   `copied` holds the snapshot's source paths; `exists` reports whether a
- *   non-copied target exists in the source repository at `sha`.
+ * @param {{sha: string, copied: Set<string>, lookup: (path: string) => ("file" | "dir" | undefined)}} context
+ *   `copied` holds the snapshot's source paths; `lookup` reports whether a
+ *   non-copied path is a file or folder in the source repository at `sha`.
  * @returns {string} the rewritten Markdown
  */
-export function rewriteLinks(markdown, file, { sha, copied, exists }) {
-  const resolveTarget = (target) => path.posix.normalize(path.posix.join(path.posix.dirname(file), target));
-  const hidden = (target) => {
-    const [targetPath] = target.split("#");
-    if (/^[a-z]+:|^#|^\//i.test(target)) return false;
-    const resolved = resolveTarget(targetPath);
-    return !copied.has(resolved) && (isInternal(resolved) || !exists(resolved));
-  };
-  return markdown.split("\n").flatMap((line) => {
-    // An index bullet that leads with a hidden link describes a page readers cannot open: drop it.
-    const first = LINK.exec(line);
-    LINK.lastIndex = 0;
-    if (first && LIST_ITEM.test(line) && hidden(first[3])) return [];
-    return [line.replace(LINK, (match, bang, text, target) => {
-      if (/^[a-z]+:|^#|^\//i.test(target)) return match;
-      const [targetPath, fragment] = target.split("#");
-      const resolved = resolveTarget(targetPath);
-      if (copied.has(resolved)) return match;
-      if (hidden(target)) return bang ? "" : text;
-      const anchor = fragment ? `#${fragment}` : "";
-      return bang
-        ? `![${text}](https://raw.githubusercontent.com/${SOURCE_REPO}/${sha}/${resolved})`
-        : `[${text}](https://github.com/${SOURCE_REPO}/blob/${sha}/${resolved}${anchor})`;
-    })];
-  }).join("\n");
+export function rewriteLinks(markdown, file, { sha, copied, lookup }) {
+  const isHidden = (link) => !!link && !copied.has(link.path) && (isInternal(link.path) || !lookup(link.path));
+  const rewrite = (text) => text.replace(LINK, (match, bang, label, target, title = "") => {
+    const inner = rewrite(label); // badges inside link text get their own rewrite
+    const link = resolveLink(file, target);
+    if (!link) return `${bang}[${inner}](${target}${title})`;
+    if (copied.has(link.path)) return `${bang}[${inner}](${target}${title})`;
+    if (isHidden(link)) return bang ? "" : inner;
+    const anchor = link.fragment ? `#${link.fragment}` : "";
+    const kind = lookup(link.path) === "dir" || link.folder ? "tree" : "blob";
+    const url = bang
+      ? `https://raw.githubusercontent.com/${SOURCE_REPO}/${sha}/${encodePath(link.path)}`
+      : `https://github.com/${SOURCE_REPO}/${kind}/${sha}/${encodePath(link.path)}${anchor}`;
+    return `${bang}[${inner}](${url}${title})`;
+  });
+
+  const lines = markdown.split("\n");
+  const kept = [];
+  const emptied = new Set(); // indexes in `kept` of headings whose section lost a list item
+  let heading = -1;
+  for (const line of lines) {
+    if (HEADING.test(line)) heading = kept.length;
+    const links = [...line.matchAll(LINK)].map((match) => resolveLink(file, match[3]));
+    // A list item whose every link is hidden only described pages readers cannot open: drop it.
+    if (LIST_ITEM.test(line) && links.length && links.every((link) => isHidden(link))) {
+      if (heading >= 0) emptied.add(heading);
+      continue;
+    }
+    kept.push(rewrite(line));
+  }
+  // Drop a heading (and its leftover blank lines) when its section became empty because its only items were dropped.
+  const drop = new Set();
+  for (const index of emptied) {
+    const level = HEADING.exec(kept[index])[1].length;
+    const section = [index];
+    let empty = true;
+    for (let next = index + 1; next < kept.length; next += 1) {
+      const nextHeading = HEADING.exec(kept[next]);
+      if (nextHeading && nextHeading[1].length <= level) break;
+      if (kept[next].trim()) { empty = false; break; }
+      section.push(next);
+    }
+    if (empty) section.forEach((line) => drop.add(line));
+  }
+  return kept.filter((_line, index) => !drop.has(index)).join("\n");
 }
 
 /** Banner placed above the copied README so it is not mistaken for this repository's setup guide. */
@@ -136,20 +185,23 @@ async function main() {
   const raw = (file) => `https://raw.githubusercontent.com/${SOURCE_REPO}/${sha}/${file}`;
   const sources = Object.fromEntries(await Promise.all(AURA_DOCS.map(async (file) => [file, await fetchText(raw(file))])));
 
-  // Check every non-copied target once, so missing pages are unlinked instead of pinned to a 404.
+  // Look up every non-copied target once (file, folder, or missing) through the contents API,
+  // which, unlike raw.githubusercontent.com, also recognizes folders. GITHUB_TOKEN raises the rate limit.
   const copied = new Set(AURA_DOCS);
   const targets = new Set();
   for (const [file, text] of Object.entries(sources)) {
-    for (const [, , , target] of text.matchAll(LINK)) {
-      if (/^[a-z]+:|^#|^\//i.test(target)) continue;
-      const resolved = path.posix.normalize(path.posix.join(path.posix.dirname(file), target.split("#")[0]));
-      if (!copied.has(resolved) && !isInternal(resolved)) targets.add(resolved);
+    for (const match of text.matchAll(LINK)) {
+      const link = resolveLink(file, match[3]);
+      if (link && !copied.has(link.path) && !isInternal(link.path)) targets.add(link.path);
     }
   }
-  const present = new Set();
+  const headers = { Accept: "application/vnd.github+json", ...(process.env.GITHUB_TOKEN ? { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` } : {}) };
+  const kinds = new Map();
   await Promise.all([...targets].map(async (target) => {
-    const response = await fetch(raw(target), { method: "HEAD" });
-    if (response.ok) present.add(target);
+    const response = await fetch(`https://api.github.com/repos/${SOURCE_REPO}/contents/${encodePath(target)}?ref=${sha}`, { headers });
+    if (response.status === 404) return;
+    if (!response.ok) throw new Error(`${response.status} looking up ${target}`);
+    kinds.set(target, Array.isArray(await response.json()) ? "dir" : "file");
   }));
 
   const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "docs", "aura-logbook");
@@ -157,14 +209,15 @@ async function main() {
   for (const [file, text] of Object.entries(sources)) {
     const out = path.join(root, file);
     await mkdir(path.dirname(out), { recursive: true });
-    const body = rewriteLinks(text, file, { sha, copied, exists: (target) => present.has(target) });
+    const body = rewriteLinks(text, file, { sha, copied, lookup: (target) => kinds.get(target) });
     await writeFile(out, file === "README.md" ? snapshotBanner(sha) + body : body);
   }
   await writeFile(path.join(root, "SOURCE.md"), sourceNote(sha, new Date().toISOString().slice(0, 10)));
-  const missing = [...targets].filter((target) => !present.has(target));
+  const missing = [...targets].filter((target) => !kinds.has(target));
   console.log(`Copied ${AURA_DOCS.length} documents from ${SOURCE_REPO}@${sha.slice(0, 7)}.${missing.length ? ` Unlinked missing targets: ${missing.join(", ")}` : ""}`);
 }
 
-if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
+// Compare real paths: Node resolves import.meta.url through symlinks (e.g. /tmp → /private/tmp on macOS).
+if (process.argv[1] && fileURLToPath(import.meta.url) === realpathSync(process.argv[1])) {
   await main();
 }
