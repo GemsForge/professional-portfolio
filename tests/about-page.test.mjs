@@ -92,9 +92,10 @@ test("About page presents the optimized profile photo accessibly", async () => {
   assert.equal((html.match(/src="\/assets\/profile-photo\.jpg"/g) ?? []).length, 1, "About should show the portrait once");
   assert.match(html, /width="1200"\s+height="1200"/);
   const homeHtml = await readFile(homePage, "utf8");
-  assert.match(homeHtml, /<div class="hero-art">[\s\S]*?role="img" aria-label="Abstract intersecting paths converge into a diamond, then emerge as aligned lines"/);
-  assert.equal((homeHtml.match(/src="\/assets\/profile-photo\.jpg"/g) ?? []).length, 1, "Home should show the portrait once in the About section");
-  assert.match(homeHtml, /<section id="about" class="dark"><div class="wrap about-grid"><div><img class="about-section-portrait" src="\/assets\/profile-photo\.jpg"/);
+  // The homepage avatar uses a 320px copy of the portrait; the About page keeps the full-size original.
+  assert.equal((homeHtml.match(/src="\/assets\/profile-avatar-320\.jpg"/g) ?? []).length, 1, "Home should show the avatar once in the creator profile");
+  assert.match(homeHtml, /<img class="sp-avatar" src="\/assets\/profile-avatar-320\.jpg" alt="Diamond Brown smiling at the camera\." width="320" height="320"/);
+  assert.ok((await stat(new URL("../static-source/assets/profile-avatar-320.jpg", import.meta.url))).size < 60 * 1024, "the avatar copy should stay small");
   assert.match(css, /\.about-hero\s*\{[^}]*display:grid/);
   assert.match(css, /\.about-section-portrait\s*\{[^}]*aspect-ratio:4\/5/);
   assert.match(css, /@media\s*\(max-width:\s*650px\)\s*\{\.about-hero\s*\{[^}]*grid-template-columns:1fr/);
