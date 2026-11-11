@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { test } from "node:test";
-import { AURA_DOCS, INTERNAL_DOCS, LINK, resolveLink, rewriteLinks } from "../scripts/sync-aura-docs.mjs";
+import { AURA_DOCS, INTERNAL_DOCS, LINK, parseArgs, resolveLink, rewriteLinks } from "../scripts/sync-aura-docs.mjs";
 
 const sha = "0123456789abcdef0123456789abcdef01234567";
 const kinds = new Map([["AuraLogbook.Api/README.md", "file"], ["aura-ui/src", "dir"], ["docs/ux/assets/p.png", "file"], ["img/badge.svg", "file"], ["My Guide.md", "file"]]);
@@ -76,4 +76,14 @@ test("the committed snapshot links to no internal page and labels its README as 
   const readme = await readFile(new URL("README.md", root), "utf8");
   assert.match(readme, /^> \*\*Snapshot from \[Aura Logbook\]/);
   assert.match(readme, /\[SOURCE\.md\]\(SOURCE\.md\)/);
+});
+
+test("the command line accepts only --ref and --help, and rejects typos and missing values", () => {
+  assert.deepEqual(parseArgs([]), { ref: "master" });
+  assert.deepEqual(parseArgs(["--ref", "3a93ed2"]), { ref: "3a93ed2" });
+  assert.deepEqual(parseArgs(["--ref=main"]), { ref: "main" });
+  assert.deepEqual(parseArgs(["--help"]), { help: true });
+  assert.deepEqual(parseArgs(["--ref"]), { error: "--ref needs a branch name or commit SHA." });
+  assert.deepEqual(parseArgs(["--ref", "--help"]), { error: "--ref needs a branch name or commit SHA." });
+  assert.deepEqual(parseArgs(["--rev", "3a93ed2"]), { error: "Unknown option: --rev" });
 });

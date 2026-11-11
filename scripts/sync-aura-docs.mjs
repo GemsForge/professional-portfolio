@@ -2,7 +2,9 @@
  * Refreshes docs/aura-logbook/, the portfolio's snapshot of Aura Logbook's
  * public-facing Markdown documents, from GemsForge/aura-logbook-api.
  *
- * Usage: node scripts/sync-aura-docs.mjs [--ref master|<commit>]
+ * Usage: node scripts/sync-aura-docs.mjs [--ref <branch|commit>]
+ * Set GITHUB_TOKEN (for example `GITHUB_TOKEN=$(gh auth token)`) to avoid
+ * GitHub's anonymous rate limits.
  *
  * The snapshot keeps the source layout so links between copied files stay
  * relative. Every other link is rewritten by `rewriteLinks`:
@@ -171,42 +173,104 @@ The source repository stays the source of truth.
 `;
 }
 
+export const USAGE = "Usage: node scripts/sync-aura-docs.mjs [--ref <branch|commit>]";
+
+/**
+ * Parses the command line. Only `--ref <branch|commit>` and `--help` are
+ * accepted, so a typo such as `--rev` fails instead of silently refreshing
+ * from master. Returns `{ref}` (default "master"), `{help: true}`, or `{error}`.
+ */
+export function parseArgs(args) {
+  let ref = "master";
+  for (let index = 0; index < args.length; index += 1) {
+    const arg = args[index];
+    if (arg === "--help" || arg === "-h") return { help: true };
+    if (arg === "--ref" || arg.startsWith("--ref=")) {
+      const value = arg.includes("=") ? arg.slice(arg.indexOf("=") + 1) : args[(index += 1)];
+      if (!value || value.startsWith("--")) return { error: "--ref needs a branch name or commit SHA." };
+      ref = value;
+      continue;
+    }
+    return { error: `Unknown option: ${arg}` };
+  }
+  return { ref };
+}
+
+/** A failure with a message meant for the person running the script (printed without a stack trace). */
+class UserError extends Error {}
+
+const githubHeaders = () => ({
+  Accept: "application/vnd.github+json",
+  ...(process.env.GITHUB_TOKEN ? { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` } : {}),
+});
+
+/**
+ * Fetches a GitHub URL. Rate-limit responses (403/429) are retried once after
+ * the delay GitHub asks for (capped at 10s); if they persist, the error says how
+ * to raise the limit instead of showing a bare status code.
+ */
+async function githubFetch(url, options = {}) {
+  for (let attempt = 0; ; attempt += 1) {
+    const response = await fetch(url, { ...options, headers: { ...githubHeaders(), ...options.headers } });
+    const limited = response.status === 429 || (response.status === 403 && (response.headers.get("x-ratelimit-remaining") === "0" || response.headers.has("retry-after") || /rate limit/i.test(await response.clone().text())));
+    if (!limited) return response;
+    if (attempt === 0) {
+      const wait = Math.min(Number(response.headers.get("retry-after")) || 2, 10);
+      await new Promise((resolve) => setTimeout(resolve, wait * 1000));
+      continue;
+    }
+    throw new UserError(`GitHub rate limit reached.${process.env.GITHUB_TOKEN ? " Wait a few minutes and try again." : " Set GITHUB_TOKEN (for example GITHUB_TOKEN=$(gh auth token)) and try again."}`);
+  }
+}
+
 async function fetchText(url) {
-  const response = await fetch(url);
-  if (!response.ok) throw new Error(`${response.status} for ${url}`);
+  const response = await githubFetch(url);
+  if (!response.ok) throw new UserError(`Could not download ${url} (HTTP ${response.status}).`);
   return response.text();
 }
 
-async function main() {
-  const refIndex = process.argv.indexOf("--ref");
-  const ref = refIndex > 0 ? process.argv[refIndex + 1] : "master";
-  const commit = JSON.parse(await fetchText(`https://api.github.com/repos/${SOURCE_REPO}/commits/${encodeURIComponent(ref)}`));
-  const sha = commit.sha;
+/** Runs `task` over `items` with at most `limit` in flight, so lookups don't trip GitHub's burst limits. */
+async function mapLimit(items, limit, task) {
+  const queue = [...items];
+  await Promise.all(Array.from({ length: Math.min(limit, queue.length) }, async () => {
+    while (queue.length) await task(queue.shift());
+  }));
+}
+
+async function main(args) {
+  const options = parseArgs(args);
+  if (options.help) { console.log(USAGE); return; }
+  if (options.error) throw new UserError(`${options.error}\n${USAGE}`);
+  const commitResponse = await githubFetch(`https://api.github.com/repos/${SOURCE_REPO}/commits/${encodeURIComponent(options.ref)}`);
+  if (commitResponse.status === 404 || commitResponse.status === 422) throw new UserError(`No branch or commit named "${options.ref}" in ${SOURCE_REPO}.`);
+  if (!commitResponse.ok) throw new UserError(`Could not look up "${options.ref}" in ${SOURCE_REPO} (HTTP ${commitResponse.status}).`);
+  const sha = (await commitResponse.json()).sha;
   const raw = (file) => `https://raw.githubusercontent.com/${SOURCE_REPO}/${sha}/${file}`;
-  const sources = Object.fromEntries(await Promise.all(AURA_DOCS.map(async (file) => [file, await fetchText(raw(file))])));
+  const sources = {};
+  await mapLimit(AURA_DOCS, 6, async (file) => { sources[file] = await fetchText(raw(file)); });
 
   // Look up every non-copied target once (file, folder, or missing) through the contents API,
   // which, unlike raw.githubusercontent.com, also recognizes folders. GITHUB_TOKEN raises the rate limit.
   const copied = new Set(AURA_DOCS);
   const targets = new Set();
-  for (const [file, text] of Object.entries(sources)) {
-    for (const match of text.matchAll(LINK)) {
+  for (const file of AURA_DOCS) {
+    for (const match of sources[file].matchAll(LINK)) {
       const link = resolveLink(file, match[3]);
       if (link && !copied.has(link.path) && !isInternal(link.path)) targets.add(link.path);
     }
   }
-  const headers = { Accept: "application/vnd.github+json", ...(process.env.GITHUB_TOKEN ? { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` } : {}) };
   const kinds = new Map();
-  await Promise.all([...targets].map(async (target) => {
-    const response = await fetch(`https://api.github.com/repos/${SOURCE_REPO}/contents/${encodePath(target)}?ref=${sha}`, { headers });
+  await mapLimit([...targets], 4, async (target) => {
+    const response = await githubFetch(`https://api.github.com/repos/${SOURCE_REPO}/contents/${encodePath(target)}?ref=${sha}`);
     if (response.status === 404) return;
-    if (!response.ok) throw new Error(`${response.status} looking up ${target}`);
+    if (!response.ok) throw new UserError(`Could not look up ${target} (HTTP ${response.status}).`);
     kinds.set(target, Array.isArray(await response.json()) ? "dir" : "file");
-  }));
+  });
 
   const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "docs", "aura-logbook");
   await rm(root, { recursive: true, force: true });
-  for (const [file, text] of Object.entries(sources)) {
+  for (const file of AURA_DOCS) {
+    const text = sources[file];
     const out = path.join(root, file);
     await mkdir(path.dirname(out), { recursive: true });
     const body = rewriteLinks(text, file, { sha, copied, lookup: (target) => kinds.get(target) });
@@ -219,5 +283,11 @@ async function main() {
 
 // Compare real paths: Node resolves import.meta.url through symlinks (e.g. /tmp → /private/tmp on macOS).
 if (process.argv[1] && fileURLToPath(import.meta.url) === realpathSync(process.argv[1])) {
-  await main();
+  try {
+    await main(process.argv.slice(2));
+  } catch (error) {
+    // Expected problems print one readable line; anything else keeps its stack for debugging.
+    console.error(error instanceof UserError ? `error: ${error.message}` : error);
+    process.exitCode = error instanceof UserError && /^--ref|^Unknown option/.test(error.message) ? 2 : 1;
+  }
 }
