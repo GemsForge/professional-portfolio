@@ -8,8 +8,8 @@ This index separates current project guidance from preserved historical material
 | --- | --- |
 | Product purpose, implemented capabilities, and direction | [Project overview](../AURA_PROJECT_OVERVIEW.md) |
 | Install, configure, run, test, and troubleshoot | [Repository README](../README.md) |
-| API configuration, persistence, and routes | [API README](https://github.com/GemsForge/aura-logbook-api/blob/3a93ed206364f1d856cc675227da009e24a5cfcb/AuraLogbook.Api/README.md) |
-| UI configuration and checks | [UI README](https://github.com/GemsForge/aura-logbook-api/blob/3a93ed206364f1d856cc675227da009e24a5cfcb/aura-ui/README.md) |
+| API configuration, persistence, and routes | [API README](https://github.com/GemsForge/aura-logbook-api/blob/96d2b65feb1538f223597a945f7e7a009f77f9d4/AuraLogbook.Api/README.md) |
+| UI configuration and checks | [UI README](https://github.com/GemsForge/aura-logbook-api/blob/96d2b65feb1538f223597a945f7e7a009f77f9d4/aura-ui/README.md) |
 | Major libraries, tools, and external services | [Dependencies and tools](../DEPENDENCIES.md) |
 | Runtime aliases, configuration order, seeding, and migrations | [Runtime environments](runtime-environments.md) |
 
@@ -26,7 +26,7 @@ These files describe intended product behavior where they say so. They do not im
 ## Data and operations
 
 - [Relational database ERD](database-erd.md) — current migration-defined tables and major relationships.
-- [Database seeder](https://github.com/GemsForge/aura-logbook-api/blob/3a93ed206364f1d856cc675227da009e24a5cfcb/Scripts/DatabaseSeeder/README.md) — full JSON-to-SQLite import and reconciliation workflow.
+- [Database seeder](https://github.com/GemsForge/aura-logbook-api/blob/96d2b65feb1538f223597a945f7e7a009f77f9d4/Scripts/DatabaseSeeder/README.md) — full JSON-to-SQLite import and reconciliation workflow.
 
 ## Historical Wiki source material
 

@@ -1,4 +1,4 @@
-> **Snapshot from [Aura Logbook](https://github.com/GemsForge/aura-logbook-api/tree/3a93ed206364f1d856cc675227da009e24a5cfcb).** This is Aura Logbook's README, copied for the portfolio case study. Commands below run in the Aura Logbook repository, not this one. See [SOURCE.md](SOURCE.md) for what was copied and how to refresh it.
+> **Snapshot from [Aura Logbook](https://github.com/GemsForge/aura-logbook-api/tree/96d2b65feb1538f223597a945f7e7a009f77f9d4).** This is Aura Logbook's README, copied for the portfolio case study. Commands below run in the Aura Logbook repository, not this one. See [SOURCE.md](SOURCE.md) for what was copied and how to refresh it.
 
 # Aura Logbook
 
@@ -56,7 +56,7 @@ VITE_API_BASE_URL=/api npm run dev -- --host 0.0.0.0 --port 58413 --strictPort
 
 Open `http://<laptop-LAN-IP>:58413` on the phone, replacing `<laptop-LAN-IP>` with the laptop's local network address. The phone and laptop must be on the same network, and that network must allow devices to communicate with each other. Add a web route to preview, such as `/login`; use an existing account to inspect protected pages.
 
-Vite's `/api` proxy forwards browser requests to the API at `http://127.0.0.1:5082`, so the API can remain bound to the laptop. The proxy is configured in `aura-ui/vite.config.ts`. `VITE_API_BASE_URL=/api` makes the browser use that same-origin proxy. The `--host 0.0.0.0` option makes the development UI reachable from other devices on the local network; use this only on a trusted network and stop the preview with **Ctrl+C** when finished. This is a development server, not a public or production deployment.
+Vite's `/api` proxy forwards browser requests to the API at `http://127.0.0.1:5082` by default, so the API can remain bound to the laptop. Set `AURA_API_PROXY_TARGET` when the API uses another local address. The proxy is configured in `aura-ui/vite.config.ts`. `VITE_API_BASE_URL=/api` makes the browser use that same-origin proxy. The `--host 0.0.0.0` option makes the development UI reachable from other devices on the local network; use this only on a trusted network and stop the preview with **Ctrl+C** when finished. This is a development server, not a public or production deployment.
 
 To use different local ports, set `AURA_API_PORT` and/or `AURA_UI_PORT` before starting the launcher. For example, set `AURA_API_PORT=5124` and `VITE_API_BASE_URL=http://localhost:5124/api` together. If any requested API port is occupied, including the default, the launcher stops with the exact port and recovery options so OAuth callbacks cannot reach a different API instance. When changing ports, update the Spotify redirect URI in both API configuration and Spotify's app settings; the launcher never kills unrelated listeners. A `VITE_API_BASE_URL` that points to a remote host continues to be a UI-only override.
 
@@ -119,7 +119,7 @@ configuration and database seeding guide.
 The Development and FIT/Staging environments use SQLite with versioned SQL
 migrations. The API applies pending migrations at startup and records them in
 `__SchemaMigrations`. To import the complete active JSON dataset into a clean
-development database, use the [database seeder](https://github.com/GemsForge/aura-logbook-api/blob/3a93ed206364f1d856cc675227da009e24a5cfcb/Scripts/DatabaseSeeder/README.md).
+development database, use the [database seeder](https://github.com/GemsForge/aura-logbook-api/blob/96d2b65feb1538f223597a945f7e7a009f77f9d4/Scripts/DatabaseSeeder/README.md).
 
 The seeder writes a reconciliation report containing source and stored counts.
 Keep the JSON files unchanged as the migration and audit source; the relational
@@ -176,11 +176,11 @@ Manual smoke test: run `npm run dev`, open the UI and Swagger URLs above, verify
 
 - [Documentation index: current guidance and historical sources](docs/README.md)
 - [Product purpose and current direction](AURA_PROJECT_OVERVIEW.md)
-- [API setup, configuration, routes, and tests](https://github.com/GemsForge/aura-logbook-api/blob/3a93ed206364f1d856cc675227da009e24a5cfcb/AuraLogbook.Api/README.md)
-- [UI setup, API URL configuration, and checks](https://github.com/GemsForge/aura-logbook-api/blob/3a93ed206364f1d856cc675227da009e24a5cfcb/aura-ui/README.md)
+- [API setup, configuration, routes, and tests](https://github.com/GemsForge/aura-logbook-api/blob/96d2b65feb1538f223597a945f7e7a009f77f9d4/AuraLogbook.Api/README.md)
+- [UI setup, API URL configuration, and checks](https://github.com/GemsForge/aura-logbook-api/blob/96d2b65feb1538f223597a945f7e7a009f77f9d4/aura-ui/README.md)
 - [React Native / Expo mobile shell](docs/ux/mobile-shell.md)
 - [Major dependencies, tools, and external-service terms](DEPENDENCIES.md)
 
 ## License
 
-MIT. See [LICENSE](https://github.com/GemsForge/aura-logbook-api/blob/3a93ed206364f1d856cc675227da009e24a5cfcb/LICENSE).
+MIT. See [LICENSE](https://github.com/GemsForge/aura-logbook-api/blob/96d2b65feb1538f223597a945f7e7a009f77f9d4/LICENSE).

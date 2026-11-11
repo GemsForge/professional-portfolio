@@ -100,8 +100,8 @@ The project currently uses this service for personal development. Before public 
 
 ## Configuration and data
 
-- Backend settings are loaded from `AuraLogbook.Api/appsettings.json`, environment-specific settings, environment variables, and .NET user secrets. The API project uses the user-secrets ID `AuraLogbook.Api`; configure private signing keys outside source control. See the [API README](https://github.com/GemsForge/aura-logbook-api/blob/3a93ed206364f1d856cc675227da009e24a5cfcb/AuraLogbook.Api/README.md).
-- Frontend API base URL is configured with `VITE_API_BASE_URL`. Vite uses port 58407; the combined launcher defaults the API to port 5082 and aligns the UI URL. See the [root README](README.md) and [UI README](https://github.com/GemsForge/aura-logbook-api/blob/3a93ed206364f1d856cc675227da009e24a5cfcb/aura-ui/README.md).
+- Backend settings are loaded from `AuraLogbook.Api/appsettings.json`, environment-specific settings, environment variables, and .NET user secrets. The API project uses the user-secrets ID `AuraLogbook.Api`; configure private signing keys outside source control. See the [API README](https://github.com/GemsForge/aura-logbook-api/blob/96d2b65feb1538f223597a945f7e7a009f77f9d4/AuraLogbook.Api/README.md).
+- Frontend API base URL is configured with `VITE_API_BASE_URL`. Vite uses port 58407; the combined launcher defaults the API to port 5082 and aligns the UI URL. See the [root README](README.md) and [UI README](https://github.com/GemsForge/aura-logbook-api/blob/96d2b65feb1538f223597a945f7e7a009f77f9d4/aura-ui/README.md).
 - Development and FIT/Staging persist runtime data in SQLite. The committed JSON files are seed/import and reconciliation inputs; treat them as project data, not package dependencies or the active relational store.
 - The current weather implementation calls Open-Meteo directly. Legacy `AztroApi` configuration and Weatherbit-named DTOs are not active external runtime dependencies.
 

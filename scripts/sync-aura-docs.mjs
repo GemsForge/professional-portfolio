@@ -152,13 +152,17 @@ export function snapshotBanner(sha) {
   return `> **Snapshot from [Aura Logbook](https://github.com/${SOURCE_REPO}/tree/${sha}).** This is Aura Logbook's README, copied for the portfolio case study. Commands below run in the Aura Logbook repository, not this one. See [SOURCE.md](SOURCE.md) for what was copied and how to refresh it.\n\n`;
 }
 
-/** Text of docs/aura-logbook/SOURCE.md for a snapshot of `sha` taken on `date` (YYYY-MM-DD). */
-export function sourceNote(sha, date) {
+/**
+ * Text of docs/aura-logbook/SOURCE.md for a snapshot of `sha`, requested as
+ * `ref` (a branch name, or a commit SHA), taken on `date` (YYYY-MM-DD).
+ */
+export function sourceNote(sha, date, ref = "master") {
+  const requested = /^[0-9a-f]{7,40}$/i.test(ref) ? "requested by commit SHA" : `branch \`${ref}\``;
   return `# Aura Logbook documents (snapshot)
 
 These Markdown files are a snapshot of the public-facing documentation for [Aura Logbook](https://github.com/${SOURCE_REPO}), copied for the portfolio's Aura Logbook case study (issue #120).
 
-- **Source:** \`${SOURCE_REPO}\`, commit [\`${sha.slice(0, 7)}\`](https://github.com/${SOURCE_REPO}/tree/${sha})
+- **Source:** \`${SOURCE_REPO}\`, ${requested}, at commit [\`${sha.slice(0, 7)}\`](https://github.com/${SOURCE_REPO}/tree/${sha})
 - **Copied:** ${date}
 - **Layout:** paths match the source repository, so links between these files work. Links to other public files point to the source repository at that commit; links to internal or missing pages are removed.
 - **Not included:** internal agent, governance, branch-cleanup, configuration, recovery-runbook, investigation, and AI output notes.
@@ -276,7 +280,7 @@ async function main(args) {
     const body = rewriteLinks(text, file, { sha, copied, lookup: (target) => kinds.get(target) });
     await writeFile(out, file === "README.md" ? snapshotBanner(sha) + body : body);
   }
-  await writeFile(path.join(root, "SOURCE.md"), sourceNote(sha, new Date().toISOString().slice(0, 10)));
+  await writeFile(path.join(root, "SOURCE.md"), sourceNote(sha, new Date().toISOString().slice(0, 10), options.ref));
   const missing = [...targets].filter((target) => !kinds.has(target));
   console.log(`Copied ${AURA_DOCS.length} documents from ${SOURCE_REPO}@${sha.slice(0, 7)}.${missing.length ? ` Unlinked missing targets: ${missing.join(", ")}` : ""}`);
 }

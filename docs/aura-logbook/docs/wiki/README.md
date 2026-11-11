@@ -20,7 +20,7 @@ These files are local Markdown copies of selected GitHub Wiki pages, retrieved o
 | --- | --- |
 | Project purpose and feature direction | [Project overview](../../AURA_PROJECT_OVERVIEW.md) |
 | Setup and local commands | [Repository README](../../README.md) |
-| API architecture, routes, and persistence | [API README](https://github.com/GemsForge/aura-logbook-api/blob/3a93ed206364f1d856cc675227da009e24a5cfcb/AuraLogbook.Api/README.md), [runtime environments](../runtime-environments.md), and [database ERD](../database-erd.md) |
+| API architecture, routes, and persistence | [API README](https://github.com/GemsForge/aura-logbook-api/blob/96d2b65feb1538f223597a945f7e7a009f77f9d4/AuraLogbook.Api/README.md), [runtime environments](../runtime-environments.md), and [database ERD](../database-erd.md) |
 | Pathway and spiritual language | [Inclusive experience principles](../ux/experience-principles.md) |
 | Visual and aura presentation | [Prism Garden visual system](../ux/prism-garden-visual-system.md) |
 | Implemented journeys and known gaps | [Core user journeys](../ux/core-user-journeys.md) |

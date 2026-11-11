@@ -64,12 +64,12 @@ The current UI exposes `Mindfulness`, `Astrology & Energy`, and `Faith & Religio
 
 Relevant current references:
 
-- [Pathway selector](https://github.com/GemsForge/aura-logbook-api/blob/3a93ed206364f1d856cc675227da009e24a5cfcb/aura-ui/src/components/MyPathwaySelector.tsx)
-- [Pathway descriptions](https://github.com/GemsForge/aura-logbook-api/blob/3a93ed206364f1d856cc675227da009e24a5cfcb/aura-ui/src/features/auth/models/SpiritualPathway.ts)
-- [API pathway display names](https://github.com/GemsForge/aura-logbook-api/blob/3a93ed206364f1d856cc675227da009e24a5cfcb/AuraLogbook.Api/Models/SpiritualPathway.cs)
-- [Mood-entry form](https://github.com/GemsForge/aura-logbook-api/blob/3a93ed206364f1d856cc675227da009e24a5cfcb/aura-ui/src/components/MoodEntryFormFields.tsx)
-- [Dashboard](https://github.com/GemsForge/aura-logbook-api/blob/3a93ed206364f1d856cc675227da009e24a5cfcb/aura-ui/src/pages/Dashboard.tsx)
-- [Current feature-list copy](https://github.com/GemsForge/aura-logbook-api/blob/3a93ed206364f1d856cc675227da009e24a5cfcb/aura-ui/src/components/home/AuraFeatures.ts)
+- [Pathway selector](https://github.com/GemsForge/aura-logbook-api/blob/96d2b65feb1538f223597a945f7e7a009f77f9d4/aura-ui/src/components/MyPathwaySelector.tsx)
+- [Pathway descriptions](https://github.com/GemsForge/aura-logbook-api/blob/96d2b65feb1538f223597a945f7e7a009f77f9d4/aura-ui/src/features/auth/models/SpiritualPathway.ts)
+- [API pathway display names](https://github.com/GemsForge/aura-logbook-api/blob/96d2b65feb1538f223597a945f7e7a009f77f9d4/AuraLogbook.Api/Models/SpiritualPathway.cs)
+- [Mood-entry form](https://github.com/GemsForge/aura-logbook-api/blob/96d2b65feb1538f223597a945f7e7a009f77f9d4/aura-ui/src/components/MoodEntryFormFields.tsx)
+- [Dashboard](https://github.com/GemsForge/aura-logbook-api/blob/96d2b65feb1538f223597a945f7e7a009f77f9d4/aura-ui/src/pages/Dashboard.tsx)
+- [Current feature-list copy](https://github.com/GemsForge/aura-logbook-api/blob/96d2b65feb1538f223597a945f7e7a009f77f9d4/aura-ui/src/components/home/AuraFeatures.ts)
 - [Historical spiritual-pathways Wiki snapshot](../wiki/spiritual-pathways.md)
 
 ## Review checklist

@@ -1,6 +1,6 @@
 # 🏗️ AuraLog Architecture
 
-> Local copy of the [GitHub Wiki page](https://github.com/GemsForge/aura-logbook-api/wiki/%F0%9F%8F%97%EF%B8%8F-AuraLog-Architecture). Last edited on GitHub: June 10, 2025. Retrieved October 18, 2026. Preserved as a dated snapshot; implementation details below are not current guidance. See the current [API README](https://github.com/GemsForge/aura-logbook-api/blob/3a93ed206364f1d856cc675227da009e24a5cfcb/AuraLogbook.Api/README.md), [runtime environments](../runtime-environments.md), and [database ERD](../database-erd.md).
+> Local copy of the [GitHub Wiki page](https://github.com/GemsForge/aura-logbook-api/wiki/%F0%9F%8F%97%EF%B8%8F-AuraLog-Architecture). Last edited on GitHub: June 10, 2025. Retrieved October 18, 2026. Preserved as a dated snapshot; implementation details below are not current guidance. See the current [API README](https://github.com/GemsForge/aura-logbook-api/blob/96d2b65feb1538f223597a945f7e7a009f77f9d4/AuraLogbook.Api/README.md), [runtime environments](../runtime-environments.md), and [database ERD](../database-erd.md).
 
 AuraLog is designed as a modular, API-first web application that follows clean separation of concerns. It uses a layered architecture for flexibility, maintainability, and scalability.
 
