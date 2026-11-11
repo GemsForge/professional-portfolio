@@ -20,18 +20,13 @@ This index separates current project guidance from preserved historical material
 - [Core user journeys](ux/core-user-journeys.md) — current web behavior, gaps, and target dashboard hierarchy.
 - [Responsive and accessibility behavior](ux/responsive-accessibility.md) — cross-viewport and assistive-technology expectations plus recorded review evidence.
 - [Private mood media attachments](private-media-attachments.md) — authenticated image upload, access, limits, and private file storage.
-- [SwiftUI shell adaptation plan](https://github.com/GemsForge/aura-logbook-api/blob/3a93ed206364f1d856cc675227da009e24a5cfcb/docs/ux/swiftui-shell-adaptation.md) — web-to-iPhone product contract, native information architecture, and mobile-readiness dependencies.
 
 These files describe intended product behavior where they say so. They do not imply that every proposed experience is already implemented.
 
 ## Data and operations
 
 - [Relational database ERD](database-erd.md) — current migration-defined tables and major relationships.
-- [Database migration recovery](https://github.com/GemsForge/aura-logbook-api/blob/3a93ed206364f1d856cc675227da009e24a5cfcb/docs/database-recovery.md) — forward-migration, backup, failure, and restore guidance.
-- [Resolved registration birthday mismatch](https://github.com/GemsForge/aura-logbook-api/blob/3a93ed206364f1d856cc675227da009e24a5cfcb/docs/registration-dateonly-mismatch.md) — retained investigation record for the fixed `DateOnly`/SQLite defect.
 - [Database seeder](https://github.com/GemsForge/aura-logbook-api/blob/3a93ed206364f1d856cc675227da009e24a5cfcb/Scripts/DatabaseSeeder/README.md) — full JSON-to-SQLite import and reconciliation workflow.
-- [Safe branch cleanup](https://github.com/GemsForge/aura-logbook-api/blob/3a93ed206364f1d856cc675227da009e24a5cfcb/BRANCH_CLEANUP.md) — local and remote branch review procedure.
-- [Issue and pull-request workflow](https://github.com/GemsForge/aura-logbook-api/blob/3a93ed206364f1d856cc675227da009e24a5cfcb/.github/ISSUE_WORKFLOW.md) — story, branch, commit, PR, and project-sync policy.
 
 ## Historical Wiki source material
 

@@ -92,7 +92,7 @@ For SwiftUI, map the same semantic names to `Color` and `CGFloat` constants. Kee
 
 The selected direction is spa-inspired: tactile warmth and breathing room first, with jewel color as a quiet signature. The proposal below is a visual reference for composition and atmosphere, not a specification of current behavior or content. Its sample labels, mood choices, weather details, reflections, and location are illustrative placeholders and must not be treated as real product data.
 
-![Spa-inspired Prism Garden proposal for web and SwiftUI](https://github.com/GemsForge/aura-logbook-api/blob/3a93ed206364f1d856cc675227da009e24a5cfcb/docs/ux/assets/prism-garden-spa-direction.png)
+![Spa-inspired Prism Garden proposal for web and SwiftUI](https://raw.githubusercontent.com/GemsForge/aura-logbook-api/3a93ed206364f1d856cc675227da009e24a5cfcb/docs/ux/assets/prism-garden-spa-direction.png)
 
 Composition cues: a spacious daily reflection area is primary; weather and trend information stay secondary; recent entries remain quiet and readable. The companion phone view stacks content with native spacing. Keep any interpretation optional and user-led; never introduce fabricated personalized insights.
 
@@ -105,6 +105,5 @@ This story defines and documents the visual system. Applying it throughout produ
 ## Reference
 
 - [Inclusive experience principles](experience-principles.md)
-- [SwiftUI shell adaptation plan](https://github.com/GemsForge/aura-logbook-api/blob/3a93ed206364f1d856cc675227da009e24a5cfcb/docs/ux/swiftui-shell-adaptation.md)
 - [Current dashboard implementation](https://github.com/GemsForge/aura-logbook-api/blob/3a93ed206364f1d856cc675227da009e24a5cfcb/aura-ui/src/pages/Dashboard.tsx)
 - [Current Aura palette implementation](https://github.com/GemsForge/aura-logbook-api/blob/3a93ed206364f1d856cc675227da009e24a5cfcb/aura-ui/src/theme/auraTheme.ts)

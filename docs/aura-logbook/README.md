@@ -1,3 +1,5 @@
+> **Snapshot from [Aura Logbook](https://github.com/GemsForge/aura-logbook-api/tree/3a93ed206364f1d856cc675227da009e24a5cfcb).** This is Aura Logbook's README, copied for the portfolio case study. Commands below run in the Aura Logbook repository, not this one. See [SOURCE.md](SOURCE.md) for what was copied and how to refresh it.
+
 # Aura Logbook
 
 Aura Logbook is a mood-tracking and reflective-journaling application with a .NET 9 / ASP.NET Core API and a separate React, TypeScript, and Vite UI. Development and FIT/Staging use SQLite through Dapper with versioned startup migrations. The committed JSON files are retained as import and local-development seed sources rather than the active Development data store.
@@ -178,8 +180,6 @@ Manual smoke test: run `npm run dev`, open the UI and Swagger URLs above, verify
 - [UI setup, API URL configuration, and checks](https://github.com/GemsForge/aura-logbook-api/blob/3a93ed206364f1d856cc675227da009e24a5cfcb/aura-ui/README.md)
 - [React Native / Expo mobile shell](docs/ux/mobile-shell.md)
 - [Major dependencies, tools, and external-service terms](DEPENDENCIES.md)
-- [Safe local and remote branch cleanup](https://github.com/GemsForge/aura-logbook-api/blob/3a93ed206364f1d856cc675227da009e24a5cfcb/BRANCH_CLEANUP.md)
-- [Repository issue and pull-request workflow](https://github.com/GemsForge/aura-logbook-api/blob/3a93ed206364f1d856cc675227da009e24a5cfcb/.github/ISSUE_WORKFLOW.md)
 
 ## License
 

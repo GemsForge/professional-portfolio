@@ -53,7 +53,7 @@ Metadata includes names, artwork URLs and Spotify links, never credentials. Erro
 
 The API distinguishes expired state, missing configuration, expired authorization, access denial, rate limiting and provider unavailability. Logs record failure categories without authorization codes or tokens. The connection card consumes the callback status once and removes it from the dashboard URL.
 
-For denied access, check Spotify's app user-access settings and current development-mode account requirements. Retry after a rate-limit warning; do not repeatedly reconnect. Configuration/secrets are described in [Configuration and Secrets](https://github.com/GemsForge/aura-logbook-api/blob/3a93ed206364f1d856cc675227da009e24a5cfcb/docs/configuration-and-secrets.md).
+For denied access, check Spotify's app user-access settings and current development-mode account requirements. Retry after a rate-limit warning; do not repeatedly reconnect. Configuration/secrets are described in Configuration and Secrets.
 
 ## Verification
 

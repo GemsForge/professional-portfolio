@@ -96,7 +96,7 @@ The migration source is also copied by the test project, allowing migration
 tests to run against an isolated temporary SQLite database without using a
 developer database file.
 
-See [Database migration recovery](https://github.com/GemsForge/aura-logbook-api/blob/3a93ed206364f1d856cc675227da009e24a5cfcb/docs/database-recovery.md) for backup, failed
+See Database migration recovery for backup, failed
 migration, and restore guidance. The migrator is forward-only; it does not
 provide automatic rollback scripts.
 
