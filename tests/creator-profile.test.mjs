@@ -111,8 +111,15 @@ test("generated post viewer retains project routes, source links, and the one-pa
   assert.match(auraPost, /<nav class="post-step-controls" aria-label="Walkthrough image controls"><button type="button" class="post-step-arrow post-step-prev" data-step-prev aria-label="Previous step">← Previous<\/button><button type="button" class="post-step-arrow post-step-next" data-step-next aria-label="Next step">Next →<\/button><\/nav>/);
   assert.match(auraPost, /class="tech-chip"/);
   assert.match(auraPost, /\/assets\/auralogbook-stack\/react\.png/);
+  assert.match(auraPost, /<img src="\/assets\/auralogbook-stack\/react\.png" alt="" loading="lazy" decoding="async"><span>React Native · Expo<\/span>/, "React Native uses the same React logo");
   assert.match(auraPost, /\/assets\/auralogbook-stack\/dapper\.png/);
   assert.match(auraPost, /\/assets\/auralogbook-stack\/jwt-bearer\.png/);
+  for (const [name, expected] of [["Vitest", "<svg"], ["Testing Library", "<svg"], ["xUnit", "/assets/auralogbook-stack/xunit.jpg"], ["Moq", "<svg"]]) {
+    const labelIndex = auraPost.indexOf(`<span>${name}</span>`);
+    const pillStart = auraPost.lastIndexOf('<span class="tech-chip">', labelIndex);
+    const pill = labelIndex >= 0 ? auraPost.slice(pillStart, labelIndex) : "";
+    assert.ok(pill.includes(expected), `${name} should render its logo`);
+  }
   assert.doesNotMatch(auraPost, /<figcaption>/, "post artwork should not have a visible caption below it");
   assert.match(auraPost, /mobile-first journal for emotions, beliefs, and the reflections that connect them/);
   assert.match(auraPost, /<dt>Product highlights<\/dt>/);

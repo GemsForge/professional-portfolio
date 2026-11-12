@@ -1,6 +1,6 @@
 import { cp, readFile, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { siApple, siDotnet, siMui, siOpenjdk, siPostgresql, siSpotify } from "simple-icons";
+import { siApple, siDotnet, siMui, siMoq, siOpenjdk, siPostgresql, siSpotify, siTestinglibrary, siVitest } from "simple-icons";
 // Node 22.13+ strips the catalog's TypeScript types at import time; no runtime
 // transpiler or JSX dependency is needed for this build-time-only module.
 import { renderDependencyGroup } from "./auralogbook-dependencies.mts";
@@ -9,10 +9,12 @@ import { applyProjectPageMetadata, HOME_PROJECT_SLUGS, PORTFOLIO_POSTS, PROJECTS
 
 const source = path.resolve("static-source");
 const pages = {};
+/** Local brand artwork and Simple Icons marks used by the Aura Logbook technology pills. */
 const TECH_PILL_MARKS = {
   "C#": { image: "/assets/auralogbook-stack/csharp.png" },
   ".NET": { icon: siDotnet },
   React: { image: "/assets/auralogbook-stack/react.png" },
+  "React Native · Expo": { image: "/assets/auralogbook-stack/react.png" },
   TypeScript: { image: "/assets/auralogbook-stack/typescript.png" },
   Redux: { image: "/assets/auralogbook-stack/redux.png" },
   "Redux Toolkit": { image: "/assets/auralogbook-stack/redux.png" },
@@ -26,6 +28,10 @@ const TECH_PILL_MARKS = {
   JWT: { image: "/assets/auralogbook-stack/jwt-bearer.png" },
   "Spotify API": { icon: siSpotify },
   "Spotify Web API · OAuth": { icon: siSpotify },
+  Vitest: { icon: siVitest },
+  "Testing Library": { icon: siTestinglibrary },
+  "xUnit": { image: "/assets/auralogbook-stack/xunit.jpg" },
+  Moq: { icon: siMoq },
   Java: { icon: siOpenjdk },
   Notion: { image: "/assets/auralogbook-stack/notion.png" },
   "Notion API": { image: "/assets/auralogbook-stack/notion.png" },
