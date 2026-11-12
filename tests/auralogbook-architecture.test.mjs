@@ -25,8 +25,9 @@ test("AuraLogbook page includes one accessible data-to-API-to-UI architecture di
   }
   assert.match(page, /the app is still in development and end-to-end verification remains/);
   assert.match(page, /native React Native\/Expo shell uses Today, Log, Journal, and Profile tabs/);
-  assert.match(page, /mobile-first mood and reflection app for daily check-ins/);
-  assert.match(page, /select light, dark, or system appearance from the theme selector/);
+  assert.match(page, /mobile-first journal for what you feel and believe/);
+  assert.match(page, /choosing the perspective that fits them/);
+  assert.match(page, /light, dark, and system appearance choices make the journal feel personal/);
   assert.match(page, /Browse entries by date range, then edit or delete them/);
   assert.match(page, /responsive React 19\/TypeScript web client, which uses Material UI, Joy UI/);
   assert.match(page, /targets \.NET 9/);

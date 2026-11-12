@@ -113,7 +113,7 @@ test("generated post viewer retains project routes, source links, and the one-pa
   assert.match(auraPost, /\/assets\/auralogbook-stack\/dapper\.png/);
   assert.match(auraPost, /\/assets\/auralogbook-stack\/jwt-bearer\.png/);
   assert.doesNotMatch(auraPost, /<figcaption>/, "post artwork should not have a visible caption below it");
-  assert.match(auraPost, /mobile-first product, with a React Native\/Expo shell/);
+  assert.match(auraPost, /mobile-first journal for emotions, beliefs, and the reflections that connect them/);
   assert.match(auraPost, /<dt>Where it stands<\/dt>/);
   assert.match(auraPost, /<h3>Technical choices<\/h3>/);
   assert.match(auraPost, /<h3 id="walkthrough-auralogbook">Walkthrough<\/h3>/);

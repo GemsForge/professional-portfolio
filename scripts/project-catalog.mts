@@ -153,8 +153,8 @@ export const PORTFOLIO_POSTS: PortfolioPostDefinition[] = [
   // Keep shipped behavior distinct from planned work and tie technical claims to the reviewed app source.
   {
     slug: "auralogbook", title: "Aura Logbook", category: "project", eyebrow: "Mobile-first reflection app · In development",
-    caption: "A phone-first reflective journal with light, dark, and system appearance choices, paired with a responsive desktop view.", image: "/assets/auralogbook-tour/home-card.png", imageAlt: "Aura Logbook phone home screen beside its desktop view",
-    role: "I’m shaping Aura Logbook as a mobile-first product, with a React Native/Expo shell, a responsive React/TypeScript client, and a .NET API.",
+    caption: "A phone-first journal for what you feel and believe, with personal reflection paths and a responsive desktop companion.", image: "/assets/auralogbook-tour/home-card.png", imageAlt: "Aura Logbook phone home screen beside its desktop view",
+    role: "I’m shaping a mobile-first journal for emotions, beliefs, and the reflections that connect them, alongside a responsive web client and a native app foundation.",
     evidenceLabel: "Where it stands",
     decisionsTitle: "Technical choices",
     decisions: [
