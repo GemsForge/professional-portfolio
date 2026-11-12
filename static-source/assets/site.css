@@ -383,8 +383,9 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid #90
 .post-image-dialog-viewport img{display:block;width:auto;max-width:100%;max-height:calc(94dvh - 110px);object-fit:contain;border:0;border-radius:2px}
 @media(max-width:650px){.post-image-dialog{position:fixed;inset:0;width:100dvw;height:100dvh;margin:0;max-width:none;max-height:none;border:0;border-radius:0}.post-image-dialog-viewport{justify-content:flex-start;padding:4px 0 12px}.post-image-dialog-viewport img{width:180vw;max-width:none;max-height:calc(100dvh - 110px);align-self:center}}
 
-/* Pair Aura Logbook's approved mark with its product name without competing with the mobile-first screen preview. */
+/* Keep the Aura Logbook case banner single-column and enlarge its brand mark by 24px. */
+.aura-case-banner{grid-template-columns:1fr}
 .case-brand-title{display:flex;align-items:center;gap:12px}
-.case-brand-title img{display:block;width:64px;height:64px;flex:none;object-fit:contain}
+.case-brand-title img{display:block;width:88px;height:88px;flex:none;object-fit:contain}
 .case-brand-title h1{margin:0}
-@media(max-width:650px){.case-brand-title img{width:52px;height:52px}}
+@media(max-width:650px){.case-brand-title img{width:76px;height:76px}}
