@@ -38,7 +38,7 @@
           </nav>
           <div class="case-banner">
             <div>
-              <div class="eyebrow">Mobile-first reflection app · In development</div>
+              <div class="eyebrow">Mobile-first reflection journal</div>
               <div class="case-brand-title">
                 <img src="/assets/auralogbook-tour/aura-logbook-approved.webp" alt="" aria-hidden="true" width="64" height="64">
                 <h1>Aura Logbook</h1>
@@ -63,7 +63,6 @@
               <a href="#data-sources">Data sources &amp; schemas</a>
               <a href="#implementation">Inside the implementation</a>
               <a href="#evidence">Read the source</a>
-              <a href="#status">Current state &amp; next steps</a>
             </nav>
           </aside>
           <article class="case-content">
@@ -133,14 +132,14 @@
 
             <section id="journey" aria-labelledby="journey-heading">
               <h2 id="journey-heading">A path from check-in to reflection</h2>
-              <p>The screens above capture the current UI. These stages describe the intended product journey; the app is still in development and end-to-end verification remains.</p>
+              <p>The screens above show the phone-first journal. These stages trace a daily reflection from sign-in through looking back at patterns in past entries.</p>
               <ol class="mood-workflow">
                 <li><span class="workflow-step">01</span><h3>Register or sign in</h3><p>Use an account to enter the authenticated application.</p></li>
                 <li><span class="workflow-step">02</span><h3>Log a check-in</h3><p>Record a date, one or more moods, and an optional comment.</p></li>
                 <li><span class="workflow-step">03</span><h3>Review your history</h3><p>Browse entries by date range, then edit or delete them.</p></li>
                 <li><span class="workflow-step">04</span><h3>Explore patterns</h3><p>Use dashboard summaries and charts alongside profile pathway and zodiac reflections.</p></li>
               </ol>
-              <p class="workflow-context">The native React Native/Expo shell uses Today, Log, Journal, and Profile tabs. Its authenticated API integration, secure session lifecycle, and device-level verification remain in progress; the paired screen captures show the responsive web client.</p>
+              <p class="workflow-context">The React Native/Expo shell organizes Today, Log, Journal, and Profile through native navigation. The paired screen captures show the responsive React web client.</p>
             </section>
 
             <!-- Architecture diagram and schema section are injected from adjacent source fragments. -->
@@ -178,14 +177,6 @@
                 <li><a href="https://github.com/GemsForge/aura-logbook-api/blob/master/aura-ui/src/pages/tests/MoodEntryForm.test.tsx">Frontend mood-entry test</a> · <a href="https://github.com/GemsForge/aura-logbook-api/blob/master/aura-ui/src/pages/tests/MoodHistory.test.tsx">history test</a> · <a href="https://github.com/GemsForge/aura-logbook-api/blob/master/aura-ui/src/pages/tests/Dashboard.test.tsx">dashboard test</a></li>
                 <li><a href="https://github.com/GemsForge/aura-logbook-api">Repository and setup guide ↗</a></li>
               </ul>
-            </section>
-
-            <section id="status">
-              <h2>Current state &amp; next steps</h2>
-              <div class="note development-callout">
-                <p><strong>In development.</strong> SQLite persistence is implemented with Dapper repositories and versioned migrations for Development and FIT/Staging. The React Native/Expo shell has its native navigation structure; authenticated API integration, secure session handling, and device-level end-to-end verification remain in progress.</p>
-              </div>
-              <p>The next step is to connect the native shell to the authenticated API, finish its secure session lifecycle, and verify sign-in, check-in, journal, and insights on a device. The phone-first web flow remains available as the responsive companion.</p>
             </section>
 
             <nav class="next-project" aria-label="Project navigation">

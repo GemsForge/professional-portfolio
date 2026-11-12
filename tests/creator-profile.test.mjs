@@ -114,12 +114,12 @@ test("generated post viewer retains project routes, source links, and the one-pa
   assert.match(auraPost, /\/assets\/auralogbook-stack\/jwt-bearer\.png/);
   assert.doesNotMatch(auraPost, /<figcaption>/, "post artwork should not have a visible caption below it");
   assert.match(auraPost, /mobile-first journal for emotions, beliefs, and the reflections that connect them/);
-  assert.match(auraPost, /<dt>Where it stands<\/dt>/);
+  assert.match(auraPost, /<dt>Product highlights<\/dt>/);
   assert.match(auraPost, /<h3>Technical choices<\/h3>/);
   assert.match(auraPost, /<h3 id="walkthrough-auralogbook">Walkthrough<\/h3>/);
   assert.doesNotMatch(auraPost, /visual-hotspot|data-step-hotspot/, "the Aura Logbook walkthrough has no unused plus marker");
   assert.match(auraPost, /SQLite persistence is implemented through Dapper repositories and versioned SQL migrations/);
-  assert.match(auraPost, /React Native\/Expo shell establishes native Today, Log, Journal, and Profile navigation/);
+  assert.match(auraPost, /React Native\/Expo shell organizes Today, Log, Journal, and Profile through native navigation/);
   assert.match(auraPost, /user-scoped access boundaries/);
   assert.match(script, /history\.pushState/);
   assert.match(script, /window\.addEventListener\("popstate"/);

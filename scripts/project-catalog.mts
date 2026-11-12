@@ -85,8 +85,8 @@ export const PROJECTS = {
   auralogbook: {
     slug: "auralogbook",
     name: "Aura Logbook",
-    description: "A mobile-first mood and reflection app with light, dark, and system appearance modes, a responsive desktop companion, and SQLite/Dapper persistence for Development and FIT/Staging.",
-    preTitle: "Mobile-first reflection app · In development",
+    description: "A mobile-first journal for what you feel and believe, with personal reflection paths, a responsive desktop companion, and SQLite/Dapper persistence for Development and FIT/Staging.",
+    preTitle: "Mobile-first reflection journal",
     primaryTools: "React · React Native · Expo · TypeScript · .NET · SQLite · Dapper",
     image: "/assets/auralogbook-tour/home-card.png",
     imageAlt: "Aura Logbook mobile home screen shown in a phone mockup, with its desktop dashboard alongside",
@@ -152,10 +152,10 @@ export const HOME_PROJECT_SLUGS = [
 export const PORTFOLIO_POSTS: PortfolioPostDefinition[] = [
   // Keep shipped behavior distinct from planned work and tie technical claims to the reviewed app source.
   {
-    slug: "auralogbook", title: "Aura Logbook", category: "project", eyebrow: "Mobile-first reflection app · In development",
+    slug: "auralogbook", title: "Aura Logbook", category: "project", eyebrow: "Mobile-first reflection journal",
     caption: "A phone-first journal for what you feel and believe, with personal reflection paths and a responsive desktop companion.", image: "/assets/auralogbook-tour/home-card.png", imageAlt: "Aura Logbook phone home screen beside its desktop view",
-    role: "I’m shaping a mobile-first journal for emotions, beliefs, and the reflections that connect them, alongside a responsive web client and a native app foundation.",
-    evidenceLabel: "Where it stands",
+    role: "I designed Aura Logbook as a mobile-first journal for emotions, beliefs, and the reflections that connect them, with a responsive web client, native navigation shell, and .NET API.",
+    evidenceLabel: "Product highlights",
     decisionsTitle: "Technical choices",
     decisions: [
       "The app is designed for mobile first; a responsive React and TypeScript client also presents the check-in and journal flow on desktop.",
@@ -163,9 +163,9 @@ export const PORTFOLIO_POSTS: PortfolioPostDefinition[] = [
       "SQLite persistence is implemented through Dapper repositories and versioned SQL migrations for Development and FIT/Staging.",
       "Mood, reference-data, reflection, and private-media workflows use API services and user-scoped access boundaries.",
       "The optional Spotify connection brings a user's current listening and playlist links into the dashboard; playback continues in Spotify.",
-      "The React Native/Expo shell establishes native Today, Log, Journal, and Profile navigation; its authenticated API integration and device verification are still in progress.",
+      "The React Native/Expo shell organizes Today, Log, Journal, and Profile through native navigation.",
     ],
-    evidence: "Recent UI work refreshed sign-in, pathway-aligned check-ins, illustrated mood choices, reflection history, and private photo browsing, alongside the Spotify connection card for current listening and playlist discovery. SQLite persistence through Dapper is implemented for Development and FIT/Staging; native mobile authentication and end-to-end device checks remain in progress.",
+    evidence: "The product brings together pathway-aligned check-ins, illustrated mood choices, reflection history, private photo browsing, and Spotify playback metadata with playlist discovery. SQLite persistence through Dapper and versioned migrations is configured for Development and FIT/Staging; the React Native/Expo shell provides native navigation.",
     tools: ["React", "React Native · Expo", "TypeScript", "C#", ".NET", "Redux Toolkit · RTK Query", "MUI · Joy UI", "Recharts", "SQLite", "Dapper", "JWT", "Spotify Web API · OAuth", "Private photo API", "Vitest", "Testing Library", "xUnit", "Moq"], caseStudy: "/portfolio/projects/auralogbook/", source: "https://github.com/GemsForge/aura-logbook-api",
     walkthrough: [
       { title: "Sign in", detail: "Start at the refreshed sign-in screen, designed for a compact phone layout with a responsive desktop companion.", screenshot: { src: "/assets/auralogbook-tour/login-pair.png", alt: "Phone-first Aura Logbook sign-in screen with its desktop view behind it" } },

@@ -23,8 +23,8 @@ test("AuraLogbook page includes one accessible data-to-API-to-UI architecture di
   for (const stage of ["Register or sign in", "Log a check-in", "Review your history", "Explore patterns"]) {
     assert.ok(page.includes(stage), `user journey includes ${stage}`);
   }
-  assert.match(page, /the app is still in development and end-to-end verification remains/);
-  assert.match(page, /native React Native\/Expo shell uses Today, Log, Journal, and Profile tabs/);
+  assert.doesNotMatch(page, /In development|still in progress|remain in progress|Current state &amp; next steps/);
+  assert.match(page, /React Native\/Expo shell organizes Today, Log, Journal, and Profile through native navigation/);
   assert.match(page, /mobile-first journal for what you feel and believe/);
   assert.match(page, /choosing the perspective that fits them/);
   assert.match(page, /light, dark, and system appearance choices make the journal feel personal/);
@@ -61,6 +61,7 @@ test("AuraLogbook page includes one accessible data-to-API-to-UI architecture di
   assert.match(page, /Music for the moment/);
   assert.match(page, /Spotify linking uses OAuth Authorization Code with PKCE/);
   assert.match(page, /Playlist links and the now-playing link continue in Spotify/);
+  assert.doesNotMatch(page, /authenticated API integration, secure session handling|next step is to connect the native shell/);
   assert.match(page, /portfolio demo; no Spotify account or personal listening data is used/);
   const captureNotes = await readFile(new URL("../docs/story-assets/aura-logbook-walkthrough-capture-notes.md", import.meta.url), "utf8");
   assert.match(captureNotes, /not Aura's latest merged commit `5913d26`/);
@@ -68,7 +69,7 @@ test("AuraLogbook page includes one accessible data-to-API-to-UI architecture di
   assert.match(captureNotes, /“Frontline” by Butcher Brown/);
   assert.match(captureNotes, /phone chrome, local IP address, or profile details are included/);
   assert.match(page, /shaping the phone-first experience, its responsive desktop companion/);
-  assert.match(page, /SQLite persistence is implemented with Dapper repositories/);
+  assert.match(page, /SQLite persistence is implemented through Dapper repositories and versioned SQL migrations/);
   assert.doesNotMatch(page, /FileMoodRepository|FileUserRepository|JSON-based persistence/);
   assert.match(page, /dependency-chip-list/);
   assert.match(page, /What this demonstrates/);
