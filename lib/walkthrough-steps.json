@@ -1,9 +1,13 @@
 {
   "auralogbook": [
     "Sign in",
+    "Public home",
     "Arrive home",
     "Check in",
     "Revisit reflections",
+    "Read one entry",
+    "Browse photos",
+    "Choose an appearance",
     "Notice patterns"
   ],
   "notion-api-shortcuts": [

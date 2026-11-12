@@ -47,10 +47,18 @@ test("AuraLogbook page includes one accessible data-to-API-to-UI architecture di
   assert.match(page, /aria-describedby="architecture-tech-list"/);
   assert.match(page, /id="data-sources"/);
   assert.match(page, /src="\/assets\/auralogbook-tour\/aura-logbook-approved\.webp" alt=""/);
-  assert.equal((page.match(/data-aura-image-trigger/g) ?? []).length, 6, "the hero and five screen captures open in the closer-look dialog");
+  assert.equal((page.match(/data-aura-image-trigger/g) ?? []).length, 10, "the hero and nine screen captures open in the closer-look dialog");
   assert.match(page, /<dialog id="aura-image-dialog" class="aura-image-dialog"/);
   assert.match(page, /aria-label="Enlarged Aura Logbook screen\. Swipe or scroll sideways to view the full image\."/);
   assert.match(page, /Mindful Living, Astrology &amp; Energy, or Faith &amp; Religion/);
+  for (const screen of ["public-home", "individual-record", "gallery", "appearance"]) {
+    assert.ok(page.includes(`/assets/auralogbook-tour/${screen}-pair.png`), `walkthrough includes the ${screen} capture`);
+  }
+  assert.match(page, /Open-Meteo for New York City on November 12, 2026/);
+  const captureNotes = await readFile(new URL("../docs/story-assets/aura-logbook-walkthrough-capture-notes.md", import.meta.url), "utf8");
+  assert.match(captureNotes, /not Aura's latest merged commit `5913d26`/);
+  assert.match(captureNotes, /58\.4°F, WMO 3 \(overcast\)/);
+  assert.match(captureNotes, /fictional Alex Morgan profile and synthetic journal entries/);
   assert.match(page, /shaping the phone-first experience, its responsive desktop companion/);
   assert.match(page, /SQLite persistence is implemented with Dapper repositories/);
   assert.doesNotMatch(page, /FileMoodRepository|FileUserRepository|JSON-based persistence/);
