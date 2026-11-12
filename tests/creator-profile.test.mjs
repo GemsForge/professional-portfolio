@@ -103,20 +103,20 @@ test("generated post viewer retains project routes, source links, and the one-pa
   // Evidence first: summary, links, role/status, picture slot (phones), walkthrough, technical choices, tools.
   const order = ['class="post-lead"', 'class="post-actions"', '<dl class="post-facts">', 'data-mobile-visual', '<section class="walkthrough"', '<section class="post-decisions">', '<section class="post-tools"><h3>Tech</h3>', 'class="post-sequence"'].map((marker) => auraPost.indexOf(marker));
   assert.ok(order.every((position, index) => position >= 0 && (index === 0 || position > order[index - 1])), `pop-up sections are out of order: ${order}`);
-  assert.match(auraPost, /<img src="\/assets\/aura-logbook\.png" alt="Open reflection journal with mood markers"/);
+  assert.match(auraPost, /<img src="\/assets\/auralogbook-tour\/login-pair\.png" alt="Phone-first Aura Logbook sign-in screen with a desktop view behind it"/);
   assert.match(auraPost, /class="tech-chip"/);
   assert.match(auraPost, /\/assets\/auralogbook-stack\/react\.png/);
   assert.match(auraPost, /\/assets\/auralogbook-stack\/dapper\.png/);
   assert.match(auraPost, /\/assets\/auralogbook-stack\/jwt-bearer\.png/);
   assert.doesNotMatch(auraPost, /<figcaption>/, "post artwork should not have a visible caption below it");
-  assert.match(auraPost, /typed forms and RTK Query to JWT-protected endpoints and repository-backed services/);
+  assert.match(auraPost, /mobile-first UI and responsive desktop view/);
   assert.match(auraPost, /<dt>Where it stands<\/dt>/);
   assert.match(auraPost, /<h3>Technical choices<\/h3>/);
   assert.match(auraPost, /<h3 id="walkthrough-auralogbook">Walkthrough<\/h3>/);
-  assert.match(auraPost, /A save writes the entry and its mood rows in one transaction/);
-  assert.match(auraPost, /Spotify uses OAuth with PKCE/);
-  assert.match(auraPost, /Photo files stay out of public assets/);
-  assert.match(auraPost, /Spotify tracks are not saved to mood entries/);
+  assert.match(auraPost, /Development and FIT\/Staging use SQLite through Dapper/);
+  assert.match(auraPost, /typed React and TypeScript client connects to the \.NET API/);
+  assert.match(auraPost, /Development and FIT\/Staging use SQLite through Dapper/);
+  assert.match(auraPost, /authorization applied to user data/);
   assert.match(script, /history\.pushState/);
   assert.match(script, /window\.addEventListener\("popstate"/);
   assert.doesNotMatch(script, /window\.addEventListener\("hashchange"/, "popstate alone handles fragment navigation; a second listener rendered posts twice");
@@ -191,7 +191,7 @@ test("pop-up keeps the walkthrough, swaps in real step screenshots, and meets ty
   assert.match(auraPost, /<button type="button" class="post-step-arrow post-step-next" data-step-next aria-label="Next step">/);
   assert.match(auraPost, /<div class="post-step-dots" aria-hidden="true">(?:<span><\/span>){5}<\/div>/);
   assert.match(auraPost, /<p class="visually-hidden" data-step-announce aria-live="polite"><\/p>/);
-  assert.match(auraPost, /<span class="eyebrow">Illustrative prototype<\/span>/, "without screenshots the walkthrough stays labeled as a prototype");
+  assert.match(auraPost, /<span class="eyebrow">App tour<\/span>/, "real screens label the walkthrough as an app tour");
   assert.doesNotMatch(auraPost, /walkthrough-controls/);
   assert.match(auraPost, /View source <span class="visually-hidden">\(opens in a new tab\)<\/span>/);
   // A catalog step with `screenshot` shows that real screen and hides its hotspot.
@@ -230,5 +230,5 @@ test("pop-up applies published step screenshots from the asset manager, newest f
   assert.match(script, /\.catch\(\(\) => \[\]\)/, "a failed request keeps the built-in pictures");
   assert.match(script, /if \(eyebrow\) eyebrow\.textContent = "App tour";/);
   const steps = JSON.parse(await read("../lib/walkthrough-steps.json"));
-  assert.deepEqual(steps.auralogbook, ["Choose a path", "Log a check-in", "Add a photo", "Connect Spotify", "Look back"]);
+  assert.deepEqual(steps.auralogbook, ["Sign in", "Arrive home", "Check in", "Revisit reflections", "Notice patterns"]);
 });

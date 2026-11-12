@@ -41,9 +41,9 @@ test("Aura Logbook card and detail page share the catalog image", async () => {
   const home = await read("../static-source/index.html");
   const projects = await read("../static-source/portfolio/projects/index.html");
   const detail = await read("../static-source/portfolio/projects/auralogbook/index.html");
-  assert.match(catalog, /auralogbook[\s\S]*?image: "\/assets\/aura-logbook\.png"/);
+  assert.match(catalog, /auralogbook[\s\S]*?image: "\/assets\/auralogbook-tour\/home-card\.png"/);
   assert.match(home, /id="creator-post-grid" class="creator-post-grid"/);
-  assert.match(catalog, /slug: "auralogbook", title: "Aura Logbook"[\s\S]*?image: "\/assets\/aura-logbook\.png"/);
-  assert.match(projects, /auralogbook\/[\s\S]*?src="\/assets\/aura-logbook\.png"/);
-  assert.match(detail, /src="\/assets\/aura-logbook\.png"/);
+  assert.match(catalog, /slug: "auralogbook", title: "Aura Logbook"[\s\S]*?image: "\/assets\/auralogbook-tour\/home-card\.png"/);
+  assert.match(projects, /auralogbook\/[\s\S]*?src="\/assets\/auralogbook-tour\/home-card\.png"/);
+  assert.match(detail, /src="\/assets\/auralogbook-tour\/home-pair\.png"/);
 });

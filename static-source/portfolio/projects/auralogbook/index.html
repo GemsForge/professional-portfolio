@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="description" content="AuraLogbook is a full-stack mood-reflection journal with belief-aligned pathways, personal history, and mood insights.">
+    <meta name="description" content="Aura Logbook is a mobile-first mood-reflection journal with personal history and gentle mood insights, paired with a responsive desktop experience.">
     <meta name="theme-color" content="#1e2823">
     <title>AuraLogbook · Diamond Brown</title>
     <link rel="icon" type="image/png" href="/assets/brandmark.png">
@@ -36,15 +36,18 @@
           </nav>
           <div class="case-banner">
             <div>
-              <div class="eyebrow">Full-stack application · In development</div>
-              <h1>Aura Logbook</h1>
-              <p class="lead">A mood-reflection journal shaped around the way you make meaning.</p>
+              <div class="eyebrow">Mobile-first reflection app · In development</div>
+              <div class="case-brand-title">
+                <img src="/assets/auralogbook-tour/aura-logbook-approved.webp" alt="" aria-hidden="true" width="64" height="64">
+                <h1>Aura Logbook</h1>
+              </div>
+              <p class="lead">A phone-first space to check in with your mood, revisit reflections, and notice patterns over time. A responsive desktop view provides the same journey on a larger screen.</p>
               <div class="facts">
                 <span>Independent project</span>
                 <div data-dependency-group="portfolioHighlights"></div>
               </div>
             </div>
-            <img src="/assets/aura-logbook.png" alt="Transparent illustration of an open reflection journal surrounded by mood markers and a soft aura" width="330" height="330">
+            <img src="/assets/auralogbook-tour/home-pair.png" alt="Aura Logbook home screen shown first on a phone with its desktop dashboard alongside" width="1600" height="1000">
           </div>
         </div>
         <div class="case-layout">
@@ -52,6 +55,7 @@
             <nav aria-label="On this project page">
               <p>On this page</p>
               <a href="#problem">The project</a>
+              <a href="#screens">App screens</a>
               <a href="#journey">User journey</a>
               <a href="#architecture">Architecture diagram</a>
               <a href="#data-sources">Data sources &amp; schemas</a>
@@ -63,20 +67,45 @@
           <article class="case-content">
             <section id="problem">
               <h2>The project</h2>
-              <p>Aura Logbook is a full-stack mood-reflection journal that helps people record emotions, revisit personal history, and explore patterns over time. Users can choose a reflective pathway—Mindful Living, Astrology &amp; Energy, or Faith &amp; Religion—so journaling can align with their beliefs and perspective. They can personalize a profile and explore dashboard context such as mood trends, zodiac-based reflections, and current weather. It is a reflection tool—not a diagnostic or treatment tool.</p>
-              <p><strong>My focus:</strong> connecting a typed frontend to a .NET API, organizing application responsibilities, and handling authenticated workflows.</p>
+              <p>Aura Logbook is primarily a mobile app for recording how you feel, writing a reflection, and returning to your personal history. Its responsive desktop view carries the same check-in and reflection flow onto a larger screen. The refreshed sign-in and home screens lead into mood check-ins, saved reflections, and insights. Reflective pathways—Mindful Living, Astrology &amp; Energy, or Faith &amp; Religion—shape prompts and context. It is a reflection tool—not a diagnostic or treatment tool.</p>
+              <p><strong>My focus:</strong> shaping a calm, usable mobile-first experience and connecting its typed frontend to a .NET API through authenticated workflows.</p>
+            </section>
+
+            <section id="screens" aria-labelledby="screens-heading">
+              <h2 id="screens-heading">The app, phone first</h2>
+              <p>These captures show the current interface at mobile size first, with the companion desktop view alongside. The walkthrough uses fictional portfolio demo data.</p>
+              <figure>
+                <img src="/assets/auralogbook-tour/login-pair.png" alt="Aura Logbook sign-in screen on a phone in front of its desktop layout" width="1600" height="1000" loading="lazy">
+                <figcaption>Sign in · The refreshed entry screen adapts from phone to desktop.</figcaption>
+              </figure>
+              <figure>
+                <img src="/assets/auralogbook-tour/home-pair.png" alt="Aura Logbook home screen on a phone in front of its desktop dashboard" width="1600" height="1000" loading="lazy">
+                <figcaption>Home · A calm starting point for the day’s check-in and reflection.</figcaption>
+              </figure>
+              <figure>
+                <img src="/assets/auralogbook-tour/check-in-pair.png" alt="Mood check-in on a phone with the desktop experience alongside" width="1600" height="1000" loading="lazy">
+                <figcaption>Check in · Choose a mood and write a short reflection.</figcaption>
+              </figure>
+              <figure>
+                <img src="/assets/auralogbook-tour/reflections-pair.png" alt="Saved reflections on a phone with the desktop history view alongside" width="1600" height="1000" loading="lazy">
+                <figcaption>History · Revisit saved entries across both screen sizes.</figcaption>
+              </figure>
+              <figure>
+                <img src="/assets/auralogbook-tour/insights-pair.png" alt="Mood insights on a phone with the desktop analytics view alongside" width="1600" height="1000" loading="lazy">
+                <figcaption>Insights · Explore patterns in a phone-first layout and on desktop.</figcaption>
+              </figure>
             </section>
 
             <section id="journey" aria-labelledby="journey-heading">
               <h2 id="journey-heading">A path from check-in to reflection</h2>
-              <p>The reviewed source supports these stages across the UI and API. This describes implemented routes and operations; it is not a claim that every path has passed end-to-end testing.</p>
+              <p>The screens above capture the current UI. These stages describe the intended product journey; the app is still in development and end-to-end verification remains.</p>
               <ol class="mood-workflow">
                 <li><span class="workflow-step">01</span><h3>Register or sign in</h3><p>Use an account to enter the authenticated application.</p></li>
                 <li><span class="workflow-step">02</span><h3>Log a check-in</h3><p>Record a date, one or more moods, and an optional comment.</p></li>
                 <li><span class="workflow-step">03</span><h3>Review your history</h3><p>Browse entries by date range, then edit or delete them.</p></li>
                 <li><span class="workflow-step">04</span><h3>Explore patterns</h3><p>Use dashboard summaries and charts alongside profile pathway and zodiac reflections.</p></li>
               </ol>
-              <p class="workflow-context">The dashboard also requests current weather from Open-Meteo (Atlanta is the configured location). Weather is contextual information—not a field saved with a mood entry.</p>
+              <p class="workflow-context">The screen captures show the responsive web client. The separate React Native/Expo mobile shell is still a visual and navigation foundation, so native end-to-end behavior remains future work.</p>
             </section>
 
             <!-- Architecture diagram and schema section are injected from adjacent source fragments. -->
@@ -88,13 +117,13 @@
               <p>The manifest specifies React 19.1, TypeScript 5.8, Material UI 7.1, Joy UI 5 beta, Redux Toolkit 2.8 with RTK Query, React Router 7.6, Axios 1.10, and Recharts 2.15. The app includes session restoration, loading feedback, and expired-session notifications.</p>
 
               <h3>Backend responsibilities</h3>
-              <p>The API targets .NET 9. Its mood controller delegates work to injected mood and statistics services; authorized actions cover mood-entry creation, retrieval, editing, deletion, and dashboard queries. JSON file repositories are active. SQLite and Dapper appear in the project dependencies but are not wired into persistence.</p>
+              <p>The API targets .NET 9. Mood controllers delegate work to injected services, and authorized routes manage mood entries and dashboard data. Development and FIT/Staging use SQLite through Dapper with versioned startup migrations; committed JSON files remain import and local-development seed sources.</p>
 
               <h3>Development support</h3>
               <p>A debug-only endpoint generates sample entries to support development. Frontend tests use Vitest and Testing Library; API tests use xUnit and Moq. Their presence shows test coverage exists, not that the suites have been run or passed for this portfolio update. Setup and environment configuration are documented in the repository.</p>
 
               <h3>What this demonstrates</h3>
-              <p>This project demonstrates full-stack product development across authenticated user workflows, API design, layered backend architecture, frontend state management, external API integration, data visualization, and automated testing.</p>
+              <p>This project demonstrates mobile-first product thinking, responsive interface design, authenticated user workflows, API design, layered backend architecture, frontend state management, data visualization, and automated testing.</p>
             </section>
 
             <section id="evidence">
@@ -115,9 +144,9 @@
             <section id="status">
               <h2>Current state &amp; next steps</h2>
               <div class="note development-callout">
-                <p><strong>In development.</strong> The inspected source currently stores user, mood, and zodiac-insight data in JSON files. As the project expands, I plan to move application data to a small database such as SQLite. SQLite and Dapper are declared dependencies, but the migration is future work—the app does not currently persist records in SQLite.</p>
+                <p><strong>In development.</strong> The responsive web client and .NET API are under active development. Development and FIT/Staging persist application data in SQLite through Dapper; the separate native mobile shell and complete end-to-end verification remain in progress.</p>
               </div>
-              <p>The next step is to complete end-to-end verification of the sign-in, journaling, history, and dashboard paths, then document the UI/API integration with fictional demo data.</p>
+              <p>The next step is to finish mobile-native integration and end-to-end verification of sign-in, check-in, history, and insights, then continue documenting the UI/API integration with fictional demo data.</p>
             </section>
 
             <nav class="next-project" aria-label="Project navigation">

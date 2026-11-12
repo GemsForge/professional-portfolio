@@ -1,10 +1,10 @@
 {
   "auralogbook": [
-    "Choose a path",
-    "Log a check-in",
-    "Add a photo",
-    "Connect Spotify",
-    "Look back"
+    "Sign in",
+    "Arrive home",
+    "Check in",
+    "Revisit reflections",
+    "Notice patterns"
   ],
   "notion-api-shortcuts": [
     "Start with a link",
