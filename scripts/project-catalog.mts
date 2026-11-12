@@ -42,7 +42,7 @@ export interface PortfolioPostDefinition {
   stackGroups?: { label: string; items: { label: string; postSlug?: string; href?: string }[] }[];
   /**
    * Each step narrates a documented interaction; it does not claim a live application.
-   * `hotspot` marks the step on the project illustration. Add `screenshot` when a real
+   * Optional `hotspot` marks the step on the project illustration. Add `screenshot` when a real
    * app screen exists: `src` under /assets/, `alt` describing what the screen shows, and an
    * optional `hotspot` (percent of the screenshot) that points at the UI element the step
    * describes. When every step has a screenshot, the walkthrough becomes an "App tour":
@@ -52,7 +52,7 @@ export interface PortfolioPostDefinition {
   walkthrough?: {
     title: string;
     detail: string;
-    hotspot: { x: number; y: number; label: string };
+    hotspot?: { x: number; y: number; label: string };
     screenshot?: { src: string; alt: string; hotspot?: { x: number; y: number; label: string } };
   }[];
 }
@@ -85,14 +85,14 @@ export const PROJECTS = {
   auralogbook: {
     slug: "auralogbook",
     name: "Aura Logbook",
-    description: "A mood-reflection journal shaped around the way you make meaning.",
-    preTitle: "Full-stack application · In development",
-    primaryTools: "React · TypeScript · .NET · MUI · Redux",
-    image: "/assets/aura-logbook.png",
-    imageAlt: "Transparent illustration of an open reflection journal surrounded by mood markers and a soft aura",
-    cardTitle: "A mood logbook, built across the stack.",
+    description: "A mobile-first journal for what you feel and believe, with personal reflection paths, a responsive desktop companion, and SQLite/Dapper persistence for Development and FIT/Staging.",
+    preTitle: "Mobile-first reflection journal",
+    primaryTools: "React · React Native · Expo · TypeScript · .NET · SQLite · Dapper",
+    image: "/assets/auralogbook-tour/home-card.png",
+    imageAlt: "Aura Logbook mobile home screen shown in a phone mockup, with its desktop dashboard alongside",
+    cardTitle: "A calmer space to check in and reflect.",
     cardLinkLabel: "Explore Aura Logbook",
-    technologies: [{ label: "React", icon: "react" }, { label: "TypeScript", icon: "typescript" }, { label: ".NET", icon: "dotnet" }, { label: "MUI", icon: "mui" }, { label: "Redux", icon: "redux" }],
+    technologies: [{ label: "React", icon: "react" }, { label: "React Native · Expo" }, { label: "TypeScript", icon: "typescript" }, { label: ".NET", icon: "dotnet" }, { label: "SQLite" }, { label: "Dapper" }],
   },
   "apple-ecosystem": {
     slug: "apple-ecosystem",
@@ -152,25 +152,32 @@ export const HOME_PROJECT_SLUGS = [
 export const PORTFOLIO_POSTS: PortfolioPostDefinition[] = [
   // Keep shipped behavior distinct from planned work and tie technical claims to the reviewed app source.
   {
-    slug: "auralogbook", title: "Aura Logbook", category: "project", eyebrow: "Full-stack application · In development",
-    caption: "A mood journal with three reflection paths, built in React and .NET.", image: "/assets/aura-logbook.png", imageAlt: "Open reflection journal with mood markers",
-    role: "I’m building the React 19/TypeScript client and .NET 9 API, from typed forms and RTK Query to JWT-protected endpoints and repository-backed services.",
-    evidenceLabel: "Where it stands",
+    slug: "auralogbook", title: "Aura Logbook", category: "project", eyebrow: "Mobile-first reflection journal",
+    caption: "A phone-first journal for what you feel and believe, with personal reflection paths and a responsive desktop companion.", image: "/assets/auralogbook-tour/home-card.png", imageAlt: "Aura Logbook phone home screen beside its desktop view",
+    role: "I designed Aura Logbook as a mobile-first journal for emotions, beliefs, and the reflections that connect them, with a responsive web client, native navigation shell, and .NET API.",
+    evidenceLabel: "Product highlights",
     decisionsTitle: "Technical choices",
     decisions: [
-      "RTK Query attaches the JWT and refreshes mood, history, and dashboard data after writes.",
-      "Development and staging use Dapper with SQLite. A save writes the entry and its mood rows in one transaction; production still uses JSON repositories.",
-      "Spotify uses OAuth with PKCE. The API encrypts tokens; the UI gets playback and playlist metadata, never credentials.",
-      "Photo files stay out of public assets. Authenticated endpoints enforce owner access; SQLite stores the attachment metadata.",
+      "The app is designed for mobile first; a responsive React and TypeScript client also presents the check-in and journal flow on desktop.",
+      "The theme selector offers Light, Dark, and Use device setting so the reflection experience can follow a chosen or system appearance.",
+      "SQLite persistence is implemented through Dapper repositories and versioned SQL migrations for Development and FIT/Staging.",
+      "Mood, reference-data, reflection, and private-media workflows use API services and user-scoped access boundaries.",
+      "The optional Spotify connection brings a user's current listening and playlist links into the dashboard; playback continues in Spotify.",
+      "The React Native/Expo shell organizes Today, Log, Journal, and Profile through native navigation.",
     ],
-    evidence: "I’ve implemented sign-in, mood create/edit/delete, calendar history, dashboard stats and charts, private photo uploads, and Spotify now-playing/playlists. It’s still in development; end-to-end checks remain.",
-    tools: ["React", "TypeScript", "C#", ".NET", "Redux Toolkit · RTK Query", "MUI · Joy UI", "Recharts", "SQLite", "Dapper", "JWT", "Spotify Web API · OAuth", "Private photo API", "Vitest", "Testing Library", "xUnit", "Moq"], caseStudy: "/portfolio/projects/auralogbook/", source: "https://github.com/GemsForge/aura-logbook-api",
+    evidence: "The product brings together pathway-aligned check-ins, illustrated mood choices, reflection history, private photo browsing, and Spotify playback metadata with playlist discovery. SQLite persistence through Dapper and versioned migrations is configured for Development and FIT/Staging; the React Native/Expo shell provides native navigation.",
+    tools: ["React", "React Native · Expo", "TypeScript", "C#", ".NET", "Redux Toolkit · RTK Query", "MUI · Joy UI", "Recharts", "SQLite", "Dapper", "JWT", "Spotify Web API · OAuth", "Private photo API", "Vitest", "Testing Library", "xUnit", "Moq"], caseStudy: "/portfolio/projects/auralogbook/", source: "https://github.com/GemsForge/aura-logbook-api",
     walkthrough: [
-      { title: "Choose a path", detail: "Mindfulness, Energy, or Faith sets the prompts and reflection text for the same check-in flow.", hotspot: { x: 48, y: 42, label: "Reflection path" } },
-      { title: "Log a check-in", detail: "A typed React form validates the date, selected moods, and optional note before RTK Query sends them to the .NET API.", hotspot: { x: 66, y: 58, label: "Mood check-in" } },
-      { title: "Add a photo", detail: "After saving, attach photos from History. Authenticated API endpoints connect each private file to its owner and mood entry.", hotspot: { x: 38, y: 68, label: "Private photo" } },
-      { title: "Connect Spotify", detail: "Server-side OAuth lets the profile request current playback and playlists. Spotify tracks are not saved to mood entries.", hotspot: { x: 57, y: 46, label: "Spotify connection" } },
-      { title: "Look back", detail: "The API supplies calendar history, streaks, and chart data; RTK Query refreshes related data after mood edits.", hotspot: { x: 48, y: 72, label: "History and dashboard" } },
+      { title: "Sign in", detail: "Start at the refreshed sign-in screen, designed for a compact phone layout with a responsive desktop companion.", screenshot: { src: "/assets/auralogbook-tour/login-pair.png", alt: "Phone-first Aura Logbook sign-in screen with its desktop view behind it" } },
+      { title: "Public home", detail: "Introduce the reflection experience with a clear phone-first landing page and desktop companion.", screenshot: { src: "/assets/auralogbook-tour/public-home-pair.png", alt: "Aura Logbook public landing page on a phone paired with its desktop layout" } },
+      { title: "Arrive home", detail: "The dark-mode home screen offers a gentle entry point into the day’s check-in and reflection tools, with current New York weather from Open-Meteo.", screenshot: { src: "/assets/auralogbook-tour/home-pair.png", alt: "Dark-mode Aura Logbook home screen on a phone paired with its desktop dashboard and current weather" } },
+      { title: "Check in", detail: "Choose from illustrated moods and add a personal reflection. This is a reflection tool, not a diagnostic assessment.", screenshot: { src: "/assets/auralogbook-tour/check-in-pair.png", alt: "Phone-first mood check-in with desktop companion" } },
+      { title: "Revisit reflections", detail: "Browse a two-week run of fictional entries and return to the thoughts attached to each check-in.", screenshot: { src: "/assets/auralogbook-tour/reflections-pair.png", alt: "Fictional saved reflections on mobile with a responsive desktop history view" } },
+      { title: "Read one entry", detail: "Open an individual saved reflection with its generated sample photos and the weather snapshot recorded with the entry.", screenshot: { src: "/assets/auralogbook-tour/individual-record-pair.png", alt: "Photo-backed Aura Logbook reflection shown on a phone and desktop with its weather snapshot" } },
+      { title: "Browse photos", detail: "The private gallery gathers nine generated sample images attached to fictional journal entries.", screenshot: { src: "/assets/auralogbook-tour/gallery-pair.png", alt: "Aura Logbook gallery showing generated sample photos on phone and desktop" } },
+      { title: "Choose an appearance", detail: "Light mode shows the appearance menu with Light, Dark, and Use device setting; the rest of the tour features Dark mode.", screenshot: { src: "/assets/auralogbook-tour/appearance-pair.png", alt: "Light-mode Aura Logbook with its theme selector open on phone and desktop" } },
+      { title: "Notice patterns", detail: "The insights view brings mood patterns into focus across mobile and desktop layouts.", screenshot: { src: "/assets/auralogbook-tour/insights-pair.png", alt: "Aura Logbook insights on a phone paired with desktop analytics" } },
+      { title: "Listen with Spotify", detail: "See Frontline by Butcher Brown alongside Discover Weekly, daylist, and Your Summer Rewind. The playlist names and cropped cover artwork follow the supplied references; playback and playlist data are a portfolio demo, with no Spotify account connected.", screenshot: { src: "/assets/auralogbook-tour/spotify-pair.png", alt: "Aura Logbook Spotify panel on phone and desktop showing Frontline by Butcher Brown with Discover Weekly, daylist, and Your Summer Rewind" } },
     ],
   },
   {

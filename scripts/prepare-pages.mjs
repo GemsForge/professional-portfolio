@@ -155,7 +155,7 @@ function renderPostViews() {
     const techSection = `<section class="post-tools"><h3>Tech</h3><div class="post-tool-list">${chips}</div></section>`;
     // Phones move the picture into this slot, directly above the walkthrough (see creator-profile.js).
     const mobileVisualSlot = `<div class="post-mobile-visual" data-mobile-visual></div>`;
-    // Steps carry their real screenshot (and its hotspot) as data; the script swaps them in.
+    // Steps carry their real screenshot and any explicitly useful marker as data.
     const steps = post.walkthrough ?? [];
     const allReal = steps.length > 0 && steps.every((step) => step.screenshot);
     const someReal = steps.some((step) => step.screenshot);
@@ -170,7 +170,8 @@ function renderPostViews() {
       : `<p class="walkthrough-disclaimer">A guided prototype based on the documented project flow; not a live production app.</p>`;
     // Step controls live on the picture (see the visual below); this region announces step changes.
     const walkthrough = steps.length ? `<section class="walkthrough" aria-labelledby="walkthrough-${post.slug}"><div class="walkthrough-heading"><div><span class="eyebrow">${eyebrow}</span><h3 id="walkthrough-${post.slug}">Walkthrough</h3></div></div><ol class="walkthrough-steps" data-walkthrough="${post.slug}">${steps.map(stepItem).join("")}</ol><p class="walkthrough-status" data-walkthrough-status aria-live="polite"></p><p class="visually-hidden" data-step-announce aria-live="polite"></p>${disclaimer}</section>` : "";
-    const visualHotspots = steps.map((step, stepIndex) => `<button type="button" class="visual-hotspot" data-visual-hotspot="${stepIndex}" data-hotspot-label="${attr(step.hotspot.label)}" data-hotspot-detail="${attr(step.detail)}" style="--hotspot-x:${step.hotspot.x}%;--hotspot-y:${step.hotspot.y}%" aria-label="Explore: ${attr(step.hotspot.label)}"><span aria-hidden="true">+</span></button>`).join("");
+    // Only add a plus marker when a step defines a useful point to explore.
+    const visualHotspots = steps.map((step, stepIndex) => step.hotspot ? `<button type="button" class="visual-hotspot" data-visual-hotspot="${stepIndex}" data-hotspot-label="${attr(step.hotspot.label)}" data-hotspot-detail="${attr(step.detail)}" style="--hotspot-x:${step.hotspot.x}%;--hotspot-y:${step.hotspot.y}%" aria-label="Explore: ${attr(step.hotspot.label)}"><span aria-hidden="true">+</span></button>` : "").join("");
     // Carousel controls: arrows on the picture, progress dots beneath it (no numeric counter).
     const stepNav = steps.length > 1 ? `<button type="button" class="post-step-arrow post-step-prev" data-step-prev aria-label="Previous step"><span aria-hidden="true">‹</span></button><button type="button" class="post-step-arrow post-step-next" data-step-next aria-label="Next step"><span aria-hidden="true">›</span></button>` : "";
     const dots = steps.length > 1 ? `<div class="post-step-dots" aria-hidden="true">${steps.map(() => "<span></span>").join("")}</div>` : "";

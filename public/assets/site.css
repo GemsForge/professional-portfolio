@@ -374,3 +374,9 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid #90
 #post-dialog .post-sequence{margin-top:28px}
 #post-dialog .post-sequence button{min-height:44px;padding:0 16px;font-size:14px}
 @media(max-width:650px){#post-dialog .post-mobile-visual{margin:20px 0 4px}}
+
+/* Pair Aura Logbook's approved mark with its product name without competing with the mobile-first screen preview. */
+.case-brand-title{display:flex;align-items:center;gap:12px}
+.case-brand-title img{display:block;width:64px;height:64px;flex:none;object-fit:contain}
+.case-brand-title h1{margin:0}
+@media(max-width:650px){.case-brand-title img{width:52px;height:52px}}
