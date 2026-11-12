@@ -63,22 +63,24 @@ test("AuraLogbook page includes one accessible data-to-API-to-UI architecture di
     "utf8",
   );
   for (const term of [
-    "Responsive web client",
-    "React Native · Expo Router",
-    "ASP.NET Core · .NET 9",
-    "Mood journal",
-    "Personalization",
-    "Private photo flow",
-    "Open-Meteo weather",
+    "PHONE-FIRST PRODUCT JOURNEY",
+    "Responsive React",
+    "Auth API issues JWT",
+    ".NET 9 API",
+    "Controllers",
+    "Services",
+    "Dapper repositories",
     "SQLite",
-    "Dapper repositories · implemented",
-    "VERSIONED SQL MIGRATIONS",
-    "Development and FIT/Staging environments",
-    "Save a check-in",
+    "Versioned migrations",
+    "Development + FIT/Staging",
+    "OPTIONAL PHOTO",
+    "Private media storage",
+    "Attachment",
+    "NATIVE SHELL · IN PROGRESS",
   ]) {
     assert.ok(diagram.includes(term), `diagram includes ${term}`);
   }
-  assert.match(diagram, /<title id="title">Aura Logbook mobile-first application architecture<\/title>/);
+  assert.match(diagram, /<title id="title">Aura Logbook phone-first product journey and data path<\/title>/);
   assert.doesNotMatch(diagram, /\.json|FileMoodRepository|System\.Text\.Json/i);
   assert.doesNotMatch(diagram, /Weatherbit/);
 
