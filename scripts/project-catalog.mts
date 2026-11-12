@@ -85,7 +85,7 @@ export const PROJECTS = {
   auralogbook: {
     slug: "auralogbook",
     name: "Aura Logbook",
-    description: "A mobile-first mood and reflection app with a responsive desktop companion and implemented SQLite persistence.",
+    description: "A mobile-first mood and reflection app with a responsive desktop companion and SQLite/Dapper persistence for Development and FIT/Staging.",
     preTitle: "Mobile-first reflection app · In development",
     primaryTools: "React · React Native · Expo · TypeScript · .NET · SQLite · Dapper",
     image: "/assets/auralogbook-tour/home-card.png",
@@ -163,7 +163,7 @@ export const PORTFOLIO_POSTS: PortfolioPostDefinition[] = [
       "Mood, reference-data, reflection, and private-media workflows use API services and user-scoped access boundaries.",
       "The React Native/Expo shell establishes native Today, Log, Journal, and Profile navigation; its authenticated API integration and device verification are still in progress.",
     ],
-    evidence: "Recent UI work refreshed sign-in, pathway-aligned check-ins, illustrated mood choices, reflection history, and private photo browsing. SQLite persistence is implemented; native mobile authentication and end-to-end device checks remain in progress.",
+    evidence: "Recent UI work refreshed sign-in, pathway-aligned check-ins, illustrated mood choices, reflection history, and private photo browsing. SQLite persistence through Dapper is implemented for Development and FIT/Staging; native mobile authentication and end-to-end device checks remain in progress.",
     tools: ["React", "React Native · Expo", "TypeScript", "C#", ".NET", "Redux Toolkit · RTK Query", "MUI · Joy UI", "Recharts", "SQLite", "Dapper", "JWT", "Spotify Web API · OAuth", "Private photo API", "Vitest", "Testing Library", "xUnit", "Moq"], caseStudy: "/portfolio/projects/auralogbook/", source: "https://github.com/GemsForge/aura-logbook-api",
     walkthrough: [
       { title: "Sign in", detail: "Start at the refreshed sign-in screen, designed for a compact phone layout with a responsive desktop companion.", screenshot: { src: "/assets/auralogbook-tour/login-pair.png", alt: "Phone-first Aura Logbook sign-in screen with a desktop view behind it" } },

@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 1000" role="img" aria-labelledby="title description">
   <title id="title">Aura Logbook mobile-first application architecture</title>
-  <desc id="description">A responsive React web client and a React Native Expo shell connect to a .NET 9 API. Dapper repositories persist user and journal data in SQLite with versioned SQL migrations. The API also connects to private photo storage and Open-Meteo weather.</desc>
+  <desc id="description">A responsive React web client and a React Native Expo shell connect to a .NET 9 API. For Development and FIT/Staging, Dapper repositories persist user and journal data in SQLite with versioned SQL migrations. Production uses a different repository configuration. The API also connects to private photo storage and Open-Meteo weather.</desc>
   <defs>
     <linearGradient id="paper" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f8f6ee"/><stop offset="1" stop-color="#e9eee5"/></linearGradient>
     <linearGradient id="forest" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#335943"/><stop offset="1" stop-color="#203c2b"/></linearGradient>
@@ -30,7 +30,7 @@
   <rect width="1800" height="1000" fill="url(#paper)"/>
   <circle cx="1660" cy="64" r="170" fill="#dfe9dc" opacity=".35"/>
   <text class="title" x="60" y="62">Mobile-first clients, one reflective journal</text>
-  <text class="subtitle" x="62" y="94">Current product layers and the persistence work already in place</text>
+  <text class="subtitle" x="62" y="94">Development and FIT/Staging data flow; Production uses different repositories</text>
 
   <!-- Client surfaces -->
   <rect class="panel" x="60" y="130" width="460" height="530" rx="22"/>
@@ -84,7 +84,7 @@
   <text class="panel-head" x="1258" y="170">03 · RELATIONAL PERSISTENCE</text>
   <rect x="1258" y="193" width="454" height="111" rx="17" fill="url(#forest)" filter="url(#shadow)"/>
   <text x="1284" y="238" font-family="Georgia,serif" font-size="27" font-weight="700" fill="#fffefa">SQLite</text>
-  <text x="1284" y="267" font-size="15" fill="#e3ebdf">Dapper repositories · implemented</text>
+  <text x="1284" y="262" font-size="15" fill="#e3ebdf"><tspan x="1284">Dapper repositories · implemented for</tspan><tspan x="1284" dy="19">Development and FIT/Staging</tspan></text>
   <rect class="accent" x="1647" y="216" width="37" height="7" rx="3.5"/>
   <rect class="accent" x="1647" y="233" width="37" height="7" rx="3.5" opacity=".7"/>
   <rect class="accent" x="1647" y="250" width="37" height="7" rx="3.5" opacity=".45"/>
@@ -114,7 +114,7 @@
   <rect class="card" x="660" y="770" width="490" height="115" rx="16"/>
   <circle cx="694" cy="808" r="17" fill="#496c4e"/><text class="number" x="690" y="813">2</text>
   <text class="flow-title" x="725" y="812">Save a check-in</text>
-  <text class="flow-body" x="725" y="840">A mood entry and its selected moods persist in SQLite.</text>
+  <text class="flow-body" x="725" y="840">For Development and FIT/Staging, check-ins persist in SQLite.</text>
   <path d="M1162 827h54" stroke="#66846a" stroke-width="3" marker-end="url(#arrow)"/>
   <rect class="card" x="1230" y="770" width="480" height="115" rx="16"/>
   <circle cx="1264" cy="808" r="17" fill="#496c4e"/><text class="number" x="1260" y="813">3</text>
