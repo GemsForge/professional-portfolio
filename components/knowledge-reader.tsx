@@ -2,6 +2,7 @@
 
 // Intentional: use browser navigation because client-side route transitions are failing.
 import { useEffect, useRef, useState } from "react";
+import { ArrowUpRight } from "lucide-react";
 import type { KeyboardEvent } from "react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
@@ -11,6 +12,7 @@ import type { KnowledgeResource } from "@/lib/knowledge-types";
 /**
  * Presents one library reference in the established reading view. Public mode
  * uses read-only public endpoints; the owner view keeps management APIs gated.
+ * Download cues are decorative Lucide icons because their links name each file.
  */
 export function KnowledgeReader({ id, publicMode = false }: {
   /** Stable library resource identifier. */
@@ -167,10 +169,10 @@ export function KnowledgeReader({ id, publicMode = false }: {
             {resource.contentType === "text/markdown" && <>
               <button type="button" onClick={() => setView("rendered")} aria-pressed={view === "rendered"}>Render Markdown</button>
               <button type="button" onClick={() => setView("source")} aria-pressed={view === "source"}>Markdown source</button>
-              <a href={documentHref(resource.id, "?format=html")}>Download HTML ↗</a>
-              <a href={documentHref(resource.id)}>Download Markdown ↗</a>
+              <a href={documentHref(resource.id, "?format=html")}>Download HTML <ArrowUpRight aria-hidden="true" focusable="false" className="link-arrow" /></a>
+              <a href={documentHref(resource.id)}>Download Markdown <ArrowUpRight aria-hidden="true" focusable="false" className="link-arrow" /></a>
             </>}
-            {resource.contentType === "text/html" && <a href={documentHref(resource.id)}>Download HTML ↗</a>}
+            {resource.contentType === "text/html" && <a href={documentHref(resource.id)}>Download HTML <ArrowUpRight aria-hidden="true" focusable="false" className="link-arrow" /></a>}
             {!['text/html', 'text/markdown'].includes(resource.contentType) && <a href={documentHref(resource.id)}>Download original</a>}
           </div>
         </details>}

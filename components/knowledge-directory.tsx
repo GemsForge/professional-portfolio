@@ -9,6 +9,7 @@ import {
   useState,
   type FormEvent,
 } from "react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import {
   siDotnet,
   siGithub,
@@ -442,8 +443,9 @@ function formatCreatedAt(createdAt: string) {
 
 /**
  * Renders the existing directory view for public read-only browsing and owner
- * management and backup export. Native anchors preserve route behavior; owner
- * routes and APIs enforce authorization independently of this presentation mode.
+ * management and backup export. Native anchors preserve route behavior, and
+ * decorative Lucide arrows do not alter their accessible names. Owner routes
+ * and APIs enforce authorization independently of this presentation mode.
  */
 export function KnowledgeDirectory({
   initialModule,
@@ -871,7 +873,7 @@ export function KnowledgeDirectory({
           {activeModule ? (
             <nav className="library-links" aria-label="Module navigation">
               <a className="button secondary" href="/admin/knowledge/">
-                ← All modules
+                <ArrowLeft aria-hidden="true" focusable="false" className="link-arrow" /> All modules
               </a>
               <a className="button secondary" href="/admin/?step=wiki-uploader">
                 Manage references
@@ -1065,7 +1067,7 @@ export function KnowledgeDirectory({
                     <a
                       className="shelf-module-link"
                       href={`/admin/knowledge/${shelf.id}/`}>
-                      Open {shelf.id} module →
+                      Open {shelf.id} module <ArrowRight aria-hidden="true" focusable="false" className="link-arrow" />
                     </a>
                   )}
                 </div>

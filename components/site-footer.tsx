@@ -1,6 +1,7 @@
 // Intentional: use browser navigation because client-side route transitions are failing.
 /* eslint-disable @next/next/no-html-link-for-pages */
 import Image from "next/image";
+import { ArrowUp } from "lucide-react";
 
 /**
  * Renders the single site-wide footer navigation with native anchors so
@@ -8,7 +9,7 @@ import Image from "next/image";
  *
  * Keeping this in the shared shell ensures every React view exposes the same
  * project, resume, contact, Admin, contextual Portfolio/Wiki, and back-to-top
- * links.
+ * links. The back-to-top arrow is decorative and leaves the link name intact.
  */
 export function SiteFooter({ wikiMode = false }: { /** Marks Wiki views that link back to the Portfolio. */ wikiMode?: boolean }) {
   return (
@@ -24,7 +25,7 @@ export function SiteFooter({ wikiMode = false }: { /** Marks Wiki views that lin
           <a href="/contact/">Contact</a>
           <a href="/admin/">Admin</a>
           <a href={wikiMode ? "/" : "/knowledge/"}>{wikiMode ? "Portfolio" : "Dev Wiki"}</a>
-          <a href="#main">Back to top ↑</a>
+          <a href="#main">Back to top <ArrowUp aria-hidden="true" focusable="false" className="link-arrow" /></a>
         </nav>
       </div>
     </footer>

@@ -105,6 +105,8 @@ test("generated post viewer retains project routes, source links, and the one-pa
   assert.ok(order.every((position, index) => position >= 0 && (index === 0 || position > order[index - 1])), `pop-up sections are out of order: ${order}`);
   assert.match(auraPost, /<img src="\/assets\/aura-logbook\.png" alt="Open reflection journal with mood markers"/);
   assert.match(auraPost, /class="tech-chip"/);
+  assert.match(auraPost, /View source <span class="visually-hidden">\(opens in a new tab\)<\/span><svg aria-hidden="true" focusable="false" class="link-arrow"/);
+  assert.match(auraPost, /data-adjacent-post="previous"><svg aria-hidden="true" focusable="false" class="link-arrow"/);
   assert.match(auraPost, /\/assets\/auralogbook-stack\/react\.png/);
   assert.match(auraPost, /\/assets\/auralogbook-stack\/dapper\.png/);
   assert.match(auraPost, /\/assets\/auralogbook-stack\/jwt-bearer\.png/);

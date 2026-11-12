@@ -5,7 +5,7 @@ import { siApple, siDotnet, siMui, siOpenjdk, siPostgresql, siSpotify } from "si
 // transpiler or JSX dependency is needed for this build-time-only module.
 import { renderDependencyGroup } from "./auralogbook-dependencies.mts";
 import { applySocialMetadata, renderRobots, renderSitemap } from "./site-metadata.mjs";
-import { applyProjectPageMetadata, HOME_PROJECT_SLUGS, PORTFOLIO_POSTS, PROJECTS, renderProjectCard } from "./project-catalog.mts";
+import { applyProjectPageMetadata, HOME_PROJECT_SLUGS, PORTFOLIO_POSTS, PROJECTS, renderArrowIcon, renderProjectCard } from "./project-catalog.mts";
 
 const source = path.resolve("static-source");
 const pages = {};
@@ -147,7 +147,7 @@ function renderPostViews() {
     const decisions = post.decisions.map((decision) => `<li>${decision}</li>`).join("");
     const links = [
       post.caseStudy ? `<a class="post-action-link post-action-primary" href="${post.caseStudy}">Read the case study</a>` : "",
-      post.source ? `<a class="post-action-link" href="${post.source}" target="_blank" rel="noopener noreferrer">View source <span class="visually-hidden">(opens in a new tab)</span><span aria-hidden="true">↗</span></a>` : "",
+      post.source ? `<a class="post-action-link" href="${post.source}" target="_blank" rel="noopener noreferrer">View source <span class="visually-hidden">(opens in a new tab)</span>${renderArrowIcon()}</a>` : "",
     ].filter(Boolean).join("");
     const actions = links ? `<nav class="post-actions" aria-label="Project links">${links}</nav>` : "";
     const facts = post.role && post.evidence ? `<dl class="post-facts"><div><dt>My role</dt><dd>${post.role}</dd></div><div><dt>${post.evidenceLabel ?? "Evidence &amp; status"}</dt><dd>${post.evidence}</dd></div></dl>` : "";
@@ -172,11 +172,11 @@ function renderPostViews() {
     const walkthrough = steps.length ? `<section class="walkthrough" aria-labelledby="walkthrough-${post.slug}"><div class="walkthrough-heading"><div><span class="eyebrow">${eyebrow}</span><h3 id="walkthrough-${post.slug}">Walkthrough</h3></div></div><ol class="walkthrough-steps" data-walkthrough="${post.slug}">${steps.map(stepItem).join("")}</ol><p class="walkthrough-status" data-walkthrough-status aria-live="polite"></p><p class="visually-hidden" data-step-announce aria-live="polite"></p>${disclaimer}</section>` : "";
     const visualHotspots = steps.map((step, stepIndex) => `<button type="button" class="visual-hotspot" data-visual-hotspot="${stepIndex}" data-hotspot-label="${attr(step.hotspot.label)}" data-hotspot-detail="${attr(step.detail)}" style="--hotspot-x:${step.hotspot.x}%;--hotspot-y:${step.hotspot.y}%" aria-label="Explore: ${attr(step.hotspot.label)}"><span aria-hidden="true">+</span></button>`).join("");
     // Carousel controls: arrows on the picture, progress dots beneath it (no numeric counter).
-    const stepNav = steps.length > 1 ? `<button type="button" class="post-step-arrow post-step-prev" data-step-prev aria-label="Previous step"><span aria-hidden="true">‹</span></button><button type="button" class="post-step-arrow post-step-next" data-step-next aria-label="Next step"><span aria-hidden="true">›</span></button>` : "";
+    const stepNav = steps.length > 1 ? `<button type="button" class="post-step-arrow post-step-prev" data-step-prev aria-label="Previous step">${renderArrowIcon("left")}</button><button type="button" class="post-step-arrow post-step-next" data-step-next aria-label="Next step">${renderArrowIcon("right")}</button>` : "";
     const dots = steps.length > 1 ? `<div class="post-step-dots" aria-hidden="true">${steps.map(() => "<span></span>").join("")}</div>` : "";
     const opening = allReal ? { src: steps[0].screenshot.src, alt: steps[0].screenshot.alt } : { src: post.image, alt: post.imageAlt };
     const visual = `<figure class="post-main-visual${allReal ? " is-step-screenshot" : ""}"><div class="post-visual-stage"><img src="${attr(opening.src)}" alt="${attr(opening.alt)}" width="960" height="960">${visualHotspots}${stepNav}</div>${dots}</figure>`;
-    return `<article class="post-story" data-post-view="${post.slug}" aria-labelledby="post-title-${post.slug}" hidden><template class="post-visual-template">${visual}</template><div class="post-story-topline"><span>${post.eyebrow}</span></div><h2 id="post-title-${post.slug}">${post.title}</h2><p class="post-lead">${post.caption}</p>${actions}${facts}${mobileVisualSlot}${walkthrough}${decisionsSection}${techSection}<nav class="post-sequence" aria-label="Browse other posts"><button type="button" data-adjacent-post="previous">← Previous post</button><button type="button" data-adjacent-post="next">Next post →</button></nav></article>`;
+    return `<article class="post-story" data-post-view="${post.slug}" aria-labelledby="post-title-${post.slug}" hidden><template class="post-visual-template">${visual}</template><div class="post-story-topline"><span>${post.eyebrow}</span></div><h2 id="post-title-${post.slug}">${post.title}</h2><p class="post-lead">${post.caption}</p>${actions}${facts}${mobileVisualSlot}${walkthrough}${decisionsSection}${techSection}<nav class="post-sequence" aria-label="Browse other posts"><button type="button" data-adjacent-post="previous">${renderArrowIcon("left")} Previous post</button><button type="button" data-adjacent-post="next">Next post ${renderArrowIcon("right")}</button></nav></article>`;
   }).join("");
 }
 
