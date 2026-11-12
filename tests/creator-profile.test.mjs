@@ -83,7 +83,7 @@ test("project posts identify evidence and provide guided prototype steps", () =>
   for (const post of projects) {
     assert.ok(post.caseStudy, `${post.slug} should retain its full case-study route`);
     assert.ok(post.evidence.length > 30, `${post.slug} should explain evidence or current status`);
-    assert.equal(post.walkthrough?.length, post.slug === "auralogbook" ? 9 : 3, `${post.slug} should have the expected number of guided steps`);
+    assert.equal(post.walkthrough?.length, post.slug === "auralogbook" ? 10 : 3, `${post.slug} should have the expected number of guided steps`);
     if (post.slug === "auralogbook") {
       assert.ok(post.walkthrough.every(({ hotspot, screenshot }) => !hotspot && !screenshot?.hotspot), "Aura Logbook's app tour does not add unused plus markers");
     } else {
@@ -188,12 +188,12 @@ test("pop-up keeps the walkthrough, swaps in real step screenshots, and meets ty
   const css = await read("../static-source/assets/site.css");
   const script = await read("../static-source/assets/creator-profile.js");
   const auraPost = html.slice(html.indexOf('data-post-view="auralogbook"'), html.indexOf("</article>", html.indexOf('data-post-view="auralogbook"')));
-  assert.equal((auraPost.match(/data-walkthrough-step="\d"/g) ?? []).length, 9);
+  assert.equal((auraPost.match(/data-walkthrough-step="\d"/g) ?? []).length, 10);
   assert.equal((auraPost.match(/class="visual-hotspot"/g) ?? []).length, 0, "Aura Logbook has no unused plus markers in its walkthrough");
   // Step arrows sit on the picture, with dots beneath it and a screen-reader announcer; no numeric counter.
   assert.match(auraPost, /<button type="button" class="post-step-arrow post-step-prev" data-step-prev aria-label="Previous step">/);
   assert.match(auraPost, /<button type="button" class="post-step-arrow post-step-next" data-step-next aria-label="Next step">/);
-  assert.match(auraPost, /<div class="post-step-dots" aria-hidden="true">(?:<span><\/span>){9}<\/div>/);
+  assert.match(auraPost, /<div class="post-step-dots" aria-hidden="true">(?:<span><\/span>){10}<\/div>/);
   assert.match(auraPost, /<p class="visually-hidden" data-step-announce aria-live="polite"><\/p>/);
   assert.match(auraPost, /<span class="eyebrow">App tour<\/span>/, "real screens label the walkthrough as an app tour");
   assert.doesNotMatch(auraPost, /walkthrough-controls/);
@@ -234,5 +234,5 @@ test("pop-up applies published step screenshots from the asset manager, newest f
   assert.match(script, /\.catch\(\(\) => \[\]\)/, "a failed request keeps the built-in pictures");
   assert.match(script, /if \(eyebrow\) eyebrow\.textContent = "App tour";/);
   const steps = JSON.parse(await read("../lib/walkthrough-steps.json"));
-  assert.deepEqual(steps.auralogbook, ["Sign in", "Public home", "Arrive home", "Check in", "Revisit reflections", "Read one entry", "Browse photos", "Choose an appearance", "Notice patterns"]);
+  assert.deepEqual(steps.auralogbook, ["Sign in", "Public home", "Arrive home", "Check in", "Revisit reflections", "Read one entry", "Browse photos", "Choose an appearance", "Notice patterns", "Listen with Spotify"]);
 });

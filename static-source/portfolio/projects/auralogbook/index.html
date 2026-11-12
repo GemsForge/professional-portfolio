@@ -69,7 +69,7 @@
           <article class="case-content">
             <section id="problem">
               <h2>The project</h2>
-              <p>Aura Logbook is a mobile-first mood and reflection app for daily check-ins, personal history, and gentle pattern-spotting, with a responsive desktop companion. The updated sign-in and home views lead into pathway-aligned prompts, illustrated mood choices, reflections, insights, and private photo browsing. People can choose Mindful Living, Astrology &amp; Energy, or Faith &amp; Religion to shape prompts and context, then select light, dark, or system appearance from the theme selector. SQLite persistence through Dapper and versioned migrations is implemented for Development and FIT/Staging. It is a reflection tool—not a diagnostic or treatment tool.</p>
+              <p>Aura Logbook is a mobile-first mood and reflection app for daily check-ins, personal history, and gentle pattern-spotting, with a responsive desktop companion. The updated sign-in and home views lead into pathway-aligned prompts, illustrated mood choices, reflections, insights, and private photo browsing, with optional Spotify playback and playlist discovery. People can choose Mindful Living, Astrology &amp; Energy, or Faith &amp; Religion to shape prompts and context, then select light, dark, or system appearance from the theme selector. SQLite persistence through Dapper and versioned migrations is implemented for Development and FIT/Staging. It is a reflection tool—not a diagnostic or treatment tool.</p>
               <p><strong>My focus:</strong> shaping the phone-first experience, its responsive desktop companion, and the relational API workflows behind the journal.</p>
             </section>
 
@@ -112,6 +112,10 @@
                 <button class="aura-image-trigger" type="button" data-aura-image-trigger data-image-title="Insights" data-image-src="/assets/auralogbook-tour/insights-pair.png" data-image-alt="Mood insights on a phone with the desktop analytics view alongside" aria-haspopup="dialog" aria-controls="aura-image-dialog" aria-label="Open the Aura Logbook mood insights and desktop analytics for a closer look"><img src="/assets/auralogbook-tour/insights-pair.png" alt="" width="1600" height="1100" loading="lazy"></button>
                 <figcaption>Insights · Explore patterns in a phone-first layout and on desktop.</figcaption>
               </figure>
+              <figure>
+                <button class="aura-image-trigger" type="button" data-aura-image-trigger data-image-title="Spotify integration" data-image-src="/assets/auralogbook-tour/spotify-pair.png" data-image-alt="Spotify panel on a phone paired with the desktop dashboard, showing a fictional now-playing track and playlists with generated abstract cover art" aria-haspopup="dialog" aria-controls="aura-image-dialog" aria-label="Open the Aura Logbook Spotify panel and desktop view for a closer look"><img src="/assets/auralogbook-tour/spotify-pair.png" alt="" width="1600" height="1100" loading="lazy"></button>
+                <figcaption>Spotify · A fictional connection shows current playback and three playlists with generated cover art; no real Spotify account data is included.</figcaption>
+              </figure>
             </section>
 
             <dialog id="aura-image-dialog" class="aura-image-dialog" aria-labelledby="aura-image-dialog-title" aria-describedby="aura-image-dialog-help">
@@ -146,7 +150,7 @@
               <p>The product is designed for phone use first. The React Native/Expo shell defines native Today, Log, Journal, and Profile destinations. The current paired screenshots come from the responsive React 19/TypeScript web client, which uses Material UI, Joy UI, Redux Toolkit with RTK Query, React Router, Axios, and Recharts to support phone and desktop layouts.</p>
 
               <h3>Backend responsibilities</h3>
-              <p>The API targets .NET 9. Controllers delegate to injected services, while user-scoped routes support authentication, mood entries, reflections, insights, and private media. SQLite persistence is implemented through Dapper repositories and versioned SQL migrations in Development and FIT/Staging. Database-backed reference definitions and presentation settings support pathway-specific prompts, moods, colors, and themes.</p>
+              <p>The API targets .NET 9. Controllers delegate to injected services, while user-scoped routes support authentication, mood entries, reflections, insights, and private media, and an optional Spotify connection for currently playing tracks and playlists. SQLite persistence is implemented through Dapper repositories and versioned SQL migrations in Development and FIT/Staging. Database-backed reference definitions and presentation settings support pathway-specific prompts, moods, colors, and themes.</p>
 
               <h3>Development support</h3>
               <p>A debug-only endpoint generates sample entries to support development. Frontend tests use Vitest and Testing Library; API tests use xUnit and Moq. Their presence shows test coverage exists, not that the suites have been run or passed for this portfolio update. Setup and environment configuration are documented in the repository.</p>
