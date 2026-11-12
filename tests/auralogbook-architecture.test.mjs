@@ -94,10 +94,13 @@ test("AuraLogbook page includes one accessible data-to-API-to-UI architecture di
     "OPTIONAL PHOTO",
     "Private media storage",
     "Attachment",
-    "NATIVE SHELL · IN PROGRESS",
+    "NATIVE APP NAVIGATION",
+    "Native navigation destinations",
   ]) {
     assert.ok(diagram.includes(term), `diagram includes ${term}`);
   }
+  assert.doesNotMatch(diagram, /IN PROGRESS|Still in progress/);
+  assert.doesNotMatch(page, /authenticated API integration remains in progress|shell in progress/);
   assert.match(diagram, /<title id="title">Aura Logbook phone-first product journey and data path<\/title>/);
   assert.doesNotMatch(diagram, /\.json|FileMoodRepository|System\.Text\.Json/i);
   assert.doesNotMatch(diagram, /Weatherbit/);

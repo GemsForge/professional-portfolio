@@ -32,12 +32,12 @@ flowchart TB
     metadata["Attachment metadata"] --> sqlite
   end
 
-  subgraph native["NATIVE SHELL · IN PROGRESS"]
+  subgraph native["NATIVE APP NAVIGATION"]
     direction LR
     expo["React Native + Expo<br/>Navigation foundation"]
-    pending["Auth · API integration · device QA<br/>Still in progress"]
+    destinations["Today · Log · Journal · Profile<br/>Native navigation destinations"]
 
-    expo -.-> pending
+    expo --> destinations
   end
 
   signin -. "Login request" .-> api

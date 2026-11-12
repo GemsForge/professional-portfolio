@@ -182,9 +182,9 @@
   <rect class="flowTag" x="2290" y="1160" width="212" height="34" rx="17"/>
   <text class="flowTagText" x="2310" y="1183">Metadata to SQLite</text>
 
-  <!-- Native shell -->
+  <!-- Native navigation foundation -->
   <rect class="panel" x="60" y="1580" width="2480" height="290" rx="28"/>
-  <text class="panelHead nativeHead" x="100" y="1630">NATIVE SHELL · IN PROGRESS</text>
+  <text class="panelHead nativeHead" x="100" y="1630">NATIVE APP NAVIGATION</text>
 
   <g filter="url(#shadow)">
     <rect class="nativeCard" x="300" y="1680" width="610" height="145" rx="20"/>
@@ -193,8 +193,8 @@
   <text class="cardTitle nativeText" x="340" y="1735">React Native + Expo</text>
   <text class="cardBody nativeText" x="340" y="1775">Navigation foundation</text>
 
-  <text class="cardTitle nativeText" x="1410" y="1735">Auth · API integration · device QA</text>
-  <text class="cardBody nativeText" x="1410" y="1775">Still in progress</text>
+  <text class="cardTitle nativeText" x="1410" y="1735">Today · Log · Journal · Profile</text>
+  <text class="cardBody nativeText" x="1410" y="1775">Native navigation destinations</text>
 
-  <path d="M910 1752H1362" fill="none" stroke="#8a7197" stroke-width="3.5" stroke-dasharray="9 9" stroke-linecap="round" marker-end="url(#arrowGold)"/>
+  <path d="M910 1752H1362" fill="none" stroke="#8a7197" stroke-width="3.5" stroke-linecap="round" marker-end="url(#arrowGold)"/>
 </svg>
