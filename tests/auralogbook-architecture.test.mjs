@@ -150,6 +150,7 @@ test("AuraLogbook dependency badges come from the typed registry with inline bra
   assert.match(imageDialogScript, /lastTrigger\.focus\(\)/);
   assert.match(imageDialogScript, /event\.target === dialog/);
   assert.match(imageDialogStyles, /\.aura-image-dialog-viewport img\{width:200vw/);
+  assert.match(imageDialogStyles, /\.aura-image-dialog\{position:fixed;inset:0;width:100dvw;height:100dvh/);
 
   const workflowTools = renderDependencyGroup("workflowTools");
   for (const id of ["notion", "apple_shortcuts", "apple_numbers", "apple_notes", "apple_freeform", "apple_reminders", "apple_calendar", "apple_siri", "apple_icloud"]) {
