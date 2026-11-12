@@ -9,10 +9,10 @@ test("Aura Logbook architecture identifies implemented SQLite and Dapper persist
   const architecturePage = await read("../static-source/portfolio/projects/auralogbook/architecture.html");
 
   assert.match(svg, /SQLite/);
-  assert.match(svg, /Dapper repositories · implemented/);
-  assert.match(svg, /Open-Meteo weather/);
+  assert.match(svg, /Dapper repositories<\/text>/);
+  assert.match(svg, /SQLite\/Dapper is active in Development and FIT\/Staging/);
   assert.doesNotMatch(svg, /Weatherbit/);
-  assert.match(svg, /aria-labelledby="title description"/);
+  assert.match(svg, /aria-labelledby="title desc"/);
   assert.match(architecturePage, /SQLite persistence through Dapper repositories and versioned SQL migrations/);
   assert.match(architecturePage, /Open-Meteo REST API for contextual weather/);
   assert.match(architecturePage, /aria-describedby="architecture-tech-list"/);

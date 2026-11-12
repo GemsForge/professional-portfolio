@@ -85,7 +85,7 @@ export const PROJECTS = {
   auralogbook: {
     slug: "auralogbook",
     name: "Aura Logbook",
-    description: "A mobile-first mood and reflection app with a responsive desktop companion and SQLite/Dapper persistence for Development and FIT/Staging.",
+    description: "A mobile-first mood and reflection app with light, dark, and system appearance modes, a responsive desktop companion, and SQLite/Dapper persistence for Development and FIT/Staging.",
     preTitle: "Mobile-first reflection app · In development",
     primaryTools: "React · React Native · Expo · TypeScript · .NET · SQLite · Dapper",
     image: "/assets/auralogbook-tour/home-card.png",
@@ -153,12 +153,13 @@ export const PORTFOLIO_POSTS: PortfolioPostDefinition[] = [
   // Keep shipped behavior distinct from planned work and tie technical claims to the reviewed app source.
   {
     slug: "auralogbook", title: "Aura Logbook", category: "project", eyebrow: "Mobile-first reflection app · In development",
-    caption: "A phone-first reflective journal for daily check-ins, saved entries, and mood insights, paired with a desktop view.", image: "/assets/auralogbook-tour/home-card.png", imageAlt: "Aura Logbook phone home screen beside its desktop view",
+    caption: "A phone-first reflective journal with light, dark, and system appearance choices, paired with a responsive desktop view.", image: "/assets/auralogbook-tour/home-card.png", imageAlt: "Aura Logbook phone home screen beside its desktop view",
     role: "I’m shaping Aura Logbook as a mobile-first product, with a React Native/Expo shell, a responsive React/TypeScript client, and a .NET API.",
     evidenceLabel: "Where it stands",
     decisionsTitle: "Technical choices",
     decisions: [
       "The app is designed for mobile first; a responsive React and TypeScript client also presents the check-in and journal flow on desktop.",
+      "The theme selector offers Light, Dark, and Use device setting so the reflection experience can follow a chosen or system appearance.",
       "SQLite persistence is implemented through Dapper repositories and versioned SQL migrations for Development and FIT/Staging.",
       "Mood, reference-data, reflection, and private-media workflows use API services and user-scoped access boundaries.",
       "The React Native/Expo shell establishes native Today, Log, Journal, and Profile navigation; its authenticated API integration and device verification are still in progress.",
