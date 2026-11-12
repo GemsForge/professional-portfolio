@@ -36,6 +36,7 @@
     steps.forEach((item, stepIndex) => { item.hidden = stepIndex !== index; });
     const screenshot = step.dataset.stepScreenshot;
     const image = dialog.querySelector(".post-visual-stage img");
+    const zoom = dialog.querySelector("[data-post-image-zoom]");
     if (image instanceof HTMLImageElement) {
       image.dataset.defaultSrc ??= image.getAttribute("src") ?? "";
       image.dataset.defaultAlt ??= image.alt;
@@ -47,7 +48,9 @@
         image.classList.add("is-fading");
       }
       image.alt = screenshot ? step.dataset.stepScreenshotAlt ?? "" : image.dataset.defaultAlt;
+      if (zoom instanceof HTMLButtonElement) zoom.setAttribute("aria-label", `Open walkthrough image, step ${index + 1}: ${step.querySelector("h4")?.textContent ?? ""}, at full size`);
       image.closest(".post-main-visual")?.classList.toggle("is-step-screenshot", Boolean(screenshot));
+      image.classList.remove("is-fading");
     }
     for (const hotspot of dialog.querySelectorAll("[data-visual-hotspot]")) {
       hotspot.dataset.defaultX ??= hotspot.style.getPropertyValue("--hotspot-x");
@@ -253,6 +256,23 @@
     if (stepButton && activePost) {
       const current = walkthroughPositions.get(activePost.dataset.postView) ?? 0;
       setWalkthroughStep(activePost, current + (stepButton.matches("[data-step-next]") ? 1 : -1), { announce: true });
+      return;
+    }
+    const zoomButton = target?.closest("[data-post-image-zoom]");
+    if (zoomButton instanceof HTMLButtonElement && activePost) {
+      const image = zoomButton.querySelector("img");
+      if (image instanceof HTMLImageElement) {
+        const preview = window.open();
+        if (preview) {
+          preview.document.title = image.alt || "Walkthrough image";
+          preview.document.body.style.cssText = "margin:0;background:#111;display:grid;place-items:center;min-height:100vh";
+          const enlarged = preview.document.createElement("img");
+          enlarged.src = image.currentSrc || image.src;
+          enlarged.alt = image.alt;
+          enlarged.style.cssText = "display:block;max-width:100vw;max-height:100vh;object-fit:contain";
+          preview.document.body.append(enlarged);
+        }
+      }
       return;
     }
     const hotspot = target?.closest("[data-visual-hotspot]");

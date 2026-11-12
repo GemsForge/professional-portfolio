@@ -107,7 +107,8 @@ test("generated post viewer retains project routes, source links, and the one-pa
   // Evidence first: summary, links, role/status, picture slot (phones), walkthrough, technical choices, tools.
   const order = ['class="post-lead"', 'class="post-actions"', '<dl class="post-facts">', 'data-mobile-visual', '<section class="walkthrough"', '<section class="post-decisions">', '<section class="post-tools"><h3>Tech</h3>', 'class="post-sequence"'].map((marker) => auraPost.indexOf(marker));
   assert.ok(order.every((position, index) => position >= 0 && (index === 0 || position > order[index - 1])), `pop-up sections are out of order: ${order}`);
-  assert.match(auraPost, /<img src="\/assets\/auralogbook-tour\/login-pair\.png" alt="Phone-first Aura Logbook sign-in screen with its desktop view behind it"/);
+  assert.match(auraPost, /<button type="button" class="post-image-zoom" data-post-image-zoom aria-label="Open Aura Logbook walkthrough image at full size"><img src="\/assets\/auralogbook-tour\/login-pair\.png" alt="Phone-first Aura Logbook sign-in screen with its desktop view behind it"/);
+  assert.match(auraPost, /<nav class="post-step-controls" aria-label="Walkthrough image controls"><button type="button" class="post-step-arrow post-step-prev" data-step-prev aria-label="Previous step">← Previous<\/button><button type="button" class="post-step-arrow post-step-next" data-step-next aria-label="Next step">Next →<\/button><\/nav>/);
   assert.match(auraPost, /class="tech-chip"/);
   assert.match(auraPost, /\/assets\/auralogbook-stack\/react\.png/);
   assert.match(auraPost, /\/assets\/auralogbook-stack\/dapper\.png/);
@@ -159,7 +160,7 @@ test("phones get a compact header, five fitting highlights, and short tile text"
   assert.match(css, /\.sp-profile\{display:grid;grid-template-columns:auto minmax\(0,1fr\)/);
   assert.match(css, /\.sp-profile-body,\.sp-name-row\{display:contents\}/);
   // Every feature tile and the Notion code tile carry a phone-length version of their text.
-  for (const short of ["ADP onboarding", "2 weeks <span aria-hidden=\"true\">→</span> 3 days", "Check-in flow", "SSG since 2013"]) {
+  for (const short of ["ADP onboarding", "2 weeks <span aria-hidden=\"true\">→</span> 3 days", "Check-in flow", "Army since 2013"]) {
     assert.ok(html.includes(`<span class="sp-narrow">${short}</span>`), `missing phone text: ${short}`);
   }
   assert.match(html, /<span class="sp-narrow">\{\n  "parent": \{…\},\n  "properties": \{…\}\n\}<\/span>/);
@@ -190,13 +191,13 @@ test("pop-up keeps the walkthrough, swaps in real step screenshots, and meets ty
   const auraPost = html.slice(html.indexOf('data-post-view="auralogbook"'), html.indexOf("</article>", html.indexOf('data-post-view="auralogbook"')));
   assert.equal((auraPost.match(/data-walkthrough-step="\d"/g) ?? []).length, 10);
   assert.equal((auraPost.match(/class="visual-hotspot"/g) ?? []).length, 0, "Aura Logbook has no unused plus markers in its walkthrough");
-  // Step arrows sit on the picture, with dots beneath it and a screen-reader announcer; no numeric counter.
-  assert.match(auraPost, /<button type="button" class="post-step-arrow post-step-prev" data-step-prev aria-label="Previous step">/);
-  assert.match(auraPost, /<button type="button" class="post-step-arrow post-step-next" data-step-next aria-label="Next step">/);
-  assert.match(auraPost, /<div class="post-step-dots" aria-hidden="true">(?:<span><\/span>){10}<\/div>/);
+  // Clearly labeled touch controls follow a zoomable image; a screen-reader announcer describes step changes.
+  assert.match(auraPost, /<button type="button" class="post-step-arrow post-step-prev" data-step-prev aria-label="Previous step">← Previous<\/button>/);
+  assert.match(auraPost, /<button type="button" class="post-step-arrow post-step-next" data-step-next aria-label="Next step">Next →<\/button>/);
+  assert.match(auraPost, /<button type="button" class="post-image-zoom" data-post-image-zoom/);
   assert.match(auraPost, /<p class="visually-hidden" data-step-announce aria-live="polite"><\/p>/);
   assert.match(auraPost, /<span class="eyebrow">App tour<\/span>/, "real screens label the walkthrough as an app tour");
-  assert.doesNotMatch(auraPost, /walkthrough-controls/);
+  assert.match(auraPost, /<nav class="post-step-controls" aria-label="Walkthrough image controls">/);
   assert.match(auraPost, /View source <span class="visually-hidden">\(opens in a new tab\)<\/span>/);
   // A catalog step with `screenshot` shows that real screen and hides its hotspot.
   assert.match(script, /const screenshot = step\.dataset\.stepScreenshot;/);
@@ -205,7 +206,9 @@ test("pop-up keeps the walkthrough, swaps in real step screenshots, and meets ty
   assert.match(script, /next\.disabled = index === steps\.length - 1;/);
   assert.match(css, /#post-dialog \.is-step-screenshot \.post-visual-stage\{width:fit-content;max-width:100%;max-height:none;aspect-ratio:auto/, "screenshots keep their own shape");
   assert.match(css, /@media\(prefers-reduced-motion:reduce\)\{#post-dialog \.post-visual-stage>img\.is-fading\{animation:none\}\}/);
-  assert.match(css, /#post-dialog \.post-step-arrow\{[^}]*width:44px;height:44px/);
+  assert.match(css, /#post-dialog \.post-step-arrow\{[^}]*min-height:48px/);
+  assert.match(css, /#post-dialog \.post-step-controls\{display:flex;justify-content:space-between;gap:12px;margin-top:12px\}/);
+  assert.match(script, /window\.open\(\)/, "visitors can open the current walkthrough screenshot at full size");
   assert.match(css, /#post-dialog \.post-story\{font-size:15px/);
   assert.match(css, /#post-dialog \.walkthrough-steps p,#post-dialog \.walkthrough-status\{font-size:15px/);
   assert.match(css, /#post-dialog \.walkthrough-disclaimer\{font-size:13px;line-height:1\.45;color:#4d5d50\}/);
@@ -234,5 +237,5 @@ test("pop-up applies published step screenshots from the asset manager, newest f
   assert.match(script, /\.catch\(\(\) => \[\]\)/, "a failed request keeps the built-in pictures");
   assert.match(script, /if \(eyebrow\) eyebrow\.textContent = "App tour";/);
   const steps = JSON.parse(await read("../lib/walkthrough-steps.json"));
-  assert.deepEqual(steps.auralogbook, ["Sign in", "Public home", "Arrive home", "Check in", "Revisit reflections", "Read one entry", "Browse photos", "Choose an appearance", "Notice patterns", "Listen with Spotify"]);
+  assert.deepEqual(steps.auralogbook, ["Sign in", "Public home", "Arrive home", "Check in", "Revisit reflections", "Read one entry", "Browse photos", "Notice patterns", "Choose an appearance", "Listen with Spotify"]);
 });
