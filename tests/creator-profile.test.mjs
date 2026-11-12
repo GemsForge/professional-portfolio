@@ -215,7 +215,7 @@ test("pop-up keeps the walkthrough, swaps in real step screenshots, and meets ty
   assert.match(css, /@media\(prefers-reduced-motion:reduce\)\{#post-dialog \.post-visual-stage>img\.is-fading\{animation:none\}\}/);
   assert.match(css, /#post-dialog \.post-step-arrow\{[^}]*min-height:48px/);
   assert.match(css, /#post-dialog \.post-step-controls\{display:flex;justify-content:space-between;gap:12px;margin-top:12px\}/);
-  assert.match(script, /window\.open\(\)/, "visitors can open the current walkthrough screenshot at full size");
+  assert.match(script, /window\.open\(image\.currentSrc \|\| image\.src, "_blank", "noopener,noreferrer"\)/, "the current walkthrough image opens directly in a new tab");
   assert.match(css, /#post-dialog \.post-story\{font-size:15px/);
   assert.match(css, /#post-dialog \.walkthrough-steps p,#post-dialog \.walkthrough-status\{font-size:15px/);
   assert.match(css, /#post-dialog \.walkthrough-disclaimer\{font-size:13px;line-height:1\.45;color:#4d5d50\}/);
