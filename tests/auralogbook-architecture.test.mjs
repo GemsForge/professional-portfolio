@@ -55,11 +55,13 @@ test("AuraLogbook page includes one accessible data-to-API-to-UI architecture di
     assert.ok(page.includes(`/assets/auralogbook-tour/${screen}-pair.png`), `walkthrough includes the ${screen} capture`);
   }
   assert.match(page, /Open-Meteo for New York City on November 12, 2026/);
-  assert.match(page, /fictional connection shows current playback and three playlists/);
+  assert.match(page, /Frontline by Butcher Brown/);
+  assert.match(page, /portfolio demo; no Spotify account or personal listening data is used/);
   const captureNotes = await readFile(new URL("../docs/story-assets/aura-logbook-walkthrough-capture-notes.md", import.meta.url), "utf8");
   assert.match(captureNotes, /not Aura's latest merged commit `5913d26`/);
-  assert.match(captureNotes, /60\.6°F, WMO 3 \(overcast\)/);
   assert.match(captureNotes, /fictional Alex Morgan profile and synthetic journal entries/);
+  assert.match(captureNotes, /“Frontline” by Butcher Brown/);
+  assert.match(captureNotes, /phone chrome, local IP address, and profile details are excluded/);
   assert.match(page, /shaping the phone-first experience, its responsive desktop companion/);
   assert.match(page, /SQLite persistence is implemented with Dapper repositories/);
   assert.doesNotMatch(page, /FileMoodRepository|FileUserRepository|JSON-based persistence/);
