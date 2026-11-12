@@ -1,0 +1,48 @@
+flowchart TB
+  subgraph journey["1 · PHONE-FIRST PRODUCT JOURNEY"]
+    direction LR
+    client["Responsive React web client<br/>Phone first · desktop companion"]
+    signin["Sign in<br/>Auth API issues JWT"]
+    today["Today<br/>Pathway thought + check-in"]
+    checkin["Check in<br/>Choose mood(s) + prompt"]
+    reflect["Reflect<br/>Add note · optional photo"]
+    save["Save entry"]
+    journal["Journal<br/>Review saved entries"]
+    insights["Insights<br/>Notice patterns"]
+
+    client --> signin --> today --> checkin --> reflect --> save
+    save --> journal
+    save --> insights
+  end
+
+  subgraph data["2 · API AND DATA PATH"]
+    direction LR
+    api[".NET 9 API<br/>JWT · user-scoped routes"]
+    controllers["Controllers"]
+    services["Services"]
+    repositories["Dapper repositories"]
+    sqlite[("SQLite<br/>Versioned migrations<br/>Development + FIT/Staging")]
+
+    api --> controllers --> services --> repositories --> sqlite
+  end
+
+  subgraph photo["OPTIONAL PHOTO"]
+    direction LR
+    bytes["Photo bytes"] --> private["Private media storage"]
+    metadata["Attachment metadata"] --> sqlite
+  end
+
+  subgraph native["NATIVE SHELL · IN PROGRESS"]
+    direction LR
+    expo["React Native + Expo<br/>Navigation foundation"]
+    pending["Auth · API integration · device QA<br/>Still in progress"]
+
+    expo -.-> pending
+  end
+
+  signin -. "Login request" .-> api
+  save -. "Authenticated save request" .-> api
+  reflect -. "Optional image" .-> bytes
+  private -. "Linked attachment" .-> metadata
+  scope["SQLite/Dapper is active in Development and FIT/Staging.<br/>Production uses a different repository configuration."]
+  sqlite --- scope
