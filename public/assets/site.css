@@ -205,6 +205,8 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid #90
 .sp-main .creator-post-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;width:100%}
 .sp-main .creator-post-tile,.sp-feature-tile{position:relative;display:flex;flex-direction:column;aspect-ratio:1;min-width:0;overflow:hidden;container-type:inline-size;border-radius:0;background:#e5e8dc;color:#1e2823;text-decoration:none;box-shadow:none;transform:none}
 .sp-main .creator-post-tile>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+/* Show the whole Earth-theme phone-and-desktop composite inside the square project tile. */
+.sp-main .creator-post-tile.tile-auralogbook>img{object-fit:contain;object-position:center;background:#fff0e2}
 .sp-main .creator-post-tile:hover>img{transform:scale(1.03)}
 .sp-tile-bar{position:absolute;right:0;bottom:0;left:0;padding:2.5cqw 4cqw;background:#1e2823;color:#f4f2e8;font-size:max(13px,4.6cqw);font-weight:600;line-height:1.3;overflow-wrap:anywhere}
 .sp-tile-pin{position:absolute;top:3cqw;right:3cqw;display:grid;width:30px;height:30px;place-items:center;border-radius:50%;background:rgba(244,242,232,.92)}

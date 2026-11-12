@@ -74,8 +74,9 @@ const TILE_TITLES = {
   "apple-ecosystem": "Apple-native system",
 };
 
-/** The 75 Days tile uses the real Shortcuts folder screenshot instead of the illustration. */
+/** Curated project tile images take precedence over the first walkthrough screenshot. */
 const TILE_IMAGES = {
+  auralogbook: { src: PROJECTS.auralogbook.image, width: 1513, height: 1039 },
   "75-hard-automation": { src: "/assets/75-days-shortcuts-overview.png", width: 636, height: 1406, position: "top" },
 };
 
