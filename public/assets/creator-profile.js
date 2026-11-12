@@ -12,6 +12,11 @@
   const media = document.querySelector("#post-media");
   const storyHost = document.querySelector("#post-story");
   const stories = document.querySelector("#post-stories");
+  // A second native dialog enlarges the current step without leaving the active walkthrough.
+  const imageDialog = document.querySelector("#post-image-dialog");
+  const enlargedImage = document.querySelector("#post-image-dialog-preview");
+  const imageDialogTitle = document.querySelector("#post-image-dialog-title");
+  const imageDialogClose = document.querySelector("[data-close-post-image]");
   if (!(grid instanceof HTMLElement) || !(dialog instanceof HTMLDialogElement) || !(media instanceof HTMLElement) || !(storyHost instanceof HTMLElement) || !(stories instanceof HTMLElement)) return;
 
   const posts = [...stories.querySelectorAll("[data-post-view]")];
@@ -19,6 +24,7 @@
   let activePost = null;
   let opener = null;
   let openedFromGrid = false;
+  let imageOpener = null;
 
   /**
    * Sets the visible walkthrough step. A step with data-step-screenshot shows that real
@@ -48,7 +54,7 @@
         image.classList.add("is-fading");
       }
       image.alt = screenshot ? step.dataset.stepScreenshotAlt ?? "" : image.dataset.defaultAlt;
-      if (zoom instanceof HTMLButtonElement) zoom.setAttribute("aria-label", `Open walkthrough image, step ${index + 1}: ${step.querySelector("h4")?.textContent ?? ""}, at full size in a new tab`);
+      if (zoom instanceof HTMLButtonElement) zoom.setAttribute("aria-label", `Open walkthrough image, step ${index + 1}: ${step.querySelector("h4")?.textContent ?? ""} in the enlarged viewer`);
       image.closest(".post-main-visual")?.classList.toggle("is-step-screenshot", Boolean(screenshot));
       image.classList.remove("is-fading");
     }
@@ -261,10 +267,19 @@
     const zoomButton = target?.closest("[data-post-image-zoom]");
     if (zoomButton instanceof HTMLButtonElement && activePost) {
       const image = zoomButton.querySelector("img");
-      // Navigate directly to the selected image; constructing an about:blank tab can leave it empty when DOM injection is blocked.
-      if (image instanceof HTMLImageElement) window.open(image.currentSrc || image.src, "_blank", "noopener,noreferrer");
+      if (image instanceof HTMLImageElement && imageDialog instanceof HTMLDialogElement && enlargedImage instanceof HTMLImageElement && imageDialogTitle instanceof HTMLElement) {
+        const currentStep = activePost.querySelector("[data-walkthrough-step]:not([hidden]) h4")?.textContent;
+        const postTitle = activePost.querySelector("h2")?.textContent;
+        imageOpener = zoomButton;
+        imageDialogTitle.textContent = [postTitle, currentStep].filter(Boolean).join(" · ") || "Walkthrough image";
+        enlargedImage.src = image.currentSrc || image.src;
+        enlargedImage.alt = image.alt;
+        imageDialog.showModal();
+        if (imageDialogClose instanceof HTMLButtonElement) imageDialogClose.focus({ preventScroll: true });
+      }
       return;
     }
+    if (target?.closest("[data-close-post-image]") && imageDialog instanceof HTMLDialogElement) imageDialog.close();
     const hotspot = target?.closest("[data-visual-hotspot]");
     if (hotspot && activePost) {
       const status = activePost.querySelector("[data-walkthrough-status]");
@@ -274,6 +289,11 @@
 
   dialog.addEventListener("cancel", (event) => { event.preventDefault(); requestClose(); });
   dialog.addEventListener("click", (event) => { if (event.target === dialog) requestClose(); });
+  imageDialog?.addEventListener("click", (event) => { if (event.target === imageDialog) imageDialog.close(); });
+  imageDialog?.addEventListener("close", () => {
+    if (imageOpener?.isConnected) imageOpener.focus({ preventScroll: true });
+    imageOpener = null;
+  });
   // popstate fires for Back/Forward and for fragment navigation, so it is the only history listener.
   window.addEventListener("popstate", syncHistory);
   window.addEventListener("resize", placePostVisual);

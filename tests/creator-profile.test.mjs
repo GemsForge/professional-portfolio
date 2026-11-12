@@ -107,7 +107,7 @@ test("generated post viewer retains project routes, source links, and the one-pa
   // Evidence first: summary, links, role/status, picture slot (phones), walkthrough, technical choices, tools.
   const order = ['class="post-lead"', 'class="post-actions"', '<dl class="post-facts">', 'data-mobile-visual', '<section class="walkthrough"', '<section class="post-decisions">', '<section class="post-tools"><h3>Tech</h3>', 'class="post-sequence"'].map((marker) => auraPost.indexOf(marker));
   assert.ok(order.every((position, index) => position >= 0 && (index === 0 || position > order[index - 1])), `pop-up sections are out of order: ${order}`);
-  assert.match(auraPost, /<button type="button" class="post-image-zoom" data-post-image-zoom aria-label="Open Aura Logbook walkthrough image at full size"><img src="\/assets\/auralogbook-tour\/login-pair\.png" alt="Phone-first Aura Logbook sign-in screen with its desktop view behind it"/);
+  assert.match(auraPost, /<button type="button" class="post-image-zoom" data-post-image-zoom aria-label="Open Aura Logbook walkthrough image in the enlarged viewer"><img src="\/assets\/auralogbook-tour\/login-pair\.png" alt="Phone-first Aura Logbook sign-in screen with its desktop view behind it"/);
   assert.match(auraPost, /<nav class="post-step-controls" aria-label="Walkthrough image controls"><button type="button" class="post-step-arrow post-step-prev" data-step-prev aria-label="Previous step">← Previous<\/button><button type="button" class="post-step-arrow post-step-next" data-step-next aria-label="Next step">Next →<\/button><\/nav>/);
   assert.match(auraPost, /class="tech-chip"/);
   assert.match(auraPost, /\/assets\/auralogbook-stack\/react\.png/);
@@ -215,7 +215,9 @@ test("pop-up keeps the walkthrough, swaps in real step screenshots, and meets ty
   assert.match(css, /@media\(prefers-reduced-motion:reduce\)\{#post-dialog \.post-visual-stage>img\.is-fading\{animation:none\}\}/);
   assert.match(css, /#post-dialog \.post-step-arrow\{[^}]*min-height:48px/);
   assert.match(css, /#post-dialog \.post-step-controls\{display:flex;justify-content:space-between;gap:12px;margin-top:12px\}/);
-  assert.match(script, /window\.open\(image\.currentSrc \|\| image\.src, "_blank", "noopener,noreferrer"\)/, "the current walkthrough image opens directly in a new tab");
+  assert.match(html, /<dialog id="post-image-dialog" class="post-image-dialog" aria-labelledby="post-image-dialog-title" aria-describedby="post-image-dialog-help">/);
+  assert.match(script, /imageDialog\.showModal\(\)/, "the enlarged image stays in the current page in a modal");
+  assert.match(script, /imageDialog\?\.addEventListener\("close", \(\) => \{[\s\S]*?imageOpener\.focus/);
   assert.match(css, /#post-dialog \.post-story\{font-size:15px/);
   assert.match(css, /#post-dialog \.walkthrough-steps p,#post-dialog \.walkthrough-status\{font-size:15px/);
   assert.match(css, /#post-dialog \.walkthrough-disclaimer\{font-size:13px;line-height:1\.45;color:#4d5d50\}/);

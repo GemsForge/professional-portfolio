@@ -370,6 +370,19 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid #90
 #post-dialog .post-sequence button{min-height:44px;padding:0 16px;font-size:14px}
 @media(max-width:650px){#post-dialog .post-mobile-visual{margin:20px 0 4px}}
 
+/* The walkthrough image viewer follows the case-study image dialog: a native modal with a pannable viewport. */
+.post-image-dialog{width:min(96vw,1500px);height:min(94dvh,1000px);max-width:none;max-height:none;margin:auto;padding:0;border:1px solid #bdc8b8;border-radius:6px;background:#f5f3e9;color:#1e2823;box-shadow:0 20px 70px #0005}
+.post-image-dialog[open]{display:flex;flex-direction:column}
+.post-image-dialog::backdrop{background:#111a15c9}
+.post-image-dialog-bar{position:sticky;top:0;z-index:2;display:flex;justify-content:space-between;align-items:center;gap:14px;padding:10px 14px;border-bottom:1px solid #bdc8b8;background:#f5f3e9;font-size:14px;font-weight:700}
+.post-image-dialog-close{flex:none;min-height:44px;border:1px solid #aeb9aa;border-radius:4px;background:#fffef8;color:#1e2823;padding:8px 10px;font:inherit;font-size:12px;cursor:pointer}
+.post-image-dialog-close kbd{margin-left:6px;color:#53635a;font-family:inherit;font-size:11px}
+.post-image-dialog-help{margin:0;padding:8px 14px;color:#536158;font-size:13px;line-height:1.4}
+.post-image-dialog-viewport{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;display:flex;align-items:flex-start;justify-content:center;padding:4px 10px 12px;touch-action:pan-x pan-y}
+.post-image-dialog-viewport:focus-visible{outline:3px solid #648444;outline-offset:-4px}
+.post-image-dialog-viewport img{display:block;width:auto;max-width:100%;max-height:calc(94dvh - 110px);object-fit:contain;border:0;border-radius:2px}
+@media(max-width:650px){.post-image-dialog{position:fixed;inset:0;width:100dvw;height:100dvh;margin:0;max-width:none;max-height:none;border:0;border-radius:0}.post-image-dialog-viewport{justify-content:flex-start;padding:4px 0 12px}.post-image-dialog-viewport img{width:180vw;max-width:none;max-height:calc(100dvh - 110px);align-self:center}}
+
 /* Pair Aura Logbook's approved mark with its product name without competing with the mobile-first screen preview. */
 .case-brand-title{display:flex;align-items:center;gap:12px}
 .case-brand-title img{display:block;width:64px;height:64px;flex:none;object-fit:contain}
