@@ -88,8 +88,9 @@ export const PROJECTS = {
     description: "A mobile-first journal for what you feel and believe, with personal reflection paths, a responsive desktop companion, and SQLite/Dapper persistence for Development and FIT/Staging.",
     preTitle: "Mobile-first reflection journal",
     primaryTools: "React · React Native · Expo · TypeScript · .NET · SQLite · Dapper",
-    image: "/assets/auralogbook-tour/home-card.png",
-    imageAlt: "Aura Logbook mobile home screen shown in a phone mockup, with its desktop dashboard alongside",
+    // Use the dark-mode device composite with its outside canvas removed so the card theme stays visible.
+    image: "/assets/auralogbook-tour/home-card-dark-transparent.png",
+    imageAlt: "Dark-mode Aura Logbook phone home screen overlapping its desktop dashboard",
     cardTitle: "A calmer space to check in and reflect.",
     cardLinkLabel: "Explore Aura Logbook",
     technologies: [{ label: "React", icon: "react" }, { label: "React Native · Expo" }, { label: "TypeScript", icon: "typescript" }, { label: ".NET", icon: "dotnet" }, { label: "SQLite" }, { label: "Dapper" }],
