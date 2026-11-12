@@ -69,8 +69,10 @@
           <article class="case-content">
             <section id="problem">
               <h2>The project</h2>
-              <p>Aura Logbook is a mobile-first mood and reflection app for daily check-ins, personal history, and gentle pattern-spotting, with a responsive desktop companion. The updated sign-in and home views lead into pathway-aligned prompts, illustrated mood choices, reflections, insights, and private photo browsing, with optional Spotify playback and playlist discovery. People can choose Mindful Living, Astrology &amp; Energy, or Faith &amp; Religion to shape prompts and context, then select light, dark, or system appearance from the theme selector. SQLite persistence through Dapper and versioned migrations is implemented for Development and FIT/Staging. It is a reflection tool—not a diagnostic or treatment tool.</p>
+              <p>Aura Logbook is a mobile-first mood and reflection app for daily check-ins, personal history, and gentle pattern-spotting, with a responsive desktop companion. The updated sign-in and home views lead into pathway-aligned prompts, illustrated mood choices, reflections, insights, and private photo browsing. People can choose Mindful Living, Astrology &amp; Energy, or Faith &amp; Religion to shape prompts and context, then select light, dark, or system appearance from the theme selector. SQLite persistence through Dapper and versioned migrations is implemented for Development and FIT/Staging. It is a reflection tool—not a diagnostic or treatment tool.</p>
               <p><strong>My focus:</strong> shaping the phone-first experience, its responsive desktop companion, and the relational API workflows behind the journal.</p>
+              <h3>Music for the moment</h3>
+              <p>The optional Spotify connection brings a person’s current listening context into the dashboard: the track that is playing, plus a browsable shelf of playlists from their Spotify account. Playlist links and the now-playing link continue in Spotify, so Aura can sit alongside someone’s listening without becoming a music player. The portfolio capture uses the supplied Discover Weekly, daylist, and Your Summer Rewind examples to show the feature in context.</p>
             </section>
 
             <section id="screens" aria-labelledby="screens-heading">
@@ -152,11 +154,14 @@
               <h3>Backend responsibilities</h3>
               <p>The API targets .NET 9. Controllers delegate to injected services, while user-scoped routes support authentication, mood entries, reflections, insights, and private media, and an optional Spotify connection for currently playing tracks and playlists. SQLite persistence is implemented through Dapper repositories and versioned SQL migrations in Development and FIT/Staging. Database-backed reference definitions and presentation settings support pathway-specific prompts, moods, colors, and themes.</p>
 
+              <h3>Spotify account connection</h3>
+              <p>Spotify linking uses OAuth Authorization Code with PKCE. The API keeps access and refresh tokens encrypted, then returns only playback and playlist metadata to the signed-in Aura user. The dashboard card handles connection, disconnection, empty playback, loading, and recovery states; playlist cards link out to Spotify, where audio playback stays.</p>
+
               <h3>Development support</h3>
               <p>A debug-only endpoint generates sample entries to support development. Frontend tests use Vitest and Testing Library; API tests use xUnit and Moq. Their presence shows test coverage exists, not that the suites have been run or passed for this portfolio update. Setup and environment configuration are documented in the repository.</p>
 
               <h3>What this demonstrates</h3>
-              <p>This project demonstrates mobile-first product design, a native navigation shell, responsive web delivery, SQLite/Dapper persistence in Development and FIT/Staging, authenticated journal workflows, database-backed personalization, private media handling, data visualization, and layered API architecture.</p>
+              <p>This project demonstrates mobile-first product design, a native navigation shell, responsive web delivery, SQLite/Dapper persistence in Development and FIT/Staging, authenticated journal workflows, database-backed personalization, private media handling, a delegated Spotify integration with encrypted credentials, data visualization, and layered API architecture.</p>
             </section>
 
             <section id="evidence">

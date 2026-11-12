@@ -57,6 +57,9 @@ test("AuraLogbook page includes one accessible data-to-API-to-UI architecture di
   assert.match(page, /Open-Meteo for New York City on November 12, 2026/);
   assert.match(page, /Frontline by Butcher Brown/);
   assert.match(page, /Discover Weekly, daylist, and Your Summer Rewind/);
+  assert.match(page, /Music for the moment/);
+  assert.match(page, /Spotify linking uses OAuth Authorization Code with PKCE/);
+  assert.match(page, /Playlist links and the now-playing link continue in Spotify/);
   assert.match(page, /portfolio demo; no Spotify account or personal listening data is used/);
   const captureNotes = await readFile(new URL("../docs/story-assets/aura-logbook-walkthrough-capture-notes.md", import.meta.url), "utf8");
   assert.match(captureNotes, /not Aura's latest merged commit `5913d26`/);
