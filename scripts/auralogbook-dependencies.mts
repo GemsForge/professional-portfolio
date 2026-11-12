@@ -158,9 +158,9 @@ export const AURALOGBOOK_DEPENDENCIES = Object.freeze({
   },
   dapper: {
     id: "dapper",
-    label: "Dapper · declared, not wired",
+    label: "Dapper",
     category: DEPENDENCY_CATEGORY.BACKEND,
-    status: DEPENDENCY_STATUS.DECLARED_NOT_WIRED,
+    status: DEPENDENCY_STATUS.ACTIVE,
     logo: { kind: DEPENDENCY_LOGO_KIND.FILE, symbolId: "dapper", description: "Dapper logo", src: "/assets/auralogbook-stack/dapper.png" },
     sourceUrl: "https://github.com/DapperLib/Dapper",
   },

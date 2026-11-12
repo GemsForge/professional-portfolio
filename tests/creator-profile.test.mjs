@@ -84,7 +84,11 @@ test("project posts identify evidence and provide guided prototype steps", () =>
     assert.ok(post.caseStudy, `${post.slug} should retain its full case-study route`);
     assert.ok(post.evidence.length > 30, `${post.slug} should explain evidence or current status`);
     assert.equal(post.walkthrough?.length, post.slug === "auralogbook" ? 5 : 3, `${post.slug} should have the expected number of guided steps`);
-    assert.ok(post.walkthrough.every(({ hotspot }) => hotspot.label), `${post.slug} should label every hotspot`);
+    if (post.slug === "auralogbook") {
+      assert.ok(post.walkthrough.every(({ hotspot, screenshot }) => !hotspot && !screenshot?.hotspot), "Aura Logbook's app tour does not add unused plus markers");
+    } else {
+      assert.ok(post.walkthrough.every(({ hotspot }) => hotspot.label), `${post.slug} should label every hotspot`);
+    }
   }
 });
 
@@ -109,14 +113,14 @@ test("generated post viewer retains project routes, source links, and the one-pa
   assert.match(auraPost, /\/assets\/auralogbook-stack\/dapper\.png/);
   assert.match(auraPost, /\/assets\/auralogbook-stack\/jwt-bearer\.png/);
   assert.doesNotMatch(auraPost, /<figcaption>/, "post artwork should not have a visible caption below it");
-  assert.match(auraPost, /mobile-first UI and responsive desktop view/);
+  assert.match(auraPost, /mobile-first product, with a React Native\/Expo shell/);
   assert.match(auraPost, /<dt>Where it stands<\/dt>/);
   assert.match(auraPost, /<h3>Technical choices<\/h3>/);
   assert.match(auraPost, /<h3 id="walkthrough-auralogbook">Walkthrough<\/h3>/);
-  assert.match(auraPost, /Development and FIT\/Staging use SQLite through Dapper/);
-  assert.match(auraPost, /typed React and TypeScript client connects to the \.NET API/);
-  assert.match(auraPost, /Development and FIT\/Staging use SQLite through Dapper/);
-  assert.match(auraPost, /authorization applied to user data/);
+  assert.doesNotMatch(auraPost, /visual-hotspot|data-step-hotspot/, "the Aura Logbook walkthrough has no unused plus marker");
+  assert.match(auraPost, /SQLite persistence is implemented through Dapper repositories and versioned SQL migrations/);
+  assert.match(auraPost, /React Native\/Expo shell establishes native Today, Log, Journal, and Profile navigation/);
+  assert.match(auraPost, /user-scoped access boundaries/);
   assert.match(script, /history\.pushState/);
   assert.match(script, /window\.addEventListener\("popstate"/);
   assert.doesNotMatch(script, /window\.addEventListener\("hashchange"/, "popstate alone handles fragment navigation; a second listener rendered posts twice");
@@ -185,7 +189,7 @@ test("pop-up keeps the walkthrough, swaps in real step screenshots, and meets ty
   const script = await read("../static-source/assets/creator-profile.js");
   const auraPost = html.slice(html.indexOf('data-post-view="auralogbook"'), html.indexOf("</article>", html.indexOf('data-post-view="auralogbook"')));
   assert.equal((auraPost.match(/data-walkthrough-step="\d"/g) ?? []).length, 5);
-  assert.equal((auraPost.match(/class="visual-hotspot"/g) ?? []).length, 5);
+  assert.equal((auraPost.match(/class="visual-hotspot"/g) ?? []).length, 0, "Aura Logbook has no unused plus markers in its walkthrough");
   // Step arrows sit on the picture, with dots beneath it and a screen-reader announcer; no numeric counter.
   assert.match(auraPost, /<button type="button" class="post-step-arrow post-step-prev" data-step-prev aria-label="Previous step">/);
   assert.match(auraPost, /<button type="button" class="post-step-arrow post-step-next" data-step-next aria-label="Next step">/);

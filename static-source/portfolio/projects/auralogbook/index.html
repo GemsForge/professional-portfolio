@@ -9,6 +9,8 @@
     <link rel="icon" type="image/png" href="/assets/brandmark.png">
     <link rel="canonical" href="https://www.gemsforge.com/portfolio/projects/auralogbook/">
     <link rel="stylesheet" href="/assets/site.css">
+    <link rel="stylesheet" href="/assets/auralogbook-image-dialog.css">
+    <script src="/assets/auralogbook-image-dialog.js" defer></script>
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
@@ -47,7 +49,7 @@
                 <div data-dependency-group="portfolioHighlights"></div>
               </div>
             </div>
-            <img src="/assets/auralogbook-tour/home-pair.png" alt="Aura Logbook home screen shown first on a phone with its desktop dashboard alongside" width="1600" height="1000">
+            <button class="aura-image-trigger aura-banner-image" type="button" data-aura-image-trigger data-image-title="Home screen and desktop dashboard" data-image-src="/assets/auralogbook-tour/home-pair.png" data-image-alt="Aura Logbook home screen shown first on a phone with its desktop dashboard alongside" aria-haspopup="dialog" aria-controls="aura-image-dialog" aria-label="Open the Aura Logbook home screen and desktop dashboard for a closer look"><img src="/assets/auralogbook-tour/home-pair.png" alt="" width="1600" height="1000"></button>
           </div>
         </div>
         <div class="case-layout">
@@ -67,34 +69,45 @@
           <article class="case-content">
             <section id="problem">
               <h2>The project</h2>
-              <p>Aura Logbook is primarily a mobile app for recording how you feel, writing a reflection, and returning to your personal history. Its responsive desktop view carries the same check-in and reflection flow onto a larger screen. The refreshed sign-in and home screens lead into mood check-ins, saved reflections, and insights. Reflective pathways—Mindful Living, Astrology &amp; Energy, or Faith &amp; Religion—shape prompts and context. It is a reflection tool—not a diagnostic or treatment tool.</p>
-              <p><strong>My focus:</strong> shaping a calm, usable mobile-first experience and connecting its typed frontend to a .NET API through authenticated workflows.</p>
+              <p>Aura Logbook is a mobile-first mood and reflection app for daily check-ins, personal history, and gentle pattern-spotting, with a responsive desktop companion. The updated sign-in and home views lead into pathway-aligned prompts, illustrated mood choices, reflections, insights, and private photo browsing. People can choose Mindful Living, Astrology &amp; Energy, or Faith &amp; Religion to shape prompts and context. SQLite persistence is implemented through Dapper and versioned migrations. It is a reflection tool—not a diagnostic or treatment tool.</p>
+              <p><strong>My focus:</strong> shaping the phone-first experience, its responsive desktop companion, and the relational API workflows behind the journal.</p>
             </section>
 
             <section id="screens" aria-labelledby="screens-heading">
               <h2 id="screens-heading">The app, phone first</h2>
-              <p>These captures show the current interface at mobile size first, with the companion desktop view alongside. The walkthrough uses fictional portfolio demo data.</p>
+              <p>Each capture leads with the phone layout and pairs it with the responsive desktop view. Open any image for a closer look; on a phone, swipe sideways to inspect both screens. These are real screens from the React web client using fictional portfolio demo data; the React Native/Expo shell is documented separately below.</p>
               <figure>
-                <img src="/assets/auralogbook-tour/login-pair.png" alt="Aura Logbook sign-in screen on a phone in front of its desktop layout" width="1600" height="1000" loading="lazy">
+                <button class="aura-image-trigger" type="button" data-aura-image-trigger data-image-title="Sign in" data-image-src="/assets/auralogbook-tour/login-pair.png" data-image-alt="Aura Logbook sign-in screen on a phone in front of its desktop layout" aria-haspopup="dialog" aria-controls="aura-image-dialog" aria-label="Open the Aura Logbook sign-in screen and desktop layout for a closer look"><img src="/assets/auralogbook-tour/login-pair.png" alt="" width="1600" height="1000" loading="lazy"></button>
                 <figcaption>Sign in · The refreshed entry screen adapts from phone to desktop.</figcaption>
               </figure>
               <figure>
-                <img src="/assets/auralogbook-tour/home-pair.png" alt="Aura Logbook home screen on a phone in front of its desktop dashboard" width="1600" height="1000" loading="lazy">
+                <button class="aura-image-trigger" type="button" data-aura-image-trigger data-image-title="Home" data-image-src="/assets/auralogbook-tour/home-pair.png" data-image-alt="Aura Logbook home screen on a phone in front of its desktop dashboard" aria-haspopup="dialog" aria-controls="aura-image-dialog" aria-label="Open the Aura Logbook home screen and desktop dashboard for a closer look"><img src="/assets/auralogbook-tour/home-pair.png" alt="" width="1600" height="1000" loading="lazy"></button>
                 <figcaption>Home · A calm starting point for the day’s check-in and reflection.</figcaption>
               </figure>
               <figure>
-                <img src="/assets/auralogbook-tour/check-in-pair.png" alt="Mood check-in on a phone with the desktop experience alongside" width="1600" height="1000" loading="lazy">
+                <button class="aura-image-trigger" type="button" data-aura-image-trigger data-image-title="Check in" data-image-src="/assets/auralogbook-tour/check-in-pair.png" data-image-alt="Mood check-in on a phone with the desktop experience alongside" aria-haspopup="dialog" aria-controls="aura-image-dialog" aria-label="Open the Aura Logbook mood check-in and desktop experience for a closer look"><img src="/assets/auralogbook-tour/check-in-pair.png" alt="" width="1600" height="1000" loading="lazy"></button>
                 <figcaption>Check in · Choose a mood and write a short reflection.</figcaption>
               </figure>
               <figure>
-                <img src="/assets/auralogbook-tour/reflections-pair.png" alt="Saved reflections on a phone with the desktop history view alongside" width="1600" height="1000" loading="lazy">
+                <button class="aura-image-trigger" type="button" data-aura-image-trigger data-image-title="History" data-image-src="/assets/auralogbook-tour/reflections-pair.png" data-image-alt="Saved reflections on a phone with the desktop history view alongside" aria-haspopup="dialog" aria-controls="aura-image-dialog" aria-label="Open the Aura Logbook reflection history and desktop view for a closer look"><img src="/assets/auralogbook-tour/reflections-pair.png" alt="" width="1600" height="1000" loading="lazy"></button>
                 <figcaption>History · Revisit saved entries across both screen sizes.</figcaption>
               </figure>
               <figure>
-                <img src="/assets/auralogbook-tour/insights-pair.png" alt="Mood insights on a phone with the desktop analytics view alongside" width="1600" height="1000" loading="lazy">
+                <button class="aura-image-trigger" type="button" data-aura-image-trigger data-image-title="Insights" data-image-src="/assets/auralogbook-tour/insights-pair.png" data-image-alt="Mood insights on a phone with the desktop analytics view alongside" aria-haspopup="dialog" aria-controls="aura-image-dialog" aria-label="Open the Aura Logbook mood insights and desktop analytics for a closer look"><img src="/assets/auralogbook-tour/insights-pair.png" alt="" width="1600" height="1000" loading="lazy"></button>
                 <figcaption>Insights · Explore patterns in a phone-first layout and on desktop.</figcaption>
               </figure>
             </section>
+
+            <dialog id="aura-image-dialog" class="aura-image-dialog" aria-labelledby="aura-image-dialog-title" aria-describedby="aura-image-dialog-help">
+              <div class="aura-image-dialog-bar">
+                <span id="aura-image-dialog-title">Aura Logbook screen</span>
+                <button class="aura-image-dialog-close" type="button" data-aura-image-close>Close <kbd>Esc</kbd></button>
+              </div>
+              <p class="aura-image-dialog-help" id="aura-image-dialog-help">Swipe sideways to explore the phone and desktop views.</p>
+              <div class="aura-image-dialog-viewport" tabindex="0" aria-label="Enlarged Aura Logbook screen. Swipe or scroll sideways to view the full image.">
+                <img id="aura-image-dialog-preview" alt="" width="1600" height="1000">
+              </div>
+            </dialog>
 
             <section id="journey" aria-labelledby="journey-heading">
               <h2 id="journey-heading">A path from check-in to reflection</h2>
@@ -105,7 +118,7 @@
                 <li><span class="workflow-step">03</span><h3>Review your history</h3><p>Browse entries by date range, then edit or delete them.</p></li>
                 <li><span class="workflow-step">04</span><h3>Explore patterns</h3><p>Use dashboard summaries and charts alongside profile pathway and zodiac reflections.</p></li>
               </ol>
-              <p class="workflow-context">The screen captures show the responsive web client. The separate React Native/Expo mobile shell is still a visual and navigation foundation, so native end-to-end behavior remains future work.</p>
+              <p class="workflow-context">The native React Native/Expo shell uses Today, Log, Journal, and Profile tabs. Its authenticated API integration, secure session lifecycle, and device-level verification remain in progress; the paired screen captures show the responsive web client.</p>
             </section>
 
             <!-- Architecture diagram and schema section are injected from adjacent source fragments. -->
@@ -113,27 +126,28 @@
 
             <section id="implementation">
               <h2>Inside the implementation</h2>
-              <h3>Frontend foundation</h3>
-              <p>The manifest specifies React 19.1, TypeScript 5.8, Material UI 7.1, Joy UI 5 beta, Redux Toolkit 2.8 with RTK Query, React Router 7.6, Axios 1.10, and Recharts 2.15. The app includes session restoration, loading feedback, and expired-session notifications.</p>
+              <h3>Mobile and web clients</h3>
+              <p>The product is designed for phone use first. The React Native/Expo shell defines native Today, Log, Journal, and Profile destinations. The current paired screenshots come from the responsive React 19/TypeScript web client, which uses Material UI, Joy UI, Redux Toolkit with RTK Query, React Router, Axios, and Recharts to support phone and desktop layouts.</p>
 
               <h3>Backend responsibilities</h3>
-              <p>The API targets .NET 9. Mood controllers delegate work to injected services, and authorized routes manage mood entries and dashboard data. Development and FIT/Staging use SQLite through Dapper with versioned startup migrations; committed JSON files remain import and local-development seed sources.</p>
+              <p>The API targets .NET 9. Controllers delegate to injected services, while user-scoped routes support authentication, mood entries, reflections, insights, and private media. SQLite persistence is implemented through Dapper repositories and versioned SQL migrations in Development and FIT/Staging. Database-backed reference definitions and presentation settings support pathway-specific prompts, moods, colors, and themes.</p>
 
               <h3>Development support</h3>
               <p>A debug-only endpoint generates sample entries to support development. Frontend tests use Vitest and Testing Library; API tests use xUnit and Moq. Their presence shows test coverage exists, not that the suites have been run or passed for this portfolio update. Setup and environment configuration are documented in the repository.</p>
 
               <h3>What this demonstrates</h3>
-              <p>This project demonstrates mobile-first product thinking, responsive interface design, authenticated user workflows, API design, layered backend architecture, frontend state management, data visualization, and automated testing.</p>
+              <p>This project demonstrates mobile-first product design, a native navigation shell, responsive web delivery, relational persistence with SQLite and Dapper, authenticated journal workflows, database-backed personalization, private media handling, data visualization, and layered API architecture.</p>
             </section>
 
             <section id="evidence">
               <h2>Read the source</h2>
-              <p>These links open the implementation reviewed for this portfolio. They provide code evidence rather than a simulated product screenshot; test files show coverage exists, not that all tests currently pass.</p>
+              <p>These links open the implementation behind the screens and architecture above. They provide source evidence; test files show coverage exists, not that every suite currently passes.</p>
               <ul>
                 <li><a href="https://github.com/GemsForge/aura-logbook-api/blob/master/AuraLogbook.Api/Controllers/MoodController.cs">Mood controller: endpoints and service boundaries</a></li>
-                <li><a href="https://github.com/GemsForge/aura-logbook-api/blob/master/AuraLogbook.Api/Controllers/AuthController.cs">Authentication endpoints</a> · <a href="https://github.com/GemsForge/aura-logbook-api/blob/master/AuraLogbook.Api/Repositories/FileMoodRepository.cs">JSON mood repository</a> · <a href="https://github.com/GemsForge/aura-logbook-api/blob/master/AuraLogbook.Api/Repositories/FileUserRepository.cs">JSON user repository</a></li>
+                <li><a href="https://github.com/GemsForge/aura-logbook-api/blob/master/AuraLogbook.Api/Controllers/AuthController.cs">Authentication endpoints</a> · <a href="https://github.com/GemsForge/aura-logbook-api/blob/master/AuraLogbook.Api/Repositories/SqliteMoodRepository.cs">SQLite mood repository using Dapper</a> · <a href="https://github.com/GemsForge/aura-logbook-api/blob/master/AuraLogbook.Api/Repositories/SqliteUserRepository.cs">SQLite user repository</a></li>
+                <li><a href="https://github.com/GemsForge/aura-logbook-api/tree/master/AuraLogbook.Api/Data/Database/Migrations">Versioned database migrations</a> · <a href="https://github.com/GemsForge/aura-logbook-api/blob/master/docs/ux/mobile-shell.md">Native mobile shell and API readiness</a></li>
                 <li><a href="https://github.com/GemsForge/aura-logbook-api/blob/master/aura-ui/src/App.tsx">App entry: session restoration and routing</a></li>
-                <li><a href="https://github.com/GemsForge/aura-logbook-api/blob/master/aura-ui/package.json">Frontend dependencies and scripts</a></li>
+                <li><a href="https://github.com/GemsForge/aura-logbook-api/tree/master/aura-ui">Responsive React client and UI tests</a></li>
                 <li><a href="https://github.com/GemsForge/aura-logbook-api/blob/master/AuraLogbook.Api/AuraLogbook.Api.csproj">API target framework and package references</a></li>
                 <li><a href="https://github.com/GemsForge/aura-logbook-api/blob/master/AuraLogbook.Api.Tests/MoodServiceTests.cs">API mood-service tests</a> · <a href="https://github.com/GemsForge/aura-logbook-api/blob/master/AuraLogbook.Api.Tests/UserServiceTests.cs">user-service tests</a></li>
                 <li><a href="https://github.com/GemsForge/aura-logbook-api/blob/master/aura-ui/src/pages/tests/MoodEntryForm.test.tsx">Frontend mood-entry test</a> · <a href="https://github.com/GemsForge/aura-logbook-api/blob/master/aura-ui/src/pages/tests/MoodHistory.test.tsx">history test</a> · <a href="https://github.com/GemsForge/aura-logbook-api/blob/master/aura-ui/src/pages/tests/Dashboard.test.tsx">dashboard test</a></li>
@@ -144,9 +158,9 @@
             <section id="status">
               <h2>Current state &amp; next steps</h2>
               <div class="note development-callout">
-                <p><strong>In development.</strong> The responsive web client and .NET API are under active development. Development and FIT/Staging persist application data in SQLite through Dapper; the separate native mobile shell and complete end-to-end verification remain in progress.</p>
+                <p><strong>In development.</strong> SQLite persistence is implemented with Dapper repositories and versioned migrations for Development and FIT/Staging. The React Native/Expo shell has its native navigation structure; authenticated API integration, secure session handling, and device-level end-to-end verification remain in progress.</p>
               </div>
-              <p>The next step is to finish mobile-native integration and end-to-end verification of sign-in, check-in, history, and insights, then continue documenting the UI/API integration with fictional demo data.</p>
+              <p>The next step is to connect the native shell to the authenticated API, finish its secure session lifecycle, and verify sign-in, check-in, journal, and insights on a device. The phone-first web flow remains available as the responsive companion.</p>
             </section>
 
             <nav class="next-project" aria-label="Project navigation">

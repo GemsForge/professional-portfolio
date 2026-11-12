@@ -42,7 +42,7 @@ export interface PortfolioPostDefinition {
   stackGroups?: { label: string; items: { label: string; postSlug?: string; href?: string }[] }[];
   /**
    * Each step narrates a documented interaction; it does not claim a live application.
-   * `hotspot` marks the step on the project illustration. Add `screenshot` when a real
+   * Optional `hotspot` marks the step on the project illustration. Add `screenshot` when a real
    * app screen exists: `src` under /assets/, `alt` describing what the screen shows, and an
    * optional `hotspot` (percent of the screenshot) that points at the UI element the step
    * describes. When every step has a screenshot, the walkthrough becomes an "App tour":
@@ -52,7 +52,7 @@ export interface PortfolioPostDefinition {
   walkthrough?: {
     title: string;
     detail: string;
-    hotspot: { x: number; y: number; label: string };
+    hotspot?: { x: number; y: number; label: string };
     screenshot?: { src: string; alt: string; hotspot?: { x: number; y: number; label: string } };
   }[];
 }
@@ -85,14 +85,14 @@ export const PROJECTS = {
   auralogbook: {
     slug: "auralogbook",
     name: "Aura Logbook",
-    description: "A mobile-first mood journal for check-ins, personal history, and gentle pattern-spotting, with a paired desktop view.",
+    description: "A mobile-first mood and reflection app with a responsive desktop companion and implemented SQLite persistence.",
     preTitle: "Mobile-first reflection app · In development",
-    primaryTools: "React · TypeScript · .NET · MUI · Redux",
+    primaryTools: "React · React Native · Expo · TypeScript · .NET · SQLite · Dapper",
     image: "/assets/auralogbook-tour/home-card.png",
     imageAlt: "Aura Logbook mobile home screen shown in a phone mockup, with its desktop dashboard alongside",
     cardTitle: "A calmer space to check in and reflect.",
     cardLinkLabel: "Explore Aura Logbook",
-    technologies: [{ label: "React", icon: "react" }, { label: "TypeScript", icon: "typescript" }, { label: ".NET", icon: "dotnet" }, { label: "MUI", icon: "mui" }, { label: "Redux", icon: "redux" }],
+    technologies: [{ label: "React", icon: "react" }, { label: "React Native · Expo" }, { label: "TypeScript", icon: "typescript" }, { label: ".NET", icon: "dotnet" }, { label: "SQLite" }, { label: "Dapper" }],
   },
   "apple-ecosystem": {
     slug: "apple-ecosystem",
@@ -153,24 +153,24 @@ export const PORTFOLIO_POSTS: PortfolioPostDefinition[] = [
   // Keep shipped behavior distinct from planned work and tie technical claims to the reviewed app source.
   {
     slug: "auralogbook", title: "Aura Logbook", category: "project", eyebrow: "Mobile-first reflection app · In development",
-    caption: "A phone-first mood journal with a paired desktop view for check-ins, reflections, and patterns.", image: "/assets/auralogbook-tour/home-card.png", imageAlt: "Aura Logbook phone home screen beside its desktop view",
-    role: "I’m building the Aura Logbook experience across its mobile-first UI and responsive desktop view, alongside the React/TypeScript client and .NET API.",
+    caption: "A phone-first reflective journal for daily check-ins, saved entries, and mood insights, paired with a desktop view.", image: "/assets/auralogbook-tour/home-card.png", imageAlt: "Aura Logbook phone home screen beside its desktop view",
+    role: "I’m shaping Aura Logbook as a mobile-first product, with a React Native/Expo shell, a responsive React/TypeScript client, and a .NET API.",
     evidenceLabel: "Where it stands",
     decisionsTitle: "Technical choices",
     decisions: [
-      "A typed React and TypeScript client connects to the .NET API through authenticated application workflows.",
-      "Development and FIT/Staging use SQLite through Dapper with versioned startup migrations; committed JSON files remain import and local-development seed sources.",
-      "Mood-entry operations are separated into API controllers and injected services, with authorization applied to user data.",
-      "The responsive web client supports phone and desktop layouts while the separate native mobile shell is still being completed.",
+      "The app is designed for mobile first; a responsive React and TypeScript client also presents the check-in and journal flow on desktop.",
+      "SQLite persistence is implemented through Dapper repositories and versioned SQL migrations for Development and FIT/Staging.",
+      "Mood, reference-data, reflection, and private-media workflows use API services and user-scoped access boundaries.",
+      "The React Native/Expo shell establishes native Today, Log, Journal, and Profile navigation; its authenticated API integration and device verification are still in progress.",
     ],
-    evidence: "The current interface includes sign-in, a home dashboard, mood check-ins, saved reflections, and insights. It’s still in development; the native mobile shell and end-to-end checks remain.",
-    tools: ["React", "TypeScript", "C#", ".NET", "Redux Toolkit · RTK Query", "MUI · Joy UI", "Recharts", "SQLite", "Dapper", "JWT", "Spotify Web API · OAuth", "Private photo API", "Vitest", "Testing Library", "xUnit", "Moq"], caseStudy: "/portfolio/projects/auralogbook/", source: "https://github.com/GemsForge/aura-logbook-api",
+    evidence: "Recent UI work refreshed sign-in, pathway-aligned check-ins, illustrated mood choices, reflection history, and private photo browsing. SQLite persistence is implemented; native mobile authentication and end-to-end device checks remain in progress.",
+    tools: ["React", "React Native · Expo", "TypeScript", "C#", ".NET", "Redux Toolkit · RTK Query", "MUI · Joy UI", "Recharts", "SQLite", "Dapper", "JWT", "Spotify Web API · OAuth", "Private photo API", "Vitest", "Testing Library", "xUnit", "Moq"], caseStudy: "/portfolio/projects/auralogbook/", source: "https://github.com/GemsForge/aura-logbook-api",
     walkthrough: [
-      { title: "Sign in", detail: "Start at the refreshed sign-in screen, designed for a compact phone layout with a responsive desktop companion.", hotspot: { x: 50, y: 50, label: "Sign-in form" }, screenshot: { src: "/assets/auralogbook-tour/login-pair.png", alt: "Phone-first Aura Logbook sign-in screen with a desktop view behind it", hotspot: { x: 29, y: 50, label: "Sign-in form" } } },
-      { title: "Arrive home", detail: "The home screen offers a gentle entry point into the day’s check-in and reflection tools.", hotspot: { x: 50, y: 50, label: "Home dashboard" }, screenshot: { src: "/assets/auralogbook-tour/home-pair.png", alt: "Aura Logbook home screen in a phone mockup paired with its desktop dashboard", hotspot: { x: 30, y: 47, label: "Mobile home" } } },
-      { title: "Check in", detail: "Choose a mood and add a note to capture what is present. The experience keeps reflection personal, not diagnostic.", hotspot: { x: 50, y: 50, label: "Mood check-in" }, screenshot: { src: "/assets/auralogbook-tour/check-in-pair.png", alt: "Phone-first mood check-in with a selected mood and desktop companion", hotspot: { x: 28, y: 44, label: "Mood choices" } } },
-      { title: "Revisit reflections", detail: "Browse saved entries and return to the thoughts attached to a check-in.", hotspot: { x: 50, y: 50, label: "Saved reflections" }, screenshot: { src: "/assets/auralogbook-tour/reflections-pair.png", alt: "Saved reflection history presented on mobile with a desktop view", hotspot: { x: 28, y: 50, label: "Reflection list" } } },
-      { title: "Notice patterns", detail: "The insights view brings mood patterns into focus across the mobile and desktop layouts.", hotspot: { x: 50, y: 50, label: "Insights" }, screenshot: { src: "/assets/auralogbook-tour/insights-pair.png", alt: "Aura Logbook insights screen in a phone mockup paired with desktop analytics", hotspot: { x: 28, y: 47, label: "Mobile insights" } } },
+      { title: "Sign in", detail: "Start at the refreshed sign-in screen, designed for a compact phone layout with a responsive desktop companion.", screenshot: { src: "/assets/auralogbook-tour/login-pair.png", alt: "Phone-first Aura Logbook sign-in screen with a desktop view behind it" } },
+      { title: "Arrive home", detail: "The home screen offers a gentle entry point into the day’s check-in and reflection tools.", screenshot: { src: "/assets/auralogbook-tour/home-pair.png", alt: "Aura Logbook home screen in a phone mockup paired with its desktop dashboard" } },
+      { title: "Check in", detail: "Choose a mood and add a note to capture what is present. The experience keeps reflection personal, not diagnostic.", screenshot: { src: "/assets/auralogbook-tour/check-in-pair.png", alt: "Phone-first mood check-in with a selected mood and desktop companion" } },
+      { title: "Revisit reflections", detail: "Browse saved entries and return to the thoughts attached to a check-in.", screenshot: { src: "/assets/auralogbook-tour/reflections-pair.png", alt: "Saved reflection history presented on mobile with a desktop view" } },
+      { title: "Notice patterns", detail: "The insights view brings mood patterns into focus across the mobile and desktop layouts.", screenshot: { src: "/assets/auralogbook-tour/insights-pair.png", alt: "Aura Logbook insights screen in a phone mockup paired with desktop analytics" } },
     ],
   },
   {

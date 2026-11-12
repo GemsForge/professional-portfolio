@@ -4,20 +4,20 @@ import { test } from "node:test";
 
 const read = (path) => readFile(new URL(path, import.meta.url), "utf8");
 
-test("Aura Logbook architecture distinguishes active storage from declared packages", async () => {
+test("Aura Logbook architecture identifies implemented SQLite and Dapper persistence", async () => {
   const svg = await read("../static-source/assets/aura-logbook-architecture.svg");
   const architecturePage = await read("../static-source/portfolio/projects/auralogbook/architecture.html");
 
-  assert.match(svg, /Active persistence: System\.Text\.Json files/);
-  assert.match(svg, /SQLite \+ Dapper: declared, not wired to storage/);
-  assert.match(svg, /Open-Meteo API/);
+  assert.match(svg, /SQLite/);
+  assert.match(svg, /Dapper repositories · implemented/);
+  assert.match(svg, /Open-Meteo weather/);
   assert.doesNotMatch(svg, /Weatherbit/);
-  assert.match(svg, /aria-labelledby="title desc"/);
-  assert.match(architecturePage, /SQLite and Dapper are declared dependencies and wired to storage/);
-  assert.match(architecturePage, /Open-Meteo weather/);
+  assert.match(svg, /aria-labelledby="title description"/);
+  assert.match(architecturePage, /SQLite persistence through Dapper repositories and versioned SQL migrations/);
+  assert.match(architecturePage, /Open-Meteo REST API for contextual weather/);
   assert.match(architecturePage, /aria-describedby="architecture-tech-list"/);
   assert.match(architecturePage, /id="architecture-tech-list"/);
-  for (const technology of ["React", "TypeScript", "Material UI", "Redux Toolkit", "Axios", "JWT Bearer", "Swashbuckle", "System.Text.Json", "Open-Meteo"]) {
+  for (const technology of ["React and TypeScript", "React Native and Expo", "Material UI", "Redux Toolkit", "Axios", ".NET 9", "SQLite persistence", "Open-Meteo"]) {
     assert.ok(architecturePage.includes(technology), `missing accessible dependency label: ${technology}`);
   }
 });

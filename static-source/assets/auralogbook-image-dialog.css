@@ -1,0 +1,21 @@
+/* Keep the closer-look controls local to the Aura Logbook case study. */
+.aura-image-trigger{display:block;width:100%;padding:0;border:0;background:transparent;text-align:left;cursor:zoom-in}
+.aura-image-trigger:focus-visible{outline:3px solid #90671d;outline-offset:4px}
+.case-banner .aura-banner-image{width:100%;min-width:0}
+.case-banner .aura-banner-image img{display:block;width:100%;max-height:240px;object-fit:contain}
+.aura-image-dialog{display:none;width:min(96vw,1500px);height:min(94dvh,1000px);max-width:none;max-height:none;margin:auto;padding:0;border:1px solid #bdc8b8;border-radius:6px;background:#f5f3e9;color:#1e2823;box-shadow:0 20px 70px #0005}
+.aura-image-dialog[open]{display:flex;flex-direction:column}
+.aura-image-dialog::backdrop{background:#111a15c9}
+.aura-image-dialog-bar{position:sticky;top:0;z-index:2;display:flex;justify-content:space-between;align-items:center;gap:14px;padding:10px 14px;border-bottom:1px solid #bdc8b8;background:#f5f3e9;font-size:14px;font-weight:700}
+.aura-image-dialog-close{flex:none;border:1px solid #aeb9aa;border-radius:4px;background:#fffef8;color:#1e2823;padding:8px 10px;font:inherit;font-size:12px;cursor:pointer}
+.aura-image-dialog-close kbd{margin-left:6px;color:#53635a;font-family:inherit;font-size:11px}
+.aura-image-dialog-help{margin:0;padding:8px 14px;color:#536158;font-size:13px;line-height:1.4}
+.aura-image-dialog-viewport{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;display:flex;align-items:flex-start;justify-content:center;padding:4px 10px 12px;touch-action:pan-x pan-y}
+.aura-image-dialog-viewport:focus-visible{outline:3px solid #90671d;outline-offset:-4px}
+.aura-image-dialog-viewport img{display:block;width:auto;max-width:100%;max-height:calc(94dvh - 110px);object-fit:contain;border:0;border-radius:2px}
+@media(max-width:650px){
+  .case-banner .aura-banner-image img{max-height:180px}
+  .aura-image-dialog{width:100vw;height:100dvh;border:0;border-radius:0}
+  .aura-image-dialog-viewport{justify-content:flex-start;padding:4px 0 12px}
+  .aura-image-dialog-viewport img{width:200vw;max-width:none;max-height:calc(100dvh - 105px);align-self:center}
+}

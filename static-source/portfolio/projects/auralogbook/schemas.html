@@ -1,52 +1,52 @@
 <section id="data-sources" class="schema-section" aria-labelledby="schema-heading">
-  <h2 id="schema-heading">Data sources &amp; simplified schemas</h2>
-  <p>This map shows the records and request data at a glance—not a relational database schema. User, mood, and zodiac-insight records currently use JSON files; weather is requested from Open-Meteo and is not saved with journal entries.</p>
+  <h2 id="schema-heading">Relational data and integrations</h2>
+  <p>The current .NET data layer uses SQLite through Dapper and versioned SQL migrations in Development and FIT/Staging. The cards summarize the main records and integrations; they are not a complete database schema.</p>
 
-  <div class="schema-map" aria-label="AuraLogbook data relationships">
+  <div class="schema-map" aria-label="Aura Logbook relational data and integrations">
     <article class="schema-card schema-user">
-      <p class="schema-kicker">Profile record · JSON file</p>
-      <h3>User</h3>
+      <p class="schema-kicker">User-owned record · SQLite</p>
+      <h3>User profile</h3>
       <dl>
-        <div><dt>Identity</dt><dd>id · email · password hash</dd></div>
-        <div><dt>Profile</dt><dd>display name · avatar · motto</dd></div>
-        <div><dt>Reflection</dt><dd>selected pathway · zodiac sign</dd></div>
+        <div><dt>Identity</dt><dd>account and secure credential data</dd></div>
+        <div><dt>Preferences</dt><dd>display settings and selected pathway</dd></div>
+        <div><dt>Context</dt><dd>profile details that personalize reflections</dd></div>
       </dl>
     </article>
 
     <p class="schema-relationship" aria-label="One user can have many mood entries"><span>1 user</span><span aria-hidden="true">→</span><span>many entries</span></p>
 
     <article class="schema-card schema-mood">
-      <p class="schema-kicker">Journal record · JSON file</p>
-      <h3>MoodEntry</h3>
+      <p class="schema-kicker">Journal records · SQLite</p>
+      <h3>Mood entries</h3>
       <dl>
-        <div><dt>Keys</dt><dd>id · userId · date</dd></div>
-        <div><dt>Reflection</dt><dd>one or more mood types · optional comment</dd></div>
-        <div><dt>Created</dt><dd>timestamp</dd></div>
+        <div><dt>Entry</dt><dd>date, reflection, and saved context</dd></div>
+        <div><dt>Selected moods</dt><dd>related mood rows per entry</dd></div>
+        <div><dt>Updates</dt><dd>entry and mood relationships saved together</dd></div>
       </dl>
     </article>
 
     <article class="schema-card schema-zodiac">
-      <p class="schema-kicker">Reference data · JSON file</p>
-      <h3>Zodiac insight templates</h3>
+      <p class="schema-kicker">Personalization · SQLite</p>
+      <h3>Pathways and reflections</h3>
       <dl>
-        <div><dt>Index</dt><dd>zodiac sign · element</dd></div>
-        <div><dt>Each insight</dt><dd>category · title · message</dd></div>
+        <div><dt>Reference definitions</dt><dd>pathways, moods, aura colors, and their mappings</dd></div>
+        <div><dt>Reflection content</dt><dd>prompts, responses, and insight templates</dd></div>
+        <div><dt>Presentation</dt><dd>database-backed themes and graphic metadata</dd></div>
       </dl>
-      <p class="schema-relationship">A profile’s zodiac sign selects matching insight templates; these are reference records, not a user-owned table.</p>
     </article>
 
     <article class="schema-card schema-weather">
-      <p class="schema-kicker">External request · Open-Meteo</p>
-      <h3>Weather context</h3>
+      <p class="schema-kicker">Private media and external context</p>
+      <h3>Photos and weather</h3>
       <dl>
-        <div><dt>Request</dt><dd>city or coordinates</dd></div>
-        <div><dt>Response</dt><dd>temperature · conditions · icon code</dd></div>
-        <div><dt>Timestamp</dt><dd>not currently returned by the app API</dd></div>
+        <div><dt>Photo metadata</dt><dd>owner and mood-entry relationships in SQLite</dd></div>
+        <div><dt>Photo bytes</dt><dd>private storage outside public web assets</dd></div>
+        <div><dt>Weather</dt><dd>Open-Meteo context requested by the API</dd></div>
       </dl>
-      <p>Fetched for dashboard context; not persisted with a mood entry.</p>
+      <p>Photo browsing supports filters, sorting, a saved grid layout, and touch-friendly lightbox navigation.</p>
     </article>
   </div>
 
-  <p class="schema-footnote">The API model stores an email (not a separate username). Password hashes are shown only to explain the schema: never expose credentials or real profile and mood data in portfolio examples.</p>
-  <p class="schema-sources"><strong>Source schemas:</strong> <a href="https://github.com/GemsForge/aura-logbook-api/blob/master/AuraLogbook.Api/Models/User.cs">User</a> · <a href="https://github.com/GemsForge/aura-logbook-api/blob/master/AuraLogbook.Api/Models/MoodEntry.cs">MoodEntry</a> · <a href="https://github.com/GemsForge/aura-logbook-api/blob/master/AuraLogbook.Api/Models/ZodiacSignInsights.cs">Zodiac insight templates</a> · <a href="https://github.com/GemsForge/aura-logbook-api/blob/master/AuraLogbook.Api/Models/Dto/WeatherDto.cs">Weather response DTO</a></p>
+  <p class="schema-footnote">Portfolio screenshots use fictional demo content. They do not show a real account or private journal entry.</p>
+  <p class="schema-sources"><strong>Source evidence:</strong> <a href="https://github.com/GemsForge/aura-logbook-api/blob/master/AuraLogbook.Api/Repositories/SqliteMoodRepository.cs">Dapper-backed mood repository</a> · <a href="https://github.com/GemsForge/aura-logbook-api/blob/master/AuraLogbook.Api/Models/User.cs">User model</a> · <a href="https://github.com/GemsForge/aura-logbook-api/blob/master/AuraLogbook.Api/Models/MoodEntry.cs">Mood entry model</a> · <a href="https://github.com/GemsForge/aura-logbook-api/blob/master/AuraLogbook.Api/Data/Database/Migrations/012_private_mood_media.sql">Private media migration</a> · <a href="https://github.com/GemsForge/aura-logbook-api/blob/master/AuraLogbook.Api/Data/Database/Migrations/010_data_driven_reference_configuration.sql">Reference-data migration</a></p>
 </section>
