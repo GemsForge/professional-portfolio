@@ -1,7 +1,9 @@
 // Intentional: use browser navigation because client-side route transitions are failing.
 /* eslint-disable @next/next/no-html-link-for-pages */
+import Image from "next/image";
 
 const links = [
+  ["/", "Home"],
   ["/portfolio/projects/", "Projects"],
   ["/about/", "About"],
   ["/assets/diamond-brown-resume.pdf", "Résumé"],
@@ -22,16 +24,21 @@ export function SiteHeader({ pathname, handbookReader = false }: {
   handbookReader?: boolean;
 }) {
   const isActive = (href: string) =>
-    href === "/portfolio/projects/"
-      ? pathname.startsWith("/portfolio/projects/")
-      : pathname === href;
+    href === "/"
+      ? pathname === "/" || pathname === "/portfolio/"
+      : href === "/portfolio/projects/"
+        ? pathname.startsWith("/portfolio/projects/")
+        : pathname === href;
 
   return (
     <>
       <a className="skip" href="#main">Skip to content</a>
       <header className="sp-topbar">
         <nav className="sp-topbar-inner" aria-label="Portfolio navigation">
-          <a className="sp-handle" href="/" aria-label="Diamond Brown portfolio home">diamond.brown</a>
+          <a className="sp-handle" href="/" aria-label="Diamond Brown portfolio home">
+            <Image className="sp-handle-avatar" src="/assets/profile-avatar-320.jpg" alt="" width={44} height={44} />
+            <span>diamond.brown</span>
+          </a>
           <div className="sp-topbar-links">
             {links.map(([href, label]) => (
               <a key={href} href={href} aria-current={isActive(href) ? "page" : undefined}>
