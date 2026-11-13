@@ -13,6 +13,7 @@ const wikiFolders = [
   ["handbooks/data", "Data"],
   ["handbooks/codex", "Codex"],
   ["handbooks/project-management", "Project management"],
+  ["handbooks/git", "Git and GitHub"],
   ["handbooks/quality", "Quality"],
   ["governance", "Governance and standards"],
   ["governance/templates/ci", "CI templates"],

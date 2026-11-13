@@ -1,3 +1,4 @@
+/* Developer Wiki styles shared by the public wiki routes and the owner knowledge pages. */
 /* Wiki catalog: compact hero, sticky browse rail, hairline-separated handbook rows, and slim shelf indexes. */
 .knowledge-page .library-intro{padding-top:56px;padding-bottom:36px;border-bottom:1px solid var(--line)}
 .knowledge-page .library-intro h1{max-width:900px;margin:0 0 14px;font-size:clamp(38px,4.4vw,56px);letter-spacing:-1.6px;line-height:1.05}

@@ -13,6 +13,7 @@ const FOLDERS = new Set([
   'handbooks/data',
   'handbooks/codex',
   'handbooks/project-management',
+  'handbooks/git',
   'handbooks/quality',
   'governance',
   'governance/templates/ci',

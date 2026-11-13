@@ -9,6 +9,13 @@ import { KnowledgeMarkdown } from "@/components/knowledge-markdown";
 import type { KnowledgeResource } from "@/lib/knowledge-types";
 
 /**
+ * Height of the sticky site header plus the collapsed reader heading and page
+ * tabs. Used for the contents observer and for page-change scrolling; update
+ * it with `scroll-margin-top` in knowledge.css when that chrome changes height.
+ */
+const STICKY_READER_OFFSET_PX = 230;
+
+/**
  * Presents one library reference in the established reading view. Public mode
  * uses read-only public endpoints; the owner view keeps management APIs gated.
  */
@@ -58,6 +65,11 @@ export function KnowledgeReader({ id, publicMode = false }: {
     return () => { active = false; };
   }, [id, publicMode]);
 
+  // Name the browser tab after the open reference; the route's static metadata cannot know it.
+  useEffect(() => {
+    if (resource) document.title = `${resource.title} · Developer Wiki`;
+  }, [resource]);
+
   /** Keeps downloads and previews on the reader's matching public or owner API. */
   function documentHref(resourceId: string, query = "") {
     const base = publicMode ? "/api/public/knowledge" : "/api/knowledge";
@@ -96,7 +108,7 @@ export function KnowledgeReader({ id, publicMode = false }: {
       const visible = entries.filter((entry) => entry.isIntersecting).sort((left, right) => left.boundingClientRect.top - right.boundingClientRect.top);
       const title = visible[0]?.target.textContent?.trim();
       if (title) setActiveContentsTitle(title);
-    }, { rootMargin: "-230px 0px -55% 0px", threshold: 0 });
+    }, { rootMargin: `-${STICKY_READER_OFFSET_PX}px 0px -55% 0px`, threshold: 0 });
     headings.forEach((heading) => observer.observe(heading));
     return () => observer.disconnect();
   }, [page, pageSource, tableOfContents]);
@@ -141,7 +153,7 @@ export function KnowledgeReader({ id, publicMode = false }: {
     const timer = window.setTimeout(() => {
       const article = document.querySelector<HTMLElement>(".knowledge-reader-content");
       if (!article) return;
-      window.scrollTo({ top: Math.max(0, article.offsetTop - 230), behavior: "smooth" });
+      window.scrollTo({ top: Math.max(0, article.offsetTop - STICKY_READER_OFFSET_PX), behavior: "smooth" });
     }, 0);
     return () => window.clearTimeout(timer);
   }, [page, resource, view]);

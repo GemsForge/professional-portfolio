@@ -47,7 +47,8 @@ test('Manage Project Assets gives both upload steps the same panel and a clear W
   assert.match(manager, /class="accepted-file-callout"[^>]*role="note"/);
   assert.match(manager, /Accepted files · Up to 20 MB/);
   assert.match(manager, /id="upload-form"/);
-  assert.match(manager, /id="wiki-uploader-frame"/);
+  assert.match(manager, /<form id="wiki-upload-form"\s+action="\/api\/knowledge"/);
+  assert.match(manager, /<select id="wiki-folder" name="folder" required/);
   assert.match(manager, /<h2 id="wiki-uploader-heading">Wiki Page Uploader<\/h2>/);
   assert.match(manager, /<p id="message" role="status" aria-live="polite"><\/p>/);
   assert.match(manager, /<label for="image">Attachment<\/label>\s*<input type="file" id="image"[^>]*aria-describedby="media-uploader-help paste-help"/);
