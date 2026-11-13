@@ -6,6 +6,7 @@ import { test } from "node:test";
 const LEAD_PROJECTS = ["auralogbook", "notion-api-shortcuts"];
 const CATALOG_ORDER = [
   ...LEAD_PROJECTS,
+  "dev-wiki",
   "75-hard-automation",
   "hair-log",
   "dynamic-folder-structures",

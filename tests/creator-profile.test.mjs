@@ -19,8 +19,8 @@ async function readGeneratedHome() {
 test("social profile shows the résumé-backed header, experience highlights, and a nine-tile grid", async () => {
   const html = await readGeneratedHome();
   const slugs = PORTFOLIO_POSTS.map(({ slug }) => slug);
-  assert.deepEqual(slugs.slice(0, 4), ["auralogbook", "notion-api-shortcuts", "portfolio-direction", "tech-stack"]);
-  assert.equal(PORTFOLIO_POSTS.filter(({ category }) => category === "project").length, 6);
+  assert.deepEqual(slugs.slice(0, 5), ["auralogbook", "notion-api-shortcuts", "dev-wiki", "portfolio-direction", "tech-stack"]);
+  assert.equal(PORTFOLIO_POSTS.filter(({ category }) => category === "project").length, 7);
 
   const profile = html.slice(html.indexOf('<section class="sp-profile"'), html.indexOf('<section id="highlights"'));
   assert.match(profile, /<h1 id="creator-name">Diamond Brown<\/h1>/);
@@ -55,10 +55,10 @@ test("social profile shows the résumé-backed header, experience highlights, an
 
   const grid = html.slice(html.indexOf('id="creator-post-grid"'), html.indexOf("</section>", html.indexOf('id="creator-post-grid"')));
   const tiles = [...grid.matchAll(/<a class="(creator-post-tile tile-[a-z0-9-]+|sp-feature-tile sp-tile-[a-z]+)"/g)].map((match) => match[1].split(" ")[1]);
-  assert.deepEqual(tiles, ["tile-auralogbook", "sp-tile-quote", "tile-notion-api-shortcuts", "tile-75-hard-automation", "sp-tile-diagram", "sp-tile-text", "tile-hair-log", "tile-dynamic-folder-structures", "tile-apple-ecosystem"]);
+  assert.deepEqual(tiles, ["tile-auralogbook", "sp-tile-quote", "tile-notion-api-shortcuts", "tile-dev-wiki", "tile-75-hard-automation", "sp-tile-diagram", "sp-tile-text", "tile-hair-log", "tile-dynamic-folder-structures", "tile-apple-ecosystem"]);
   const tileOrder = [...grid.matchAll(/class="creator-post-tile tile-[^"]+" href="[^"]+" data-post-link="([^"]+)"/g)].map((match) => match[1]);
   assert.deepEqual(tileOrder, slugs.filter((slug) => !["tech-stack", "portfolio-direction"].includes(slug)));
-  assert.equal((grid.match(/class="sp-tile-bar"/g) ?? []).length, 6, "every project tile has a title bar");
+  assert.equal((grid.match(/class="sp-tile-bar"/g) ?? []).length, 7, "every project tile has a title bar");
   assert.match(grid, /aria-label="Open post: Pinned\. Aura Logbook\./);
   assert.match(grid, /<span>POST \/v1\/pages<\/span><span class="sp-wide">Simplified<\/span>/);
   assert.match(grid, /src="\/assets\/75-days-shortcuts-overview\.png"/);
@@ -90,7 +90,7 @@ test("social profile uses a 935px centered column", async () => {
 
 test("project posts identify evidence and provide guided prototype steps", () => {
   const projects = PORTFOLIO_POSTS.filter(({ category }) => category === "project");
-  assert.equal(projects.length, 6);
+  assert.equal(projects.length, 7);
   for (const post of projects) {
     assert.ok(post.caseStudy, `${post.slug} should retain its full case-study route`);
     assert.ok(post.evidence.length > 30, `${post.slug} should explain evidence or current status`);

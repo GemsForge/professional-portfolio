@@ -16,6 +16,11 @@
     "Prepare the request",
     "Map the properties"
   ],
+  "dev-wiki": [
+    "Find a pattern",
+    "Read the why",
+    "Copy and apply"
+  ],
   "75-hard-automation": [
     "Check in",
     "Reuse workflow steps",

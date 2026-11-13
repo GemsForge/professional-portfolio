@@ -23,7 +23,8 @@ test("every non-profile page gets the redesign shell exactly once", () => {
     assert.equal((html.match(/src="\/assets\/projects-redesign\.js"/g) ?? []).length, 1, `${route} script count`);
     assert.equal((html.match(/class="rd-topbar"/g) ?? []).length, 1, `${route} top bar count`);
     assert.doesNotMatch(html, /<div class="wrap nav">/, `${route} still has the old header`);
-    assert.match(html, /gemsforge\.com\/knowledge.*?DevWiki|DevWiki[\s\S]*?gemsforge\.com\/knowledge/, `${route} footer has DevWiki`);
+    assert.match(html, /<a href="\/knowledge\/">DevWiki<\/a>/, `${route} footer has DevWiki`);
+    assert.match(html, /<a href="\/admin\/">Admin<\/a>/, `${route} footer has Admin`);
     assert.doesNotMatch(html, /<footer[\s\S]*?Diamond Brown/, `${route} footer brand is GemsForge only`);
   }
   for (const route of PROFILE_ROUTES) {
@@ -44,7 +45,8 @@ test("the shared top bar marks the active section for each route", () => {
 
 test("the shared footer has utility links and no primary nav duplicates", () => {
   const footer = renderFooter();
-  assert.match(footer, /gemsforge\.com\/knowledge/);
+  assert.match(footer, /<a href="\/admin\/">Admin<\/a>/);
+  assert.match(footer, /<a href="\/knowledge\/">DevWiki<\/a>/);
   assert.doesNotMatch(footer, /href="\/about\/"/);
   assert.doesNotMatch(footer, /diamond-brown-resume\.pdf/);
   assert.match(footer, /#main/);
@@ -58,7 +60,7 @@ test("applying the shell is idempotent and leaves profile routes alone", () => {
   const once = applySiteRedesign(source, "/about/");
   assert.equal(applySiteRedesign(once, "/about/"), once);
   assert.match(once, /<body class="x rd">/);
-  assert.match(once, /gemsforge\.com\/knowledge/);
+  assert.match(once, /<a href="\/knowledge\/">DevWiki<\/a>/);
   assert.equal(applySiteRedesign(source, "/"), source);
 });
 
@@ -71,7 +73,7 @@ test("projects index renders the featured band, filters, and filterable cards", 
   }
   assert.match(html, /data-filter-status aria-live="polite"/);
   const filters = [...html.matchAll(/<article class="project rd-post" data-filter="([a-z]+)">/g)].map(([, value]) => value);
-  assert.equal(filters.length, 6);
+  assert.equal(filters.length, 7);
   assert.deepEqual([...new Set(filters)].sort(), ["automation", "fullstack", "integration", "systems"]);
   assert.match(catalog, /focus: ProjectFocus;/);
 });

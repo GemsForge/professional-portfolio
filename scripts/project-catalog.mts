@@ -135,6 +135,19 @@ export const PROJECTS = {
     technologies: [{ label: "Apple Shortcuts", icon: "apple" }, { label: "Variables" }, { label: "Loops" }, { label: "File paths" }],
     focus: "automation",
   },
+  "dev-wiki": {
+    slug: "dev-wiki",
+    name: "GemsForge DevWiki",
+    description: "A personal technical knowledge base I built to centralize full-stack development patterns, best practices, and guides — written in my own words so they're actually searchable and useful.",
+    preTitle: "Personal knowledge base · Full-stack documentation",
+    primaryTools: "Notion · Technical writing · Information architecture",
+    image: "/assets/dev-wiki.svg",
+    imageAlt: "Illustration of a searchable technical documentation hub with categorized articles and code examples",
+    cardTitle: "My own searchable reference — built, not borrowed.",
+    cardLinkLabel: "Explore GemsForge DevWiki",
+    technologies: [{ label: "Technical writing" }, { label: "Notion" }, { label: "Information architecture" }],
+    focus: "systems",
+  },
   "notion-api-shortcuts": {
     slug: "notion-api-shortcuts",
     name: "Notion API integration",
@@ -208,6 +221,23 @@ export const PORTFOLIO_POSTS: PortfolioPostDefinition[] = [
       { title: "Start with a link", detail: "Pass a Notion page or database link to the Shortcut.", hotspot: { x: 42, y: 28, label: "Link intake" } },
       { title: "Prepare the request", detail: "Extract the target ID and prepare authentication.", hotspot: { x: 60, y: 48, label: "Target and auth" } },
       { title: "Map the properties", detail: "Format typed values before sending the API request.", hotspot: { x: 47, y: 71, label: "Property mapping" } },
+    ],
+  },
+  {
+    slug: "dev-wiki", title: "GemsForge DevWiki", category: "project", eyebrow: "Personal knowledge base · Full-stack documentation",
+    caption: "A searchable Notion hub I built to centralize full-stack patterns, best practices, and guides in my own words.", image: "/assets/dev-wiki.svg", imageAlt: "Technical documentation hub with categorized articles and code examples",
+    role: "Identified the knowledge gap, designed the information architecture, and wrote every article.",
+    decisions: [
+      "Organize by technology and concept, not by date, so entries stay useful as reference rather than a diary.",
+      "Write the why behind each pattern, not just the syntax, so the article teaches rather than just shows.",
+    ],
+    evidence: "Live at gemsforge.com/knowledge. Covers React/TypeScript, C#/.NET, SQL, accessibility, and debugging approaches.",
+    tools: ["Notion", "Technical writing", "Information architecture", "React", "TypeScript", "C#/.NET", "SQL"],
+    caseStudy: "/portfolio/projects/dev-wiki/",
+    walkthrough: [
+      { title: "Find a pattern", detail: "Search or browse by technology to find the relevant guide.", hotspot: { x: 50, y: 28, label: "Knowledge search" } },
+      { title: "Read the why", detail: "Each article explains the reason behind the pattern, not just the syntax or the what.", hotspot: { x: 55, y: 52, label: "Pattern context" } },
+      { title: "Copy and apply", detail: "Code examples and checklists you can apply directly to your own work.", hotspot: { x: 48, y: 73, label: "Reference material" } },
     ],
   },
   {

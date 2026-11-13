@@ -37,11 +37,12 @@ export function renderTopBar(route) {
 }
 
 /**
- * Renders the shared footer. Projects and Contact are omitted — the top bar
- * covers primary nav. DevWiki and Résumé serve as utility/secondary links.
+ * Renders the shared footer. Primary nav lives in the top bar, so the footer
+ * carries only the utility links: the owner Admin tools, the public Dev Wiki,
+ * and back-to-top.
  */
 export function renderFooter() {
-  return `<footer class="footer"><div class="wrap"><div class="footer-brand"><img src="/assets/brandmark.png" alt="" width="45" height="45"><span>© 2026 GemsForge</span></div><nav aria-label="Footer navigation"><a href="https://www.gemsforge.com/knowledge">DevWiki</a><a href="#main">Back to top ↑</a></nav></div></footer>`;
+  return `<footer class="footer"><div class="wrap"><div class="footer-brand"><img src="/assets/brandmark.png" alt="" width="45" height="45"><span>© 2026 GemsForge</span></div><nav aria-label="Footer navigation"><a href="/admin/">Admin</a><a href="/knowledge/">DevWiki</a><a href="#main">Back to top ↑</a></nav></div></footer>`;
 }
 
 /**

@@ -12,6 +12,7 @@ export const PROJECT_REGISTRY = [
   { slug: "apple-ecosystem", label: "Apple-native operating system" },
   { slug: "dynamic-folder-structures", label: "Dynamic folder structures" },
   { slug: "notion-api-shortcuts", label: "Notion API integration" },
+  { slug: "dev-wiki", label: "GemsForge DevWiki" },
 ] as const;
 
 export const PROJECTS = PROJECT_REGISTRY.map(({ slug }) => slug) as [string, ...string[]];
