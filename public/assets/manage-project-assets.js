@@ -50,7 +50,7 @@ function selectStep(stepName, updateUrl = true) {
 function setWikiMessage(text, isError = false) {
   wikiMessage.textContent = text;
   wikiMessage.setAttribute("role", isError ? "alert" : "status");
-  wikiMessage.style.color = isError ? "#9b2c2c" : "";
+  wikiMessage.style.color = isError ? "var(--error)" : "";
 }
 
 /** Matches the server rule: records saved before publishing existed have no flag and are live. */

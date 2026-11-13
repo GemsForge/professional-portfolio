@@ -6,6 +6,7 @@
     <meta name="robots" content="noindex,nofollow">
     <title>Manage Project Assets · GemsForge</title>
     <link rel="stylesheet" href="/assets/site.css">
+    <script src="/assets/theme.js"></script>
     <style>
       /* ---- Design tokens (wireframe-exact set; fallback when site.css omits them) ---- */
       :root{
@@ -17,6 +18,10 @@
         --body:"Instrument Sans","Avenir Next",Avenir,"Segoe UI",Arial,sans-serif;
         --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
       }
+      /* Admin-only extras; shared tokens (--bg, --surface, --ink, --muted, --line) take their dark values from site.css. */
+      :root{--draft-bg:#f3e8d2;--error:#9b2c2c}
+      @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--sage-soft:#28352e;--gold-ink:#e3c48a;--draft-bg:#3a3020;--error:#f2a7a0;--shadow:0 18px 45px rgba(0,0,0,.4)}}
+      :root[data-theme="dark"]{--sage-soft:#28352e;--gold-ink:#e3c48a;--draft-bg:#3a3020;--error:#f2a7a0;--shadow:0 18px 45px rgba(0,0,0,.4)}
       *, *::before, *::after{box-sizing:border-box}
       body{background:var(--bg);color:var(--ink);font:15px/1.6 var(--body,system-ui);margin:0}
       a{color:inherit}
@@ -96,11 +101,11 @@
       .ws-callout{
         display:grid;gap:1px;padding:9px 13px;
         border-left:4px solid var(--forest-2);border-radius:0 8px 8px 0;
-        background:rgba(228,232,219,.75);font-size:13.5px;
+        background:var(--sage-soft);font-size:13.5px;
         margin-bottom:14px}
       .ws-callout strong{
         font:600 10px var(--mono);letter-spacing:.08em;
-        text-transform:uppercase;color:var(--forest-2)}
+        text-transform:uppercase;color:var(--accent-text)}
       /* Live status feedback */
       #message{min-height:1.4em;font-weight:600;font-size:13px;color:var(--muted)}
 
@@ -203,8 +208,8 @@
       .ws-chip{
         font:600 11px var(--mono);padding:4px 9px;
         border-radius:999px;justify-self:start;white-space:nowrap}
-      .ws-chip.pub{background:var(--sage-soft);color:var(--forest-2)}
-      .ws-chip.draft{background:#f3e8d2;color:var(--gold-ink)}
+      .ws-chip.pub{background:var(--sage-soft);color:var(--accent-text)}
+      .ws-chip.draft{background:var(--draft-bg);color:var(--gold-ink)}
       /* Actions column */
       .ws-act{
         font:600 12px var(--body);color:var(--gold-ink);
