@@ -195,7 +195,8 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid #90
 /* Keep supplied employer marks contained inside the existing circular highlight frame. */
 .sp-highlight-ring>img{width:100%;height:100%;padding:4px;border-radius:50%;object-fit:contain}
 .sp-highlight-ring svg{width:28px;height:28px;fill:none;stroke:#1e2823;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.sp-highlight-dark{background:#47714e;color:#f4f2e8}
+.sp-highlight-adp{background:#f0ede0;color:#1e2823}
+.sp-highlight-resume{border-color:#8eaf8b;background:#b5d7b6}
 .sp-highlight-sage{background:#dfe6dc}
 .sp-highlight-light{background:#e8ece4}
 .sp-highlight-quiet{border-color:#b9b6a6;background:#f0ede0}
@@ -317,7 +318,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid #90
 .sp-story-avatar{display:flex;width:40px;height:40px;flex:none;align-items:center;justify-content:center;border-radius:50%;background:#f4f2e8;color:#1e2823;font-size:13px;font-weight:700}
 /* Story headings provide the organization names, so their matching marks stay decorative. */
 .sp-story-avatar img{width:100%;height:100%;padding:3px;border-radius:50%;object-fit:contain}
-.sp-story-avatar-adp{background:#47714e}
+.sp-story-avatar-adp{background:#f0ede0}
 .sp-story-avatar-ust{background:#231f20}
 .sp-story-avatar-army{background:#fff}
 .sp-story-close{width:44px;height:44px;border:0;border-radius:50%;background:transparent;color:#f4f2e8;font-size:28px;line-height:1;cursor:pointer}
