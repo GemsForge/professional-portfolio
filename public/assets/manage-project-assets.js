@@ -172,7 +172,38 @@ function wikiRow(resource) {
     edit.setAttribute("aria-expanded", "true");
     panel.querySelector("input[name=title]").focus();
   });
-  actionGroup.append(toggle, textElement("span", "·", "muted"), edit);
+  // Delete is permanent (record and file), so it swaps the actions for an inline confirmation first.
+  const remove = textElement("button", "Delete", "ws-link-btn ws-link-danger");
+  remove.type = "button";
+  remove.setAttribute("aria-label", `Delete ${resource.title}`);
+  remove.addEventListener("click", () => {
+    const confirmGroup = document.createElement("div");
+    confirmGroup.className = "ws-row-actions";
+    confirmGroup.setAttribute("role", "group");
+    confirmGroup.setAttribute("aria-label", `Confirm deleting ${resource.title}`);
+    const yes = textElement("button", "Delete permanently", "ws-link-btn ws-link-danger");
+    yes.type = "button";
+    const no = textElement("button", "Cancel", "ws-link-btn");
+    no.type = "button";
+    no.addEventListener("click", () => { confirmGroup.replaceWith(actionGroup); remove.focus(); });
+    yes.addEventListener("click", async () => {
+      yes.disabled = no.disabled = true;
+      try {
+        const response = await fetch(`/api/knowledge/${encodeURIComponent(resource.id)}`, { method: "DELETE", cache: "no-store" });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.error || "Could not delete this reference.");
+        setWikiMessage(`${resource.title} deleted.`);
+        await loadWikiReferences();
+      } catch (error) {
+        setWikiMessage(error.message, true);
+        yes.disabled = no.disabled = false;
+      }
+    });
+    confirmGroup.append(yes, no);
+    actionGroup.replaceWith(confirmGroup);
+    no.focus();
+  });
+  actionGroup.append(toggle, textElement("span", "·", "muted"), edit, textElement("span", "·", "muted"), remove);
   actions.append(actionGroup);
   // Captions for the stacked card layout the table switches to in a narrow panel.
   [[status, "Status"], [published, "Published"]].forEach(([cell, label]) => { cell.dataset.label = label; });
