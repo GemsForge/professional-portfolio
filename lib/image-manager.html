@@ -446,22 +446,62 @@
               </section>
 
               <!-- ======= Panel 3: Walkthrough Uploader =======
-                   Lazy-loads /admin/walkthrough/uploader on first tab switch via
-                   the inline script below (mirrors manage-project-assets.js pattern). -->
+                   Inline form matching the wireframe; no iframe needed since
+                   walkthrough step uploads use the same /admin/assets endpoint
+                   as the Project Assets form. -->
               <section id="walkthrough-uploader-step" class="ws-panel"
                 data-workspace-panel="walkthrough-uploader"
                 aria-labelledby="walkthrough-uploader-heading" hidden>
                 <h3 id="walkthrough-uploader-heading">Walkthrough Uploader</h3>
                 <p class="sub">Add or update a step image in a project's portfolio walkthrough carousel.</p>
-                <aside class="ws-callout" role="note"
+                <aside class="ws-callout" id="wt-uploader-help" role="note"
                   aria-label="Accepted walkthrough file types">
                   <strong>Images only · up to 50 MB</strong>
                   <span>PNG, JPEG, or WebP — portrait orientation recommended</span>
                 </aside>
-                <iframe id="walkthrough-uploader-frame" class="ws-frame"
-                  title="Walkthrough step uploader form and step list"
-                  aria-describedby="walkthrough-uploader-heading"
-                  loading="lazy"></iframe>
+                <p id="wt-message" role="status" aria-live="polite" style="min-height:1.4em;font-weight:600;font-size:13px;color:var(--muted)"></p>
+                <form id="walkthrough-form">
+                  <div class="ws-form">
+                    <div class="ws-field">
+                      <small>Project</small>
+                      <select id="wt-project" name="project"><!--PROJECT_OPTIONS--></select>
+                    </div>
+                    <div class="ws-field">
+                      <small>Step number</small>
+                      <select id="wt-step" name="step">
+                        <option value="">Select a step…</option>
+                      </select>
+                    </div>
+                    <div class="ws-field full">
+                      <small>Step label <span style="font-weight:400;opacity:.75">· optional</span></small>
+                      <input id="wt-label" name="stepLabel" maxlength="120"
+                        placeholder="e.g. Check-In Detail">
+                    </div>
+                    <div class="ws-field full">
+                      <small>Image file</small>
+                      <input type="file" id="wt-image" name="file"
+                        accept="image/png,image/jpeg,image/webp"
+                        required aria-describedby="wt-uploader-help">
+                    </div>
+                    <div class="ws-field full">
+                      <small>Alt text <b>· required</b></small>
+                      <input id="wt-alt" name="alt" maxlength="500" required
+                        aria-describedby="wt-alt-help">
+                      <p id="wt-alt-help" class="ws-help">Describe the step image. Used by screen readers and search engines.</p>
+                    </div>
+                    <div class="ws-field full" style="margin-top:4px">
+                      <button class="ws-btn-gold" type="submit">Upload step as draft</button>
+                    </div>
+                  </div>
+                </form>
+                <div class="ws-list-head">
+                  <div>
+                    <h4 id="wt-steps-heading">Walkthrough steps</h4>
+                    <p>Select a project above to see its current walkthrough steps.</p>
+                  </div>
+                </div>
+                <div id="wt-step-list" role="list"
+                  aria-labelledby="wt-steps-heading"></div>
               </section>
 
             </div>
@@ -497,20 +537,6 @@
     <!--WALKTHROUGH_STEPS-->
     <script type="module" src="/assets/image-manager.js"></script>
     <script type="module" src="/assets/manage-project-assets.js"></script>
-
-    <!-- Lazy-loads the walkthrough uploader iframe the first time that tab is selected,
-         mirroring the wiki-uploader lazy-load pattern in manage-project-assets.js. -->
-    <script>
-    (function () {
-      var btn = document.querySelector('[data-workspace-step="walkthrough-uploader"]');
-      var frame = document.getElementById('walkthrough-uploader-frame');
-      if (btn && frame) {
-        btn.addEventListener('click', function () {
-          if (!frame.src) frame.src = new URL('/admin/walkthrough/uploader', location.href).toString();
-        });
-      }
-    })();
-    </script>
 
     <!-- Augments each .managed-image article rendered by image-manager.js into the
          wireframe .ws-row grid:
