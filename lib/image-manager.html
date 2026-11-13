@@ -295,20 +295,17 @@
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
-    <!-- Site header — matches the shared header on About, project, and knowledge pages -->
-    <header>
-      <div class="wrap nav">
-        <a class="brand" href="/" aria-label="Diamond Brown portfolio home">
-          <img src="/assets/brandmark.png" alt="" width="66" height="66">
-          <span>Diamond Brown<small>Software Development &amp; Systems</small></span>
-        </a>
-        <nav class="links" aria-label="Portfolio navigation">
+    <!-- Site header — matches the sp-topbar used on the main portfolio (index.html) -->
+    <header class="sp-topbar">
+      <nav class="sp-topbar-inner" aria-label="Portfolio navigation">
+        <a class="sp-handle" href="/" aria-label="Diamond Brown portfolio home">diamond.brown</a>
+        <div class="sp-topbar-links">
           <a href="/portfolio/projects/">Projects</a>
           <a href="/about/">About</a>
-          <a href="/assets/diamond-brown-resume.pdf">Resume</a>
+          <a href="/assets/diamond-brown-resume.pdf">Résumé</a>
           <a href="/contact/">Contact</a>
-        </nav>
-      </div>
+        </div>
+      </nav>
     </header>
     <div class="page-wrap">
       <!-- .ws card: the owner workspace, displayed as a card matching the wireframe.
@@ -624,18 +621,17 @@
       </div>
     </div>
 
-    <!-- Site footer — matches the shared footer on About, project, and knowledge pages -->
-    <footer class="footer">
+    <!-- Site footer — matches the creator-footer used on the main portfolio (index.html) -->
+    <footer class="footer creator-footer">
       <div class="wrap">
         <div class="footer-brand">
           <img src="/assets/brandmark.png" alt="" width="45" height="45">
           <span>© 2026 Diamond Brown · GemsForge</span>
         </div>
         <nav aria-label="Footer navigation">
-          <a href="/portfolio/projects/">Projects</a>
-          <a href="/assets/diamond-brown-resume.pdf">Resume</a>
-          <a href="/contact/">Contact</a>
-          <a href="#main">Back to top ↑</a>
+          <a href="/portfolio/projects/">All project stories</a>
+          <a href="/about/">About</a>
+          <a href="/assets/diamond-brown-resume.pdf">Résumé</a>
         </nav>
       </div>
     </footer>
