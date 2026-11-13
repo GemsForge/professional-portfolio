@@ -89,7 +89,7 @@ export const PROJECTS = {
     preTitle: "Mobile-first reflection journal",
     primaryTools: "React · React Native · Expo · TypeScript · .NET · SQLite · Dapper",
     // Use the Earth-theme phone-and-desktop composite with the approved app logo overlay.
-    image: "/assets/auralogbook-tour/earth-dark-pair-logo-overlay.png",
+    image: "/assets/auralogbook-tour/earth-dark-pair-logo-overlay-transparent.png",
     imageAlt: "Earth-theme Aura Logbook phone and desktop screens under the app logo",
     cardTitle: "A calmer space to check in and reflect.",
     cardLinkLabel: "Explore Aura Logbook",
