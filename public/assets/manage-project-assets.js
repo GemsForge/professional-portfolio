@@ -107,6 +107,10 @@ function editRow(resource, row) {
   form.elements.title.value = resource.title;
   wikiFolders.forEach(([path, label]) => form.elements.folder.append(new Option(label, path)));
   form.elements.folder.value = resource.folder;
+  // Escape backs out of the editor the same way Cancel does.
+  form.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") { event.preventDefault(); form.querySelector("[data-cancel]").click(); }
+  });
   form.querySelector("[data-cancel]").addEventListener("click", () => {
     editRowElement.remove();
     row.querySelector("[data-edit]").setAttribute("aria-expanded", "false");
@@ -195,6 +199,10 @@ function wikiRow(resource) {
     const no = textElement("button", "Cancel", "ws-link-btn");
     no.type = "button";
     no.addEventListener("click", () => { confirmGroup.replaceWith(actionGroup); remove.focus(); });
+    // Escape cancels the delete, never confirms it.
+    confirmGroup.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && !no.disabled) { event.preventDefault(); no.click(); }
+    });
     yes.addEventListener("click", async () => {
       yes.disabled = no.disabled = true;
       try {
