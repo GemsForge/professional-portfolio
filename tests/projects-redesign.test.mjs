@@ -81,6 +81,6 @@ test("case study leads with a pausable story carousel and keeps its evidence", (
 test("the ADP career page leads with onboarding and accessibility impact", () => {
   const html = pages["/work/enterprise-applications/"];
   assert.match(html, /<section class="rd-impact" aria-label="Impact at ADP">[\s\S]*?2 weeks → 3 days[\s\S]*?onboarding program[\s\S]*?Led WCAG refactor[\s\S]*?WCAG refactor across/);
-  assert.match(html, /What accessibility taught me/);
+  assert.match(html, /Accessibility impact/);
   assert.match(html, /onboarding figure is self-reported/);
 });
