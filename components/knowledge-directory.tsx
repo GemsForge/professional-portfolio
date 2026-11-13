@@ -366,7 +366,7 @@ const shelfReferences: {
 }[] = [
   {
     id: "governance",
-    title: "🧭 Governance shelf",
+    title: "Governance shelf",
     description: "Shared standards and reusable ways of working.",
     items: [
       {
@@ -374,11 +374,11 @@ const shelfReferences: {
         resourceTitle: "Technology and coding standards",
       },
       {
-        title: "💎 GemsForge coding preferences",
+        title: "GemsForge coding preferences",
         resourceTitle: "GemsForge coding preferences",
       },
       {
-        title: "📌 Knowledge base source of truth",
+        title: "Knowledge base source of truth",
         resourceTitle: "Knowledge base source of truth",
       },
       {
@@ -402,7 +402,7 @@ const shelfReferences: {
   },
   {
     id: "delivery",
-    title: "✅ Delivery references",
+    title: "Delivery references",
     description: "Checklists and templates for delivering work consistently.",
     items: [
       { title: "Definition of Done", resourceTitle: "Definition of Done" },

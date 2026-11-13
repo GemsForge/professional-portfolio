@@ -53,8 +53,9 @@
 .library-panel{min-width:0;scroll-margin-top:80px;overflow-wrap:anywhere}
 .library-panel h2{margin:0 0 4px;font-size:22px;letter-spacing:-.4px}
 .library-panel>p{margin:0 0 14px;color:var(--muted);font-size:14px}
-.library-panel ul{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
-.library-panel li{padding:10px 0;border-bottom:1px solid var(--line);font-size:15px}
+/* Shelf indexes are plain link lists: spacing alone separates entries, no rules. */
+.library-panel ul{list-style:none;margin:0;padding:0}
+.library-panel li{padding:6px 0;font-size:15px}
 .library-panel li a{color:var(--ink);text-decoration:none}
 .library-panel li a:hover{color:var(--forest);text-decoration:underline;text-underline-offset:4px}
 .library-panel li>span{color:var(--muted)}
