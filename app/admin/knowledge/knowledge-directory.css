@@ -98,6 +98,8 @@
 .knowledge-markdown li+li{margin-top:.35em}
 .knowledge-markdown blockquote{padding:4px 18px;border-left:4px solid var(--green);color:var(--muted)}
 .knowledge-markdown mark{padding:.08em .2em;background:#f5d98b;color:inherit;border-radius:3px}
+.knowledge-markdown .knowledge-unresolved-link{border-bottom:1px dashed currentColor;cursor:help}
+.knowledge-markdown li>ul,.knowledge-markdown li>ol{margin:.25rem 0}
 .knowledge-markdown pre{max-width:100%;overflow:auto;padding:18px;border-radius:4px;background:#202a25;color:#f5f4ec;font-size:.88em;line-height:1.55}
 .knowledge-markdown .mermaid{display:flex;justify-content:center;max-width:100%;overflow:auto;padding:18px;border-radius:4px;background:#202a25;color:#f5f4ec;line-height:1.35}
 .knowledge-markdown .mermaid svg{max-width:100%;height:auto}

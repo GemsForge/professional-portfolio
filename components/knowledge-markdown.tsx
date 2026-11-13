@@ -1,4 +1,5 @@
 import { useEffect, useRef, type ReactNode } from "react";
+import { classifyLink, LIST_ITEM_PATTERN, parseListBlock, UNRESOLVED_LINK_TITLE, type ListNode } from "@/lib/knowledge-markdown-syntax";
 
 declare global {
   interface Window { mermaid?: { initialize: (options: Record<string, unknown>) => void; run: (options: { nodes: HTMLElement[] }) => Promise<void>; }; }
@@ -30,6 +31,12 @@ function MermaidBlock({ source }: { source: string }) {
     return () => { cancelled = true; };
   }, [source]);
   return <div ref={ref} className="mermaid" role="img" aria-label="Mermaid diagram">{source}</div>;
+}
+
+/** Renders one parsed list level, recursing into nested child lists inside each `<li>`. */
+function MarkdownList({ list }: { list: ListNode }) {
+  const items = list.items.map((item, itemIndex) => <li key={itemIndex}>{inline(item.text)}{item.children.map((child, childIndex) => <MarkdownList key={childIndex} list={child} />)}</li>);
+  return list.ordered ? <ol>{items}</ol> : <ul>{items}</ul>;
 }
 
 /** Renders the common handbook Markdown subset without interpreting embedded HTML. */
@@ -81,17 +88,10 @@ export function KnowledgeMarkdown({ source }: { /** Markdown source text from th
       continue;
     }
 
-    const listMatch = line.match(/^\s*(?:([-+*])|(\d+)[.)])\s+(.+)$/);
-    if (listMatch) {
-      const ordered = Boolean(listMatch[2]);
-      const items: ReactNode[] = [];
-      while (index < lines.length) {
-        const item = lines[index].match(/^\s*(?:([-+*])|(\d+)[.)])\s+(.+)$/);
-        if (!item || Boolean(item[2]) !== ordered) break;
-        items.push(<li key={items.length}>{inline(item[3])}</li>);
-        index += 1;
-      }
-      blocks.push(ordered ? <ol key={key++}>{items}</ol> : <ul key={key++}>{items}</ul>);
+    if (LIST_ITEM_PATTERN.test(line)) {
+      const { lists, next } = parseListBlock(lines, index);
+      for (const list of lists) blocks.push(<MarkdownList key={key++} list={list} />);
+      index = next;
       continue;
     }
 
@@ -126,11 +126,10 @@ function inline(text: string): ReactNode[] {
     if (match.index > previous) result.push(text.slice(previous, match.index));
     const key = `inline-${match.index}`;
     if (match[2] && match[3]) {
-      let protocol = "";
-      try { protocol = new URL(match[3], "https://library.invalid").protocol; } catch { /* Render unsafe or malformed destinations as text. */ }
-      result.push(["https:", "http:", "mailto:"].includes(protocol)
+      // Only absolute web/mail links become anchors; relative or unsafe ones stay visibly unlinked.
+      result.push(classifyLink(match[3]) === "external"
         ? <a key={key} href={match[3]} title={match[4]}>{match[2]}</a>
-        : match[2]);
+        : <span key={key} className="knowledge-unresolved-link" title={UNRESOLVED_LINK_TITLE}>{match[2]}</span>);
     } else if (match[5]) result.push(<code key={key}>{match[5]}</code>);
     else if (match[6]) result.push(<mark key={key}>{match[6]}</mark>);
     else if (match[7] || match[8]) result.push(<strong key={key}>{match[7] || match[8]}</strong>);
