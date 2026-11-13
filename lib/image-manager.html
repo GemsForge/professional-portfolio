@@ -444,9 +444,8 @@
               </section>
 
               <!-- ======= Panel 2: Wiki Page Uploader =======
-                   Inline form matching the wireframe, with a hidden stub iframe that
-                   preserves the #wiki-uploader-frame element required by
-                   manage-project-assets.js (which calls uploaderFrame.src on tab switch). -->
+                   Inline form matching the wireframe; manage-project-assets.js fills the
+                   folder list, uploads to /api/knowledge, and renders saved references. -->
               <section id="wiki-uploader-step" class="ws-panel"
                 data-workspace-panel="wiki-uploader"
                 aria-labelledby="wiki-uploader-heading" hidden>
@@ -459,9 +458,9 @@
                 </aside>
                 <p id="wiki-message" role="status" aria-live="polite" style="min-height:1.4em;font-weight:600;font-size:13px;color:var(--muted)"></p>
                 <!-- Form fields styled to match ws-form/ws-field compact sage-soft treatment.
-                     Posts to the same knowledge uploader endpoint that the iframe targets. -->
+                     manage-project-assets.js submits it to /api/knowledge; the action is the no-script fallback. -->
                 <form id="wiki-upload-form"
-                  action="/admin/knowledge/uploader" method="post"
+                  action="/api/knowledge" method="post"
                   enctype="multipart/form-data">
                   <div class="ws-form">
                     <div class="ws-field full">
@@ -470,8 +469,8 @@
                         aria-describedby="wiki-uploader-help">
                     </div>
                     <div class="ws-field">
-                      <small>Library folder</small>
-                      <select id="wiki-folder" name="folder" data-wiki-folder>
+                      <small>Library folder <b>· required</b></small>
+                      <select id="wiki-folder" name="folder" required data-wiki-folder>
                         <option value="">Select a folder…</option>
                       </select>
                     </div>
@@ -503,7 +502,7 @@
                 <div class="ws-list-head">
                   <div>
                     <h4 id="wiki-refs-heading">Saved references</h4>
-                    <p>Switch to this tab to load the directory listing.</p>
+                    <p id="wiki-refs-status">Loading saved references…</p>
                   </div>
                   <span class="ws-search" role="search" aria-label="Filter references">Filter references…</span>
                 </div>
@@ -525,12 +524,6 @@
                     </tr>
                   </tbody>
                 </table>
-
-                <!-- Hidden stub iframe required by manage-project-assets.js which checks
-                     uploaderFrame.src on the wiki-uploader tab; the frame is not visible
-                     and does not receive focus. -->
-                <iframe id="wiki-uploader-frame" src="" style="display:none"
-                  aria-hidden="true" tabindex="-1" title=""></iframe>
               </section>
 
               <!-- ======= Panel 3: Walkthrough Uploader =======
