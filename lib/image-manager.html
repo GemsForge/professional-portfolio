@@ -239,8 +239,12 @@
         color:var(--muted);cursor:pointer}
       .ws-btn-delete:hover{color:#c0392b;border-color:#c0392b}
 
-      /* Wiki / walkthrough iframes */
-      .ws-frame{display:block;width:100%;min-height:600px;border:0;background:transparent}
+      /* Filter pill (wiki saved references) */
+      .ws-search{
+        background:var(--sage-soft);border-radius:999px;padding:8px 14px;
+        font:13px var(--body);color:var(--muted);min-width:170px;white-space:nowrap}
+      /* Utility */
+      .visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
 
       /* ======= Right rail — matches wireframe .ws-rail exactly ======= */
       .ws-rail{display:flex;flex-direction:column;gap:14px;min-width:0}
@@ -291,6 +295,21 @@
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
+    <!-- Site header — matches the shared header on About, project, and knowledge pages -->
+    <header>
+      <div class="wrap nav">
+        <a class="brand" href="/" aria-label="Diamond Brown portfolio home">
+          <img src="/assets/brandmark.png" alt="" width="66" height="66">
+          <span>Diamond Brown<small>Software Development &amp; Systems</small></span>
+        </a>
+        <nav class="links" aria-label="Portfolio navigation">
+          <a href="/portfolio/projects/">Projects</a>
+          <a href="/about/">About</a>
+          <a href="/assets/diamond-brown-resume.pdf">Resume</a>
+          <a href="/contact/">Contact</a>
+        </nav>
+      </div>
+    </header>
     <div class="page-wrap">
       <!-- .ws card: the owner workspace, displayed as a card matching the wireframe.
            manage-project-assets.js drives tab switching via [data-workspace-step] buttons
@@ -427,22 +446,93 @@
               </section>
 
               <!-- ======= Panel 2: Wiki Page Uploader =======
-                   manage-project-assets.js lazy-loads the iframe src to
-                   /admin/knowledge/uploader on first switch to this tab. -->
+                   Inline form matching the wireframe, with a hidden stub iframe that
+                   preserves the #wiki-uploader-frame element required by
+                   manage-project-assets.js (which calls uploaderFrame.src on tab switch). -->
               <section id="wiki-uploader-step" class="ws-panel"
                 data-workspace-panel="wiki-uploader"
                 aria-labelledby="wiki-uploader-heading" hidden>
                 <h3 id="wiki-uploader-heading">Wiki Page Uploader</h3>
-                <p class="sub">Upload reference files and manage your Developer Wiki directory.</p>
-                <aside class="ws-callout" role="note"
+                <p class="sub">Uploads are saved to your owner-only Developer Wiki.</p>
+                <aside class="ws-callout" id="wiki-uploader-help" role="note"
                   aria-label="Accepted wiki file types">
                   <strong>Accepted files · up to 20 MB</strong>
                   <span>PDF, DOCX, Markdown, HTML, text, PNG, JPEG, WebP, or TIFF</span>
                 </aside>
-                <iframe id="wiki-uploader-frame" class="ws-frame"
-                  title="Wiki Page Uploader form and saved references"
-                  aria-describedby="wiki-uploader-heading"
-                  loading="lazy"></iframe>
+                <p id="wiki-message" role="status" aria-live="polite" style="min-height:1.4em;font-weight:600;font-size:13px;color:var(--muted)"></p>
+                <!-- Form fields styled to match ws-form/ws-field compact sage-soft treatment.
+                     Posts to the same knowledge uploader endpoint that the iframe targets. -->
+                <form id="wiki-upload-form"
+                  action="/admin/knowledge/uploader" method="post"
+                  enctype="multipart/form-data">
+                  <div class="ws-form">
+                    <div class="ws-field full">
+                      <small>Title <b>· required</b></small>
+                      <input id="wiki-title" name="title" required maxlength="200"
+                        aria-describedby="wiki-uploader-help">
+                    </div>
+                    <div class="ws-field">
+                      <small>Library folder</small>
+                      <select id="wiki-folder" name="folder" data-wiki-folder>
+                        <option value="">Select a folder…</option>
+                      </select>
+                    </div>
+                    <div class="ws-field">
+                      <small>Area</small>
+                      <select id="wiki-area" name="area">
+                        <option value="">Select an area…</option>
+                        <option>Frontend</option>
+                        <option>Backend</option>
+                        <option>Data</option>
+                        <option>Accessibility</option>
+                        <option>Operations</option>
+                        <option>General</option>
+                      </select>
+                    </div>
+                    <div class="ws-field full">
+                      <small>Reference file <b>· required</b></small>
+                      <input type="file" id="wiki-file" name="file" required
+                        accept=".pdf,.docx,.md,.html,.txt,image/png,image/jpeg,image/webp,image/tiff"
+                        aria-describedby="wiki-uploader-help">
+                    </div>
+                    <div class="ws-field full" style="margin-top:4px">
+                      <button class="ws-btn-gold" type="submit">Add to directory</button>
+                    </div>
+                  </div>
+                </form>
+
+                <!-- Saved references list -->
+                <div class="ws-list-head">
+                  <div>
+                    <h4 id="wiki-refs-heading">Saved references</h4>
+                    <p>Switch to this tab to load the directory listing.</p>
+                  </div>
+                  <span class="ws-search" role="search" aria-label="Filter references">Filter references…</span>
+                </div>
+                <table class="ws-table" aria-labelledby="wiki-refs-heading">
+                  <thead>
+                    <tr>
+                      <th scope="col">File name</th>
+                      <th scope="col">Type</th>
+                      <th scope="col">Area</th>
+                      <th scope="col">Status</th>
+                      <th scope="col"><span class="visually-hidden">Actions</span></th>
+                    </tr>
+                  </thead>
+                  <tbody id="wiki-refs-body">
+                    <tr>
+                      <td colspan="5" style="color:var(--muted);font-size:13px;padding:16px 10px">
+                        No references yet. Upload a file above to add your first entry.
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <!-- Hidden stub iframe required by manage-project-assets.js which checks
+                     uploaderFrame.src on the wiki-uploader tab; the frame is not visible
+                     and does not receive focus. -->
+                <iframe id="wiki-uploader-frame" src="" style="display:none"
+                  aria-hidden="true" tabindex="-1" title=""></iframe>
               </section>
 
               <!-- ======= Panel 3: Walkthrough Uploader =======
@@ -533,6 +623,22 @@
         </main>
       </div>
     </div>
+
+    <!-- Site footer — matches the shared footer on About, project, and knowledge pages -->
+    <footer class="footer">
+      <div class="wrap">
+        <div class="footer-brand">
+          <img src="/assets/brandmark.png" alt="" width="45" height="45">
+          <span>© 2026 Diamond Brown · GemsForge</span>
+        </div>
+        <nav aria-label="Footer navigation">
+          <a href="/portfolio/projects/">Projects</a>
+          <a href="/assets/diamond-brown-resume.pdf">Resume</a>
+          <a href="/contact/">Contact</a>
+          <a href="#main">Back to top ↑</a>
+        </nav>
+      </div>
+    </footer>
 
     <!--WALKTHROUGH_STEPS-->
     <script type="module" src="/assets/image-manager.js"></script>
