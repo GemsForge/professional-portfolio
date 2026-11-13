@@ -164,7 +164,9 @@ body.rd .pagehero .breadcrumb{color:var(--rd-on-forest-muted);font:13px var(--rd
 body.rd .pagehero a{color:var(--rd-on-forest)}
 body.rd .pagehero .tags{color:var(--rd-gold);font:13px var(--rd-mono)}
 body.rd .pagehero .pagehero-employer-logo{margin:0 0 14px}
-body.rd .pagehero .pagehero-employer-logo img{display:block;height:34px;width:auto;padding:5px 10px;background:#f0ede0;border-radius:8px}
+body.rd .pagehero .pagehero-employer-logo img{display:block;height:34px;width:auto;padding:5px 10px;border-radius:8px}
+body.rd .pagehero .pagehero-employer-logo--light img{background:#f0ede0}
+body.rd .pagehero .pagehero-employer-logo--dark img{background:#1e2823}
 body.rd .pagehero .case-banner{padding:0;border:0;background:none;box-shadow:none;backdrop-filter:none}
 body.rd .pagehero .case-banner>img,body.rd .pagehero .case-banner-media{border-radius:28px;background:var(--rd-bg);box-shadow:0 30px 60px rgba(0,0,0,.35)}
 body.rd .pagehero .case-banner>img{padding:18px;box-sizing:border-box}
