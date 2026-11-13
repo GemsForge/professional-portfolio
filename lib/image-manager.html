@@ -298,10 +298,11 @@
       .ws-table th{font:600 10px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
       .ws-table td{padding:11px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
       .ws-table td small{display:block;color:var(--muted)}
+      .ws-table .ws-ref-meta{font:600 10px var(--mono);letter-spacing:.06em;text-transform:uppercase;margin-top:2px}
       /* Cells wrap instead of widening the table; the table scrolls inside the panel as a last resort. */
       .ws-table-scroll{max-width:100%;overflow-x:auto;container-type:inline-size}
       /* When the panel is narrow, each reference stacks as a card so its actions never leave the panel. */
-      @container (max-width:640px){
+      @container (max-width:460px){
         .ws-table thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
         .ws-table,.ws-table tbody,.ws-table tr,.ws-table td{display:block;width:100%}
         .ws-table tr{padding:10px 0;border-bottom:1px solid var(--line)}
@@ -538,9 +539,7 @@
                 <table class="ws-table" aria-labelledby="wiki-refs-heading">
                   <thead>
                     <tr>
-                      <th scope="col">File name</th>
-                      <th scope="col">Type</th>
-                      <th scope="col">Area</th>
+                      <th scope="col">Reference</th>
                       <th scope="col">Status</th>
                       <th scope="col">Published</th>
                       <th scope="col"><span class="visually-hidden">Actions</span></th>
@@ -548,7 +547,7 @@
                   </thead>
                   <tbody id="wiki-refs-body">
                     <tr>
-                      <td colspan="6" style="color:var(--muted);font-size:13px;padding:16px 10px">
+                      <td colspan="4" style="color:var(--muted);font-size:13px;padding:16px 10px">
                         No references yet. Upload a file above to add your first entry.
                       </td>
                     </tr>

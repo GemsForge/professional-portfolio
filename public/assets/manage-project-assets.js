@@ -81,7 +81,7 @@ function editRow(resource, row) {
   const editRowElement = document.createElement("tr");
   editRowElement.className = "ws-edit-row";
   const cell = document.createElement("td");
-  cell.colSpan = 6;
+  cell.colSpan = 4;
   const form = document.createElement("form");
   const prefix = `wiki-edit-${resource.id}`;
   form.innerHTML = `
@@ -124,9 +124,9 @@ function wikiRow(resource) {
   const live = isLive(resource);
   const row = document.createElement("tr");
   const name = document.createElement("td");
-  name.append(textElement("strong", resource.filename), textElement("small", resource.title));
-  const type = textElement("td", resource.filename.split(".").pop().toUpperCase());
-  const area = textElement("td", folderLabel(resource.folder));
+  // File type and folder ride under the name so the table needs only four columns.
+  const meta = `${resource.filename.split(".").pop().toUpperCase()} · ${folderLabel(resource.folder)}`;
+  name.append(textElement("strong", resource.filename), textElement("small", resource.title), textElement("small", meta, "ws-ref-meta"));
   const status = document.createElement("td");
   status.append(textElement("span", live ? "Live" : "Draft", `ws-chip ${live ? "pub" : "draft"}`));
   const published = document.createElement("td");
@@ -175,8 +175,8 @@ function wikiRow(resource) {
   actionGroup.append(toggle, textElement("span", "·", "muted"), edit);
   actions.append(actionGroup);
   // Captions for the stacked card layout the table switches to in a narrow panel.
-  [[type, "Type"], [area, "Area"], [status, "Status"], [published, "Published"]].forEach(([cell, label]) => { cell.dataset.label = label; });
-  row.append(name, type, area, status, published, actions);
+  [[status, "Status"], [published, "Published"]].forEach(([cell, label]) => { cell.dataset.label = label; });
+  row.append(name, status, published, actions);
   return row;
 }
 
