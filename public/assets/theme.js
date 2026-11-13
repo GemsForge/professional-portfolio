@@ -10,7 +10,7 @@
   try {
     var stored = localStorage.getItem(KEY);
     if (stored === "light" || stored === "dark") root.dataset.theme = stored;
-  } catch (e) { /* Storage can be blocked; the OS setting still applies. */ }
+  } catch { /* Storage can be blocked; the OS setting still applies. */ }
 
   var media = window.matchMedia("(prefers-color-scheme: dark)");
   var current = function () { return root.dataset.theme || (media.matches ? "dark" : "light"); };
@@ -37,7 +37,7 @@
     button.addEventListener("click", function () {
       var next = current() === "dark" ? "light" : "dark";
       root.dataset.theme = next;
-      try { localStorage.setItem(KEY, next); } catch (e) { /* Applies to this page only. */ }
+      try { localStorage.setItem(KEY, next); } catch { /* Applies to this page only. */ }
       render(button);
     });
     media.addEventListener("change", function () { render(button); });

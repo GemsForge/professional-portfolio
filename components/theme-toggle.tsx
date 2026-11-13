@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 
 type Theme = "light" | "dark";
 
 /** localStorage key shared with the pre-paint boot script in `app/layout.tsx`. */
 export const THEME_STORAGE_KEY = "gf-theme";
+const THEME_EVENT = "gf-theme-change";
 
 /** Reads the theme in effect: an explicit `data-theme` choice, else the OS preference. */
 function currentTheme(): Theme {
@@ -14,27 +15,30 @@ function currentTheme(): Theme {
   return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 }
 
+/** Re-renders on OS theme changes and on choices made by any toggle on the page. */
+function subscribe(onChange: () => void) {
+  const media = window.matchMedia("(prefers-color-scheme: dark)");
+  media.addEventListener("change", onChange);
+  window.addEventListener(THEME_EVENT, onChange);
+  return () => {
+    media.removeEventListener("change", onChange);
+    window.removeEventListener(THEME_EVENT, onChange);
+  };
+}
+
 /**
  * Switches the site between light and dark themes. Until the visitor chooses,
  * the site follows the OS setting; a choice is stored and applied as
  * `data-theme` on `<html>`, which the theme tokens in `site.css` key off.
+ * Server render has no theme yet, so it shows the moon icon until hydration.
  */
 export function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme | null>(null);
-
-  useEffect(() => {
-    setTheme(currentTheme());
-    const media = window.matchMedia("(prefers-color-scheme: dark)");
-    const follow = () => { if (!document.documentElement.dataset.theme) setTheme(currentTheme()); };
-    media.addEventListener("change", follow);
-    return () => media.removeEventListener("change", follow);
-  }, []);
-
+  const theme = useSyncExternalStore<Theme | null>(subscribe, currentTheme, () => null);
   const next: Theme = theme === "dark" ? "light" : "dark";
   const toggle = () => {
     document.documentElement.dataset.theme = next;
     try { localStorage.setItem(THEME_STORAGE_KEY, next); } catch { /* Storage can be blocked; the choice still applies to this page. */ }
-    setTheme(next);
+    window.dispatchEvent(new Event(THEME_EVENT));
   };
 
   return (
