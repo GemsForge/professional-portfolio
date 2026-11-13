@@ -16,30 +16,27 @@ const diagramUrl = "/assets/aura-logbook-architecture.svg";
 
 test("AuraLogbook page includes one accessible data-to-API-to-UI architecture diagram", async () => {
   assert.ok(page, "the generated AuraLogbook route exists");
-  assert.match(page, /href="#architecture">Architecture diagram<\/a>/);
-  assert.match(page, /href="#journey">User journey<\/a>/);
+  // Keep this case-study contract aligned with the recruiter-first section names and current source links.
+  assert.match(page, /href="#architecture">Architecture<\/a>/);
+  assert.match(page, /href="#journey">Core user flow<\/a>/);
   assert.match(page, /id="journey" aria-labelledby="journey-heading"/);
-  assert.match(page, /A path from check-in to reflection/);
-  for (const stage of ["Register or sign in", "Log a check-in", "Review your history", "Explore patterns"]) {
+  assert.match(page, /Core user flow/);
+  for (const stage of ["Register or sign in", "Record a check-in", "Review saved entries", "Explore patterns"]) {
     assert.ok(page.includes(stage), `user journey includes ${stage}`);
   }
-  assert.doesNotMatch(page, /In development|still in progress|remain in progress|Current state &amp; next steps/);
-  assert.match(page, /React Native\/Expo shell organizes Today, Log, Journal, and Profile through native navigation/);
-  assert.match(page, /mobile-first journal for what you feel and believe/);
-  assert.match(page, /choosing the perspective that fits them/);
-  assert.match(page, /light, dark, and system appearance choices make the journal feel personal/);
-  assert.match(page, /Browse entries by date range, then edit or delete them/);
-  assert.match(page, /responsive React 19\/TypeScript web client, which uses Material UI, Joy UI/);
-  assert.match(page, /targets \.NET 9/);
-  assert.match(page, /SQLite persistence is implemented through Dapper repositories and versioned SQL migrations in Development and FIT\/Staging/);
-  assert.match(page, /Frontend tests use Vitest and Testing Library; API tests use xUnit and Moq/);
+  assert.match(page, /Independent project in development/);
+  assert.match(page, /React Native\/Expo shell organizes the native destinations/);
+  assert.match(page, /I shaped the product and built its responsive web client/);
+  assert.match(page, /The \.NET 9 API separates controllers, injected services, and user-scoped routes/);
+  assert.match(page, /Dapper repositories and versioned SQL migrations persist journal data in SQLite/);
+  assert.match(page, /JWT-protected workflows scope journal and private-media access/);
+  assert.match(page, /Spotify linking uses OAuth Authorization Code with PKCE/);
+  assert.match(page, /repositories include Vitest and Testing Library checks for the web client, plus xUnit and Moq tests for the API/);
   assert.match(page, /AuraLogbook\.Api\.Tests\/MoodServiceTests\.cs/);
-  assert.match(page, /aura-ui\/src\/pages\/tests\/MoodHistory\.test\.tsx/);
+  assert.match(page, /aura-ui\/src\/pages\/tests\/MoodEntryForm\.test\.tsx/);
   assert.match(page, /Controllers\/AuthController\.cs/);
   assert.match(page, /Repositories\/SqliteMoodRepository\.cs/);
   assert.match(page, /Repositories\/SqliteUserRepository\.cs/);
-  assert.match(page, /not that every suite currently passes/);
-  assert.doesNotMatch(page, /only renders a test page|source inspection has not established.*tests/i);
   assert.match(page, /id="architecture"/);
   assert.match(page, new RegExp(`src="${diagramUrl}"`));
   assert.match(page, /aria-label="Click to zoom the Aura Logbook architecture diagram"/);
@@ -48,31 +45,23 @@ test("AuraLogbook page includes one accessible data-to-API-to-UI architecture di
   assert.match(page, /aria-describedby="architecture-tech-list"/);
   assert.match(page, /id="data-sources"/);
   assert.match(page, /src="\/assets\/auralogbook-tour\/aura-logbook-approved\.webp" alt=""/);
-  assert.equal((page.match(/data-aura-image-trigger/g) ?? []).length, 11, "the hero and ten screen captures open in the closer-look dialog");
+  assert.equal((page.match(/data-aura-image-trigger/g) ?? []).length, 10, "the hero and nine screen captures open in the closer-look dialog");
   assert.match(page, /<dialog id="aura-image-dialog" class="aura-image-dialog"/);
   assert.match(page, /aria-label="Enlarged Aura Logbook screen\. Swipe or scroll sideways to view the full image\."/);
-  assert.match(page, /Mindful Living, Astrology &amp; Energy, or Faith &amp; Religion/);
-  for (const screen of ["public-home", "individual-record", "gallery", "appearance", "spotify"]) {
+  for (const screen of ["public-home", "login", "home", "check-in", "individual-record", "gallery", "appearance", "spotify"]) {
     assert.ok(page.includes(`/assets/auralogbook-tour/${screen}-pair.png`), `walkthrough includes the ${screen} capture`);
   }
-  assert.match(page, /Open-Meteo for New York City on November 12, 2026/);
-  assert.match(page, /Frontline by Butcher Brown/);
-  assert.match(page, /Discover Weekly, daylist, and Your Summer Rewind/);
-  assert.match(page, /Music for the moment/);
-  assert.match(page, /Spotify linking uses OAuth Authorization Code with PKCE/);
-  assert.match(page, /Playlist links and the now-playing link continue in Spotify/);
-  assert.doesNotMatch(page, /authenticated API integration, secure session handling|next step is to connect the native shell/);
-  assert.match(page, /portfolio demo; no Spotify account or personal listening data is used/);
+  assert.match(page, /Captures use fictional demo data/);
   const captureNotes = await readFile(new URL("../docs/story-assets/aura-logbook-walkthrough-capture-notes.md", import.meta.url), "utf8");
   assert.match(captureNotes, /not Aura's latest merged commit `5913d26`/);
   assert.match(captureNotes, /fictional Alex Morgan profile and synthetic journal entries/);
   assert.match(captureNotes, /“Frontline” by Butcher Brown/);
   assert.match(captureNotes, /phone chrome, local IP address, or profile details are included/);
-  assert.match(page, /shaping the phone-first experience, its responsive desktop companion/);
-  assert.match(page, /SQLite persistence is implemented through Dapper repositories and versioned SQL migrations/);
+  assert.match(page, /I shaped the product and built its responsive web client/);
+  assert.match(page, /Dapper repositories and versioned SQL migrations/);
   assert.doesNotMatch(page, /FileMoodRepository|FileUserRepository|JSON-based persistence/);
   assert.match(page, /dependency-chip-list/);
-  assert.match(page, /What this demonstrates/);
+  assert.match(page, /Source evidence/);
   assert.match(page, /aura-logbook-api\/blob\/master\/AuraLogbook.Api\/Models\/MoodEntry.cs/);
   assert.doesNotMatch(page, /data-dependency-group=/);
 

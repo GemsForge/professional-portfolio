@@ -1,6 +1,6 @@
 import { cp, readFile, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { siApple, siDotnet, siMui, siOpenjdk, siPostgresql, siSpotify } from "simple-icons";
+import { siApple, siDotnet, siMui, siMoq, siOpenjdk, siPostgresql, siSpotify, siTestinglibrary, siVitest } from "simple-icons";
 // Node 22.13+ strips the catalog's TypeScript types at import time; no runtime
 // transpiler or JSX dependency is needed for this build-time-only module.
 import { renderDependencyGroup } from "./auralogbook-dependencies.mts";
@@ -9,10 +9,12 @@ import { applyProjectPageMetadata, HOME_PROJECT_SLUGS, PORTFOLIO_POSTS, PROJECTS
 
 const source = path.resolve("static-source");
 const pages = {};
+/** Local brand artwork and Simple Icons marks used by the Aura Logbook technology pills. */
 const TECH_PILL_MARKS = {
   "C#": { image: "/assets/auralogbook-stack/csharp.png" },
   ".NET": { icon: siDotnet },
   React: { image: "/assets/auralogbook-stack/react.png" },
+  "React Native · Expo": { image: "/assets/auralogbook-stack/react.png" },
   TypeScript: { image: "/assets/auralogbook-stack/typescript.png" },
   Redux: { image: "/assets/auralogbook-stack/redux.png" },
   "Redux Toolkit": { image: "/assets/auralogbook-stack/redux.png" },
@@ -26,6 +28,10 @@ const TECH_PILL_MARKS = {
   JWT: { image: "/assets/auralogbook-stack/jwt-bearer.png" },
   "Spotify API": { icon: siSpotify },
   "Spotify Web API · OAuth": { icon: siSpotify },
+  Vitest: { icon: siVitest },
+  "Testing Library": { icon: siTestinglibrary },
+  "xUnit": { image: "/assets/auralogbook-stack/xunit.jpg" },
+  Moq: { icon: siMoq },
   Java: { icon: siOpenjdk },
   Notion: { image: "/assets/auralogbook-stack/notion.png" },
   "Notion API": { image: "/assets/auralogbook-stack/notion.png" },
@@ -91,7 +97,7 @@ const FEATURE_TILES = {
   ],
   "75-hard-automation": [
     `<a class="sp-feature-tile sp-tile-diagram" href="/portfolio/projects/75-hard-automation/" data-post-link="75-hard-automation" aria-label="Diagram post: how a 75 Days check-in flows from Shortcut prompts to a Notion record. Open the 75 Days of Discipline post."><span class="sp-tile-eyebrow"><span class="sp-wide">How a check-in flows</span><span class="sp-narrow">Check-in flow</span></span><span class="sp-flow-step"><span class="sp-wide">Shortcut prompts</span><span class="sp-narrow">Prompts</span></span><span class="sp-flow-arrow" aria-hidden="true">↓</span><span class="sp-flow-step"><span class="sp-wide">Response dictionary</span><span class="sp-narrow">Dictionary</span></span><span class="sp-flow-arrow" aria-hidden="true">↓</span><span class="sp-flow-step sp-flow-end"><span class="sp-wide">Notion API → daily record</span><span class="sp-narrow">Notion record</span></span></a>`,
-    `<a class="sp-feature-tile sp-tile-text" href="/about/" data-highlight-link="army" aria-label="Text post: Army National Guard Staff Sergeant and Squad Leader since 2013. Open the Army Guard highlight."><span class="sp-tile-eyebrow"><span class="sp-wide">Army National Guard</span><span class="sp-narrow">Army Guard</span></span><span class="sp-tile-quote-text"><span class="sp-wide">Staff Sergeant. Squad Leader. Since 2013.</span><span class="sp-narrow">SSG since 2013</span></span><span class="sp-tile-note">Training, readiness, accountability.</span></a>`,
+    `<a class="sp-feature-tile sp-tile-text" href="/about/" data-highlight-link="army" aria-label="Text post: Army National Guard service since 2013. Open the Army Guard highlight."><span class="sp-tile-eyebrow"><span class="sp-wide">Army National Guard</span><span class="sp-narrow">Army Guard</span></span><span class="sp-tile-quote-text"><span class="sp-wide">Serving in the Army since 2013.</span><span class="sp-narrow">Army since 2013</span></span><span class="sp-tile-note">Service, readiness, accountability.</span></a>`,
   ],
 };
 
@@ -138,9 +144,9 @@ function renderCreatorGrid() {
 
 /**
  * Emits one story view per grid post, in grid order. Reading order puts evidence
- * first: title and summary, case-study/source links, role and status, then the
- * walkthrough (phones place the picture directly above it so its hotspots stay
- * next to the steps), technical choices, and the tool chips.
+ * first: title and summary, case-study/source links, role and status, then
+ * engineering decisions and stack. On phones, the walkthrough image remains
+ * directly beside its controls after those recruiter-scan details.
  */
 function renderPostViews() {
   return GRID_POSTS.map((post) => {
@@ -153,7 +159,7 @@ function renderPostViews() {
     const actions = links ? `<nav class="post-actions" aria-label="Project links">${links}</nav>` : "";
     const facts = post.role && post.evidence ? `<dl class="post-facts"><div><dt>My role</dt><dd>${post.role}</dd></div><div><dt>${post.evidenceLabel ?? "Evidence &amp; status"}</dt><dd>${post.evidence}</dd></div></dl>` : "";
     const decisionsSection = post.decisions.length ? `<section class="post-decisions"><h3>${post.decisionsTitle ?? "Decisions that shaped it"}</h3><ul>${decisions}</ul></section>` : "";
-    const techSection = `<section class="post-tools"><h3>Tech</h3><div class="post-tool-list">${chips}</div></section>`;
+    const techSection = `<section class="post-tools"><h3>Stack</h3><div class="post-tool-list">${chips}</div></section>`;
     // Phones move the picture into this slot, directly above the walkthrough (see creator-profile.js).
     const mobileVisualSlot = `<div class="post-mobile-visual" data-mobile-visual></div>`;
     // Steps carry their real screenshot and any explicitly useful marker as data.
@@ -169,16 +175,16 @@ function renderPostViews() {
     const disclaimer = allReal ? "" : someReal
       ? `<p class="walkthrough-disclaimer">Illustrated steps follow the documented project flow; screenshots come from the app.</p>`
       : `<p class="walkthrough-disclaimer">A guided prototype based on the documented project flow; not a live production app.</p>`;
-    // Step controls live on the picture (see the visual below); this region announces step changes.
-    const walkthrough = steps.length ? `<section class="walkthrough" aria-labelledby="walkthrough-${post.slug}"><div class="walkthrough-heading"><div><span class="eyebrow">${eyebrow}</span><h3 id="walkthrough-${post.slug}">Walkthrough</h3></div></div><ol class="walkthrough-steps" data-walkthrough="${post.slug}">${steps.map(stepItem).join("")}</ol><p class="walkthrough-status" data-walkthrough-status aria-live="polite"></p><p class="visually-hidden" data-step-announce aria-live="polite"></p>${disclaimer}</section>` : "";
+    // Step controls follow the image in reading order so they remain easy to reach on touch screens.
+    const walkthrough = steps.length ? `<section class="walkthrough" aria-labelledby="walkthrough-${post.slug}"><div class="walkthrough-heading"><div><span class="eyebrow">${eyebrow}</span><h3 id="walkthrough-${post.slug}">Product walkthrough</h3></div></div><ol class="walkthrough-steps" data-walkthrough="${post.slug}">${steps.map(stepItem).join("")}</ol><p class="walkthrough-status" data-walkthrough-status aria-live="polite"></p><p class="visually-hidden" data-step-announce aria-live="polite"></p>${disclaimer}</section>` : "";
     // Only add a plus marker when a step defines a useful point to explore.
     const visualHotspots = steps.map((step, stepIndex) => step.hotspot ? `<button type="button" class="visual-hotspot" data-visual-hotspot="${stepIndex}" data-hotspot-label="${attr(step.hotspot.label)}" data-hotspot-detail="${attr(step.detail)}" style="--hotspot-x:${step.hotspot.x}%;--hotspot-y:${step.hotspot.y}%" aria-label="Explore: ${attr(step.hotspot.label)}"><span aria-hidden="true">+</span></button>` : "").join("");
-    // Carousel controls: arrows on the picture, progress dots beneath it (no numeric counter).
-    const stepNav = steps.length > 1 ? `<button type="button" class="post-step-arrow post-step-prev" data-step-prev aria-label="Previous step"><span aria-hidden="true">‹</span></button><button type="button" class="post-step-arrow post-step-next" data-step-next aria-label="Next step"><span aria-hidden="true">›</span></button>` : "";
-    const dots = steps.length > 1 ? `<div class="post-step-dots" aria-hidden="true">${steps.map(() => "<span></span>").join("")}</div>` : "";
+    // Touch-friendly carousel controls sit below the image; dots communicate position without replacing labels.
+    const stepNav = steps.length > 1 ? `<nav class="post-step-controls" aria-label="Walkthrough image controls"><button type="button" class="post-step-arrow post-step-prev" data-step-prev aria-label="Previous step">← Previous</button><button type="button" class="post-step-arrow post-step-next" data-step-next aria-label="Next step">Next →</button></nav>` : "";
     const opening = allReal ? { src: steps[0].screenshot.src, alt: steps[0].screenshot.alt } : { src: post.image, alt: post.imageAlt };
-    const visual = `<figure class="post-main-visual${allReal ? " is-step-screenshot" : ""}"><div class="post-visual-stage"><img src="${attr(opening.src)}" alt="${attr(opening.alt)}" width="960" height="960">${visualHotspots}${stepNav}</div>${dots}</figure>`;
-    return `<article class="post-story" data-post-view="${post.slug}" aria-labelledby="post-title-${post.slug}" hidden><template class="post-visual-template">${visual}</template><div class="post-story-topline"><span>${post.eyebrow}</span></div><h2 id="post-title-${post.slug}">${post.title}</h2><p class="post-lead">${post.caption}</p>${actions}${facts}${mobileVisualSlot}${walkthrough}${decisionsSection}${techSection}<nav class="post-sequence" aria-label="Browse other posts"><button type="button" data-adjacent-post="previous">← Previous post</button><button type="button" data-adjacent-post="next">Next post →</button></nav></article>`;
+    const zoomLabel = `Open ${post.title} walkthrough image in the enlarged viewer`;
+    const visual = `<figure class="post-main-visual${allReal ? " is-step-screenshot" : ""}"><div class="post-visual-stage"><button type="button" class="post-image-zoom" data-post-image-zoom aria-label="${attr(zoomLabel)}"><img src="${attr(opening.src)}" alt="${attr(opening.alt)}" width="960" height="960"></button>${visualHotspots}</div>${stepNav}</figure>`;
+    return `<article class="post-story" data-post-view="${post.slug}" aria-labelledby="post-title-${post.slug}" hidden><template class="post-visual-template">${visual}</template><div class="post-story-topline"><span>${post.eyebrow}</span></div><h2 id="post-title-${post.slug}">${post.title}</h2><p class="post-lead">${post.caption}</p>${actions}${facts}${decisionsSection}${techSection}${mobileVisualSlot}${walkthrough}<nav class="post-sequence" aria-label="Browse other posts"><button type="button" data-adjacent-post="previous">← Previous post</button><button type="button" data-adjacent-post="next">Next post →</button></nav></article>`;
   }).join("");
 }
 
