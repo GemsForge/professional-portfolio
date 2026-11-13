@@ -413,3 +413,37 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid #90
 .case-content .mood-workflow{list-style:decimal;padding-left:26px}
 @media(max-width:900px){.project-snapshot{grid-template-columns:1fr}.project-snapshot-facts{grid-template-columns:repeat(2,minmax(0,1fr))}.project-status{padding:0;border:0}}
 @media(max-width:650px){.project-snapshot{gap:18px;margin-bottom:30px;padding:19px;border-radius:12px}.project-snapshot-facts{grid-template-columns:1fr;gap:13px}.case-project-actions{align-items:stretch}.case-project-actions .button{white-space:normal}.engineering-highlights{grid-template-columns:1fr}}
+/* Profile highlights (#131): the row is centered, and the Contact highlight takes over from the removed Contact and Résumé buttons. */
+.sp-highlights ul{justify-content:center}
+.sp-highlight-contact{background:#2f4e39;color:#f4f2e8}
+.sp-highlight-contact svg{stroke:#f4f2e8}
+/* Six highlights fit a 375px phone without sideways scrolling: smaller labels, even spacing. */
+@media(max-width:650px){.sp-highlights ul{justify-content:space-between}.sp-highlights li{flex:0 0 auto}.sp-highlights a{padding:0}.sp-highlights .sp-highlight-ring{width:48px;height:48px;font-size:13px}.sp-highlights .sp-highlight-ring svg{width:22px;height:22px}.sp-highlight-label{font-size:10px;letter-spacing:-.01em;white-space:nowrap}}
+/*
+ * Profile depth (#131). Layers, not new content: the profile header sits on a
+ * raised card over a soft glow, the avatar and highlight rings cast shadows and
+ * lift on hover, and desktop post tiles become rounded cards. Phones keep the
+ * tight edge-to-edge post grid so the feed still reads like a social profile.
+ */
+.creator-page .sp-main{position:relative;isolation:isolate}
+.creator-page .sp-main::before{content:"";position:absolute;z-index:-1;inset:-40px 0 auto;height:420px;background:radial-gradient(60% 70% at 30% 30%,rgba(184,205,180,.45),transparent 70%),radial-gradient(40% 60% at 80% 20%,rgba(227,196,138,.22),transparent 70%);pointer-events:none}
+.creator-page .sp-topbar{box-shadow:0 10px 24px -18px rgba(30,40,35,.45)}
+.creator-page .sp-profile{padding:32px 36px;border:1px solid rgba(47,78,57,.12);border-radius:28px;background:linear-gradient(145deg,#fdfcf7,#f1efe3);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 30px 60px -28px rgba(30,40,35,.35),0 10px 20px -12px rgba(30,40,35,.18)}
+.creator-page .sp-avatar{box-shadow:0 18px 34px -14px rgba(30,40,35,.55)}
+.creator-page .sp-highlight-ring{box-shadow:inset 0 0 0 3px #f4f2e8,0 12px 22px -10px rgba(30,40,35,.45);transition:transform .2s ease,box-shadow .2s ease}
+.creator-page .sp-highlights a:hover .sp-highlight-ring,.creator-page .sp-highlights a:focus-visible .sp-highlight-ring{transform:translateY(-3px);box-shadow:inset 0 0 0 3px #f4f2e8,0 18px 28px -10px rgba(30,40,35,.5)}
+@media(min-width:651px){
+  .creator-page .creator-post-grid{gap:14px}
+  /* The Aura composite is drawn edge to edge; inset it so the phone and logo clear the rounded corners and title bar. */
+  .creator-page .creator-post-tile.tile-auralogbook>img{top:7%;left:7%;width:86%;height:76%}
+  .creator-page .creator-post-tile,.creator-page .sp-feature-tile{overflow:hidden;border-radius:16px;box-shadow:0 14px 30px -18px rgba(30,40,35,.5);transition:transform .25s ease,box-shadow .25s ease}
+  .creator-page .creator-post-tile:hover,.creator-page .sp-feature-tile:hover{transform:translateY(-4px);box-shadow:0 24px 40px -18px rgba(30,40,35,.55)}
+}
+@media(max-width:650px){
+  .creator-page .sp-profile{margin-inline:12px;padding:18px;border-radius:22px}
+  .creator-page .sp-main::before{height:320px}
+}
+@media(prefers-reduced-motion:reduce){
+  .creator-page .sp-highlight-ring,.creator-page .creator-post-tile,.creator-page .sp-feature-tile{transition:none}
+  .creator-page .sp-highlights a:hover .sp-highlight-ring,.creator-page .creator-post-tile:hover,.creator-page .sp-feature-tile:hover{transform:none}
+}

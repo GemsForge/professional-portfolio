@@ -24,9 +24,15 @@ test("social profile shows the résumé-backed header, experience highlights, an
 
   const profile = html.slice(html.indexOf('<section class="sp-profile"'), html.indexOf('<section id="highlights"'));
   assert.match(profile, /<h1 id="creator-name">Diamond Brown<\/h1>/);
-  assert.match(profile, /<a class="sp-button sp-button-primary" href="mailto:diamondbrown\.tech@gmail\.com">Contact<\/a>/);
-  assert.match(profile, /<a class="sp-button" href="\/assets\/diamond-brown-resume\.pdf">Résumé<\/a>/);
-  assert.match(profile, /<li><strong>6<\/strong> projects<\/li>\s*<li><strong>4<\/strong> roles<\/li>\s*<li><strong>13<\/strong> yrs Army Guard<\/li>/);
+  // Contact and Résumé live in the highlights row (#131), so the header has no duplicate buttons.
+  assert.doesNotMatch(profile, /class="sp-button/);
+  const highlightRow = html.slice(html.indexOf('<section id="highlights"'), html.indexOf('<nav class="sp-sections"'));
+  assert.match(highlightRow, /<li id="contact"><a href="mailto:diamondbrown\.tech@gmail\.com" aria-label="Contact Diamond by email">/);
+  assert.doesNotMatch(highlightRow, /mailto:[^"]*" data-highlight-link/, "Contact must stay a plain mailto link, not a story card");
+  assert.match(highlightRow, /href="\/assets\/diamond-brown-resume\.pdf"><span class="sp-highlight-ring[^"]*">[\s\S]*?Résumé/);
+  // Army service stays in the bio and the Army Guard highlight, so the stats row shows only portfolio and role counts.
+  assert.match(profile, /<li><strong>6<\/strong> projects<\/li>\s*<li><strong>4<\/strong> roles<\/li>\s*<\/ul>/);
+  assert.doesNotMatch(profile, /yrs Army Guard/);
   assert.doesNotMatch(html, /followers|likes|following/i, "stats must be résumé counts, not social engagement");
   for (const line of ["Software Engineer Analyst @ ADP", "U.S. Secret clearance · Army National Guard since 2013", "Cut dev onboarding from two weeks to three days.", "Atlanta · open to remote or hybrid"]) {
     assert.ok(profile.includes(line), `bio should include: ${line}`);

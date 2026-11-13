@@ -141,7 +141,10 @@ body.rd .case-nav nav{display:flex;flex-direction:column}
 body.rd .case-nav a{padding:8px 12px;border-left:2px solid var(--rd-line);text-decoration:none}
 body.rd .case-nav a.is-current{color:var(--rd-ink);border-left-color:var(--rd-gold-ink);font-weight:600}
 body.rd .case-content h2{font-weight:700;letter-spacing:-.02em}
-body.rd .engineering-highlights article{border-radius:16px;background:var(--rd-surface)}
+/* Technical-approach cards: site.css gives them no side padding, so add breathing room and a real gap. */
+body.rd .engineering-highlights{gap:16px;margin-top:18px}
+body.rd .engineering-highlights article{padding:22px 24px;border:1px solid var(--rd-line);border-radius:16px;background:var(--rd-surface);box-shadow:0 10px 24px -18px rgba(30,40,35,.35)}
+body.rd .engineering-verification{margin-top:20px}
 body.rd .next-project{padding:22px 24px;border-radius:22px;background:var(--rd-forest)}
 body.rd .next-project a{color:var(--rd-on-forest);font-weight:600}
 
