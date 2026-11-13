@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { KnowledgeDirectory } from "@/components/knowledge-directory";
-import "../knowledge/knowledge-directory.css";
+import "@/app/knowledge/knowledge.css";
 
 export const metadata: Metadata = {
   title: "Handbooks · Developer Wiki",

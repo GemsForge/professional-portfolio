@@ -1,0 +1,262 @@
+/*
+ * Portfolio redesign layer (#131).
+ *
+ * Loaded after site.css only by pages that opt in with <body class="rd">, so the
+ * social-profile home page and pages not yet migrated keep their current look.
+ * It carries the profile's language onto project pages: the diamond.brown top
+ * bar with the avatar ring, dark forest feature bands with real app screens,
+ * story-highlight filters, post-style cards, and a story-style screen carousel.
+ * Every color comes from the tokens below; the gold accent is reserved for
+ * active state, focus, and calls to action.
+ */
+body.rd{
+  --rd-bg:#f4f2e8;--rd-surface:#fbfaf4;--rd-ink:#1e2823;--rd-muted:#4d5d50;--rd-line:#d9d6c8;
+  --rd-forest:#1e2823;--rd-on-forest:#f4f2e8;--rd-on-forest-muted:#b8cdb4;--rd-sage-soft:#dfe6dc;
+  --rd-gold:#e3c48a;--rd-gold-ink:#8a6526;--rd-shadow:0 18px 45px rgba(30,40,35,.10);
+  --rd-display:"Avenir Next",Avenir,"Segoe UI Variable Display","Segoe UI",Arial,sans-serif;
+  --rd-mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  background:var(--rd-bg);color:var(--rd-ink)
+}
+/* Dark values for the redesign tokens; forest bands stay dark in both themes. Same rule as site.css:
+   the OS setting applies unless <html data-theme> holds the visitor's choice. */
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body.rd{--rd-bg:#121915;--rd-surface:#1b241f;--rd-ink:#e8e5da;--rd-muted:#a3b1a7;--rd-line:#2c3832;--rd-sage-soft:#28352e;--rd-gold-ink:#e3c48a;--rd-shadow:0 18px 45px rgba(0,0,0,.35)}}
+:root[data-theme="dark"] body.rd{--rd-bg:#121915;--rd-surface:#1b241f;--rd-ink:#e8e5da;--rd-muted:#a3b1a7;--rd-line:#2c3832;--rd-sage-soft:#28352e;--rd-gold-ink:#e3c48a;--rd-shadow:0 18px 45px rgba(0,0,0,.35)}
+body.rd h1,body.rd h2,body.rd h3{font-family:var(--rd-display);text-wrap:balance}
+body.rd :focus-visible{outline:3px solid var(--rd-gold-ink);outline-offset:3px}
+body.rd .rd-eyebrow,body.rd .eyebrow{font:600 11px/1.4 var(--rd-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--rd-gold-ink)}
+
+/* Shared top bar: the same handle and avatar ring as the profile page. */
+body.rd header{position:sticky;top:0;z-index:10;border-bottom:1px solid var(--rd-line);background:color-mix(in srgb,var(--rd-surface) 90%,transparent);backdrop-filter:blur(12px)}
+.rd-topbar{max-width:1180px;margin:0 auto;padding:10px 40px;display:flex;align-items:center;justify-content:space-between;gap:8px 16px;flex-wrap:wrap}
+.rd-handle{display:inline-flex;align-items:center;gap:10px;min-height:44px;text-decoration:none;font:700 17px var(--rd-display);letter-spacing:-.01em}
+.rd-handle img{width:36px;height:36px;border-radius:50%;object-fit:cover;box-shadow:0 0 0 2px var(--rd-surface),0 0 0 4px var(--rd-gold)}
+.rd-links{display:flex;flex-wrap:wrap;gap:2px}
+.rd-links a{display:inline-flex;align-items:center;min-height:44px;padding:0 13px;border-radius:999px;font-size:15px;font-weight:500;color:var(--rd-muted);text-decoration:none}
+.rd-links a:hover{color:var(--rd-ink);background:var(--rd-sage-soft)}
+.rd-links a[aria-current="page"]{color:var(--rd-ink);background:var(--rd-sage-soft);font-weight:600}
+
+/* site.css pads every <section> by 80px; redesigned sections set their own spacing. */
+body.rd .rd-featured,body.rd .rd-hero,body.rd .rd-story,body.rd .rd-grid-section{padding:0}
+
+/* Buttons on dark bands. */
+.rd-btn{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:0 22px;border-radius:999px;font-weight:600;font-size:15px;text-decoration:none;transition:transform .2s ease}
+.rd-btn:hover{transform:translateY(-2px)}
+.rd-btn-gold{background:var(--rd-gold);color:#1e2823}
+.rd-btn-ghost{border:1px solid rgba(244,242,232,.4);color:var(--rd-on-forest)}
+.rd-chips{display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:0;list-style:none}
+.rd-chip{font:500 12px var(--rd-mono);padding:5px 11px;border-radius:999px;border:1px solid rgba(184,205,180,.4);color:var(--rd-on-forest)}
+
+/* ---------- Projects index ---------- */
+.rd-intro{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:end;padding:56px 0 28px}
+.rd-intro h1{font-size:clamp(42px,6vw,76px);line-height:1;font-weight:800;letter-spacing:-.035em;margin:12px 0 0}
+.rd-intro h1 em{font-style:normal;color:var(--rd-gold-ink)}
+.rd-intro p{max-width:48ch;color:var(--rd-muted);margin:16px 0 0;font-size:18px}
+.rd-counts{display:flex;gap:28px;margin:0}
+.rd-counts div{text-align:center}
+.rd-counts dd{margin:0;font:800 30px/1 var(--rd-display);font-variant-numeric:tabular-nums}
+.rd-counts dt{font-size:13px;color:var(--rd-muted)}
+.rd-counts div{display:flex;flex-direction:column-reverse;gap:4px}
+
+.rd-featured{position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);min-height:450px;overflow:hidden;border-radius:28px;background:var(--rd-forest);color:var(--rd-on-forest);box-shadow:var(--rd-shadow)}
+.rd-featured::before{content:"";position:absolute;inset:auto -10% -40% 30%;height:120%;background:radial-gradient(closest-side,rgba(227,196,138,.22),transparent);pointer-events:none}
+.rd-featured-copy{position:relative;z-index:1;display:flex;flex-direction:column;gap:16px;min-width:0;padding:46px 42px}
+.rd-featured .rd-eyebrow{color:var(--rd-gold)}
+.rd-featured h2{margin:0;font-size:clamp(38px,4.6vw,60px);line-height:1;font-weight:800;letter-spacing:-.03em;color:var(--rd-on-forest)}
+.rd-featured p{margin:0;max-width:42ch;font-size:17px;color:var(--rd-on-forest-muted)}
+.rd-cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:auto;padding-top:8px}
+.rd-phones{position:relative;min-height:390px}
+.rd-phone{position:absolute;width:42%;max-width:215px;aspect-ratio:332/720;overflow:hidden;margin:0;border:6px solid #0b110d;border-radius:26px;background:#0b110d;box-shadow:0 30px 60px rgba(0,0,0,.45);transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+.rd-phone img{display:block;width:100%;height:100%;object-fit:cover;object-position:top}
+.rd-phone:nth-child(1){left:6%;top:16%;transform:rotate(-8deg)}
+.rd-phone:nth-child(2){left:31%;top:6%;z-index:2}
+.rd-phone:nth-child(3){left:56%;top:18%;transform:rotate(8deg)}
+.rd-featured:hover .rd-phone:nth-child(1){transform:rotate(-11deg) translateX(-10px)}
+.rd-featured:hover .rd-phone:nth-child(2){transform:translateY(-8px)}
+.rd-featured:hover .rd-phone:nth-child(3){transform:rotate(11deg) translateX(10px)}
+
+/* Story-highlight filters; hidden until projects-redesign.js can run them. */
+.rd-rings{display:flex;gap:18px;overflow-x:auto;padding:36px 4px 8px;scrollbar-width:none}
+.rd-ring{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:8px;padding:4px;border:0;background:none;color:var(--rd-ink);font:500 13px var(--rd-display);cursor:pointer}
+.rd-ring-mark{display:grid;place-items:center;width:68px;height:68px;border-radius:50%;background:var(--rd-surface);box-shadow:0 0 0 2px var(--rd-bg),0 0 0 4px var(--rd-line);font:600 13px var(--rd-mono);transition:box-shadow .2s,background .2s}
+.rd-ring[aria-pressed="true"] .rd-ring-mark{background:var(--rd-forest);color:var(--rd-gold);box-shadow:0 0 0 2px var(--rd-bg),0 0 0 4px var(--rd-gold)}
+.rd-ring-count{margin-top:-6px;font-size:11px;color:var(--rd-muted)}
+.rd-filter-status{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* Post-style project cards (markup from renderProjectCard). */
+body.rd .projects.rd-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;padding:20px 0 76px}
+body.rd .project.rd-post{display:flex;flex-direction:column;min-width:0;padding:0;overflow:hidden;border:1px solid var(--rd-line);border-radius:20px;background:var(--rd-surface);box-shadow:none;transition:transform .25s ease,box-shadow .25s ease}
+body.rd .project.rd-post:hover{transform:translateY(-4px);box-shadow:var(--rd-shadow)}
+body.rd .project.rd-post[hidden]{display:none}
+body.rd .rd-post .project-visual{position:relative;height:auto;aspect-ratio:4/3;padding:18px;border:0;border-radius:0;background:var(--rd-sage-soft)}
+body.rd .rd-post .project-visual img{width:100%;height:100%;object-fit:contain;transition:transform .5s ease}
+body.rd .rd-post:hover .project-visual img{transform:scale(1.04)}
+.rd-kind{position:absolute;left:12px;top:12px;padding:4px 10px;border-radius:999px;background:color-mix(in srgb,var(--rd-surface) 92%,transparent);font:600 11px var(--rd-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--rd-ink)}
+.rd-post-body{display:flex;flex:1;flex-direction:column;gap:8px;padding:18px 18px 20px}
+body.rd .rd-post .project-meta{margin:0;font:600 11px var(--rd-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--rd-gold-ink)}
+body.rd .rd-post h3{margin:0;font-size:23px;font-weight:700;line-height:1.15;letter-spacing:-.02em}
+body.rd .rd-post p{margin:0;font-size:15px;line-height:1.5;color:var(--rd-muted);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+body.rd .rd-post .tags{margin:4px 0 0}
+body.rd .rd-post .worklink{margin-top:auto;padding-top:12px;border-top:1px solid var(--rd-line);font-weight:600}
+
+/* ---------- Case study ---------- */
+.rd-hero{position:relative;overflow:hidden;background:var(--rd-forest);color:var(--rd-on-forest)}
+.rd-hero::after{content:"";position:absolute;right:-12%;top:-30%;width:60%;height:140%;background:radial-gradient(closest-side,rgba(227,196,138,.18),transparent);pointer-events:none}
+.rd-hero-grid{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:40px;align-items:end;padding-bottom:0}
+body.rd .rd-hero .pagehero{padding:44px 0 0}
+/* Drop site.css's light glass card so hero copy sits directly on the forest band. */
+body.rd .rd-hero .case-banner{padding:0;border:0;background:none;box-shadow:none;backdrop-filter:none}
+body.rd .rd-hero .button{border-color:var(--rd-gold);background:var(--rd-gold);color:#1e2823}
+body.rd .rd-hero .button.secondary{border-color:rgba(244,242,232,.4);background:transparent;color:var(--rd-on-forest)}
+body.rd .rd-hero .button:hover{border-color:var(--rd-on-forest);background:var(--rd-on-forest);color:#1e2823}
+body.rd .rd-hero .breadcrumb{color:var(--rd-on-forest-muted);font:13px var(--rd-mono)}
+body.rd .rd-hero .breadcrumb a{color:var(--rd-on-forest)}
+body.rd .rd-hero .eyebrow{color:var(--rd-gold)}
+body.rd .rd-hero h1{font-size:clamp(46px,7vw,92px);line-height:.95;font-weight:800;letter-spacing:-.04em;color:var(--rd-on-forest)}
+body.rd .rd-hero .case-brand-title img{border-radius:20px;background:rgba(244,242,232,.08)}
+body.rd .rd-hero .lead{max-width:46ch;color:var(--rd-on-forest-muted);font-size:19px}
+body.rd .rd-hero .facts .dependency-chip{background:rgba(244,242,232,.1);border-color:rgba(184,205,180,.3);color:var(--rd-on-forest);box-shadow:none}
+body.rd .rd-hero .facts .dependency-chip-label{background:none;color:var(--rd-on-forest)}
+/* Brand marks are drawn for light backgrounds; seat each on a small cream disc. */
+body.rd .rd-hero .facts .dependency-chip-logo{box-sizing:content-box;width:17px;height:17px;padding:3px;border-radius:50%;background:var(--rd-bg)}
+.rd-stats{display:flex;margin:32px 0 0;border-top:1px solid rgba(184,205,180,.25)}
+.rd-stats div{flex:1;min-width:0;padding:18px 16px 30px 0;display:flex;flex-direction:column-reverse}
+.rd-stats div+div{padding-left:16px;border-left:1px solid rgba(184,205,180,.25)}
+.rd-stats dd{margin:0;font:800 27px/1.1 var(--rd-display);color:var(--rd-on-forest)}
+.rd-stats dt{font-size:13px;color:var(--rd-on-forest-muted)}
+
+.rd-story{justify-self:center;width:min(300px,100%);margin:0 0 -64px}
+.rd-story-bars{display:flex;gap:4px;margin-bottom:10px}
+.rd-story-bars button{position:relative;flex:1;height:14px;padding:5px 0;border:0;background:none;cursor:pointer}
+.rd-story-bars button::before,.rd-story-bars button::after{content:"";position:absolute;left:0;right:0;top:5px;height:4px;border-radius:4px}
+.rd-story-bars button::before{background:rgba(244,242,232,.25)}
+.rd-story-bars button::after{background:var(--rd-gold);transform-origin:left;transform:scaleX(0)}
+.rd-story-bars button.is-done::after,.rd-story-bars button[aria-current="true"]::after{transform:scaleX(1)}
+.rd-story[data-playing="true"] .rd-story-bars button[aria-current="true"]::after{animation:rd-fill var(--rd-story-ms,4500ms) linear forwards}
+@keyframes rd-fill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.rd-story-frame{aspect-ratio:332/720;margin:0;overflow:hidden;border:8px solid #0b110d;border-radius:34px;background:#0b110d;box-shadow:0 40px 80px rgba(0,0,0,.5)}
+.rd-story-frame img{display:block;width:100%;height:100%;object-fit:cover;object-position:top}
+.rd-story-caption{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;font:12px var(--rd-mono);color:var(--rd-on-forest-muted)}
+.rd-story-caption strong{color:var(--rd-gold);font-weight:600}
+.rd-story-toggle{min-height:32px;padding:0 12px;border:1px solid rgba(184,205,180,.4);border-radius:999px;background:none;color:var(--rd-on-forest);font:12px var(--rd-mono);cursor:pointer}
+
+body.rd .rd-case-body{padding-top:104px}
+body.rd .project-snapshot{border-top-color:var(--rd-gold-ink);background:var(--rd-surface)}
+body.rd .case-nav nav{display:flex;flex-direction:column}
+body.rd .case-nav a{padding:8px 12px;border-left:2px solid var(--rd-line);text-decoration:none}
+body.rd .case-nav a.is-current{color:var(--rd-ink);border-left-color:var(--rd-gold-ink);font-weight:600}
+body.rd .case-content h2{font-weight:700;letter-spacing:-.02em}
+/* Technical-approach cards: site.css gives them no side padding, so add breathing room and a real gap. */
+body.rd .engineering-highlights{gap:16px;margin-top:18px}
+body.rd .engineering-highlights article{padding:22px 24px;border:1px solid var(--rd-line);border-radius:16px;background:var(--rd-surface);box-shadow:0 10px 24px -18px rgba(30,40,35,.35)}
+body.rd .engineering-verification{margin-top:20px}
+body.rd .next-project{padding:22px 24px;border-radius:22px;background:var(--rd-forest)}
+body.rd .next-project a{color:var(--rd-on-forest);font-weight:600}
+
+
+/* ---------- Shared page blocks (case studies, Experience, About, Contact) ----------
+ * These pages keep their source markup; the rules below restyle the common
+ * blocks. A .pagehero becomes a full-bleed forest band: the 100vmax box-shadow
+ * paints the band edge to edge and clip-path trims it to the hero's height, so
+ * no wrapper markup is needed. The Aura hero (.rd-hero) already supplies its own band.
+ */
+body.rd .pagehero{position:relative;padding-top:52px;padding-bottom:56px;background:var(--rd-forest);box-shadow:0 0 0 100vmax var(--rd-forest);clip-path:inset(0 -100vmax);color:var(--rd-on-forest)}
+body.rd .rd-hero .pagehero{background:none;box-shadow:none;clip-path:none}
+body.rd .pagehero h1{font-weight:800;letter-spacing:-.04em;line-height:1;color:var(--rd-on-forest)}
+body.rd .pagehero .lead,body.rd .pagehero p{color:var(--rd-on-forest-muted)}
+body.rd .pagehero .eyebrow{color:var(--rd-gold)}
+body.rd .pagehero .breadcrumb{color:var(--rd-on-forest-muted);font:13px var(--rd-mono)}
+body.rd .pagehero a{color:var(--rd-on-forest)}
+body.rd .pagehero .tags{color:var(--rd-gold);font:13px var(--rd-mono)}
+body.rd .pagehero .pagehero-employer-logo{margin:0 0 14px}
+body.rd .pagehero .pagehero-employer-logo img{display:block;height:34px;width:auto;padding:5px 10px;border-radius:8px}
+body.rd .pagehero .pagehero-employer-logo--light img{background:#f0ede0}
+body.rd .pagehero .pagehero-employer-logo--dark img{background:#1e2823}
+body.rd .pagehero .case-banner{padding:0;border:0;background:none;box-shadow:none;backdrop-filter:none}
+body.rd .pagehero .case-banner>img,body.rd .pagehero .case-banner-media{border-radius:28px;background:var(--rd-bg);box-shadow:0 30px 60px rgba(0,0,0,.35)}
+body.rd .pagehero .case-banner>img{padding:18px;box-sizing:border-box}
+body.rd .pagehero .facts span{border-color:rgba(184,205,180,.35);background:rgba(244,242,232,.08);color:var(--rd-on-forest)}
+body.rd .pagehero .facts .dependency-chip{background:rgba(244,242,232,.1);border-color:rgba(184,205,180,.3);color:var(--rd-on-forest);box-shadow:none}
+body.rd .pagehero .facts .dependency-chip-label{background:none;color:var(--rd-on-forest)}
+body.rd .pagehero .facts .dependency-chip-logo{box-sizing:content-box;width:17px;height:17px;padding:3px;border-radius:50%;background:var(--rd-bg)}
+body.rd .pagehero .button{border-color:var(--rd-gold);background:var(--rd-gold);color:#1e2823}
+body.rd .pagehero .button.secondary{border-color:rgba(244,242,232,.4);background:transparent;color:var(--rd-on-forest)}
+
+/* Case-study body: space below the band, cards for notes and evidence. */
+body.rd .case-layout{padding-top:48px}
+body.rd .rd-case-body .case-layout{padding-top:0}
+body.rd .case-content h2{font-weight:700;letter-spacing:-.02em}
+body.rd .note,body.rd .evidence-note{border:1px solid var(--rd-line);border-left:3px solid var(--rd-gold-ink);border-radius:0 14px 14px 0;background:var(--rd-surface)}
+body.rd .case-content .code{border-radius:14px}
+body.rd .next-project{padding:22px 24px;border-radius:22px;background:var(--rd-forest)}
+body.rd .next-project a{color:var(--rd-on-forest);font-weight:600}
+
+/* Experience detail pages. */
+/* Impact cards on career pages: the headline figure leads, then what it means. */
+body.rd .rd-impact{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;padding:40px 0 0}
+body.rd .rd-impact article{padding:24px 26px;border:1px solid var(--rd-line);border-radius:20px;background:var(--rd-surface);box-shadow:0 18px 36px -24px rgba(30,40,35,.45)}
+body.rd .rd-impact-figure{margin:0 0 6px;font:800 clamp(26px,3vw,34px)/1.1 var(--rd-display);letter-spacing:-.02em;color:var(--rd-gold-ink)}
+body.rd .rd-impact h2{margin:0 0 8px;font-size:19px;font-weight:700}
+body.rd .rd-impact p:last-child{margin:0;color:var(--rd-muted);font-size:16px}
+body.rd .wrap.note{margin-top:20px}
+body.rd .project-page{padding-top:44px}
+body.rd .project-page .project-visual{border:1px solid var(--rd-line);border-radius:20px;background:var(--rd-sage-soft)}
+body.rd .project-page .case h4{font:600 11px var(--rd-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--rd-gold-ink)}
+
+/* Card grids outside the Projects index (Experience index) share the post-card look. */
+body.rd .projects:not(.rd-grid){gap:18px;padding-top:12px}
+body.rd .projects:not(.rd-grid) .project{padding:0 0 16px;overflow:hidden;border:1px solid var(--rd-line);border-radius:20px;background:var(--rd-surface);box-shadow:none;transition:transform .25s ease,box-shadow .25s ease}
+body.rd .projects:not(.rd-grid) .project:hover{transform:translateY(-4px);box-shadow:var(--rd-shadow)}
+body.rd .projects:not(.rd-grid) .project-visual{border:0;border-radius:0;background:var(--rd-sage-soft)}
+body.rd .projects:not(.rd-grid) .project-meta{margin:16px 16px 0;font:600 11px var(--rd-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--rd-gold-ink)}
+body.rd .projects:not(.rd-grid) .project h3,body.rd .projects:not(.rd-grid) .project>p,body.rd .projects:not(.rd-grid) .project .tags,body.rd .projects:not(.rd-grid) .project .worklink{margin-left:16px;margin-right:16px}
+body.rd .projects:not(.rd-grid) .project h3{font-weight:700;letter-spacing:-.02em}
+
+/* About: the portrait gets the profile's gold avatar ring. */
+body.rd .about-portrait{border:0;border-radius:50%;aspect-ratio:1;max-width:340px;box-shadow:0 0 0 6px var(--rd-forest),0 0 0 10px var(--rd-gold),0 30px 60px rgba(0,0,0,.4)}
+body.rd .about-hero h1{font-size:clamp(40px,5.5vw,72px)}
+body.rd .dark .eyebrow{color:var(--rd-gold)}
+
+/* Contact card. */
+body.rd .contact-inner{border-color:var(--rd-line);border-radius:24px;background:var(--rd-surface)}
+
+/* Footer. */
+body.rd .footer{border-top:1px solid var(--rd-line);background:var(--rd-surface)}
+body.rd .footer a:hover{color:var(--rd-ink);text-decoration:underline}
+
+@media (max-width:900px){
+  .rd-topbar{padding:8px 25px}
+  .rd-featured,.rd-hero-grid{grid-template-columns:1fr}
+  .rd-phones{min-height:350px}
+  body.rd .projects.rd-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .rd-story{margin-bottom:-54px}
+  /* min-width:0 keeps the one-line rail scrolling inside its grid track instead of widening the page. */
+  body.rd .case-nav,body.rd .case-nav nav{min-width:0;max-width:100%}
+  body.rd .case-nav nav{flex-direction:row;overflow-x:auto}
+  /* Code samples and the rail scroll inside a zero-minimum track instead of widening the page. */
+  body.rd .case-layout{grid-template-columns:minmax(0,1fr)}
+  body.rd .case-content{min-width:0;max-width:100%}
+  body.rd .case-nav a{white-space:nowrap;border-left:0;border-bottom:2px solid var(--rd-line)}
+  body.rd .case-nav a.is-current{border-bottom-color:var(--rd-gold-ink)}
+}
+@media (max-width:650px){
+  .rd-topbar{padding:6px 16px}
+  .rd-handle span{display:none}
+  /* The avatar already links home, so phones drop the text link and keep the bar on one row. */
+  .rd-links a[href="/"]{display:none}
+  .rd-links a{padding:0 9px;font-size:14px}
+  .rd-intro{grid-template-columns:1fr;padding-top:36px}
+  .rd-featured-copy{padding:30px 22px}
+  .rd-phones{min-height:300px}
+  body.rd .projects.rd-grid{grid-template-columns:1fr}
+  .rd-stats{flex-wrap:wrap}
+  .rd-stats div{flex:1 1 45%}
+  .rd-stats div+div{padding-left:0;border-left:0}
+  body.rd .pagehero{padding-top:36px;padding-bottom:40px}
+  body.rd .rd-impact{grid-template-columns:1fr}
+  body.rd .pagehero .case-banner{grid-template-columns:minmax(0,1fr)}
+  body.rd .pagehero .case-banner>img,body.rd .pagehero .case-banner-media{width:160px;height:160px;max-width:100%;order:-1}
+  body.rd .about-portrait{max-width:220px}
+}
+@media (prefers-reduced-motion:reduce){
+  body.rd *{transition:none!important;animation:none!important}
+}

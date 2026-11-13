@@ -8,7 +8,7 @@ const projectGridMarker = "<!--PROJECT_CARD_GRID-->";
 
 function cleanPage(html: string) {
   return html
-    .replace(/<header>[\s\S]*?<\/header>/i, "")
+    .replace(/<header[^>]*>[\s\S]*?<\/header>/i, "")
     .replace(/<footer[\s\S]*?<\/footer>/i, "")
     .replace(/<script[\s\S]*?<\/script>/gi, "")
     .replace(/<!doctype html>/i, "")

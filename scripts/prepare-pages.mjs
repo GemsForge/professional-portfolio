@@ -6,6 +6,7 @@ import { siApple, siDotnet, siMui, siMoq, siOpenjdk, siPostgresql, siSpotify, si
 import { renderDependencyGroup } from "./auralogbook-dependencies.mts";
 import { applySocialMetadata, renderRobots, renderSitemap } from "./site-metadata.mjs";
 import { applyProjectPageMetadata, HOME_PROJECT_SLUGS, PORTFOLIO_POSTS, PROJECTS, renderProjectCard } from "./project-catalog.mts";
+import { applySiteRedesign } from "./site-redesign.mjs";
 
 const source = path.resolve("static-source");
 const pages = {};
@@ -96,7 +97,6 @@ const FEATURE_TILES = {
     `<a class="sp-feature-tile sp-tile-quote" href="/work/enterprise-applications/" data-highlight-link="adp" aria-label="Quote post: at ADP, developer onboarding went from two weeks to three days. Open the ADP highlight."><span class="sp-tile-eyebrow"><span class="sp-wide">ADP · Developer enablement</span><span class="sp-narrow">ADP onboarding</span></span><span class="sp-tile-quote-text"><span class="sp-wide">Onboarding: two weeks <span aria-hidden="true">→</span> three days.</span><span class="sp-narrow">2 weeks <span aria-hidden="true">→</span> 3 days</span></span><span class="sp-tile-note">Setup guides new developers actually used.</span></a>`,
   ],
   "75-hard-automation": [
-    `<a class="sp-feature-tile sp-tile-diagram" href="/portfolio/projects/75-hard-automation/" data-post-link="75-hard-automation" aria-label="Diagram post: how a 75 Days check-in flows from Shortcut prompts to a Notion record. Open the 75 Days of Discipline post."><span class="sp-tile-eyebrow"><span class="sp-wide">How a check-in flows</span><span class="sp-narrow">Check-in flow</span></span><span class="sp-flow-step"><span class="sp-wide">Shortcut prompts</span><span class="sp-narrow">Prompts</span></span><span class="sp-flow-arrow" aria-hidden="true">↓</span><span class="sp-flow-step"><span class="sp-wide">Response dictionary</span><span class="sp-narrow">Dictionary</span></span><span class="sp-flow-arrow" aria-hidden="true">↓</span><span class="sp-flow-step sp-flow-end"><span class="sp-wide">Notion API → daily record</span><span class="sp-narrow">Notion record</span></span></a>`,
     `<a class="sp-feature-tile sp-tile-text" href="/about/" data-highlight-link="army" aria-label="Text post: Army National Guard service since 2013. Open the Army Guard highlight."><span class="sp-tile-eyebrow"><span class="sp-wide">Army National Guard</span><span class="sp-narrow">Army Guard</span></span><span class="sp-tile-quote-text"><span class="sp-wide">Serving in the Army since 2013.</span><span class="sp-narrow">Army since 2013</span></span><span class="sp-tile-note">Service, readiness, accountability.</span></a>`,
   ],
 };
@@ -171,12 +171,11 @@ function renderPostViews() {
       const data = shot ? ` data-step-screenshot="${attr(shot.src)}" data-step-screenshot-alt="${attr(shot.alt)}"${shot.hotspot ? ` data-step-hotspot-x="${shot.hotspot.x}" data-step-hotspot-y="${shot.hotspot.y}" data-step-hotspot-label="${attr(shot.hotspot.label)}"` : ""}` : "";
       return `<li data-walkthrough-step="${stepIndex}"${data}><div><h4>${step.title}</h4><p>${step.detail}</p></div></li>`;
     };
-    const eyebrow = allReal ? "App tour" : "Illustrative prototype";
     const disclaimer = allReal ? "" : someReal
       ? `<p class="walkthrough-disclaimer">Illustrated steps follow the documented project flow; screenshots come from the app.</p>`
       : `<p class="walkthrough-disclaimer">A guided prototype based on the documented project flow; not a live production app.</p>`;
     // Step controls follow the image in reading order so they remain easy to reach on touch screens.
-    const walkthrough = steps.length ? `<section class="walkthrough" aria-labelledby="walkthrough-${post.slug}"><div class="walkthrough-heading"><div><span class="eyebrow">${eyebrow}</span><h3 id="walkthrough-${post.slug}">Product walkthrough</h3></div></div><ol class="walkthrough-steps" data-walkthrough="${post.slug}">${steps.map(stepItem).join("")}</ol><p class="walkthrough-status" data-walkthrough-status aria-live="polite"></p><p class="visually-hidden" data-step-announce aria-live="polite"></p>${disclaimer}</section>` : "";
+    const walkthrough = steps.length ? `<section class="walkthrough" aria-labelledby="walkthrough-${post.slug}"><div class="walkthrough-heading"><h3 id="walkthrough-${post.slug}">Product walkthrough</h3></div><ol class="walkthrough-steps" data-walkthrough="${post.slug}">${steps.map(stepItem).join("")}</ol><p class="walkthrough-status" data-walkthrough-status aria-live="polite"></p><p class="visually-hidden" data-step-announce aria-live="polite"></p>${disclaimer}</section>` : "";
     // Only add a plus marker when a step defines a useful point to explore.
     const visualHotspots = steps.map((step, stepIndex) => step.hotspot ? `<button type="button" class="visual-hotspot" data-visual-hotspot="${stepIndex}" data-hotspot-label="${attr(step.hotspot.label)}" data-hotspot-detail="${attr(step.detail)}" style="--hotspot-x:${step.hotspot.x}%;--hotspot-y:${step.hotspot.y}%" aria-label="Explore: ${attr(step.hotspot.label)}"><span aria-hidden="true">+</span></button>` : "").join("");
     // Touch-friendly carousel controls sit below the image; dots communicate position without replacing labels.
@@ -309,8 +308,14 @@ async function visit(directory) {
       );
     }
 
+    // Every page except the social-profile home gets the shared redesign shell (#131).
+    text = applySiteRedesign(text, route);
+
     // Social previews run last so they read the final title and description.
     text = applySocialMetadata(text, route);
+
+    // Theme boot + toggle for static pages; it must run in <head> so a stored choice applies before paint.
+    if (!text.includes("/assets/theme.js")) text = text.replace("</head>", '<script src="/assets/theme.js"></script></head>');
 
     pages[route] = text;
     }

@@ -17,7 +17,18 @@ export interface ProjectDefinition {
   cardLinkLabel: string;
   /** Technology labels receive a recognizable Simple Icons mark when available. */
   technologies: { label: string; icon?: string }[];
+  /** Projects-index filter ring this project belongs to; also labels the card cover. */
+  focus: ProjectFocus;
 }
+
+/** Focus areas shown as story-highlight filters on the Projects index, with their card labels. */
+export const PROJECT_FOCUS_LABELS = {
+  fullstack: "Full-stack",
+  integration: "Integration",
+  automation: "Automation",
+  systems: "Systems",
+} as const;
+export type ProjectFocus = keyof typeof PROJECT_FOCUS_LABELS;
 
 /** Content and evidence used by the one-page creator profile and its post viewer. */
 export interface PortfolioPostDefinition {
@@ -69,6 +80,7 @@ export const PROJECTS = {
     cardTitle: "A better memory for hair-care decisions.",
     cardLinkLabel: "Explore Hair Care Log",
     technologies: [{ label: "Apple Shortcuts", icon: "apple" }, { label: "Notion API", icon: "notion" }, { label: "Structured records" }],
+    focus: "automation",
   },
   "75-hard-automation": {
     slug: "75-hard-automation",
@@ -81,6 +93,7 @@ export const PROJECTS = {
     cardTitle: "Practice discipline one day at a time.",
     cardLinkLabel: "Explore 75 Days of Discipline",
     technologies: [{ label: "Apple Shortcuts", icon: "apple" }, { label: "Notion API", icon: "notion" }, { label: "Daily accountability" }],
+    focus: "automation",
   },
   auralogbook: {
     slug: "auralogbook",
@@ -94,6 +107,7 @@ export const PROJECTS = {
     cardTitle: "A calmer space to check in and reflect.",
     cardLinkLabel: "Explore Aura Logbook",
     technologies: [{ label: "React", icon: "react" }, { label: "React Native · Expo" }, { label: "TypeScript", icon: "typescript" }, { label: ".NET", icon: "dotnet" }, { label: "SQLite" }, { label: "Dapper" }],
+    focus: "fullstack",
   },
   "apple-ecosystem": {
     slug: "apple-ecosystem",
@@ -106,6 +120,7 @@ export const PROJECTS = {
     cardTitle: "A place for everything. A purpose for every tool.",
     cardLinkLabel: "Explore Apple-native operating system",
     technologies: [{ label: "Information architecture" }, { label: "Migration" }, { label: "Numbers" }, { label: "Shortcuts", icon: "apple" }],
+    focus: "systems",
   },
   "dynamic-folder-structures": {
     slug: "dynamic-folder-structures",
@@ -118,6 +133,20 @@ export const PROJECTS = {
     cardTitle: "Less folder setup. More actual work.",
     cardLinkLabel: "Explore Dynamic folder structures",
     technologies: [{ label: "Apple Shortcuts", icon: "apple" }, { label: "Variables" }, { label: "Loops" }, { label: "File paths" }],
+    focus: "automation",
+  },
+  "dev-wiki": {
+    slug: "dev-wiki",
+    name: "GemsForge DevWiki",
+    description: "A personal technical knowledge base I built to centralize full-stack development patterns, best practices, and guides — written in my own words so they're actually searchable and useful.",
+    preTitle: "Personal knowledge base · Full-stack documentation",
+    primaryTools: "Notion · Technical writing · Information architecture",
+    image: "/assets/dev-wiki.svg",
+    imageAlt: "Illustration of a searchable technical documentation hub with categorized articles and code examples",
+    cardTitle: "My own searchable reference — built, not borrowed.",
+    cardLinkLabel: "Explore GemsForge DevWiki",
+    technologies: [{ label: "Technical writing" }, { label: "Notion" }, { label: "Information architecture" }],
+    focus: "systems",
   },
   "notion-api-shortcuts": {
     slug: "notion-api-shortcuts",
@@ -130,6 +159,7 @@ export const PROJECTS = {
     cardTitle: "Custom setup, without the repetitive setup.",
     cardLinkLabel: "Explore Notion API integration",
     technologies: [{ label: "REST APIs" }, { label: "JSON" }, { label: "Dictionaries" }, { label: "Technical documentation" }],
+    focus: "integration",
   },
 } satisfies Record<string, ProjectDefinition>;
 
@@ -191,6 +221,23 @@ export const PORTFOLIO_POSTS: PortfolioPostDefinition[] = [
       { title: "Start with a link", detail: "Pass a Notion page or database link to the Shortcut.", hotspot: { x: 42, y: 28, label: "Link intake" } },
       { title: "Prepare the request", detail: "Extract the target ID and prepare authentication.", hotspot: { x: 60, y: 48, label: "Target and auth" } },
       { title: "Map the properties", detail: "Format typed values before sending the API request.", hotspot: { x: 47, y: 71, label: "Property mapping" } },
+    ],
+  },
+  {
+    slug: "dev-wiki", title: "GemsForge DevWiki", category: "project", eyebrow: "Personal knowledge base · Full-stack documentation",
+    caption: "A searchable Notion hub I built to centralize full-stack patterns, best practices, and guides in my own words.", image: "/assets/dev-wiki.svg", imageAlt: "Technical documentation hub with categorized articles and code examples",
+    role: "Identified the knowledge gap, designed the information architecture, and wrote every article.",
+    decisions: [
+      "Organize by technology and concept, not by date, so entries stay useful as reference rather than a diary.",
+      "Write the why behind each pattern, not just the syntax, so the article teaches rather than just shows.",
+    ],
+    evidence: "Live at gemsforge.com/knowledge. Covers React/TypeScript, C#/.NET, SQL, accessibility, and debugging approaches.",
+    tools: ["Notion", "Technical writing", "Information architecture", "React", "TypeScript", "C#/.NET", "SQL"],
+    caseStudy: "/portfolio/projects/dev-wiki/",
+    walkthrough: [
+      { title: "Find a pattern", detail: "Search or browse by technology to find the relevant guide.", hotspot: { x: 50, y: 28, label: "Knowledge search" } },
+      { title: "Read the why", detail: "Each article explains the reason behind the pattern, not just the syntax or the what.", hotspot: { x: 55, y: 52, label: "Pattern context" } },
+      { title: "Copy and apply", detail: "Code examples and checklists you can apply directly to your own work.", hotspot: { x: 48, y: 73, label: "Reference material" } },
     ],
   },
   {
@@ -271,10 +318,14 @@ export const PORTFOLIO_POSTS: PortfolioPostDefinition[] = [
   },
 ];
 
-/** Renders the static fallback card used while preparing generated pages. */
+/**
+ * Renders the post-style Projects-index card used while preparing generated
+ * pages. data-filter ties the card to its focus ring (see projects-redesign.js); the cover link stays out of the tab
+ * order because the "Explore" link below is the card's single keyboard stop.
+ */
 export function renderProjectCard(project: ProjectDefinition) {
   const tags = project.technologies.map(({ label, icon }) => `<span class="tech-chip">${icon ? `<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="${iconPath(icon)}"/></svg>` : ""}<span>${label}</span></span>`).join("");
-  return `<article class="project"><a href="/portfolio/projects/${project.slug}/" class="project-visual" tabindex="-1" aria-hidden="true"><img src="${project.image}" alt="" loading="lazy"></a><div class="project-meta">${project.preTitle}</div><h3>${project.cardTitle}</h3><p>${project.description}</p><div class="tags" aria-label="Technologies and project themes">${tags}</div><a class="worklink" href="/portfolio/projects/${project.slug}/">${project.cardLinkLabel}</a></article>`;
+  return `<article class="project rd-post" data-filter="${project.focus}"><a href="/portfolio/projects/${project.slug}/" class="project-visual" tabindex="-1" aria-hidden="true"><img src="${project.image}" alt="" loading="lazy"><span class="rd-kind">${PROJECT_FOCUS_LABELS[project.focus]}</span></a><div class="rd-post-body"><div class="project-meta">${project.preTitle}</div><h3>${project.name}</h3><p>${project.description}</p><div class="tags" aria-label="Technologies and project themes">${tags}</div><a class="worklink" href="/portfolio/projects/${project.slug}/">${project.cardLinkLabel}</a></div></article>`;
 }
 
 /** Resolves the bundled Simple Icons path used by static project cards. */

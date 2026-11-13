@@ -9,6 +9,13 @@ import { KnowledgeMarkdown } from "@/components/knowledge-markdown";
 import type { KnowledgeResource } from "@/lib/knowledge-types";
 
 /**
+ * Height of the sticky site header plus the collapsed reader heading and page
+ * tabs. Used for the contents observer and for page-change scrolling; update
+ * it with `scroll-margin-top` in knowledge.css when that chrome changes height.
+ */
+const STICKY_READER_OFFSET_PX = 230;
+
+/**
  * Presents one library reference in the established reading view. Public mode
  * uses read-only public endpoints; the owner view keeps management APIs gated.
  */
@@ -58,6 +65,11 @@ export function KnowledgeReader({ id, publicMode = false }: {
     return () => { active = false; };
   }, [id, publicMode]);
 
+  // Name the browser tab after the open reference; the route's static metadata cannot know it.
+  useEffect(() => {
+    if (resource) document.title = `${resource.title} · Developer Wiki`;
+  }, [resource]);
+
   /** Keeps downloads and previews on the reader's matching public or owner API. */
   function documentHref(resourceId: string, query = "") {
     const base = publicMode ? "/api/public/knowledge" : "/api/knowledge";
@@ -74,12 +86,9 @@ export function KnowledgeReader({ id, publicMode = false }: {
   const pageSources = rawPageSources.length > 1 && /^#\s+(?!Page\b).+\s*$/s.test(rawPageSources[0].trim())
     ? [`${rawPageSources[0].trim()}\n\n${rawPageSources[1].trim()}`, ...rawPageSources.slice(2)]
     : rawPageSources;
-  const chapters = [{
-    title: chapterHeading ?? "Chapter 1",
-    pages: pageSources.length ? pageSources : [markdown],
-  }];
-  const currentChapter = chapters[0];
-  const pages = currentChapter.pages;
+  /** The handbook's single chapter title, shown in the page tabs and pagination. */
+  const chapterTitle = chapterHeading ?? "Chapter 1";
+  const pages = pageSources.length ? pageSources : [markdown];
   const pageSource = pages[page] ?? pages[0] ?? markdown;
   const pageTabs = pages.map((source, index) => ({
     index,
@@ -96,7 +105,7 @@ export function KnowledgeReader({ id, publicMode = false }: {
       const visible = entries.filter((entry) => entry.isIntersecting).sort((left, right) => left.boundingClientRect.top - right.boundingClientRect.top);
       const title = visible[0]?.target.textContent?.trim();
       if (title) setActiveContentsTitle(title);
-    }, { rootMargin: "-230px 0px -55% 0px", threshold: 0 });
+    }, { rootMargin: `-${STICKY_READER_OFFSET_PX}px 0px -55% 0px`, threshold: 0 });
     headings.forEach((heading) => observer.observe(heading));
     return () => observer.disconnect();
   }, [page, pageSource, tableOfContents]);
@@ -141,7 +150,7 @@ export function KnowledgeReader({ id, publicMode = false }: {
     const timer = window.setTimeout(() => {
       const article = document.querySelector<HTMLElement>(".knowledge-reader-content");
       if (!article) return;
-      window.scrollTo({ top: Math.max(0, article.offsetTop - 230), behavior: "smooth" });
+      window.scrollTo({ top: Math.max(0, article.offsetTop - STICKY_READER_OFFSET_PX), behavior: "smooth" });
     }, 0);
     return () => window.clearTimeout(timer);
   }, [page, resource, view]);
@@ -193,12 +202,12 @@ export function KnowledgeReader({ id, publicMode = false }: {
               </div>}
               <h2 id="toc-heading">Contents</h2>
               <ol>
-                {tableOfContents.map((entry, index) => <li key={`${page}-${index}`} className={activeContentsTitle === entry.title ? "is-active" : ""} style={{ paddingLeft: `${Math.max(0, entry.level - 2) * 12}px` }}><button type="button" onClick={() => { setActiveContentsTitle(entry.title); navigateToContents(entry.title); }}>{entry.title}</button></li>)}
+                {tableOfContents.map((entry, index) => <li key={`${page}-${index}`} className={activeContentsTitle === entry.title ? "is-active" : ""} data-level={entry.level}><button type="button" onClick={() => { setActiveContentsTitle(entry.title); navigateToContents(entry.title); }}>{entry.title}</button></li>)}
               </ol>
             </section>
           </aside>
           <section className="knowledge-reader-main">
-            <nav className="knowledge-page-tabs-header" aria-label={`${currentChapter.title} pages`}>
+            <nav className="knowledge-page-tabs-header" aria-label={`${chapterTitle} pages`}>
               <div role="tablist" aria-label="Handbook pages">
                 {pageTabs.map((tab) => <button
                   aria-controls="knowledge-page-panel"
@@ -216,7 +225,7 @@ export function KnowledgeReader({ id, publicMode = false }: {
               </div>
             </nav>
             <article aria-labelledby={`knowledge-page-tab-${page}`} className="knowledge-reader-content" id="knowledge-page-panel" role="tabpanel" tabIndex={0}><KnowledgeMarkdown source={pageSource} /></article>
-            <nav className="knowledge-pagination" aria-label={`${currentChapter.title} pages`}><button className="button secondary" type="button" onClick={() => navigateToPage(Math.max(0, page - 1))} disabled={page === 0}>Previous</button><span>{currentChapter.title} · Page {page + 1} of {Math.max(1, pages.length)}</span><button className="button secondary" type="button" onClick={() => navigateToPage(Math.min(pages.length - 1, page + 1))} disabled={page >= pages.length - 1}>Next</button></nav>
+            <nav className="knowledge-pagination" aria-label={`${chapterTitle} pages`}><button className="button secondary" type="button" onClick={() => navigateToPage(Math.max(0, page - 1))} disabled={page === 0}>Previous</button><span>{chapterTitle} · Page {page + 1} of {Math.max(1, pages.length)}</span><button className="button secondary" type="button" onClick={() => navigateToPage(Math.min(pages.length - 1, page + 1))} disabled={page >= pages.length - 1}>Next</button></nav>
           </section>
         </div>
         : <pre className="knowledge-source" tabIndex={0} aria-label="Markdown source"><code>{markdown}</code></pre>)}

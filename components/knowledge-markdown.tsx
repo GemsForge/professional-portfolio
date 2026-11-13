@@ -15,7 +15,8 @@ function MermaidBlock({ source }: { source: string }) {
           const existing = document.querySelector<HTMLScriptElement>('script[data-mermaid-runtime="true"]');
           if (existing) { existing.addEventListener("load", () => resolve(), { once: true }); existing.addEventListener("error", () => reject(new Error("Mermaid failed to load")), { once: true }); return; }
           const script = document.createElement("script");
-          script.src = "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js";
+          // Exact version so a Mermaid release cannot silently change handbook diagrams.
+          script.src = "https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js";
           script.dataset.mermaidRuntime = "true";
           script.onload = () => resolve();
           script.onerror = () => reject(new Error("Mermaid failed to load"));

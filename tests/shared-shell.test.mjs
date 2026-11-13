@@ -20,7 +20,7 @@ test("the routed portfolio page owns the shared shell", () => {
   assert.equal((renderer.match(/<SiteHeader/g) ?? []).length, 1);
   assert.equal((renderer.match(/<SiteFooter/g) ?? []).length, 1);
   assert.match(renderer, /cleanPage\(page\)/);
-  assert.match(renderer, /replace\(\/<header>/);
+  assert.match(renderer, /replace\(\/<header/);
   assert.match(renderer, /replace\(\/<footer/);
 });
 
@@ -54,7 +54,7 @@ test("site and owner navigation use native anchors for reliable full-page routin
   }
   assert.match(footer, /<a href="\/admin\/">Admin<\/a>/);
   assert.match(footer, /href=\{wikiMode \? "\/" : "\/knowledge\/"\}/);
-  assert.match(knowledgeDirectory, /!publicMode && <a href="\/admin\/handbooks">All handbooks →<\/a>/);
+  assert.doesNotMatch(knowledgeDirectory, /All handbooks →/);
   assert.doesNotMatch(knowledgeDirectory, /id="all-references"|aria-label="Developer Wiki documents"/);
 });
 

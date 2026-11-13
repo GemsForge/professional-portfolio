@@ -10,26 +10,31 @@
     <link rel="canonical" href="https://www.gemsforge.com/portfolio/projects/auralogbook/">
     <link rel="stylesheet" href="/assets/site.css?v=auralogbook-recruiter-case-20261112">
     <link rel="stylesheet" href="/assets/auralogbook-image-dialog.css">
+    <link rel="stylesheet" href="/assets/redesign.css">
+    <script src="/assets/projects-redesign.js" defer></script>
     <script src="/assets/auralogbook-image-dialog.js" defer></script>
   </head>
-  <body>
+  <body class="rd">
     <a class="skip" href="#main">Skip to content</a>
     <header>
-      <div class="wrap nav">
-        <a class="brand" href="/" aria-label="Diamond Brown portfolio home">
-          <img src="/assets/brandmark.png" alt="" width="66" height="66">
-          <span>Diamond Brown<small>Software Development &amp; Systems</small></span>
+      <div class="rd-topbar">
+        <a class="rd-handle" href="/" aria-label="Diamond Brown portfolio home">
+          <img src="/assets/profile-avatar-320.jpg" alt="" width="36" height="36">
+          <span>diamond.brown</span>
         </a>
-        <nav class="links" aria-label="Portfolio navigation">
+        <nav class="rd-links" aria-label="Portfolio navigation">
+          <a href="/">Home</a>
           <a href="/portfolio/projects/" aria-current="page">Projects</a>
           <a href="/about/">About</a>
-          <a href="/assets/diamond-brown-resume.pdf">Resume</a>
+          <a href="/assets/diamond-brown-resume.pdf">Résumé</a>
           <a href="/contact/">Contact</a>
         </nav>
       </div>
     </header>
     <main id="main">
-      <div class="wrap">
+      <!-- #131 redesign: dark story hero leads with real phone screens, then the recruiter snapshot and detail. -->
+      <section class="rd-hero">
+        <div class="wrap rd-hero-grid">
         <div class="pagehero">
           <nav class="breadcrumb" aria-label="Breadcrumb">
             <a href="/portfolio/">Portfolio</a> /
@@ -51,9 +56,29 @@
                 <a class="button" href="https://github.com/GemsForge/aura-logbook-api">View source on GitHub ↗</a>
                 <a class="button secondary" href="#screens">Browse app screens</a>
               </div>
+              <dl class="rd-stats" aria-label="Project at a glance">
+                <div><dt>React web + Expo shell</dt><dd>2 clients</dd></div>
+                <div><dt>API on Dapper and SQLite</dt><dd>.NET 9</dd></div>
+                <div><dt>Spotify OAuth, tokens kept in the API</dt><dd>PKCE</dd></div>
+              </dl>
             </div>
           </div>
         </div>
+        <!-- Story-style screen carousel; projects-redesign.js adds progress bars and autoplay with a pause control. -->
+        <section class="rd-story" data-story aria-roledescription="carousel" aria-label="Aura Logbook phone screens">
+          <ul hidden>
+            <li data-story-slide data-src="/assets/auralogbook-tour/home-mobile.png" data-alt="Aura Logbook home screen on a phone with the daily mood check-in" data-title="Home" data-detail="daily check-in"></li>
+            <li data-story-slide data-src="/assets/auralogbook-tour/check-in-mobile-top.png" data-alt="Aura Logbook mood check-in on a phone" data-title="Check in" data-detail="moods and detail"></li>
+            <li data-story-slide data-src="/assets/auralogbook-tour/reflections-mobile.png" data-alt="Saved Aura Logbook reflections on a phone" data-title="Reflections" data-detail="saved entries"></li>
+            <li data-story-slide data-src="/assets/auralogbook-tour/insights-mobile.png" data-alt="Aura Logbook mood insights on a phone" data-title="Insights" data-detail="patterns over time"></li>
+          </ul>
+          <div class="rd-story-bars" data-story-bars></div>
+          <figure class="rd-story-frame"><img data-story-image src="/assets/auralogbook-tour/home-mobile.png" alt="Aura Logbook home screen on a phone with the daily mood check-in" width="332" height="720"></figure>
+          <div class="rd-story-caption"><span data-story-caption aria-live="off"><strong>Home</strong> · daily check-in</span><button class="rd-story-toggle" type="button" data-story-toggle hidden>Pause</button></div>
+        </section>
+        </div>
+      </section>
+      <div class="wrap rd-case-body">
         <!-- Recruiter scan order: role, stack, system boundaries, then detailed evidence. -->
         <section class="project-snapshot" aria-labelledby="project-snapshot-heading">
           <div>

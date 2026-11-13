@@ -6,15 +6,20 @@ import { test } from "node:test";
 const LEAD_PROJECTS = ["auralogbook", "notion-api-shortcuts"];
 const CATALOG_ORDER = [
   ...LEAD_PROJECTS,
+  "dev-wiki",
   "75-hard-automation",
   "hair-log",
   "dynamic-folder-structures",
   "apple-ecosystem",
 ];
 
-/** Lists project card slugs in the order the cards appear in a page. */
+/**
+ * Lists project card slugs in the order the cards appear in a page. Cards may
+ * carry extra classes and data attributes (the #131 post-style card adds
+ * `rd-post` and `data-filter`), so only the leading class and link are pinned.
+ */
 const cardSlugs = (html) =>
-  [...html.matchAll(/<article class="project"><a href="\/portfolio\/projects\/([a-z0-9-]+)\//g)].map(
+  [...html.matchAll(/<article class="project[^"]*"[^>]*><a href="\/portfolio\/projects\/([a-z0-9-]+)\//g)].map(
     ([, slug]) => slug,
   );
 

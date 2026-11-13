@@ -36,29 +36,33 @@ export type KnowledgeModule =
   | "delivery"
   | "assets";
 
-type HandbookCategory =
-  | "architecture"
-  | "backend"
-  | "data"
-  | "project"
-  | "codex"
-  | "quality";
+/** Handbook filter ids; each equals the folder segment after `handbooks/`. */
+const handbookCategoryIds = [
+  "architecture",
+  "backend",
+  "data",
+  "project-management",
+  "codex",
+  "git",
+  "quality",
+] as const;
 
-type HandbookReference = {
-  folder: string;
-  filename: string;
-};
+type HandbookCategory = (typeof handbookCategoryIds)[number];
 
-/** Keeps the landing-page handbook cards and their private library files aligned. */
+/** Narrows a `handbooks/<segment>` folder segment to a known filter id. */
+function isHandbookCategory(value: string): value is HandbookCategory {
+  return (handbookCategoryIds as readonly string[]).includes(value);
+}
+
+/** One published Markdown handbook card; unknown folders show only under All. */
 type Handbook = {
+  resourceId: string;
   title: string;
-  category: HandbookCategory;
+  category?: HandbookCategory;
   categoryLabel: string;
   description: string;
   tags: string[];
   searchText: string;
-  html?: HandbookReference;
-  markdown?: HandbookReference;
 };
 
 /** Uses saved library logos first, then bundled Simple Icons when available. */
@@ -152,19 +156,6 @@ const folders: LibraryFolder[] = [
       "Coding, accessibility, operating, and source-of-truth guidance.",
   },
   {
-    path: "handbooks/quality",
-    label: "Quality",
-    group: "handbooks",
-    description: "Testing, QA, and verification.",
-  },
-  {
-    path: "governance",
-    label: "Governance and standards",
-    group: "governance",
-    description:
-      "Coding, accessibility, operating, and source-of-truth guidance.",
-  },
-  {
     path: "governance/templates/ci",
     label: "CI templates",
     group: "governance",
@@ -221,142 +212,11 @@ const handbookCategories: { id: HandbookCategory | "all"; label: string }[] = [
   { id: "architecture", label: "Architecture" },
   { id: "backend", label: "Backend" },
   { id: "data", label: "Data" },
-  { id: "project", label: "Project management" },
+  { id: "project-management", label: "Project management" },
   { id: "codex", label: "Codex" },
+  { id: "git", label: "Git and GitHub" },
   { id: "quality", label: "Quality" },
 ];
-
-const handbooks: Handbook[] = [
-  {
-    title: "Console Feature-Oriented Layered UI Architecture",
-    category: "architecture",
-    categoryLabel: "Architecture",
-    description:
-      "Feature boundaries, reusable views, workflows, query state, routing, forms, and role-oriented file names.",
-    tags: ["React", "TypeScript", "TanStack Query"],
-    searchText:
-      "console feature oriented layered ui architecture react typescript tanstack query",
-    html: {
-      folder: "handbooks/architecture",
-      filename: "console-feature-oriented-layered-ui-architecture-booklet.html",
-    },
-    markdown: {
-      folder: "handbooks/architecture",
-      filename: "Console Feature-Oriented Layered UI Architecture.md",
-    },
-  },
-  {
-    title: "Backend API and Microservices Engineering",
-    category: "backend",
-    categoryLabel: "Backend",
-    description:
-      "Contracts, layers, API boundaries, microservice distinctions, security, errors, testing, documentation, and MVP practice.",
-    tags: ["ASP.NET Core", "Vapor", "OpenAPI"],
-    searchText:
-      "backend api microservices engineering swift vapor fluent c sharp dotnet asp net node typescript openapi security",
-    html: {
-      folder: "handbooks/backend",
-      filename: "backend-api-microservices-engineering-handbook.html",
-    },
-    markdown: {
-      folder: "handbooks/backend",
-      filename: "backend-api-microservices-engineering-handbook.md",
-    },
-  },
-  {
-    title: "Database Engineering Handbook",
-    category: "data",
-    categoryLabel: "Data",
-    description:
-      "Schema design, table criteria, SQL portability, migrations, integrity, ERDs, backups, recovery, and tests.",
-    tags: ["SQLite", "PostgreSQL", "ERD"],
-    searchText:
-      "database engineering sqlite postgresql mysql fluent migrations erd schema sql",
-    html: {
-      folder: "handbooks/data",
-      filename: "database-engineering-handbook-booklet.html",
-    },
-    markdown: {
-      folder: "handbooks/data",
-      filename: "database-engineering-handbook.md",
-    },
-  },
-  {
-    title: "Database Testing Handbook",
-    category: "data",
-    categoryLabel: "Data quality",
-    description:
-      "Foreign keys, migrations, rollback, query mapping, compatibility, fixtures, ERD verification, and restore testing.",
-    tags: ["SQLite", "PostgreSQL", "Migrations"],
-    searchText:
-      "database testing sqlite postgresql migrations foreign keys fixtures erd backup restore",
-    html: {
-      folder: "handbooks/data",
-      filename: "database-testing-handbook.html",
-    },
-    markdown: {
-      folder: "handbooks/data",
-      filename: "database-testing-handbook.md",
-    },
-  },
-  {
-    title: "GitHub Project Management Handbook",
-    category: "project",
-    categoryLabel: "Project management",
-    description:
-      "Repository setup, Scrum boards, commit policy, protected branches, labels, issue writing, and MVP stories.",
-    tags: ["GitHub", "Scrum", "MVP"],
-    searchText:
-      "github project management scrum board labels issues pull requests mvp stories",
-    html: {
-      folder: "handbooks/project-management",
-      filename: "github-project-management-handbook.html",
-    },
-    markdown: {
-      folder: "handbooks/project-management",
-      filename: "github-project-management-handbook.md",
-    },
-  },
-  {
-    title: "Codex Development Handbook",
-    category: "codex",
-    categoryLabel: "Codex",
-    description:
-      "Instructions, agents, subagents, prompts, tools, projects, chats, automations, safety, and evidence.",
-    tags: ["Codex", "ChatGPT", "Automation"],
-    searchText:
-      "codex chatgpt agents subagents projects chats automations terminal cli ide instructions",
-    html: {
-      folder: "handbooks/codex",
-      filename: "codex-development-handbook.html",
-    },
-    markdown: {
-      folder: "handbooks/codex",
-      filename: "codex-development-handbook.md",
-    },
-  },
-  {
-    title: "Testing and QA Handbook",
-    category: "quality",
-    categoryLabel: "Quality",
-    description:
-      "API versus UI testing, developer and QA roles, good and bad tests, regression risk, and quality evidence.",
-    tags: ["Testing", "QA", "Playwright"],
-    searchText:
-      "testing qa api ui developer tests good bad tests quality accessibility regression integration end to end",
-    html: {
-      folder: "handbooks/quality",
-      filename: "testing-and-qa-handbook.html",
-    },
-    markdown: {
-      folder: "handbooks/quality",
-      filename: "testing-and-qa-handbook.md",
-    },
-  },
-];
-
-/** Keeps the original catalog available for comparison while testing generated Markdown cards. */
-const showSeededHandbooks = false;
 
 const shelfReferences: {
   id: "governance" | "delivery";
@@ -366,7 +226,7 @@ const shelfReferences: {
 }[] = [
   {
     id: "governance",
-    title: "🧭 Governance shelf",
+    title: "Governance shelf",
     description: "Shared standards and reusable ways of working.",
     items: [
       {
@@ -374,11 +234,11 @@ const shelfReferences: {
         resourceTitle: "Technology and coding standards",
       },
       {
-        title: "💎 GemsForge coding preferences",
+        title: "GemsForge coding preferences",
         resourceTitle: "GemsForge coding preferences",
       },
       {
-        title: "📌 Knowledge base source of truth",
+        title: "Knowledge base source of truth",
         resourceTitle: "Knowledge base source of truth",
       },
       {
@@ -402,7 +262,7 @@ const shelfReferences: {
   },
   {
     id: "delivery",
-    title: "✅ Delivery references",
+    title: "Delivery references",
     description: "Checklists and templates for delivering work consistently.",
     items: [
       { title: "Definition of Done", resourceTitle: "Definition of Done" },
@@ -571,27 +431,20 @@ export function KnowledgeDirectory({
   }, [folderResources, search]);
   /** Applies the landing-page category and text filters without altering the source list. */
   const libraryHandbooks = useMemo(() => {
-    const seededHandbooks = showSeededHandbooks ? handbooks : [];
-    const knownMarkdown = new Set(
-      seededHandbooks.flatMap((handbook) =>
-        handbook.markdown
-          ? [`${handbook.markdown.folder}/${handbook.markdown.filename}`]
-          : [],
-      ),
-    );
-    const uploaded = resources
+    return resources
       .filter(
         (resource) =>
           resource.contentType === "text/markdown" &&
-          resource.folder.startsWith("handbooks/") &&
-          !knownMarkdown.has(`${resource.folder}/${resource.filename}`),
+          resource.folder.startsWith("handbooks/"),
       )
       .map((resource): Handbook => {
-        const category = resource.folder.split("/")[1] as HandbookCategory;
+        const segment = resource.folder.split("/")[1] ?? "";
+        const category = isHandbookCategory(segment) ? segment : undefined;
         const categoryLabel =
           handbookCategories.find((entry) => entry.id === category)?.label ??
           "Handbook";
         return {
+          resourceId: resource.id,
           title: resource.title,
           category,
           categoryLabel,
@@ -604,10 +457,8 @@ export function KnowledgeDirectory({
           searchText:
             resource.searchText ??
             `${resource.title} ${resource.filename} ${resource.folder}`,
-          markdown: { folder: resource.folder, filename: resource.filename },
         };
       });
-    return [...seededHandbooks, ...uploaded];
   }, [publicMode, resources]);
   const visibleHandbooks = useMemo(() => {
     const query = handbookSearch.trim().toLocaleLowerCase();
@@ -621,16 +472,6 @@ export function KnowledgeDirectory({
             .includes(query)),
     );
   }, [activeHandbookCategory, handbookSearch, libraryHandbooks]);
-
-  /** Finds an uploaded handbook edition by its module folder and original filename. */
-  function findHandbookReference(reference?: HandbookReference) {
-    if (!reference) return undefined;
-    return resources.find(
-      (resource) =>
-        resource.folder === reference.folder &&
-        resource.filename === reference.filename,
-    );
-  }
 
   async function addReference(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -651,13 +492,14 @@ export function KnowledgeDirectory({
       if (!response.ok)
         throw new Error(data.error || "Could not save this reference.");
       form.reset();
-      await loadResources();
+      // Markdown opens in the reader right away, so only refresh the list when staying here.
       if (data.resource?.contentType === "text/markdown") {
         const target =
           uploaderOnly && window.parent !== window ? window.parent : window;
         target.location.assign(readerHref(data.resource.id, true));
         return;
       }
+      await loadResources();
       setMessage("Reference added to your library.");
     } catch (error) {
       setIsError(true);
@@ -861,7 +703,6 @@ export function KnowledgeDirectory({
       <SiteHeader pathname={publicMode ? "/knowledge/" : "/admin/knowledge/"} />
       <main id="main" className="wrap knowledge-page">
         <div className="pagehero library-intro">
-          <div className="eyebrow">MY DEVELOPER NOTES</div>
           <h1>{activeModule ? activeModule.title : "Developer Wiki"}</h1>
           <p className="lead">
             {activeModule
@@ -870,102 +711,95 @@ export function KnowledgeDirectory({
           </p>
           {activeModule ? (
             <nav className="library-links" aria-label="Module navigation">
-              <a className="button secondary" href="/admin/knowledge/">
-                ← All modules
-              </a>
-              <a className="button secondary" href="/admin/?step=wiki-uploader">
-                Manage references
-              </a>
+              <a href="/admin/knowledge/">← All modules</a>
+              <a href="/admin/?step=wiki-uploader">Manage references</a>
             </nav>
           ) : (
-            <nav className="library-links" aria-label="Library sections">
-              <a className="button" href="#handbooks">
-                Browse handbooks
-              </a>
-              <a className="button secondary" href="#governance">
-                Open governance shelf
-              </a>
-              <a className="button secondary" href="#delivery">
-                Delivery references
-              </a>
-              {!publicMode && (
-                <a className="button secondary" href="/admin/knowledge/assets/">
-                  Tool assets
-                </a>
-              )}
-              {!publicMode && (
-                <a className="button secondary" href="/api/knowledge/export">
-                  Download document backup
-                </a>
-              )}
-            </nav>
+            !publicMode && (
+              <nav className="library-links" aria-label="Library tools">
+                <a href="/admin/knowledge/assets/">Tool assets</a>
+                <a href="/api/knowledge/export">Download document backup</a>
+              </nav>
+            )
           )}
         </div>
 
         {!activeModule ? (
-          <>
+          // Catalog layout: a sticky browse rail beside the searchable handbook list and shelf indexes.
+          <div className="wiki-catalog">
+            <aside className="wiki-rail" aria-label="Browse the wiki">
+              <p className="wiki-rail-label" id="wiki-rail-handbooks">
+                Handbooks
+              </p>
+              <div
+                className="handbook-filters"
+                role="group"
+                aria-label="Handbook category filters">
+                {handbookCategories.map((category) => (
+                  <button
+                    aria-pressed={activeHandbookCategory === category.id}
+                    aria-controls="handbook-grid"
+                    className={
+                      activeHandbookCategory === category.id
+                        ? "handbook-filter is-active"
+                        : "handbook-filter"
+                    }
+                    key={category.id}
+                    onClick={() => setActiveHandbookCategory(category.id)}
+                    type="button">
+                    <span>{category.label}</span>
+                    <span className="wiki-count">
+                      {category.id === "all"
+                        ? libraryHandbooks.length
+                        : libraryHandbooks.filter(
+                            (handbook) => handbook.category === category.id,
+                          ).length}
+                    </span>
+                  </button>
+                ))}
+              </div>
+              <p className="wiki-rail-label">Shelves</p>
+              <nav className="wiki-rail-links" aria-label="Reference shelves">
+                <a href="#governance">Governance</a>
+                <a href="#delivery">Delivery</a>
+              </nav>
+              <p className="wiki-rail-tip">
+                <strong>Reading path</strong>
+                Start with Console architecture for UI boundaries, then Backend
+                API for service boundaries, then Database Engineering for
+                persistence decisions.
+              </p>
+            </aside>
+
+            <div className="wiki-catalog-main">
             <section
               className="library-section"
               id="handbooks"
               aria-labelledby="handbooks-heading">
-              <div className="section-heading">
-                <div>
-                  <h2 id="handbooks-heading">Handbooks</h2>
-                  <p>Choose a handbook to open its wiki.</p>
-                  {/*TODO: Remove the "All handbooks" link and view */}
-                </div>
+              <div className="wiki-catalog-head">
+                <h2 id="handbooks-heading">Handbooks</h2>
+                <span className="wiki-result-count" aria-live="polite">
+                  {visibleHandbooks.length} of {libraryHandbooks.length}
+                </span>
               </div>
-              {/* </div>
-                {!publicMode && <a href="/admin/handbooks">All handbooks →</a>}
-              </div> */}
-              <div className="handbook-controls">
-                <label className="handbook-search">
-                  <span>Search handbooks</span>
-                  <input
-                    type="search"
-                    placeholder="Search by topic or technology…"
-                    value={handbookSearch}
-                    onChange={(event) => setHandbookSearch(event.target.value)}
-                  />
-                </label>
-                <div
-                  className="handbook-filters"
-                  role="group"
-                  aria-label="Handbook category filters">
-                  {handbookCategories.map((category) => (
-                    <button
-                      aria-pressed={activeHandbookCategory === category.id}
-                      aria-controls="handbook-grid"
-                      className={
-                        activeHandbookCategory === category.id
-                          ? "handbook-filter is-active"
-                          : "handbook-filter"
-                      }
-                      key={category.id}
-                      onClick={() => setActiveHandbookCategory(category.id)}
-                      type="button">
-                      {category.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
+              <label className="handbook-search">
+                <span className="sr-only">Search handbooks</span>
+                <input
+                  type="search"
+                  placeholder="Search by topic or technology"
+                  value={handbookSearch}
+                  onChange={(event) => setHandbookSearch(event.target.value)}
+                />
+              </label>
               <div className="handbook-grid" id="handbook-grid">
                 {visibleHandbooks.map((handbook) => {
-                  const htmlReference = findHandbookReference(handbook.html);
-                  const markdownReference = findHandbookReference(
-                    handbook.markdown,
-                  );
-                  const cardHref = markdownReference
-                    ? readerHref(markdownReference.id, publicMode)
-                    : htmlReference
-                      ? readerHref(htmlReference.id, publicMode)
-                      : undefined;
+                  const cardHref = readerHref(handbook.resourceId, publicMode);
                   const cardContent = (
                     <>
+                      <h3>{handbook.title}</h3>
                       <div className="handbook-kicker">
                         {handbook.categoryLabel}
                       </div>
-                      <h3>{handbook.title}</h3>
                       <p>{handbook.description}</p>
                       <ul
                         className="dependency-chip-list handbook-tags"
@@ -984,23 +818,21 @@ export function KnowledgeDirectory({
                     </>
                   );
                   // Plain anchors preserve browser navigation, context menus, and assistive-technology discovery.
-                  return cardHref ? (
+                  return (
                     <a
                       className="handbook-card handbook-card-link"
                       href={cardHref}
-                      key={handbook.title}>
+                      key={handbook.resourceId}>
                       {cardContent}
                     </a>
-                  ) : (
-                    <article className="handbook-card" key={handbook.title}>
-                      {cardContent}
-                    </article>
                   );
                 })}
               </div>
-              {visibleHandbooks.length === 0 && (
+              {!isLoading && visibleHandbooks.length === 0 && (
                 <p className="handbook-empty" role="status">
-                  No handbook matches that search yet.
+                  {libraryHandbooks.length === 0
+                    ? "No handbooks are published yet."
+                    : "No handbook matches that search. Try a broader term or choose All."}
                 </p>
               )}
               {isLoading && (
@@ -1014,12 +846,6 @@ export function KnowledgeDirectory({
                 </p>
               )}
             </section>
-
-            <div className="note reading-path">
-              <strong>💡 Reading path:</strong> Start with Console architecture
-              for UI boundaries, then Backend API for service boundaries, then
-              Database Engineering for persistence decisions.
-            </div>
 
             <section
               className="library-shelves"
@@ -1071,7 +897,8 @@ export function KnowledgeDirectory({
                 </div>
               ))}
             </section>
-          </>
+            </div>
+          </div>
         ) : (
           <section
             className="library-section"
