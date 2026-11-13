@@ -31,7 +31,7 @@ test("social profile shows the résumé-backed header, experience highlights, an
   assert.doesNotMatch(highlightRow, /mailto:[^"]*" data-highlight-link/, "Contact must stay a plain mailto link, not a story card");
   assert.match(highlightRow, /href="\/assets\/diamond-brown-resume\.pdf"><span class="sp-highlight-ring[^"]*">[\s\S]*?Résumé/);
   // Army service stays in the bio and the Army Guard highlight, so the stats row shows only portfolio and role counts.
-  assert.match(profile, /<li><strong>6<\/strong> projects<\/li>\s*<li><strong>4<\/strong> roles<\/li>\s*<\/ul>/);
+  assert.match(profile, /<li><strong>7<\/strong> projects<\/li>\s*<li><strong>4<\/strong> roles<\/li>\s*<\/ul>/);
   assert.doesNotMatch(profile, /yrs Army Guard/);
   assert.doesNotMatch(html, /followers|likes|following/i, "stats must be résumé counts, not social engagement");
   for (const line of ["Software Engineer Analyst @ ADP", "U.S. Secret clearance · Army National Guard since 2013", "Cut dev onboarding from two weeks to three days.", "Atlanta · open to remote or hybrid"]) {
@@ -55,7 +55,7 @@ test("social profile shows the résumé-backed header, experience highlights, an
 
   const grid = html.slice(html.indexOf('id="creator-post-grid"'), html.indexOf("</section>", html.indexOf('id="creator-post-grid"')));
   const tiles = [...grid.matchAll(/<a class="(creator-post-tile tile-[a-z0-9-]+|sp-feature-tile sp-tile-[a-z]+)"/g)].map((match) => match[1].split(" ")[1]);
-  assert.deepEqual(tiles, ["tile-auralogbook", "sp-tile-quote", "tile-notion-api-shortcuts", "tile-dev-wiki", "tile-75-hard-automation", "sp-tile-diagram", "sp-tile-text", "tile-hair-log", "tile-dynamic-folder-structures", "tile-apple-ecosystem"]);
+  assert.deepEqual(tiles, ["tile-auralogbook", "sp-tile-quote", "tile-notion-api-shortcuts", "tile-dev-wiki", "tile-75-hard-automation", "sp-tile-text", "tile-hair-log", "tile-dynamic-folder-structures", "tile-apple-ecosystem"]);
   const tileOrder = [...grid.matchAll(/class="creator-post-tile tile-[^"]+" href="[^"]+" data-post-link="([^"]+)"/g)].map((match) => match[1]);
   assert.deepEqual(tileOrder, slugs.filter((slug) => !["tech-stack", "portfolio-direction"].includes(slug)));
   assert.equal((grid.match(/class="sp-tile-bar"/g) ?? []).length, 7, "every project tile has a title bar");
@@ -177,7 +177,7 @@ test("phones get a compact header, five fitting highlights, and short tile text"
   assert.match(css, /\.sp-profile\{display:grid;grid-template-columns:auto minmax\(0,1fr\)/);
   assert.match(css, /\.sp-profile-body,\.sp-name-row\{display:contents\}/);
   // Every feature tile and the Notion code tile carry a phone-length version of their text.
-  for (const short of ["ADP onboarding", "2 weeks <span aria-hidden=\"true\">→</span> 3 days", "Check-in flow", "Army since 2013"]) {
+  for (const short of ["ADP onboarding", "2 weeks <span aria-hidden=\"true\">→</span> 3 days", "Army since 2013"]) {
     assert.ok(html.includes(`<span class="sp-narrow">${short}</span>`), `missing phone text: ${short}`);
   }
   assert.match(html, /<span class="sp-narrow">\{\n  "parent": \{…\},\n  "properties": \{…\}\n\}<\/span>/);

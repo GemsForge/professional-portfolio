@@ -55,7 +55,7 @@ export function renderFooter() {
  */
 export function applySiteRedesign(html, route) {
   if (PROFILE_ROUTES.has(route)) return html;
-  let text = html.replace(/<header>[\s\S]*?<\/header>/, renderTopBar(route));
+  let text = html.replace(/<header[^>]*>[\s\S]*?<\/header>/, renderTopBar(route));
   text = text.replace(/<footer[\s\S]*?<\/footer>/, renderFooter());
   if (!text.includes("/assets/redesign.css")) {
     text = text.replace("</head>", '<link rel="stylesheet" href="/assets/redesign.css"></head>');
