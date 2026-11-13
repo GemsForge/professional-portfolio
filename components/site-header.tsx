@@ -1,6 +1,7 @@
 // Intentional: use browser navigation because client-side route transitions are failing.
 /* eslint-disable @next/next/no-html-link-for-pages */
 import Image from "next/image";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 const links = [
   ["/", "Home"],
@@ -48,6 +49,7 @@ export function SiteHeader({ pathname, handbookReader = false }: {
             <a href={handbookReader || pathname.startsWith("/knowledge") ? "/" : "/knowledge"}>
               {handbookReader || pathname.startsWith("/knowledge") ? "Portfolio" : "Dev Wiki"}
             </a>
+            <ThemeToggle />
           </div>
         </nav>
       </header>

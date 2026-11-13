@@ -314,6 +314,9 @@ async function visit(directory) {
     // Social previews run last so they read the final title and description.
     text = applySocialMetadata(text, route);
 
+    // Theme boot + toggle for static pages; it must run in <head> so a stored choice applies before paint.
+    if (!text.includes("/assets/theme.js")) text = text.replace("</head>", '<script src="/assets/theme.js"></script></head>');
+
     pages[route] = text;
     }
   }

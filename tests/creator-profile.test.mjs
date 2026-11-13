@@ -230,7 +230,7 @@ test("pop-up keeps the walkthrough, swaps in real step screenshots, and meets ty
   assert.match(script, /imageDialog\?\.addEventListener\("close", \(\) => \{[\s\S]*?imageOpener\.focus/);
   assert.match(css, /#post-dialog \.post-story\{font-size:15px/);
   assert.match(css, /#post-dialog \.walkthrough-steps p,#post-dialog \.walkthrough-status\{font-size:15px/);
-  assert.match(css, /#post-dialog \.walkthrough-disclaimer\{font-size:13px;line-height:1\.45;color:#4d5d50\}/);
+  assert.match(css, /#post-dialog \.walkthrough-disclaimer\{font-size:13px;line-height:1\.45;color:var\(--muted\)\}/);
   assert.match(css, /#post-dialog \.visual-hotspot\{width:44px;height:44px\}/);
   assert.match(css, /#post-dialog \.post-close\{width:44px;height:44px/);
   assert.match(css, /#post-dialog \.post-sequence button\{min-height:44px/);
