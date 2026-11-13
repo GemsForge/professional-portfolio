@@ -1,15 +1,15 @@
 {
   "auralogbook": [
-    "Sign in",
     "Public home",
-    "Arrive home",
+    "Sign in",
+    "Dashboard",
     "Check in",
     "Revisit reflections",
     "Read one entry",
     "Browse photos",
     "Notice patterns",
     "Choose an appearance",
-    "Listen with Spotify"
+    "Connect Spotify"
   ],
   "notion-api-shortcuts": [
     "Start with a link",

@@ -80,8 +80,9 @@ const TILE_TITLES = {
   "apple-ecosystem": "Apple-native system",
 };
 
-/** The 75 Days tile uses the real Shortcuts folder screenshot instead of the illustration. */
+/** Curated project tile images take precedence over the first walkthrough screenshot. */
 const TILE_IMAGES = {
+  auralogbook: { src: PROJECTS.auralogbook.image, width: 1513, height: 1039 },
   "75-hard-automation": { src: "/assets/75-days-shortcuts-overview.png", width: 636, height: 1406, position: "top" },
 };
 
@@ -143,9 +144,9 @@ function renderCreatorGrid() {
 
 /**
  * Emits one story view per grid post, in grid order. Reading order puts evidence
- * first: title and summary, case-study/source links, role and status, then the
- * walkthrough (phones place the picture directly above it so its hotspots stay
- * next to the steps), technical choices, and the tool chips.
+ * first: title and summary, case-study/source links, role and status, then
+ * engineering decisions and stack. On phones, the walkthrough image remains
+ * directly beside its controls after those recruiter-scan details.
  */
 function renderPostViews() {
   return GRID_POSTS.map((post) => {
@@ -158,7 +159,7 @@ function renderPostViews() {
     const actions = links ? `<nav class="post-actions" aria-label="Project links">${links}</nav>` : "";
     const facts = post.role && post.evidence ? `<dl class="post-facts"><div><dt>My role</dt><dd>${post.role}</dd></div><div><dt>${post.evidenceLabel ?? "Evidence &amp; status"}</dt><dd>${post.evidence}</dd></div></dl>` : "";
     const decisionsSection = post.decisions.length ? `<section class="post-decisions"><h3>${post.decisionsTitle ?? "Decisions that shaped it"}</h3><ul>${decisions}</ul></section>` : "";
-    const techSection = `<section class="post-tools"><h3>Tech</h3><div class="post-tool-list">${chips}</div></section>`;
+    const techSection = `<section class="post-tools"><h3>Stack</h3><div class="post-tool-list">${chips}</div></section>`;
     // Phones move the picture into this slot, directly above the walkthrough (see creator-profile.js).
     const mobileVisualSlot = `<div class="post-mobile-visual" data-mobile-visual></div>`;
     // Steps carry their real screenshot and any explicitly useful marker as data.
@@ -175,7 +176,7 @@ function renderPostViews() {
       ? `<p class="walkthrough-disclaimer">Illustrated steps follow the documented project flow; screenshots come from the app.</p>`
       : `<p class="walkthrough-disclaimer">A guided prototype based on the documented project flow; not a live production app.</p>`;
     // Step controls follow the image in reading order so they remain easy to reach on touch screens.
-    const walkthrough = steps.length ? `<section class="walkthrough" aria-labelledby="walkthrough-${post.slug}"><div class="walkthrough-heading"><div><span class="eyebrow">${eyebrow}</span><h3 id="walkthrough-${post.slug}">Walkthrough</h3></div></div><ol class="walkthrough-steps" data-walkthrough="${post.slug}">${steps.map(stepItem).join("")}</ol><p class="walkthrough-status" data-walkthrough-status aria-live="polite"></p><p class="visually-hidden" data-step-announce aria-live="polite"></p>${disclaimer}</section>` : "";
+    const walkthrough = steps.length ? `<section class="walkthrough" aria-labelledby="walkthrough-${post.slug}"><div class="walkthrough-heading"><div><span class="eyebrow">${eyebrow}</span><h3 id="walkthrough-${post.slug}">Product walkthrough</h3></div></div><ol class="walkthrough-steps" data-walkthrough="${post.slug}">${steps.map(stepItem).join("")}</ol><p class="walkthrough-status" data-walkthrough-status aria-live="polite"></p><p class="visually-hidden" data-step-announce aria-live="polite"></p>${disclaimer}</section>` : "";
     // Only add a plus marker when a step defines a useful point to explore.
     const visualHotspots = steps.map((step, stepIndex) => step.hotspot ? `<button type="button" class="visual-hotspot" data-visual-hotspot="${stepIndex}" data-hotspot-label="${attr(step.hotspot.label)}" data-hotspot-detail="${attr(step.detail)}" style="--hotspot-x:${step.hotspot.x}%;--hotspot-y:${step.hotspot.y}%" aria-label="Explore: ${attr(step.hotspot.label)}"><span aria-hidden="true">+</span></button>` : "").join("");
     // Touch-friendly carousel controls sit below the image; dots communicate position without replacing labels.
@@ -183,7 +184,7 @@ function renderPostViews() {
     const opening = allReal ? { src: steps[0].screenshot.src, alt: steps[0].screenshot.alt } : { src: post.image, alt: post.imageAlt };
     const zoomLabel = `Open ${post.title} walkthrough image in the enlarged viewer`;
     const visual = `<figure class="post-main-visual${allReal ? " is-step-screenshot" : ""}"><div class="post-visual-stage"><button type="button" class="post-image-zoom" data-post-image-zoom aria-label="${attr(zoomLabel)}"><img src="${attr(opening.src)}" alt="${attr(opening.alt)}" width="960" height="960"></button>${visualHotspots}</div>${stepNav}</figure>`;
-    return `<article class="post-story" data-post-view="${post.slug}" aria-labelledby="post-title-${post.slug}" hidden><template class="post-visual-template">${visual}</template><div class="post-story-topline"><span>${post.eyebrow}</span></div><h2 id="post-title-${post.slug}">${post.title}</h2><p class="post-lead">${post.caption}</p>${actions}${facts}${mobileVisualSlot}${walkthrough}${decisionsSection}${techSection}<nav class="post-sequence" aria-label="Browse other posts"><button type="button" data-adjacent-post="previous">← Previous post</button><button type="button" data-adjacent-post="next">Next post →</button></nav></article>`;
+    return `<article class="post-story" data-post-view="${post.slug}" aria-labelledby="post-title-${post.slug}" hidden><template class="post-visual-template">${visual}</template><div class="post-story-topline"><span>${post.eyebrow}</span></div><h2 id="post-title-${post.slug}">${post.title}</h2><p class="post-lead">${post.caption}</p>${actions}${facts}${decisionsSection}${techSection}${mobileVisualSlot}${walkthrough}<nav class="post-sequence" aria-label="Browse other posts"><button type="button" data-adjacent-post="previous">← Previous post</button><button type="button" data-adjacent-post="next">Next post →</button></nav></article>`;
   }).join("");
 }
 
