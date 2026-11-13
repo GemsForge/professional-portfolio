@@ -298,8 +298,22 @@
       .ws-table th{font:600 10px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
       .ws-table td{padding:11px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
       .ws-table td small{display:block;color:var(--muted)}
-      .ws-table time{font-variant-numeric:tabular-nums;white-space:nowrap}
-      .ws-row-actions{display:flex;gap:4px;align-items:center;white-space:nowrap}
+      /* Cells wrap instead of widening the table; the table scrolls inside the panel as a last resort. */
+      .ws-table-scroll{max-width:100%;overflow-x:auto;container-type:inline-size}
+      /* When the panel is narrow, each reference stacks as a card so its actions never leave the panel. */
+      @container (max-width:640px){
+        .ws-table thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+        .ws-table,.ws-table tbody,.ws-table tr,.ws-table td{display:block;width:100%}
+        .ws-table tr{padding:10px 0;border-bottom:1px solid var(--line)}
+        .ws-table td{padding:3px 4px;border:0}
+        .ws-table td[data-label]::before{content:attr(data-label);display:inline-block;min-width:84px;font:600 10px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+        .ws-row-actions{padding-top:4px}
+        .ws-edit-row td{padding:12px 4px}
+        .ws-edit-row .ws-form{grid-template-columns:1fr}
+      }
+      .ws-table td strong{overflow-wrap:anywhere}
+      .ws-table time{font-variant-numeric:tabular-nums}
+      .ws-row-actions{display:flex;flex-wrap:wrap;gap:0 6px;align-items:center}
       .ws-link-btn{background:none;border:0;padding:4px 2px;font:600 13px var(--body);color:var(--gold-ink);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
       .ws-link-btn:disabled{opacity:.5;cursor:wait}
       .ws-link-btn:focus-visible{outline:3px solid var(--gold);outline-offset:2px;border-radius:4px}
@@ -520,6 +534,7 @@
                   </div>
                   <span class="ws-search" role="search" aria-label="Filter references">Filter references…</span>
                 </div>
+                <div class="ws-table-scroll">
                 <table class="ws-table" aria-labelledby="wiki-refs-heading">
                   <thead>
                     <tr>
@@ -539,6 +554,7 @@
                     </tr>
                   </tbody>
                 </table>
+                </div>
               </section>
 
               <!-- ======= Panel 3: Walkthrough Uploader =======

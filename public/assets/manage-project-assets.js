@@ -174,6 +174,8 @@ function wikiRow(resource) {
   });
   actionGroup.append(toggle, textElement("span", "·", "muted"), edit);
   actions.append(actionGroup);
+  // Captions for the stacked card layout the table switches to in a narrow panel.
+  [[type, "Type"], [area, "Area"], [status, "Status"], [published, "Published"]].forEach(([cell, label]) => { cell.dataset.label = label; });
   row.append(name, type, area, status, published, actions);
   return row;
 }
