@@ -7,197 +7,237 @@
     <title>Manage Project Assets · GemsForge</title>
     <link rel="stylesheet" href="/assets/site.css">
     <style>
-      form{max-width:720px}
-      label{display:block;font-weight:600;margin:18px 0 7px}
-      input,select,textarea{display:block;width:100%;font:inherit;padding:12px;border:1px solid #7a8a78;border-radius:4px;background:#fff;color:#1e2823}
-      textarea{min-height:100px}
-      #preview{max-width:360px;max-height:260px;object-fit:contain;margin-top:20px}
-      .managed-image{border:1px solid #aebbab;padding:24px;margin:25px 0;max-width:800px}
-      .managed-image>img{max-height:350px;object-fit:contain;width:auto}
-      button{cursor:pointer}
-      button:disabled{opacity:.6}
-      #message{min-height:2em;font-weight:600}
-      .admin-links{display:flex;gap:24px;flex-wrap:wrap}
-      .workspace-intro{padding-bottom:30px}
-      .workspace-intro h1{font-size:clamp(38px,5.5vw,68px);letter-spacing:-2.5px}
-      .workspace-intro .lead{max-width:760px}
-      .workspace-steps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:26px 0 34px}
-      .workspace-step{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:start;gap:12px;min-height:82px;padding:16px 18px;border:1px solid var(--line);border-radius:8px;background:rgba(255,255,255,.48);color:var(--ink);text-align:left;cursor:pointer;transition:background-color .15s ease,border-color .15s ease,box-shadow .15s ease}
-      .workspace-step:hover{border-color:#829b84;background:rgba(255,255,255,.78)}
-      .workspace-step[aria-current="step"]{border-color:var(--green);background:rgba(181,215,182,.3);box-shadow:inset 0 0 0 1px var(--green)}
-      .step-number{display:grid;place-items:center;width:32px;height:32px;border:1px solid currentColor;border-radius:50%;font-weight:700}
-      .step-copy{display:grid;gap:3px}
-      .step-copy strong{font-size:15px}
-      .step-copy span{font-size:13px;line-height:1.45;color:var(--muted)}
-      .workspace-panel{padding:clamp(20px,4vw,38px);border:1px solid var(--line);border-radius:12px;background:linear-gradient(145deg,rgba(255,255,255,.76),rgba(232,235,223,.7));box-shadow:0 10px 30px rgba(30,40,35,.06)}
+      /* ---- Workspace shell ---- */
+      /* Full-bleed forest sidebar layout; `body.rd` class intentionally absent
+         so the site redesign top-bar injection is skipped on this owner-only page. */
+      body{background:#f4f2e8;margin:0}
+      .ws-layout{display:grid;grid-template-columns:220px minmax(0,1fr);min-height:100dvh}
+
+      /* Sidebar */
+      .ws-side{background:#1e2823;color:#f4f2e8;display:flex;flex-direction:column;gap:4px;padding:22px 14px;position:sticky;top:0;height:100dvh;overflow-y:auto}
+      .ws-brand{display:flex;align-items:center;gap:10px;font:600 16px/1.2 var(--serif,Georgia,serif);padding:2px 10px 18px;border-bottom:1px solid rgba(184,205,180,.22);margin-bottom:12px;text-decoration:none;color:inherit}
+      .ws-brand img{border-radius:50%;box-shadow:0 0 0 2px #1e2823,0 0 0 3.5px #e3c48a}
+
+      /* Sidebar nav items — both <button> (tab switchers) and <a> (external links) */
+      .ws-side button,.ws-side a.ws-link{
+        display:block;width:100%;text-align:left;text-decoration:none;
+        background:none;border:0;border-radius:8px;padding:10px 12px;
+        font:500 14px/1.4 var(--font,system-ui,sans-serif);color:rgba(244,242,232,.62);
+        cursor:pointer;transition:background .15s,color .15s}
+      .ws-side button:hover,.ws-side a.ws-link:hover{color:#f4f2e8}
+      .ws-side button[aria-current="step"]{background:#2f4e39;color:#f4f2e8;font-weight:600}
+      .ws-side button:focus-visible,.ws-side a.ws-link:focus-visible{outline:3px solid #e3c48a;outline-offset:2px}
+      .ws-out{margin-top:auto;font:12px/1 var(--mono,monospace);color:rgba(244,242,232,.4);padding:10px 12px}
+
+      /* Main area */
+      .ws-main{min-width:0;padding:28px 32px}
+      .ws-topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:16px;margin-bottom:24px;border-bottom:1px solid var(--line,#d9d6c8)}
+      .ws-topbar h1{font-size:clamp(22px,2.4vw,30px);font-weight:800;margin:0;letter-spacing:-.03em}
+      .ws-eyebrow{font:600 11px/1 var(--mono,monospace);letter-spacing:.12em;text-transform:uppercase;color:#8a6526}
+
+      /* Content + right rail */
+      .ws-content{display:grid;grid-template-columns:minmax(0,1fr) 240px;gap:16px;align-items:start}
+      .ws-panel-wrap{min-width:0}
+
+      /* Workspace panels (inheriting existing .workspace-panel) */
+      .workspace-panel{padding:clamp(20px,3vw,28px);border:1px solid var(--line,#d9d6c8);border-radius:16px;background:linear-gradient(145deg,rgba(255,255,255,.8),rgba(232,235,223,.72));box-shadow:0 8px 24px rgba(30,40,35,.06)}
       .workspace-panel[hidden]{display:none}
-      .workspace-panel h2{margin:0 0 8px;font:clamp(25px,3vw,34px)/1.2 var(--serif);letter-spacing:-.4px}
-      .workspace-panel h3{margin:28px 0 10px;font-size:20px}
-      .workspace-panel>p{max-width:760px;color:var(--muted)}
-      .accepted-file-callout{display:grid;gap:2px;margin:14px 0 8px;padding:12px 16px;border-left:4px solid var(--green);border-radius:0 8px 8px 0;background:rgba(228,232,219,.78);color:var(--ink);font-size:14px;line-height:1.5}
-      .accepted-file-callout strong{font-size:12px;letter-spacing:.04em;text-transform:uppercase}
-      #project-assets-step form{max-width:720px}
-      #wiki-uploader-frame{display:block;width:100%;min-height:600px;border:0;background:transparent}
-      /* Walkthrough placement: a step picker plus a marker placed by clicking the image. */
-      fieldset.walkthrough-fields{margin:24px 0 8px;padding:16px 18px 18px;border:1px solid var(--line);border-radius:8px}
-      fieldset.walkthrough-fields legend{padding:0 6px;font-weight:700}
-      .walkthrough-fields p{margin:6px 0 0;font-size:14px;color:var(--muted)}
+      .workspace-panel h2{margin:0 0 6px;font-size:20px;font-weight:700;letter-spacing:-.02em}
+      .workspace-panel>p{max-width:760px;color:var(--muted,#4d5d50);margin:0 0 16px}
+      .workspace-panel h3{margin:28px 0 10px;font-size:17px;font-weight:600}
+
+      /* Right rail cards */
+      .ws-rail{display:flex;flex-direction:column;gap:14px}
+      .ws-rail-card{background:#fff;border:1px solid var(--line,#d9d6c8);border-radius:16px;overflow:hidden}
+      .ws-rail-card h3{font-size:14px;font-weight:600;padding:14px 16px 0;margin:0}
+      .ws-rail-card ul{list-style:none;margin:10px 0 0;padding:0 16px 14px}
+      .ws-rail-card li{border-top:1px solid var(--line,#d9d6c8);padding:10px 0;font-size:13px}
+      .ws-rail-card li:first-child{border-top:0;padding-top:0}
+      .ws-rail-card li b{display:block;font-weight:600;color:var(--ink,#1e2823)}
+      .ws-rail-card li small{color:var(--muted,#4d5d50);font-size:12px}
+      .ws-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px}
+      .ws-dot-pub{background:#2f4e39}
+      .ws-dot-draft{background:#8a6526}
+      .ws-rail-card .ws-wiki-btn{display:block;margin:0 16px 16px;padding:9px 16px;background:#e3c48a;color:#1e2823;text-decoration:none;border-radius:999px;font:600 13px/1 var(--font,system-ui,sans-serif);text-align:center}
+      .ws-rail-card .ws-wiki-btn:hover{background:#d4b47a}
+
+      /* Status chips (used by image-manager.js on rendered attachment rows) */
+      .attachment-status-draft,.attachment-status-live{font:600 11px/1 var(--mono,monospace);padding:4px 9px;border-radius:999px}
+      .attachment-status-draft{background:#f3e8d2;color:#8a6526}
+      .attachment-status-live{background:#dfe6dc;color:#2f4e39}
+
+      /* Form styles */
+      form{max-width:680px}
+      label{display:block;font-weight:600;margin:16px 0 6px;font-size:14px}
+      input,select,textarea{display:block;width:100%;font:inherit;padding:10px 12px;border:1px solid #7a8a78;border-radius:6px;background:#fff;color:#1e2823}
+      textarea{min-height:90px}
+      #preview{max-width:360px;max-height:260px;object-fit:contain;margin-top:16px}
+      .managed-image{border:1px solid var(--line,#aebbab);padding:20px;margin:20px 0;max-width:760px;border-radius:8px;background:#fff}
+      .managed-image>img{max-height:300px;object-fit:contain;width:auto}
+      button.button{cursor:pointer;padding:12px 24px;background:#1e2823;color:#f4f2e8;border:0;border-radius:999px;font:600 14px/1 var(--font,system-ui,sans-serif)}
+      button.button:hover{background:#2f4e39}
+      button.button:disabled{opacity:.6;cursor:not-allowed}
+      #message{min-height:1.8em;font-weight:600;font-size:14px}
+
+      .accepted-file-callout{display:grid;gap:2px;margin:12px 0 8px;padding:11px 15px;border-left:4px solid var(--green,#5a9b5e);border-radius:0 8px 8px 0;background:rgba(228,232,219,.8);color:var(--ink,#1e2823);font-size:13.5px;line-height:1.5}
+      .accepted-file-callout strong{font-size:11px;letter-spacing:.05em;text-transform:uppercase}
+
+      /* Walkthrough placement fieldset */
+      fieldset.walkthrough-fields{margin:20px 0 8px;padding:14px 16px 16px;border:1px solid var(--line,#d9d6c8);border-radius:8px}
+      fieldset.walkthrough-fields legend{padding:0 6px;font-weight:700;font-size:14px}
+      .walkthrough-fields p{margin:6px 0 0;font-size:13px;color:var(--muted,#4d5d50)}
       .marker-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px}
-      .marker-stage{position:relative;display:inline-block;max-width:100%;margin-top:20px;line-height:0;cursor:crosshair}
+      .marker-stage{position:relative;display:inline-block;max-width:100%;margin-top:16px;line-height:0;cursor:crosshair}
       .marker-stage img{display:block;max-width:100%}
       #preview{margin-top:0}
-      .marker-dot{position:absolute;display:grid;width:34px;height:34px;place-items:center;transform:translate(-50%,-50%);border:2px solid #fbfaf4;border-radius:50%;background:#2f4e39;color:#fff;font:700 20px/1 var(--font);box-shadow:0 2px 8px rgba(30,40,35,.3);pointer-events:none}
+      .marker-dot{position:absolute;display:grid;width:34px;height:34px;place-items:center;transform:translate(-50%,-50%);border:2px solid #fbfaf4;border-radius:50%;background:#2f4e39;color:#fff;font:700 20px/1 var(--font,system-ui,sans-serif);box-shadow:0 2px 8px rgba(30,40,35,.3);pointer-events:none}
       .marker-dot[hidden]{display:none}
-      .placement-status{font-weight:600}
-      @media(max-width:650px){
-        .marker-row{grid-template-columns:1fr}
-        .workspace-intro h1{font-size:clamp(36px,11vw,52px);letter-spacing:-1.8px}
-        .workspace-steps{grid-template-columns:1fr;gap:9px}
-        .workspace-step{min-height:72px;padding:13px 14px}
-        .workspace-panel{padding:20px 16px;border-radius:8px}
-        .accepted-file-callout{padding:11px 13px}
-        #wiki-uploader-frame{min-height:760px}
-        .admin-links{gap:12px}
+      .placement-status{font-weight:600;font-size:14px}
+
+      /* Responsive */
+      @media(max-width:1000px){
+        .ws-content{grid-template-columns:1fr}
+        .ws-rail{display:none}
       }
-      @media(prefers-reduced-motion:reduce){.workspace-step{transition:none}}
+      @media(max-width:720px){
+        .ws-layout{grid-template-columns:1fr}
+        .ws-side{position:static;height:auto;flex-direction:row;flex-wrap:wrap;align-items:center;gap:4px;padding:12px}
+        .ws-brand{padding-bottom:0;border-bottom:0;margin-bottom:0}
+        .ws-out{margin:0}
+        .ws-main{padding:20px 16px}
+        .marker-row{grid-template-columns:1fr}
+      }
+      @media(prefers-reduced-motion:reduce){.ws-side button,.ws-side a.ws-link{transition:none}.button{transition:none}}
     </style>
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
-    <header>
-      <div class="wrap nav">
-        <a class="brand" href="/" aria-label="Diamond Brown portfolio home">
-          <img src="/assets/brandmark.png" alt="" width="66" height="66">
-          <span>Diamond Brown<small>Software Development &amp; Systems</small></span>
+    <div class="ws-layout">
+      <!-- Forest sidebar — buttons carry the same data-workspace-step hooks used by manage-project-assets.js -->
+      <aside class="ws-side" aria-label="Owner workspace navigation">
+        <a class="ws-brand" href="/" aria-label="GemsForge portfolio home">
+          <img src="/assets/brandmark.png" alt="" width="34" height="34">
+          GemsForge
         </a>
-        <nav class="links" aria-label="Portfolio navigation">
-          <a href="/portfolio/projects/">Projects</a>
-          <a href="/about/">About</a>
-          <a href="/assets/diamond-brown-resume.pdf">Resume</a>
-          <a href="/contact/">Contact</a>
-        </nav>
-      </div>
-    </header>
-    <main id="main" class="wrap">
-      <div class="pagehero workspace-intro">
-        <div class="eyebrow">Admin - Owner Workspace</div>
-        <h1>Manage Project Assets</h1>
-        <p class="lead">Manage portfolio attachments and add reference documents to your Developer Wiki.</p>
-        <nav class="admin-links" aria-label="Owner workspace links">
-          <!-- The owner workspace opens the shared Developer Wiki. -->
-          <a href="/admin/knowledge/">Developer Wiki</a>
-          <a href="/portfolio/projects/">View portfolio</a>
-          <a href="/signout-with-chatgpt?return_to=%2F">Sign out</a>
-        </nav>
-      </div>
-
-      <!-- The two owner workflows stay separate while sharing one owner-gated page. -->
-      <nav id="workspace-steps" class="workspace-steps" aria-label="Manage Project Assets steps">
         <button
-          class="workspace-step"
           type="button"
           data-workspace-step="project-assets"
           aria-controls="project-assets-step"
           aria-current="step">
-          <span class="step-number" aria-hidden="true">1</span>
-          <span class="step-copy">
-            <strong>Project Assets Manager</strong>
-          </span>
+          Project assets
         </button>
         <button
-          class="workspace-step"
           type="button"
           data-workspace-step="wiki-uploader"
           aria-controls="wiki-uploader-step">
-          <span class="step-number" aria-hidden="true">2</span>
-          <span class="step-copy">
-            <strong>Wiki Page Uploader</strong>
-          </span>
+          Wiki uploader
         </button>
-      </nav>
+        <a class="ws-link" href="/knowledge/">Dev Wiki ↗</a>
+        <a class="ws-link" href="/portfolio/projects/">View portfolio ↗</a>
+        <a class="ws-link" href="/signout-with-chatgpt?return_to=%2F">Sign out</a>
+        <span class="ws-out">signed in · owner</span>
+      </aside>
 
-      <section
-        id="project-assets-step"
-        class="workspace-panel"
-        data-workspace-panel="project-assets"
-        aria-labelledby="project-assets-heading">
-        <h2 id="project-assets-heading">Project Assets Manager</h2>
-        <p id="project-assets-description">Upload, edit, publish, or remove portfolio attachments.</p>
-        <aside class="accepted-file-callout" id="media-uploader-help" role="note" aria-label="Accepted Media file types">
-          <strong>Attachment · up to 50 MB</strong>
-          <span>PNG, JPEG, WebP, PDF, MP4, WebM</span>
-        </aside>
-        <!-- The media uploader reports file selection, progress, and errors here. -->
-        <p id="message" role="status" aria-live="polite"></p>
-        <form id="upload-form">
-          <label for="project">Project</label>
-          <select id="project" name="project"><!--PROJECT_OPTIONS--></select>
-          <label for="image">Attachment</label>
-          <input type="file" id="image" name="file" accept="image/png,image/jpeg,image/webp,application/pdf,video/mp4,video/webm" required aria-describedby="media-uploader-help paste-help">
-          <p id="paste-help">Choose a file or paste one supported attachment while this page is open. Pasted files use the same upload form and are not uploaded until you submit.</p>
-          <!-- Clicking the preview places the walkthrough marker when a step is chosen. -->
-          <span class="marker-stage" data-marker-stage><img id="preview" alt="Selected image preview" hidden><span class="marker-dot" data-marker-dot aria-hidden="true" hidden>+</span></span>
-          <label for="alt">Alt text (required)</label>
-          <input id="alt" name="alt" maxlength="500" required aria-describedby="alt-help">
-          <p id="alt-help">Describe what the screenshot demonstrates. Do not include private information.</p>
-          <label for="caption">Caption (optional)</label>
-          <textarea id="caption" name="caption" maxlength="2000"></textarea>
-          <fieldset class="walkthrough-fields" data-walkthrough-fields>
-            <legend>Walkthrough (optional, images only)</legend>
-            <label for="step">Walkthrough step</label>
-            <select id="step" name="step" data-step-select aria-describedby="step-help"><option value="">Not in the walkthrough</option></select>
-            <p id="step-help">Once published, this image replaces the illustration for that step in the project pop-up. The newest published image wins if two share a step.</p>
-            <div data-marker-fields hidden>
-              <p id="marker-help">Click the preview where the step's marker should point, or type the position. Leave both blank for no marker.</p>
-              <div class="marker-row">
-                <div><label for="markerX">Marker across (%)</label><input id="markerX" name="markerX" type="number" min="0" max="100" step="0.1" inputmode="decimal" data-marker-x aria-describedby="marker-help"></div>
-                <div><label for="markerY">Marker down (%)</label><input id="markerY" name="markerY" type="number" min="0" max="100" step="0.1" inputmode="decimal" data-marker-y aria-describedby="marker-help"></div>
-              </div>
-              <label for="markerLabel">Marker label</label>
-              <input id="markerLabel" name="markerLabel" maxlength="80" placeholder="Highlight" data-marker-label>
-            </div>
-          </fieldset>
-          <button class="button" type="submit">Upload as draft</button>
-        </form>
-        <section aria-labelledby="attachments-heading">
-          <h3 id="attachments-heading">Attachments in this project</h3>
-          <div id="image-list"></div>
-        </section>
-      </section>
-
-      <section
-        id="wiki-uploader-step"
-        class="workspace-panel"
-        data-workspace-panel="wiki-uploader"
-        aria-labelledby="wiki-uploader-heading"
-        hidden>
-        <h2 id="wiki-uploader-heading">Wiki Page Uploader</h2>
-        <p id="wiki-uploader-description">Uploads are saved to your owner-only Developer Wiki.</p>
-        <aside class="accepted-file-callout" id="wiki-uploader-help" role="note" aria-label="Accepted Wiki file types">
-          <strong>Accepted files · Up to 20 MB</strong>
-          <span>PDF, DOCX, Markdown, HTML, UTF-8 text, PNG, JPEG, WebP, or TIFF. HTML previews are isolated, and Markdown files are formatted for reading.</span>
-        </aside>
-        <iframe
-          id="wiki-uploader-frame"
-          title="Wiki Page Uploader form and saved references"
-          aria-describedby="wiki-uploader-description wiki-uploader-help"
-          loading="lazy"></iframe>
-      </section>
-    </main>
-    <footer class="footer">
-      <div class="wrap">
-        <div class="footer-brand">
-          <img src="/assets/brandmark.png" alt="" width="45" height="45">
-          <span>© 2026 Diamond Brown · GemsForge</span>
+      <main id="main" class="ws-main">
+        <div class="ws-topbar">
+          <h1>Manage Project Assets</h1>
+          <span class="ws-eyebrow">Admin · Owner workspace</span>
         </div>
-        <nav aria-label="Footer navigation">
-          <a href="/portfolio/projects/">Projects</a>
-          <a href="/assets/diamond-brown-resume.pdf">Resume</a>
-          <a href="/contact/">Contact</a>
-          <a href="#main">Back to top ↑</a>
-        </nav>
-      </div>
-    </footer>
+
+        <div class="ws-content">
+          <div class="ws-panel-wrap">
+            <!-- Panel 1: Project Assets Manager -->
+            <section
+              id="project-assets-step"
+              class="workspace-panel"
+              data-workspace-panel="project-assets"
+              aria-labelledby="project-assets-heading">
+              <h2 id="project-assets-heading">Project Assets Manager</h2>
+              <p id="project-assets-description">Upload, edit, publish, or remove portfolio attachments.</p>
+              <aside class="accepted-file-callout" id="media-uploader-help" role="note" aria-label="Accepted Media file types">
+                <strong>Attachment · up to 50 MB</strong>
+                <span>PNG, JPEG, WebP, PDF, MP4, WebM</span>
+              </aside>
+              <!-- The media uploader reports file selection, progress, and errors here. -->
+              <p id="message" role="status" aria-live="polite"></p>
+              <form id="upload-form">
+                <label for="project">Project</label>
+                <select id="project" name="project"><!--PROJECT_OPTIONS--></select>
+                <label for="image">Attachment</label>
+                <input type="file" id="image" name="file" accept="image/png,image/jpeg,image/webp,application/pdf,video/mp4,video/webm" required aria-describedby="media-uploader-help paste-help">
+                <p id="paste-help">Choose a file or paste one supported attachment while this page is open. Pasted files use the same upload form and are not uploaded until you submit.</p>
+                <!-- Clicking the preview places the walkthrough marker when a step is chosen. -->
+                <span class="marker-stage" data-marker-stage><img id="preview" alt="Selected image preview" hidden><span class="marker-dot" data-marker-dot aria-hidden="true" hidden>+</span></span>
+                <label for="alt">Alt text (required)</label>
+                <input id="alt" name="alt" maxlength="500" required aria-describedby="alt-help">
+                <p id="alt-help">Describe what the screenshot demonstrates. Do not include private information.</p>
+                <label for="caption">Caption (optional)</label>
+                <textarea id="caption" name="caption" maxlength="2000"></textarea>
+                <fieldset class="walkthrough-fields" data-walkthrough-fields>
+                  <legend>Walkthrough (optional, images only)</legend>
+                  <label for="step">Walkthrough step</label>
+                  <select id="step" name="step" data-step-select aria-describedby="step-help"><option value="">Not in the walkthrough</option></select>
+                  <p id="step-help">Once published, this image replaces the illustration for that step in the project pop-up. The newest published image wins if two share a step.</p>
+                  <div data-marker-fields hidden>
+                    <p id="marker-help">Click the preview where the step's marker should point, or type the position. Leave both blank for no marker.</p>
+                    <div class="marker-row">
+                      <div><label for="markerX">Marker across (%)</label><input id="markerX" name="markerX" type="number" min="0" max="100" step="0.1" inputmode="decimal" data-marker-x aria-describedby="marker-help"></div>
+                      <div><label for="markerY">Marker down (%)</label><input id="markerY" name="markerY" type="number" min="0" max="100" step="0.1" inputmode="decimal" data-marker-y aria-describedby="marker-help"></div>
+                    </div>
+                    <label for="markerLabel">Marker label</label>
+                    <input id="markerLabel" name="markerLabel" maxlength="80" placeholder="Highlight" data-marker-label>
+                  </div>
+                </fieldset>
+                <button class="button" type="submit">Upload as draft</button>
+              </form>
+              <section aria-labelledby="attachments-heading">
+                <h3 id="attachments-heading">Attachments in this project</h3>
+                <div id="image-list"></div>
+              </section>
+            </section>
+
+            <!-- Panel 2: Wiki Page Uploader -->
+            <section
+              id="wiki-uploader-step"
+              class="workspace-panel"
+              data-workspace-panel="wiki-uploader"
+              aria-labelledby="wiki-uploader-heading"
+              hidden>
+              <h2 id="wiki-uploader-heading">Wiki Page Uploader</h2>
+              <p id="wiki-uploader-description">Uploads are saved to your owner-only Developer Wiki.</p>
+              <aside class="accepted-file-callout" id="wiki-uploader-help" role="note" aria-label="Accepted Wiki file types">
+                <strong>Accepted files · Up to 20 MB</strong>
+                <span>PDF, DOCX, Markdown, HTML, UTF-8 text, PNG, JPEG, WebP, or TIFF. HTML previews are isolated, and Markdown files are formatted for reading.</span>
+              </aside>
+              <iframe
+                id="wiki-uploader-frame"
+                title="Wiki Page Uploader form and saved references"
+                aria-describedby="wiki-uploader-description wiki-uploader-help"
+                loading="lazy"
+                style="display:block;width:100%;min-height:600px;border:0;background:transparent"></iframe>
+            </section>
+          </div>
+
+          <!-- Right rail (hidden on narrow viewports via CSS) -->
+          <aside class="ws-rail" aria-label="Workspace quick access">
+            <div class="ws-rail-card">
+              <h3>Recent activity</h3>
+              <ul id="ws-recent-activity">
+                <!-- Populated by manage-project-assets.js when available; static fallback below. -->
+                <li><b><span class="ws-dot ws-dot-draft" aria-hidden="true"></span>No activity yet</b><small>Upload an asset to see it here</small></li>
+              </ul>
+            </div>
+            <div class="ws-rail-card">
+              <h3>Dev Wiki</h3>
+              <ul>
+                <li><b>Your personal reference</b><small>Patterns · Guides · Checklists</small></li>
+              </ul>
+              <a class="ws-wiki-btn" href="/knowledge/">Open the wiki →</a>
+            </div>
+          </aside>
+        </div>
+      </main>
+    </div>
     <!--WALKTHROUGH_STEPS-->
     <script type="module" src="/assets/image-manager.js"></script>
     <script type="module" src="/assets/manage-project-assets.js"></script>
