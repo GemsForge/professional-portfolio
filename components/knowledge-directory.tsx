@@ -861,7 +861,7 @@ export function KnowledgeDirectory({
       <SiteHeader pathname={publicMode ? "/knowledge/" : "/admin/knowledge/"} />
       <main id="main" className="wrap knowledge-page">
         <div className="pagehero library-intro">
-          <div className="eyebrow">MY DEVELOPER NOTES</div>
+          <div className="eyebrow">Developer reference</div>
           <h1>{activeModule ? activeModule.title : "Developer Wiki"}</h1>
           <p className="lead">
             {activeModule
