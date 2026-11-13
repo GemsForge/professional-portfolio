@@ -66,6 +66,19 @@ function textElement(tag, text, className) {
   return element;
 }
 
+/** Builds an icon-only action button; the label names the action and reference for screen readers and tooltips. */
+function iconButton(icon, label, className = "") {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = `ws-icon-btn ${className}`.trim();
+  button.setAttribute("aria-label", label);
+  button.title = label;
+  button.innerHTML = icon;
+  return button;
+}
+const EDIT_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>';
+const DELETE_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>';
+
 /** Sends a multipart PATCH for one reference and returns the updated record. */
 async function updateReference(id, fields) {
   const body = new FormData();
@@ -155,11 +168,9 @@ function wikiRow(resource) {
       toggle.disabled = false;
     }
   });
-  const edit = textElement("button", "Edit", "ws-link-btn");
-  edit.type = "button";
+  const edit = iconButton(EDIT_ICON, `Edit ${resource.title}`);
   edit.dataset.edit = "";
   edit.setAttribute("aria-expanded", "false");
-  edit.setAttribute("aria-label", `Edit ${resource.title}`);
   edit.addEventListener("click", () => {
     const open = row.nextElementSibling?.classList.contains("ws-edit-row");
     if (open) {
@@ -173,9 +184,7 @@ function wikiRow(resource) {
     panel.querySelector("input[name=title]").focus();
   });
   // Delete is permanent (record and file), so it swaps the actions for an inline confirmation first.
-  const remove = textElement("button", "Delete", "ws-link-btn ws-link-danger");
-  remove.type = "button";
-  remove.setAttribute("aria-label", `Delete ${resource.title}`);
+  const remove = iconButton(DELETE_ICON, `Delete ${resource.title}`, "ws-icon-danger");
   remove.addEventListener("click", () => {
     const confirmGroup = document.createElement("div");
     confirmGroup.className = "ws-row-actions";
@@ -203,7 +212,7 @@ function wikiRow(resource) {
     actionGroup.replaceWith(confirmGroup);
     no.focus();
   });
-  actionGroup.append(toggle, textElement("span", "·", "muted"), edit, textElement("span", "·", "muted"), remove);
+  actionGroup.append(toggle, edit, remove);
   actions.append(actionGroup);
   // Captions for the stacked card layout the table switches to in a narrow panel.
   [[status, "Status"], [published, "Published"]].forEach(([cell, label]) => { cell.dataset.label = label; });
@@ -223,7 +232,9 @@ async function loadWikiReferences() {
       ? `${resources.length} saved ${resources.length === 1 ? "reference" : "references"}.`
       : "No references yet. Upload a file above to add your first entry.";
   } catch (error) {
-    wikiRefsStatus.textContent = error.message;
+    // Drop the static "No references yet" row so a failed load never reads as an empty library.
+    wikiRefsBody.replaceChildren();
+    wikiRefsStatus.textContent = `Could not load saved references (${error.message}). Refresh to try again.`;
   }
 }
 

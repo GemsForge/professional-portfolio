@@ -323,6 +323,14 @@
       .ws-link-btn{background:none;border:0;padding:4px 2px;font:600 13px var(--body);color:var(--gold-ink);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
       .ws-link-btn:disabled{opacity:.5;cursor:wait}
       .ws-link-danger{color:var(--error)}
+      /* Icon-only row actions: 36px targets with a visible focus ring; the label lives in aria-label/title. */
+      .ws-icon-btn{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--accent-text);cursor:pointer}
+      .ws-icon-btn:hover{background:var(--sage-soft)}
+      .ws-icon-btn[aria-expanded="true"]{background:var(--sage-soft);border-color:var(--accent-text)}
+      .ws-icon-btn:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+      .ws-icon-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+      .ws-icon-danger{color:var(--error)}
+      .ws-row-actions{gap:6px;flex-wrap:nowrap}
       .ws-link-btn:focus-visible{outline:3px solid var(--gold);outline-offset:2px;border-radius:4px}
       .ws-edit-row td{background:var(--surface);padding:14px 10px 16px}
       .ws-edit-row .ws-form{margin-bottom:10px}
