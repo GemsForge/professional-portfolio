@@ -1,3 +1,6 @@
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, ArrowUpRight } from "lucide-react";
 import { siApple, siDotnet, siMui, siNotion, siReact, siRedux, siTypescript } from "simple-icons";
 
 /**
@@ -270,16 +273,20 @@ export function renderProjectCard(project: ProjectDefinition) {
   return `<article class="project"><a href="/portfolio/projects/${project.slug}/" class="project-visual" tabindex="-1" aria-hidden="true"><img src="${project.image}" alt="" loading="lazy"></a><div class="project-meta">${project.preTitle}</div><h3>${project.cardTitle}</h3><p>${project.description}</p><div class="tags" aria-label="Technologies and project themes">${tags}</div><a class="worklink" href="/portfolio/projects/${project.slug}/">${project.cardLinkLabel}${renderArrowIcon()}</a></article>`;
 }
 
-/** Renders a decorative Lucide arrow for static markup; link text supplies its accessible name. */
+/** Renders a decorative Lucide component for generated markup; surrounding text supplies its accessible name. */
 export function renderArrowIcon(direction: "left" | "right" | "up" | "down" | "up-right" = "up-right") {
-  const paths = {
-    left: "M19 12H5m7 7-7-7 7-7",
-    right: "M5 12h14m-7-7 7 7-7 7",
-    up: "M12 19V5m-7 7 7-7 7 7",
-    down: "M12 5v14m7-7-7 7-7-7",
-    "up-right": "M7 7h10v10M7 17 17 7",
+  const icons = {
+    left: ArrowLeft,
+    right: ArrowRight,
+    up: ArrowUp,
+    down: ArrowDown,
+    "up-right": ArrowUpRight,
   };
-  return `<svg aria-hidden="true" focusable="false" class="link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="${paths[direction]}"/></svg>`;
+  return renderToStaticMarkup(createElement(icons[direction], {
+    "aria-hidden": true,
+    focusable: false,
+    className: "link-arrow",
+  }));
 }
 
 /** Resolves the bundled Simple Icons path used by static project cards. */

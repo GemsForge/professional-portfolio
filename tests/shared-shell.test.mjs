@@ -15,6 +15,7 @@ const worker = await readFile("build/sites-worker.ts", "utf8");
 const css = await readFile("static-source/assets/site.css", "utf8");
 const staticAbout = await readFile("static-source/about/index.html", "utf8");
 const staticProjects = await readFile("static-source/portfolio/projects/index.html", "utf8");
+const generatedPages = JSON.parse(await readFile("lib/static-pages.json", "utf8"));
 
 test("the routed portfolio page owns the shared shell", () => {
   assert.match(renderer, /<SiteHeader pathname=\{pathname\} \/>/);
@@ -127,8 +128,9 @@ test("project-card labels render their decorative arrow with Lucide", () => {
   assert.doesNotMatch(catalog, /cardLinkLabel: "Explore Aura Logbook ↗"/);
   assert.doesNotMatch(css, /\.worklink:after\{content:/);
   assert.match(catalog, /renderArrowIcon\(\)/);
-  assert.match(catalog, /decorative Lucide arrow for static markup/);
-  assert.match(catalog, /aria-hidden="true" focusable="false" class="link-arrow"/);
+  assert.match(catalog, /ArrowDown, ArrowLeft, ArrowRight, ArrowUp, ArrowUpRight } from "lucide-react"/);
+  assert.match(catalog, /renderToStaticMarkup\(createElement\(icons\[direction\]/);
+  assert.match(catalog, /"aria-hidden": true,[\s\S]*?focusable: false,[\s\S]*?className: "link-arrow"/);
   assert.match(projectCard, /from "lucide-react"/);
   assert.match(css, /\.link-arrow\{/);
   assert.match(footer, /ArrowUp aria-hidden="true" focusable="false" className="link-arrow"/);
@@ -136,6 +138,8 @@ test("project-card labels render their decorative arrow with Lucide", () => {
   assert.match(knowledgeReader, /ArrowUpRight aria-hidden="true" focusable="false" className="link-arrow"/);
   assert.match(staticAbout, /View full resume <svg aria-hidden="true" focusable="false" class="link-arrow"/);
   assert.match(staticProjects, /Explore Aura Logbook <svg aria-hidden="true" focusable="false" class="link-arrow"/);
+  assert.match(generatedPages["/about/"], /View full resume\s*<svg(?=[^>]*class="lucide lucide-arrow-up-right link-arrow")(?=[^>]*aria-hidden="true")(?=[^>]*focusable="false")[^>]*>/);
+  assert.match(generatedPages["/portfolio/projects/"], /Explore Aura Logbook\s*<svg(?=[^>]*class="lucide lucide-arrow-up-right link-arrow")(?=[^>]*aria-hidden="true")(?=[^>]*focusable="false")[^>]*>/);
   assert.match(projectCard, /project\.cardLinkLabel/);
 });
 

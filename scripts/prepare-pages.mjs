@@ -9,6 +9,22 @@ import { applyProjectPageMetadata, HOME_PROJECT_SLUGS, PORTFOLIO_POSTS, PROJECTS
 
 const source = path.resolve("static-source");
 const pages = {};
+
+/** Render static-source arrow markers with their matching Lucide components during generation. */
+function renderStaticLucideArrows(html) {
+  const directionByPath = new Map([
+    ["M7 7h10v10M7 17 17 7", "up-right"],
+    ["M19 12H5m7 7-7-7 7-7", "left"],
+    ["M5 12h14m-7-7 7 7-7 7", "right"],
+    ["M12 19V5m-7 7 7-7 7 7", "up"],
+    ["M12 5v14m7-7-7 7-7-7", "down"],
+  ]);
+  return html.replace(/<svg\b(?=[^>]*\bclass="[^"]*\blink-arrow\b")[^>]*>[\s\S]*?<\/svg>/g, (svg) => {
+    const pathData = [...svg.matchAll(/<path\b[^>]*\bd="([^"]+)"/g)].map((match) => match[1]).join("");
+    const direction = directionByPath.get(pathData);
+    return direction ? renderArrowIcon(direction) : svg;
+  });
+}
 const TECH_PILL_MARKS = {
   "C#": { image: "/assets/auralogbook-stack/csharp.png" },
   ".NET": { icon: siDotnet },
@@ -193,7 +209,7 @@ async function visit(directory) {
     baseRoute = baseRoute === "/" ? baseRoute : `${baseRoute}/`;
     // The homepage source also renders the /portfolio/ alias, so the two pages cannot drift apart.
     for (const route of baseRoute === "/" ? ["/", "/portfolio/"] : [baseRoute]) {
-    let text = await readFile(file, "utf8");
+    let text = renderStaticLucideArrows(await readFile(file, "utf8"));
 
     const project = PROJECTS[route.split("/").filter(Boolean).at(-1) ?? ""];
     if (project) text = applyProjectPageMetadata(text, project);
