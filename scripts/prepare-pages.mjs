@@ -175,10 +175,8 @@ function renderPostViews() {
     const disclaimer = allReal ? "" : someReal
       ? `<p class="walkthrough-disclaimer">Illustrated steps follow the documented project flow; screenshots come from the app.</p>`
       : `<p class="walkthrough-disclaimer">A guided prototype based on the documented project flow; not a live production app.</p>`;
-    // "Illustrative prototype" eyebrow only when steps are not all real screenshots — it adds information the heading doesn't.
-    const eyebrowHtml = allReal ? "" : `<span class="eyebrow">Illustrative prototype</span>`;
     // Step controls follow the image in reading order so they remain easy to reach on touch screens.
-    const walkthrough = steps.length ? `<section class="walkthrough" aria-labelledby="walkthrough-${post.slug}"><div class="walkthrough-heading"><div>${eyebrowHtml}<h3 id="walkthrough-${post.slug}">Product walkthrough</h3></div></div><ol class="walkthrough-steps" data-walkthrough="${post.slug}">${steps.map(stepItem).join("")}</ol><p class="walkthrough-status" data-walkthrough-status aria-live="polite"></p><p class="visually-hidden" data-step-announce aria-live="polite"></p>${disclaimer}</section>` : "";
+    const walkthrough = steps.length ? `<section class="walkthrough" aria-labelledby="walkthrough-${post.slug}"><div class="walkthrough-heading"><h3 id="walkthrough-${post.slug}">Product walkthrough</h3></div><ol class="walkthrough-steps" data-walkthrough="${post.slug}">${steps.map(stepItem).join("")}</ol><p class="walkthrough-status" data-walkthrough-status aria-live="polite"></p><p class="visually-hidden" data-step-announce aria-live="polite"></p>${disclaimer}</section>` : "";
     // Only add a plus marker when a step defines a useful point to explore.
     const visualHotspots = steps.map((step, stepIndex) => step.hotspot ? `<button type="button" class="visual-hotspot" data-visual-hotspot="${stepIndex}" data-hotspot-label="${attr(step.hotspot.label)}" data-hotspot-detail="${attr(step.detail)}" style="--hotspot-x:${step.hotspot.x}%;--hotspot-y:${step.hotspot.y}%" aria-label="Explore: ${attr(step.hotspot.label)}"><span aria-hidden="true">+</span></button>` : "").join("");
     // Touch-friendly carousel controls sit below the image; dots communicate position without replacing labels.
