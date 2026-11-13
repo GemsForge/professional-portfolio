@@ -861,7 +861,6 @@ export function KnowledgeDirectory({
       <SiteHeader pathname={publicMode ? "/knowledge/" : "/admin/knowledge/"} />
       <main id="main" className="wrap knowledge-page">
         <div className="pagehero library-intro">
-          <div className="eyebrow">Developer reference</div>
           <h1>{activeModule ? activeModule.title : "Developer Wiki"}</h1>
           <p className="lead">
             {activeModule
@@ -870,85 +869,90 @@ export function KnowledgeDirectory({
           </p>
           {activeModule ? (
             <nav className="library-links" aria-label="Module navigation">
-              <a className="button secondary" href="/admin/knowledge/">
-                ← All modules
-              </a>
-              <a className="button secondary" href="/admin/?step=wiki-uploader">
-                Manage references
-              </a>
+              <a href="/admin/knowledge/">← All modules</a>
+              <a href="/admin/?step=wiki-uploader">Manage references</a>
             </nav>
           ) : (
-            <nav className="library-links" aria-label="Library sections">
-              <a className="button" href="#handbooks">
-                Browse handbooks
-              </a>
-              <a className="button secondary" href="#governance">
-                Open governance shelf
-              </a>
-              <a className="button secondary" href="#delivery">
-                Delivery references
-              </a>
-              {!publicMode && (
-                <a className="button secondary" href="/admin/knowledge/assets/">
-                  Tool assets
-                </a>
-              )}
-              {!publicMode && (
-                <a className="button secondary" href="/api/knowledge/export">
-                  Download document backup
-                </a>
-              )}
-            </nav>
+            !publicMode && (
+              <nav className="library-links" aria-label="Library tools">
+                <a href="/admin/knowledge/assets/">Tool assets</a>
+                <a href="/api/knowledge/export">Download document backup</a>
+              </nav>
+            )
           )}
         </div>
 
         {!activeModule ? (
-          <>
+          // Catalog layout: a sticky browse rail beside the searchable handbook list and shelf indexes.
+          <div className="wiki-catalog">
+            <aside className="wiki-rail" aria-label="Browse the wiki">
+              <p className="wiki-rail-label" id="wiki-rail-handbooks">
+                Handbooks
+              </p>
+              <div
+                className="handbook-filters"
+                role="group"
+                aria-label="Handbook category filters">
+                {handbookCategories.map((category) => (
+                  <button
+                    aria-pressed={activeHandbookCategory === category.id}
+                    aria-controls="handbook-grid"
+                    className={
+                      activeHandbookCategory === category.id
+                        ? "handbook-filter is-active"
+                        : "handbook-filter"
+                    }
+                    key={category.id}
+                    onClick={() => setActiveHandbookCategory(category.id)}
+                    type="button">
+                    <span>{category.label}</span>
+                    <span className="wiki-count">
+                      {category.id === "all"
+                        ? libraryHandbooks.length
+                        : libraryHandbooks.filter(
+                            (handbook) => handbook.category === category.id,
+                          ).length}
+                    </span>
+                  </button>
+                ))}
+              </div>
+              <p className="wiki-rail-label">Shelves</p>
+              <nav className="wiki-rail-links" aria-label="Reference shelves">
+                <a href="#governance">Governance</a>
+                <a href="#delivery">Delivery</a>
+              </nav>
+              <p className="wiki-rail-tip">
+                <strong>Reading path</strong>
+                Start with Console architecture for UI boundaries, then Backend
+                API for service boundaries, then Database Engineering for
+                persistence decisions.
+              </p>
+            </aside>
+
+            <div className="wiki-catalog-main">
             <section
               className="library-section"
               id="handbooks"
               aria-labelledby="handbooks-heading">
-              <div className="section-heading">
-                <div>
-                  <h2 id="handbooks-heading">Handbooks</h2>
-                  <p>Choose a handbook to open its wiki.</p>
-                  {/*TODO: Remove the "All handbooks" link and view */}
-                </div>
+              <div className="wiki-catalog-head">
+                <h2 id="handbooks-heading">Handbooks</h2>
+                <span className="wiki-result-count" aria-live="polite">
+                  {visibleHandbooks.length} of {libraryHandbooks.length}
+                </span>
+                {/*TODO: Remove the "All handbooks" link and view */}
               </div>
               {/* </div>
                 {!publicMode && <a href="/admin/handbooks">All handbooks →</a>}
               </div> */}
-              <div className="handbook-controls">
-                <label className="handbook-search">
-                  <span>Search handbooks</span>
-                  <input
-                    type="search"
-                    placeholder="Search by topic or technology…"
-                    value={handbookSearch}
-                    onChange={(event) => setHandbookSearch(event.target.value)}
-                  />
-                </label>
-                <div
-                  className="handbook-filters"
-                  role="group"
-                  aria-label="Handbook category filters">
-                  {handbookCategories.map((category) => (
-                    <button
-                      aria-pressed={activeHandbookCategory === category.id}
-                      aria-controls="handbook-grid"
-                      className={
-                        activeHandbookCategory === category.id
-                          ? "handbook-filter is-active"
-                          : "handbook-filter"
-                      }
-                      key={category.id}
-                      onClick={() => setActiveHandbookCategory(category.id)}
-                      type="button">
-                      {category.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
+              <label className="handbook-search">
+                <span className="sr-only">Search handbooks</span>
+                <input
+                  type="search"
+                  placeholder="Search by topic or technology"
+                  value={handbookSearch}
+                  onChange={(event) => setHandbookSearch(event.target.value)}
+                />
+              </label>
               <div className="handbook-grid" id="handbook-grid">
                 {visibleHandbooks.map((handbook) => {
                   const htmlReference = findHandbookReference(handbook.html);
@@ -962,10 +966,10 @@ export function KnowledgeDirectory({
                       : undefined;
                   const cardContent = (
                     <>
+                      <h3>{handbook.title}</h3>
                       <div className="handbook-kicker">
                         {handbook.categoryLabel}
                       </div>
-                      <h3>{handbook.title}</h3>
                       <p>{handbook.description}</p>
                       <ul
                         className="dependency-chip-list handbook-tags"
@@ -998,9 +1002,11 @@ export function KnowledgeDirectory({
                   );
                 })}
               </div>
-              {visibleHandbooks.length === 0 && (
+              {!isLoading && visibleHandbooks.length === 0 && (
                 <p className="handbook-empty" role="status">
-                  No handbook matches that search yet.
+                  {libraryHandbooks.length === 0
+                    ? "No handbooks are published yet."
+                    : "No handbook matches that search. Try a broader term or choose All."}
                 </p>
               )}
               {isLoading && (
@@ -1014,12 +1020,6 @@ export function KnowledgeDirectory({
                 </p>
               )}
             </section>
-
-            <div className="note reading-path">
-              <strong>💡 Reading path:</strong> Start with Console architecture
-              for UI boundaries, then Backend API for service boundaries, then
-              Database Engineering for persistence decisions.
-            </div>
 
             <section
               className="library-shelves"
@@ -1071,7 +1071,8 @@ export function KnowledgeDirectory({
                 </div>
               ))}
             </section>
-          </>
+            </div>
+          </div>
         ) : (
           <section
             className="library-section"
