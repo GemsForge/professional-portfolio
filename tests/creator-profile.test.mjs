@@ -28,18 +28,18 @@ test("social profile shows the résumé-backed header, experience highlights, an
   assert.match(profile, /<a class="sp-button" href="\/assets\/diamond-brown-resume\.pdf">Résumé<\/a>/);
   assert.match(profile, /<li><strong>6<\/strong> projects<\/li>\s*<li><strong>4<\/strong> roles<\/li>\s*<li><strong>13<\/strong> yrs Army Guard<\/li>/);
   assert.doesNotMatch(html, /followers|likes|following/i, "stats must be résumé counts, not social engagement");
-  for (const line of ["Software Engineer Analyst @ ADP", "U.S. Secret clearance · Army National Guard Staff Sergeant", "Cut dev onboarding from two weeks to three days.", "Atlanta · open to remote or hybrid"]) {
+  for (const line of ["Software Engineer Analyst @ ADP", "U.S. Secret clearance · Army National Guard since 2013", "Cut dev onboarding from two weeks to three days.", "Atlanta · open to remote or hybrid"]) {
     assert.ok(profile.includes(line), `bio should include: ${line}`);
   }
   assert.match(profile, /href="https:\/\/github\.com\/GemsForge"/);
   assert.match(profile, /href="https:\/\/www\.linkedin\.com\/in\/diamond-brown\/"/);
 
   const highlights = [...html.matchAll(/<a href="([^"]+)" data-highlight-link="([a-z]+)"><span class="sp-highlight-ring/g)].map((match) => [match[2], match[1]]);
-  assert.deepEqual(highlights, [["adp", "/work/enterprise-applications/"], ["army", "/about/"], ["gemsforge", "/work/gemsforge-business-systems/"], ["apprentice", "/assets/diamond-brown-resume.pdf"]], "each highlight is a working link before JavaScript upgrades it");
+  assert.deepEqual(highlights, [["adp", "/work/enterprise-applications/"], ["gemsforge", "/work/gemsforge-business-systems/"], ["apprentice", "/assets/diamond-brown-resume.pdf"], ["army", "/about/"]], "the Army Guard highlight remains last in the reel");
   const views = [...html.matchAll(/data-highlight-view="([a-z]+)"/g)].map((match) => match[1]);
-  assert.deepEqual(views, ["adp", "army", "gemsforge", "apprentice"]);
+  assert.deepEqual(views, ["adp", "gemsforge", "apprentice", "army"]);
   assert.match(html, /February 2023 – present[\s\S]*?2 weeks → 3 days/);
-  assert.match(html, /May 2013 – present[\s\S]*?Staff Sergeant and Squad Leader/);
+  assert.match(html, /Since May 2013[\s\S]*?Army National Guard service since 2013/);
   assert.equal((html.match(/data-close-highlight aria-label="Close highlight"/g) ?? []).length, 4);
 
   const grid = html.slice(html.indexOf('id="creator-post-grid"'), html.indexOf("</section>", html.indexOf('id="creator-post-grid"')));
@@ -104,10 +104,10 @@ test("generated post viewer retains project routes, source links, and the one-pa
   assert.match(html, /href="\/admin\/">Admin<\/a>/);
   assert.match(html, /href="\/knowledge\/">Dev Wiki<\/a>/);
   const auraPost = html.slice(html.indexOf('data-post-view="auralogbook"'), html.indexOf('</article>', html.indexOf('data-post-view="auralogbook"')));
-  // Evidence first: summary, links, role/status, picture slot (phones), walkthrough, technical choices, tools.
-  const order = ['class="post-lead"', 'class="post-actions"', '<dl class="post-facts">', 'data-mobile-visual', '<section class="walkthrough"', '<section class="post-decisions">', '<section class="post-tools"><h3>Tech</h3>', 'class="post-sequence"'].map((marker) => auraPost.indexOf(marker));
+  // Recruiter scan order precedes the mobile image and tour; those controls stay paired after the stack.
+  const order = ['class="post-lead"', 'class="post-actions"', '<dl class="post-facts">', '<section class="post-decisions">', '<section class="post-tools"><h3>Stack</h3>', 'data-mobile-visual', '<section class="walkthrough"', 'class="post-sequence"'].map((marker) => auraPost.indexOf(marker));
   assert.ok(order.every((position, index) => position >= 0 && (index === 0 || position > order[index - 1])), `pop-up sections are out of order: ${order}`);
-  assert.match(auraPost, /<button type="button" class="post-image-zoom" data-post-image-zoom aria-label="Open Aura Logbook walkthrough image in the enlarged viewer"><img src="\/assets\/auralogbook-tour\/login-pair\.png" alt="Phone-first Aura Logbook sign-in screen with its desktop view behind it"/);
+  assert.match(auraPost, /<button type="button" class="post-image-zoom" data-post-image-zoom aria-label="Open Aura Logbook walkthrough image in the enlarged viewer"><img src="\/assets\/auralogbook-tour\/public-home-pair\.png" alt="Aura Logbook public landing page on a phone paired with its desktop layout"/);
   assert.match(auraPost, /<nav class="post-step-controls" aria-label="Walkthrough image controls"><button type="button" class="post-step-arrow post-step-prev" data-step-prev aria-label="Previous step">← Previous<\/button><button type="button" class="post-step-arrow post-step-next" data-step-next aria-label="Next step">Next →<\/button><\/nav>/);
   assert.match(auraPost, /class="tech-chip"/);
   assert.match(auraPost, /\/assets\/auralogbook-stack\/react\.png/);
@@ -121,14 +121,13 @@ test("generated post viewer retains project routes, source links, and the one-pa
     assert.ok(pill.includes(expected), `${name} should render its logo`);
   }
   assert.doesNotMatch(auraPost, /<figcaption>/, "post artwork should not have a visible caption below it");
-  assert.match(auraPost, /mobile-first journal for emotions, beliefs, and the reflections that connect them/);
-  assert.match(auraPost, /<dt>Product highlights<\/dt>/);
-  assert.match(auraPost, /<h3>Technical choices<\/h3>/);
-  assert.match(auraPost, /<h3 id="walkthrough-auralogbook">Walkthrough<\/h3>/);
+  assert.match(auraPost, /A phone-first journal built across a responsive React client/);
+  assert.match(auraPost, /<dt>Scope and status<\/dt>/);
+  assert.match(auraPost, /<h3>Engineering decisions<\/h3>/);
+  assert.match(auraPost, /<h3 id="walkthrough-auralogbook">Product walkthrough<\/h3>/);
   assert.doesNotMatch(auraPost, /visual-hotspot|data-step-hotspot/, "the Aura Logbook walkthrough has no unused plus marker");
-  assert.match(auraPost, /SQLite persistence is implemented through Dapper repositories and versioned SQL migrations/);
-  assert.match(auraPost, /React Native\/Expo shell organizes Today, Log, Journal, and Profile through native navigation/);
-  assert.match(auraPost, /user-scoped access boundaries/);
+  assert.match(auraPost, /Dapper repositories handling SQLite persistence/);
+  assert.match(auraPost, /scope attachment metadata and journal access to the signed-in user/);
   assert.match(script, /history\.pushState/);
   assert.match(script, /window\.addEventListener\("popstate"/);
   assert.doesNotMatch(script, /window\.addEventListener\("hashchange"/, "popstate alone handles fragment navigation; a second listener rendered posts twice");
@@ -246,5 +245,5 @@ test("pop-up applies published step screenshots from the asset manager, newest f
   assert.match(script, /\.catch\(\(\) => \[\]\)/, "a failed request keeps the built-in pictures");
   assert.match(script, /if \(eyebrow\) eyebrow\.textContent = "App tour";/);
   const steps = JSON.parse(await read("../lib/walkthrough-steps.json"));
-  assert.deepEqual(steps.auralogbook, ["Sign in", "Public home", "Arrive home", "Check in", "Revisit reflections", "Read one entry", "Browse photos", "Notice patterns", "Choose an appearance", "Listen with Spotify"]);
+  assert.deepEqual(steps.auralogbook, ["Public home", "Sign in", "Dashboard", "Check in", "Revisit reflections", "Read one entry", "Browse photos", "Notice patterns", "Choose an appearance", "Connect Spotify"]);
 });
