@@ -42,7 +42,7 @@ export function renderTopBar(route) {
  * and back-to-top.
  */
 export function renderFooter() {
-  return `<footer class="footer"><div class="wrap"><div class="footer-brand"><img src="/assets/brandmark.png" alt="" width="45" height="45"><span>© 2026 GemsForge</span></div><nav aria-label="Footer navigation"><a href="/admin/">Admin</a><a href="/knowledge/">DevWiki</a><a href="#main">Back to top ↑</a></nav></div></footer>`;
+  return `<footer class="footer"><div class="wrap"><div class="footer-brand"><img src="/assets/brandmark.png" alt="" width="45" height="45"><span>© 2026 GemsForge</span></div><nav aria-label="Footer navigation"><a href="/admin/">Admin</a><a href="/knowledge/">Dev Wiki</a><a href="#main">Back to top ↑</a></nav></div></footer>`;
 }
 
 /**

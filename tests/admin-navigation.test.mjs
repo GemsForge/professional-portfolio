@@ -43,27 +43,29 @@ test('Manage Project Assets gives both upload steps the same panel and a clear W
   assert.match(manager, /<h1>Manage Project Assets<\/h1>/);
   assert.match(manager, /Project Assets Manager/);
   assert.match(manager, /Wiki Page Uploader/);
-  assert.equal((manager.match(/class="workspace-panel"/g) || []).length, 2);
-  assert.match(manager, /class="accepted-file-callout"[^>]*role="note"/);
-  assert.match(manager, /Accepted files · Up to 20 MB/);
+  assert.equal((manager.match(/class="ws-panel"/g) || []).length, 3);
+  assert.match(manager, /<aside class="ws-callout" id="wiki-uploader-help" role="note"/);
+  assert.match(manager, /Accepted files · up to 20 MB/);
   assert.match(manager, /id="upload-form"/);
   assert.match(manager, /<form id="wiki-upload-form"\s+action="\/api\/knowledge"/);
   assert.match(manager, /<select id="wiki-folder" name="folder" required/);
   assert.match(manager, /<h2 id="wiki-uploader-heading">Wiki Page Uploader<\/h2>/);
   assert.match(manager, /<p id="message" role="status" aria-live="polite"><\/p>/);
-  assert.match(manager, /<label for="image">Attachment<\/label>\s*<input type="file" id="image"[^>]*aria-describedby="media-uploader-help paste-help"/);
-  assert.match(manager, /<p id="project-assets-description">Upload, edit, publish, or remove portfolio attachments\.<\/p>/);
-  assert.match(manager, /<p id="wiki-uploader-description">Uploads are saved to your owner-only Developer Wiki\.<\/p>/);
+  assert.match(manager, /<label for="image">Attachment file<\/label>\s*<input type="file" id="image"[^>]*aria-describedby="media-uploader-help paste-help"/);
+  assert.match(manager, /<p class="sub" id="project-assets-description">Upload, edit, publish, or remove portfolio attachments\.<\/p>/);
+  assert.match(manager, /<p class="sub" id="wiki-uploader-description">Uploads are saved to your owner-only Developer Wiki\.<\/p>/);
   assert.match(manager, /aria-describedby="wiki-uploader-description wiki-uploader-help"/);
+  // Every visible field caption must be a label bound to its control.
+  for (const [, id] of manager.matchAll(/<div class="ws-field[^"]*">\s*<(?:input|select|textarea)[^>]*id="([^"]+)"/g)) assert.fail(`#${id} has no label`);
+  for (const [, id] of manager.matchAll(/<label for="([^"]+)"/g)) assert.match(manager, new RegExp(`id="${id}"`));
   const ids = [...manager.matchAll(/\bid="([^"]+)"/g)].map(([, id]) => id);
   assert.equal(new Set(ids).size, ids.length, 'admin workspace IDs must remain unique for label and description references');
   assert.doesNotMatch(manager, /separate tab/);
   const uploaderView = directory.split('if (uploaderOnly) {')[1]?.split('async function deleteReference')[0] ?? '';
   assert.doesNotMatch(uploaderView, /className="eyebrow"|<h1\b|Accepted files:/);
-  assert.match(workflow, /\/admin\/knowledge\/uploader/);
+  assert.match(workflow, /fetch\("\/api\/knowledge", \{ method: "POST", body: new FormData\(wikiForm\)/);
   assert.match(workflow, /new URLSearchParams\(window\.location\.search\)\.get\("folder"\)/);
-  assert.match(workflow, /uploader\.searchParams\.set\("folder", selectedFolder\)/);
-  assert.match(workflow, /event\.origin !== window\.location\.origin/);
+  assert.match(workflow, /\["handbooks\/git", "Git and GitHub"\]/);
 });
 
 test('generated footer links to Admin without client-side identity checks', async () => {

@@ -23,7 +23,7 @@ test("every non-profile page gets the redesign shell exactly once", () => {
     assert.equal((html.match(/src="\/assets\/projects-redesign\.js"/g) ?? []).length, 1, `${route} script count`);
     assert.equal((html.match(/class="rd-topbar"/g) ?? []).length, 1, `${route} top bar count`);
     assert.doesNotMatch(html, /<div class="wrap nav">/, `${route} still has the old header`);
-    assert.match(html, /<a href="\/knowledge\/">DevWiki<\/a>/, `${route} footer has DevWiki`);
+    assert.match(html, /<a href="\/knowledge\/">Dev Wiki<\/a>/, `${route} footer has Dev Wiki`);
     assert.match(html, /<a href="\/admin\/">Admin<\/a>/, `${route} footer has Admin`);
     assert.doesNotMatch(html, /<footer[\s\S]*?Diamond Brown/, `${route} footer brand is GemsForge only`);
   }
@@ -46,7 +46,7 @@ test("the shared top bar marks the active section for each route", () => {
 test("the shared footer has utility links and no primary nav duplicates", () => {
   const footer = renderFooter();
   assert.match(footer, /<a href="\/admin\/">Admin<\/a>/);
-  assert.match(footer, /<a href="\/knowledge\/">DevWiki<\/a>/);
+  assert.match(footer, /<a href="\/knowledge\/">Dev Wiki<\/a>/);
   assert.doesNotMatch(footer, /href="\/about\/"/);
   assert.doesNotMatch(footer, /diamond-brown-resume\.pdf/);
   assert.match(footer, /#main/);
@@ -60,7 +60,7 @@ test("applying the shell is idempotent and leaves profile routes alone", () => {
   const once = applySiteRedesign(source, "/about/");
   assert.equal(applySiteRedesign(once, "/about/"), once);
   assert.match(once, /<body class="x rd">/);
-  assert.match(once, /<a href="\/knowledge\/">DevWiki<\/a>/);
+  assert.match(once, /<a href="\/knowledge\/">Dev Wiki<\/a>/);
   assert.equal(applySiteRedesign(source, "/"), source);
 });
 

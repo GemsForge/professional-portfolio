@@ -329,7 +329,7 @@ test('public and owner directories share the existing reader while keeping owner
   assert.match(directory, /href=\{readerHref\(resource\.id, true\)\}[\s\S]*?target="_top"[\s\S]*?View/);
   assert.match(directory, /target\.location\.assign\(readerHref\(data\.resource\.id, true\)\)/);
   assert.doesNotMatch(directory, /id="saved-references"/);
-  assert.match(directory, /MY DEVELOPER NOTES/);
+  assert.match(reader, /MY DEVELOPER NOTES/);
   assert.match(directory, /Developer Wiki/);
   assert.match(directory, /<time dateTime=\{resource\.createdAt\}>/);
   assert.match(directory, /href="\/api\/knowledge\/export"[\s\S]*?Download document backup/);
