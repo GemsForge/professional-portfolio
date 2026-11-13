@@ -474,3 +474,10 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid #90
   .creator-page .sp-story-dialog{border-radius:26px;box-shadow:0 60px 120px -40px rgba(0,0,0,.7)}
 }
 @media(prefers-reduced-motion:reduce){.creator-page .post-dialog[open],.creator-page .sp-story-dialog[open]{animation:none}}
+/* ADP highlight (#131): two résumé-backed wins sit side by side, stacking on very narrow screens. */
+.sp-story-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.sp-story-metrics .sp-story-metric{padding:14px}
+.sp-story-metrics .sp-story-metric strong{font-size:21px}
+.sp-story-metrics .sp-story-metric span{font-size:13px;line-height:1.45}
+@media(max-width:650px){.sp-story-body{gap:14px}.sp-story-body ul{gap:5px;font-size:14px}}
+@media(max-width:340px){.sp-story-metrics{grid-template-columns:1fr}}

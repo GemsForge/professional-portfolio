@@ -45,6 +45,11 @@ test("social profile shows the résumé-backed header, experience highlights, an
   const views = [...html.matchAll(/data-highlight-view="([a-z]+)"/g)].map((match) => match[1]);
   assert.deepEqual(views, ["adp", "gemsforge", "apprentice", "army"]);
   assert.match(html, /February 2023 – present[\s\S]*?2 weeks → 3 days/);
+  // The ADP story leads with both résumé-backed wins: onboarding as a new developer and the WCAG refactor (#131).
+  const adpStory = html.slice(html.indexOf('data-highlight-view="adp"'), html.indexOf('data-highlight-view="gemsforge"'));
+  assert.match(adpStory, /class="sp-story-metrics"[\s\S]*?2 weeks → 3 days[\s\S]*?as a new developer[\s\S]*?Accessibility lead[\s\S]*?toward WCAG/);
+  assert.match(adpStory, /semantic HTML, C#, and UI development process/);
+  assert.match(html, /<p>Led a frontend accessibility refactor toward WCAG\.<\/p>/);
   assert.match(html, /Since May 2013[\s\S]*?Army National Guard service since 2013/);
   assert.equal((html.match(/data-close-highlight aria-label="Close highlight"/g) ?? []).length, 4);
 

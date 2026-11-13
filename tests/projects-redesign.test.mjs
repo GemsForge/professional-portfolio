@@ -77,3 +77,10 @@ test("case study leads with a pausable story carousel and keeps its evidence", (
   assert.match(script, /addEventListener\("focusin"/);
   assert.match(css, /prefers-reduced-motion:reduce/);
 });
+
+test("the ADP career page leads with onboarding and accessibility impact", () => {
+  const html = pages["/work/enterprise-applications/"];
+  assert.match(html, /<section class="rd-impact" aria-label="Impact at ADP">[\s\S]*?2 weeks → 3 days[\s\S]*?As a new developer[\s\S]*?Accessibility lead[\s\S]*?toward WCAG standards/);
+  assert.match(html, /What accessibility taught me/);
+  assert.match(html, /onboarding figure is self-reported/);
+});

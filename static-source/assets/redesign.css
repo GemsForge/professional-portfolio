@@ -183,6 +183,12 @@ body.rd .next-project{padding:22px 24px;border-radius:22px;background:var(--rd-f
 body.rd .next-project a{color:var(--rd-on-forest);font-weight:600}
 
 /* Experience detail pages. */
+/* Impact cards on career pages: the headline figure leads, then what it means. */
+body.rd .rd-impact{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;padding:40px 0 0}
+body.rd .rd-impact article{padding:24px 26px;border:1px solid var(--rd-line);border-radius:20px;background:var(--rd-surface);box-shadow:0 18px 36px -24px rgba(30,40,35,.45)}
+body.rd .rd-impact-figure{margin:0 0 6px;font:800 clamp(26px,3vw,34px)/1.1 var(--rd-display);letter-spacing:-.02em;color:var(--rd-gold-ink)}
+body.rd .rd-impact h2{margin:0 0 8px;font-size:19px;font-weight:700}
+body.rd .rd-impact p:last-child{margin:0;color:var(--rd-muted);font-size:16px}
 body.rd .wrap.note{margin-top:20px}
 body.rd .project-page{padding-top:44px}
 body.rd .project-page .project-visual{border:1px solid var(--rd-line);border-radius:20px;background:var(--rd-sage-soft)}
@@ -238,6 +244,7 @@ body.rd .footer a:hover{color:var(--rd-ink);text-decoration:underline}
   .rd-stats div{flex:1 1 45%}
   .rd-stats div+div{padding-left:0;border-left:0}
   body.rd .pagehero{padding-top:36px;padding-bottom:40px}
+  body.rd .rd-impact{grid-template-columns:1fr}
   body.rd .pagehero .case-banner{grid-template-columns:minmax(0,1fr)}
   body.rd .pagehero .case-banner>img,body.rd .pagehero .case-banner-media{width:160px;height:160px;max-width:100%;order:-1}
   body.rd .about-portrait{max-width:220px}
