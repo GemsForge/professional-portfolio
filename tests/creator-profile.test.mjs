@@ -213,7 +213,7 @@ test("pop-up keeps the walkthrough, swaps in real step screenshots, and meets ty
   assert.match(auraPost, /<button type="button" class="post-step-arrow post-step-next" data-step-next aria-label="Next step">Next →<\/button>/);
   assert.match(auraPost, /<button type="button" class="post-image-zoom" data-post-image-zoom/);
   assert.match(auraPost, /<p class="visually-hidden" data-step-announce aria-live="polite"><\/p>/);
-  assert.match(auraPost, /<span class="eyebrow">App tour<\/span>/, "real screens label the walkthrough as an app tour");
+  assert.doesNotMatch(auraPost, /<span class="eyebrow">App tour<\/span>/, "real-screenshot walkthrough has no redundant eyebrow");
   assert.match(auraPost, /<nav class="post-step-controls" aria-label="Walkthrough image controls">/);
   assert.match(auraPost, /View source <span class="visually-hidden">\(opens in a new tab\)<\/span>/);
   // A catalog step with `screenshot` shows that real screen and hides its hotspot.
