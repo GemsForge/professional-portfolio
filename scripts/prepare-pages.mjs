@@ -6,6 +6,7 @@ import { siApple, siDotnet, siMui, siMoq, siOpenjdk, siPostgresql, siSpotify, si
 import { renderDependencyGroup } from "./auralogbook-dependencies.mts";
 import { applySocialMetadata, renderRobots, renderSitemap } from "./site-metadata.mjs";
 import { applyProjectPageMetadata, HOME_PROJECT_SLUGS, PORTFOLIO_POSTS, PROJECTS, renderProjectCard } from "./project-catalog.mts";
+import { applySiteRedesign } from "./site-redesign.mjs";
 
 const source = path.resolve("static-source");
 const pages = {};
@@ -308,6 +309,9 @@ async function visit(directory) {
         '<nav aria-label="Footer navigation"><a href="/admin/">Admin</a><a href="/knowledge/">Dev Wiki</a>',
       );
     }
+
+    // Every page except the social-profile home gets the shared redesign shell (#131).
+    text = applySiteRedesign(text, route);
 
     // Social previews run last so they read the final title and description.
     text = applySocialMetadata(text, route);

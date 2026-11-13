@@ -145,6 +145,67 @@ body.rd .engineering-highlights article{border-radius:16px;background:var(--rd-s
 body.rd .next-project{padding:22px 24px;border-radius:22px;background:var(--rd-forest)}
 body.rd .next-project a{color:var(--rd-on-forest);font-weight:600}
 
+
+/* ---------- Shared page blocks (case studies, Experience, About, Contact) ----------
+ * These pages keep their source markup; the rules below restyle the common
+ * blocks. A .pagehero becomes a full-bleed forest band: the 100vmax box-shadow
+ * paints the band edge to edge and clip-path trims it to the hero's height, so
+ * no wrapper markup is needed. The Aura hero (.rd-hero) already supplies its own band.
+ */
+body.rd .pagehero{position:relative;padding-top:52px;padding-bottom:56px;background:var(--rd-forest);box-shadow:0 0 0 100vmax var(--rd-forest);clip-path:inset(0 -100vmax);color:var(--rd-on-forest)}
+body.rd .rd-hero .pagehero{background:none;box-shadow:none;clip-path:none}
+body.rd .pagehero h1{font-weight:800;letter-spacing:-.04em;line-height:1;color:var(--rd-on-forest)}
+body.rd .pagehero .lead,body.rd .pagehero p{color:var(--rd-on-forest-muted)}
+body.rd .pagehero .eyebrow{color:var(--rd-gold)}
+body.rd .pagehero .breadcrumb{color:var(--rd-on-forest-muted);font:13px var(--rd-mono)}
+body.rd .pagehero a{color:var(--rd-on-forest)}
+body.rd .pagehero .tags{color:var(--rd-gold);font:13px var(--rd-mono)}
+body.rd .pagehero .case-banner{padding:0;border:0;background:none;box-shadow:none;backdrop-filter:none}
+body.rd .pagehero .case-banner>img,body.rd .pagehero .case-banner-media{border-radius:28px;background:var(--rd-bg);box-shadow:0 30px 60px rgba(0,0,0,.35)}
+body.rd .pagehero .case-banner>img{padding:18px;box-sizing:border-box}
+body.rd .pagehero .facts span{border-color:rgba(184,205,180,.35);background:rgba(244,242,232,.08);color:var(--rd-on-forest)}
+body.rd .pagehero .facts .dependency-chip{background:rgba(244,242,232,.1);border-color:rgba(184,205,180,.3);color:var(--rd-on-forest);box-shadow:none}
+body.rd .pagehero .facts .dependency-chip-label{background:none;color:var(--rd-on-forest)}
+body.rd .pagehero .facts .dependency-chip-logo{box-sizing:content-box;width:17px;height:17px;padding:3px;border-radius:50%;background:var(--rd-bg)}
+body.rd .pagehero .button{border-color:var(--rd-gold);background:var(--rd-gold);color:#1e2823}
+body.rd .pagehero .button.secondary{border-color:rgba(244,242,232,.4);background:transparent;color:var(--rd-on-forest)}
+
+/* Case-study body: space below the band, cards for notes and evidence. */
+body.rd .case-layout{padding-top:48px}
+body.rd .rd-case-body .case-layout{padding-top:0}
+body.rd .case-content h2{font-weight:700;letter-spacing:-.02em}
+body.rd .note,body.rd .evidence-note{border:1px solid var(--rd-line);border-left:3px solid var(--rd-gold-ink);border-radius:0 14px 14px 0;background:var(--rd-surface)}
+body.rd .case-content .code{border-radius:14px}
+body.rd .next-project{padding:22px 24px;border-radius:22px;background:var(--rd-forest)}
+body.rd .next-project a{color:var(--rd-on-forest);font-weight:600}
+
+/* Experience detail pages. */
+body.rd .wrap.note{margin-top:20px}
+body.rd .project-page{padding-top:44px}
+body.rd .project-page .project-visual{border:1px solid var(--rd-line);border-radius:20px;background:var(--rd-sage-soft)}
+body.rd .project-page .case h4{font:600 11px var(--rd-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--rd-gold-ink)}
+
+/* Card grids outside the Projects index (Experience index) share the post-card look. */
+body.rd .projects:not(.rd-grid){gap:18px;padding-top:12px}
+body.rd .projects:not(.rd-grid) .project{padding:0 0 16px;overflow:hidden;border:1px solid var(--rd-line);border-radius:20px;background:var(--rd-surface);box-shadow:none;transition:transform .25s ease,box-shadow .25s ease}
+body.rd .projects:not(.rd-grid) .project:hover{transform:translateY(-4px);box-shadow:var(--rd-shadow)}
+body.rd .projects:not(.rd-grid) .project-visual{border:0;border-radius:0;background:var(--rd-sage-soft)}
+body.rd .projects:not(.rd-grid) .project-meta{margin:16px 16px 0;font:600 11px var(--rd-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--rd-gold-ink)}
+body.rd .projects:not(.rd-grid) .project h3,body.rd .projects:not(.rd-grid) .project>p,body.rd .projects:not(.rd-grid) .project .tags,body.rd .projects:not(.rd-grid) .project .worklink{margin-left:16px;margin-right:16px}
+body.rd .projects:not(.rd-grid) .project h3{font-weight:700;letter-spacing:-.02em}
+
+/* About: the portrait gets the profile's gold avatar ring. */
+body.rd .about-portrait{border:0;border-radius:50%;aspect-ratio:1;max-width:340px;box-shadow:0 0 0 6px var(--rd-forest),0 0 0 10px var(--rd-gold),0 30px 60px rgba(0,0,0,.4)}
+body.rd .about-hero h1{font-size:clamp(40px,5.5vw,72px)}
+body.rd .dark .eyebrow{color:var(--rd-gold)}
+
+/* Contact card. */
+body.rd .contact-inner{border-color:var(--rd-line);border-radius:24px;background:var(--rd-surface)}
+
+/* Footer. */
+body.rd .footer{border-top:1px solid var(--rd-line);background:var(--rd-surface)}
+body.rd .footer a:hover{color:var(--rd-ink);text-decoration:underline}
+
 @media (max-width:900px){
   .rd-topbar{padding:8px 25px}
   .rd-featured,.rd-hero-grid{grid-template-columns:1fr}
@@ -154,6 +215,9 @@ body.rd .next-project a{color:var(--rd-on-forest);font-weight:600}
   /* min-width:0 keeps the one-line rail scrolling inside its grid track instead of widening the page. */
   body.rd .case-nav,body.rd .case-nav nav{min-width:0;max-width:100%}
   body.rd .case-nav nav{flex-direction:row;overflow-x:auto}
+  /* Code samples and the rail scroll inside a zero-minimum track instead of widening the page. */
+  body.rd .case-layout{grid-template-columns:minmax(0,1fr)}
+  body.rd .case-content{min-width:0;max-width:100%}
   body.rd .case-nav a{white-space:nowrap;border-left:0;border-bottom:2px solid var(--rd-line)}
   body.rd .case-nav a.is-current{border-bottom-color:var(--rd-gold-ink)}
 }
@@ -170,6 +234,10 @@ body.rd .next-project a{color:var(--rd-on-forest);font-weight:600}
   .rd-stats{flex-wrap:wrap}
   .rd-stats div{flex:1 1 45%}
   .rd-stats div+div{padding-left:0;border-left:0}
+  body.rd .pagehero{padding-top:36px;padding-bottom:40px}
+  body.rd .pagehero .case-banner{grid-template-columns:minmax(0,1fr)}
+  body.rd .pagehero .case-banner>img,body.rd .pagehero .case-banner-media{width:160px;height:160px;max-width:100%;order:-1}
+  body.rd .about-portrait{max-width:220px}
 }
 @media (prefers-reduced-motion:reduce){
   body.rd *{transition:none!important;animation:none!important}

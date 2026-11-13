@@ -3,30 +3,49 @@ import { readFile } from "node:fs/promises";
 import { test } from "node:test";
 
 /**
- * Guards the #131 projects redesign: the opt-in `rd` layer is applied only to
- * the Projects index and Aura Logbook case study, the social-profile home page
- * stays untouched, and the progressive enhancements keep their accessible hooks.
+ * Guards the #131 site redesign: every page except the social-profile home
+ * receives the shared top bar and opt-in `rd` layer, the home page stays
+ * untouched, and the progressive enhancements keep their accessible hooks.
  */
 const pages = JSON.parse(await readFile(new URL("../lib/static-pages.json", import.meta.url), "utf8"));
 const css = await readFile(new URL("../static-source/assets/redesign.css", import.meta.url), "utf8");
 const script = await readFile(new URL("../static-source/assets/projects-redesign.js", import.meta.url), "utf8");
 const catalog = await readFile(new URL("../scripts/project-catalog.mts", import.meta.url), "utf8");
-const REDESIGNED = ["/portfolio/projects/", "/portfolio/projects/auralogbook/"];
+const { applySiteRedesign, renderTopBar, PROFILE_ROUTES } = await import("../scripts/site-redesign.mjs");
+const REDESIGNED = Object.keys(pages).filter((route) => !PROFILE_ROUTES.has(route));
 
-test("only redesigned pages opt into the redesign layer", () => {
+test("every non-profile page gets the redesign shell exactly once", () => {
+  assert.ok(REDESIGNED.length >= 15, "expected the full public page set");
   for (const route of REDESIGNED) {
-    assert.match(pages[route], /<body class="rd">/, `${route} should opt in`);
-    assert.match(pages[route], /href="\/assets\/redesign\.css"/);
-    assert.match(pages[route], /src="\/assets\/projects-redesign\.js" defer/);
-    assert.match(pages[route], /class="rd-handle" href="\/"[\s\S]*?profile-avatar-320\.jpg/);
-    assert.match(pages[route], /<a href="\/portfolio\/projects\/" aria-current="page">Projects<\/a>/);
+    const html = pages[route];
+    assert.match(html, /<body class="[^"]*\brd\b[^"]*">/, `${route} should opt in`);
+    assert.equal((html.match(/href="\/assets\/redesign\.css"/g) ?? []).length, 1, `${route} stylesheet count`);
+    assert.equal((html.match(/src="\/assets\/projects-redesign\.js"/g) ?? []).length, 1, `${route} script count`);
+    assert.equal((html.match(/class="rd-topbar"/g) ?? []).length, 1, `${route} top bar count`);
+    assert.doesNotMatch(html, /<div class="wrap nav">/, `${route} still has the old header`);
   }
-  for (const route of ["/", "/portfolio/", "/about/", "/contact/"]) {
-    assert.doesNotMatch(pages[route], /redesign\.css|<body class="rd">/, `${route} must keep its current look`);
+  for (const route of PROFILE_ROUTES) {
+    assert.doesNotMatch(pages[route], /redesign\.css|class="rd-topbar"|<body class="rd/, `${route} must keep the profile design`);
   }
   // Every rule is scoped to the opt-in body class or an rd- component class.
   assert.match(css, /^body\.rd\{/m);
   assert.doesNotMatch(css, /^(?:header|main|footer|h1|h2|h3|a|body)\s*\{/m);
+});
+
+test("the shared top bar marks the active section for each route", () => {
+  assert.match(renderTopBar("/portfolio/projects/hair-log/"), /<a href="\/portfolio\/projects\/" aria-current="page">Projects<\/a>/);
+  assert.match(renderTopBar("/about/"), /<a href="\/about\/" aria-current="page">About<\/a>/);
+  assert.match(renderTopBar("/contacts/"), /<a href="\/contact\/" aria-current="page">Contact<\/a>/);
+  assert.doesNotMatch(renderTopBar("/work/"), /aria-current/);
+  assert.match(renderTopBar("/"), /class="rd-handle" href="\/"[\s\S]*?profile-avatar-320\.jpg/);
+});
+
+test("applying the shell is idempotent and leaves profile routes alone", () => {
+  const source = '<html><head><link rel="stylesheet" href="/assets/site.css"></head><body class="x"><header><div class="wrap nav">old</div></header><main></main></body></html>';
+  const once = applySiteRedesign(source, "/about/");
+  assert.equal(applySiteRedesign(once, "/about/"), once);
+  assert.match(once, /<body class="x rd">/);
+  assert.equal(applySiteRedesign(source, "/"), source);
 });
 
 test("projects index renders the featured band, filters, and filterable cards", () => {
