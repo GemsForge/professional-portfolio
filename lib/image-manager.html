@@ -75,7 +75,7 @@
       .ws-top{
         display:flex;align-items:center;justify-content:space-between;gap:12px;
         padding-bottom:14px;margin-bottom:20px;border-bottom:1px solid var(--line)}
-      .ws-top h2{font-size:26px;font-weight:800}
+      .ws-top h1{font-size:26px;font-weight:800}
       .ws-top .mono{
         font-family:var(--mono);font-size:11px;letter-spacing:.12em;
         text-transform:uppercase;color:var(--gold-ink)}
@@ -89,7 +89,7 @@
         background:var(--surface);border:1px solid var(--line);
         border-radius:16px;padding:18px}
       .ws-panel[hidden]{display:none}
-      .ws-panel>h3{font-size:18px;font-weight:700;margin-bottom:2px}
+      .ws-panel>h2{font-size:18px;font-weight:700;margin-bottom:2px}
       .ws-panel>.sub{color:var(--muted);font-size:13.5px;margin:0 0 14px}
 
       /* Callout strip (accepted types / file size) */
@@ -114,10 +114,11 @@
       .ws-field{display:flex;flex-direction:column;gap:4px}
       .ws-field.full{grid-column:1/-1}
       /* 10px MONO UPPERCASE label */
-      .ws-field>small{
+      /* Field captions are real <label for> elements so every control has an accessible name. */
+      .ws-field>label{
         display:block;font:600 10px var(--mono);letter-spacing:.08em;
         text-transform:uppercase;color:var(--muted);margin-bottom:1px}
-      .ws-field>small b{color:var(--gold-ink);font-weight:600}
+      .ws-field>label b{color:var(--gold-ink);font-weight:600}
       .ws-field input,.ws-field select,.ws-field textarea{
         display:block;width:100%;background:var(--sage-soft);
         border:1px solid transparent;border-radius:8px;
@@ -176,7 +177,7 @@
       .ws-list-head{
         display:flex;align-items:end;justify-content:space-between;
         gap:12px;margin:20px 0 6px;flex-wrap:wrap}
-      .ws-list-head h4{font-size:15px;font-weight:600;margin:0}
+      .ws-list-head h3{font-size:15px;font-weight:600;margin:0}
       .ws-list-head p{margin:2px 0 0;font-size:12.5px;color:var(--muted)}
 
       /* .ws-row: 4-column grid matching wireframe exactly:
@@ -251,7 +252,7 @@
       .ws-rail{display:flex;flex-direction:column;gap:14px;min-width:0}
       .ws-rail-card{
         background:var(--surface);border:1px solid var(--line);border-radius:16px}
-      .ws-rail-card h3{
+      .ws-rail-card h2{
         font-size:15px;font-weight:600;padding:14px 16px 0;margin:0}
       .ws-rail-card ul{
         list-style:none;margin:10px 0 0;padding:0 16px 14px}
@@ -292,6 +293,19 @@
       @media(prefers-reduced-motion:reduce){
         .ws-side button,.ws-side a.ws-link,.ws-btn-gold{transition:none}
       }
+      /* Wiki reference table: inline publish/edit actions and the expandable edit row. */
+      .ws-table{width:100%;border-collapse:collapse;font-size:13px}
+      .ws-table th{font:600 10px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+      .ws-table td{padding:11px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+      .ws-table td small{display:block;color:var(--muted)}
+      .ws-table time{font-variant-numeric:tabular-nums;white-space:nowrap}
+      .ws-row-actions{display:flex;gap:4px;align-items:center;white-space:nowrap}
+      .ws-link-btn{background:none;border:0;padding:4px 2px;font:600 13px var(--body);color:var(--gold-ink);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+      .ws-link-btn:disabled{opacity:.5;cursor:wait}
+      .ws-link-btn:focus-visible{outline:3px solid var(--gold);outline-offset:2px;border-radius:4px}
+      .ws-edit-row td{background:var(--surface);padding:14px 10px 16px}
+      .ws-edit-row .ws-form{margin-bottom:10px}
+      .ws-edit-actions{display:flex;gap:12px;align-items:center}
     </style>
   </head>
   <body>
@@ -341,9 +355,9 @@
         <!-- ---- Main workspace ---- -->
         <main id="main" class="ws-main">
 
-          <!-- ws-top: card header matching wireframe (.ws-top h2 + .mono subtext) -->
+          <!-- ws-top: card header matching wireframe; the title is the page h1. -->
           <div class="ws-top">
-            <h2>Manage Project Assets</h2>
+            <h1>Manage Project Assets</h1>
             <span class="mono">screenshots · wiki documents</span>
           </div>
 
@@ -356,8 +370,8 @@
               <section id="project-assets-step" class="ws-panel"
                 data-workspace-panel="project-assets"
                 aria-labelledby="project-assets-heading">
-                <h3 id="project-assets-heading">Project Assets Manager</h3>
-                <p class="sub">Upload, edit, publish, or remove portfolio attachments.</p>
+                <h2 id="project-assets-heading">Project Assets Manager</h2>
+                <p class="sub" id="project-assets-description">Upload, edit, publish, or remove portfolio attachments.</p>
                 <aside class="ws-callout" id="media-uploader-help" role="note"
                   aria-label="Accepted media file types">
                   <strong>Attachment · up to 50 MB</strong>
@@ -369,11 +383,11 @@
                 <form id="upload-form">
                   <div class="ws-form">
                     <div class="ws-field">
-                      <small>Project</small>
+                      <label for="project">Project</label>
                       <select id="project" name="project"><!--PROJECT_OPTIONS--></select>
                     </div>
                     <div class="ws-field">
-                      <small>Attachment file</small>
+                      <label for="image">Attachment file</label>
                       <input type="file" id="image" name="file"
                         accept="image/png,image/jpeg,image/webp,application/pdf,video/mp4,video/webm"
                         required aria-describedby="media-uploader-help paste-help">
@@ -386,13 +400,13 @@
                       </span>
                     </div>
                     <div class="ws-field full">
-                      <small>Alt text <b>· required</b></small>
+                      <label for="alt">Alt text <b>· required</b></label>
                       <input id="alt" name="alt" maxlength="500" required
                         aria-describedby="alt-help">
                       <p id="alt-help" class="ws-help">Describe what the screenshot demonstrates. Do not include private information.</p>
                     </div>
                     <div class="ws-field full">
-                      <small>Caption <span style="font-weight:400;opacity:.75">· optional</span></small>
+                      <label for="caption">Caption <span style="font-weight:400;opacity:.75">· optional</span></label>
                       <textarea id="caption" name="caption" maxlength="2000"></textarea>
                     </div>
                     <fieldset class="walkthrough-fields" data-walkthrough-fields>
@@ -435,7 +449,7 @@
                      into a .ws-row grid with DRAFT/LIVE chip and inline edit panel. -->
                 <div class="ws-list-head">
                   <div>
-                    <h4 id="attachments-heading">Attachments in this project</h4>
+                    <h3 id="attachments-heading">Attachments in this project</h3>
                     <p>Drafts stay private until you publish them.</p>
                   </div>
                 </div>
@@ -449,8 +463,8 @@
               <section id="wiki-uploader-step" class="ws-panel"
                 data-workspace-panel="wiki-uploader"
                 aria-labelledby="wiki-uploader-heading" hidden>
-                <h3 id="wiki-uploader-heading">Wiki Page Uploader</h3>
-                <p class="sub">Uploads are saved to your owner-only Developer Wiki.</p>
+                <h2 id="wiki-uploader-heading">Wiki Page Uploader</h2>
+                <p class="sub" id="wiki-uploader-description">Uploads are saved to your owner-only Developer Wiki.</p>
                 <aside class="ws-callout" id="wiki-uploader-help" role="note"
                   aria-label="Accepted wiki file types">
                   <strong>Accepted files · up to 20 MB</strong>
@@ -464,18 +478,18 @@
                   enctype="multipart/form-data">
                   <div class="ws-form">
                     <div class="ws-field full">
-                      <small>Title <b>· required</b></small>
-                      <input id="wiki-title" name="title" required maxlength="200"
-                        aria-describedby="wiki-uploader-help">
+                      <label for="wiki-title">Title <b>· required</b></label>
+                      <input id="wiki-title" name="title" required maxlength="160"
+                        aria-describedby="wiki-uploader-description wiki-uploader-help">
                     </div>
                     <div class="ws-field">
-                      <small>Library folder <b>· required</b></small>
+                      <label for="wiki-folder">Library folder <b>· required</b></label>
                       <select id="wiki-folder" name="folder" required data-wiki-folder>
                         <option value="">Select a folder…</option>
                       </select>
                     </div>
                     <div class="ws-field">
-                      <small>Area</small>
+                      <label for="wiki-area">Area</label>
                       <select id="wiki-area" name="area">
                         <option value="">Select an area…</option>
                         <option>Frontend</option>
@@ -487,7 +501,7 @@
                       </select>
                     </div>
                     <div class="ws-field full">
-                      <small>Reference file <b>· required</b></small>
+                      <label for="wiki-file">Reference file <b>· required</b></label>
                       <input type="file" id="wiki-file" name="file" required
                         accept=".pdf,.docx,.md,.html,.txt,image/png,image/jpeg,image/webp,image/tiff"
                         aria-describedby="wiki-uploader-help">
@@ -501,7 +515,7 @@
                 <!-- Saved references list -->
                 <div class="ws-list-head">
                   <div>
-                    <h4 id="wiki-refs-heading">Saved references</h4>
+                    <h3 id="wiki-refs-heading">Saved references</h3>
                     <p id="wiki-refs-status">Loading saved references…</p>
                   </div>
                   <span class="ws-search" role="search" aria-label="Filter references">Filter references…</span>
@@ -513,12 +527,13 @@
                       <th scope="col">Type</th>
                       <th scope="col">Area</th>
                       <th scope="col">Status</th>
+                      <th scope="col">Published</th>
                       <th scope="col"><span class="visually-hidden">Actions</span></th>
                     </tr>
                   </thead>
                   <tbody id="wiki-refs-body">
                     <tr>
-                      <td colspan="5" style="color:var(--muted);font-size:13px;padding:16px 10px">
+                      <td colspan="6" style="color:var(--muted);font-size:13px;padding:16px 10px">
                         No references yet. Upload a file above to add your first entry.
                       </td>
                     </tr>
@@ -533,7 +548,7 @@
               <section id="walkthrough-uploader-step" class="ws-panel"
                 data-workspace-panel="walkthrough-uploader"
                 aria-labelledby="walkthrough-uploader-heading" hidden>
-                <h3 id="walkthrough-uploader-heading">Walkthrough Uploader</h3>
+                <h2 id="walkthrough-uploader-heading">Walkthrough Uploader</h2>
                 <p class="sub">Add or update a step image in a project's portfolio walkthrough carousel.</p>
                 <aside class="ws-callout" id="wt-uploader-help" role="note"
                   aria-label="Accepted walkthrough file types">
@@ -544,28 +559,28 @@
                 <form id="walkthrough-form">
                   <div class="ws-form">
                     <div class="ws-field">
-                      <small>Project</small>
+                      <label for="wt-project">Project</label>
                       <select id="wt-project" name="project"><!--PROJECT_OPTIONS--></select>
                     </div>
                     <div class="ws-field">
-                      <small>Step number</small>
+                      <label for="wt-step">Step number</label>
                       <select id="wt-step" name="step">
                         <option value="">Select a step…</option>
                       </select>
                     </div>
                     <div class="ws-field full">
-                      <small>Step label <span style="font-weight:400;opacity:.75">· optional</span></small>
+                      <label for="wt-label">Step label <span style="font-weight:400;opacity:.75">· optional</span></label>
                       <input id="wt-label" name="stepLabel" maxlength="120"
                         placeholder="e.g. Check-In Detail">
                     </div>
                     <div class="ws-field full">
-                      <small>Image file</small>
+                      <label for="wt-image">Image file</label>
                       <input type="file" id="wt-image" name="file"
                         accept="image/png,image/jpeg,image/webp"
                         required aria-describedby="wt-uploader-help">
                     </div>
                     <div class="ws-field full">
-                      <small>Alt text <b>· required</b></small>
+                      <label for="wt-alt">Alt text <b>· required</b></label>
                       <input id="wt-alt" name="alt" maxlength="500" required
                         aria-describedby="wt-alt-help">
                       <p id="wt-alt-help" class="ws-help">Describe the step image. Used by screen readers and search engines.</p>
@@ -577,7 +592,7 @@
                 </form>
                 <div class="ws-list-head">
                   <div>
-                    <h4 id="wt-steps-heading">Walkthrough steps</h4>
+                    <h3 id="wt-steps-heading">Walkthrough steps</h3>
                     <p>Select a project above to see its current walkthrough steps.</p>
                   </div>
                 </div>
@@ -591,7 +606,7 @@
                  ul/li with .ws-dot activity indicators, not generic cards. -->
             <aside class="ws-rail" aria-label="Workspace quick access">
               <div class="ws-rail-card">
-                <h3>Recent activity</h3>
+                <h2>Recent activity</h2>
                 <ul id="ws-recent-activity">
                   <li>
                     <b>Upload an asset to see activity</b>
@@ -600,7 +615,7 @@
                 </ul>
               </div>
               <div class="ws-rail-card">
-                <h3>Dev Wiki</h3>
+                <h2>Dev Wiki</h2>
                 <ul>
                   <li>
                     <b>Your personal reference</b>

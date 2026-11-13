@@ -149,6 +149,16 @@ test('public Wiki exposes document bodies through read-only routes, not its inde
   const created = await knowledgeRequest(request('/api/knowledge', 'POST', form), env);
   const { resource } = await created.json();
 
+  // New uploads are drafts: hidden from the public index and reader until the owner publishes them.
+  assert.equal(resource.published, false);
+  assert.equal((await (await publicKnowledgeRequest(request('/api/public/knowledge', 'GET', undefined, {}), env)).json()).resources.length, 0);
+  assert.equal((await publicKnowledgeRequest(request(`/api/public/knowledge/${resource.id}`, 'GET', undefined, {}), env)).status, 404);
+  const publish = new FormData();
+  publish.set('published', 'true');
+  const published = await (await knowledgeRequest(request(`/api/knowledge/${resource.id}`, 'PATCH', publish), env)).json();
+  assert.equal(published.resource.published, true);
+  assert.match(published.resource.publishedAt, /^\d{4}-\d{2}-\d{2}T/);
+
   const response = await publicKnowledgeRequest(request('/api/public/knowledge', 'GET', undefined, {}), env);
   const data = await response.json();
   const serialized = JSON.stringify(data);

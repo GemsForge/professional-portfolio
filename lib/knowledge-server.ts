@@ -34,7 +34,27 @@ type KnowledgeRecord = {
   description?: string;
   tags?: string[];
   searchText?: string;
+  /** False keeps a reference owner-only; records saved before publishing existed omit it and stay public. */
+  published?: boolean;
+  /** When the reference last went live; cleared when it is unpublished. */
+  publishedAt?: string;
 };
+
+/** Treats legacy records without a publish flag as live so existing public pages keep working. */
+function isPublished(record: KnowledgeRecord) {
+  return record.published !== false;
+}
+
+/** Validates an uploaded reference file and returns its stored name, type, and bytes, or an error response. */
+async function readUpload(file: FormDataEntryValue | null): Promise<{ filename: string; contentType: KnowledgeFileType; bytes: Uint8Array } | Response> {
+  if (!(file instanceof File) || !file.size) return json({ error: 'Choose a file to add.' }, 400);
+  if (file.size > MAX_FILE_BYTES) return json({ error: 'The maximum file size is 20 MB.' }, 413);
+  const filename = safeFilename(file.name);
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  const contentType = fileType(filename, bytes);
+  if (!contentType) return json({ error: 'Use a valid PDF, DOCX, Markdown, or UTF-8 text file.' }, 415);
+  return { filename, contentType, bytes };
+}
 
 function json(data: unknown, status = 200) {
   return Response.json(data, {
@@ -281,7 +301,7 @@ export async function publicKnowledgeRequest(request: Request, env: Cloudflare.E
   const id = url.pathname.slice('/api/public/knowledge'.length).replace(/^\//, '');
   if (id) return knowledgeFileResponse(request, bucket, id, true);
 
-  const resources = (await listRecords(bucket)).map(({ id, title, folder, filename, contentType, size, createdAt, tags }) => ({
+  const resources = (await listRecords(bucket)).filter(isPublished).map(({ id, title, folder, filename, contentType, size, createdAt, tags }) => ({
     id,
     title,
     folder,
@@ -307,6 +327,8 @@ async function knowledgeFileResponse(request: Request, bucket: R2Bucket, id: str
   const metadata = await bucket.get(`${RECORD_PREFIX}${id}.json`);
   if (!metadata) return json({ error: 'Resource not found.' }, 404);
   const record = await metadata.json<KnowledgeRecord>();
+  // Drafts are owner-only: the public reader treats them as missing.
+  if (publicAccess && !isPublished(record)) return json({ error: 'Resource not found.' }, 404);
   // Inline HTML is reserved for the reader's restrictive, sandboxed preview frame.
   const renderHtml = url.searchParams.get('render') === 'html';
   if (renderHtml && record.contentType !== 'text/html') {
@@ -380,17 +402,13 @@ export async function knowledgeRequest(request: Request, env: Cloudflare.Env): P
       return json({ error: 'The maximum file size is 20 MB.' }, 413);
     }
     const form = await request.formData();
-    const file = form.get('file');
     const title = String(form.get('title') || '').trim();
     const folder = String(form.get('folder') || '').trim();
-    if (!(file instanceof File) || !file.size) return json({ error: 'Choose a file to add.' }, 400);
-    if (file.size > MAX_FILE_BYTES) return json({ error: 'The maximum file size is 20 MB.' }, 413);
+    const upload = await readUpload(form.get('file'));
+    if (upload instanceof Response) return upload;
     if (!title || title.length > TITLE_LIMIT) return json({ error: 'Add a title up to 160 characters.' }, 400);
     if (!FOLDERS.has(folder)) return json({ error: 'Choose a folder in the library.' }, 400);
-    const filename = safeFilename(file.name);
-    const bytes = new Uint8Array(await file.arrayBuffer());
-    const contentType = fileType(filename, bytes);
-    if (!contentType) return json({ error: 'Use a valid PDF, DOCX, Markdown, or UTF-8 text file.' }, 415);
+    const { filename, contentType, bytes } = upload;
 
     const id = crypto.randomUUID();
     const record: KnowledgeRecord = {
@@ -399,8 +417,10 @@ export async function knowledgeRequest(request: Request, env: Cloudflare.Env): P
       folder,
       filename,
       contentType,
-      size: file.size,
+      size: bytes.length,
       createdAt: new Date().toISOString(),
+      // New uploads start as drafts until the owner publishes them.
+      published: false,
       ...(contentType === 'text/markdown' ? inferMarkdownMetadata(new TextDecoder().decode(bytes), title) : {}),
     };
     await bucket.put(`${FILE_PREFIX}${id}`, bytes, { httpMetadata: { contentType } });
@@ -411,6 +431,52 @@ export async function knowledgeRequest(request: Request, env: Cloudflare.Env): P
       throw error;
     }
     return json({ resource: record }, 201);
+  }
+
+  /**
+   * Updates one reference from multipart fields: `title`, `folder`, `published` ("true"/"false"),
+   * and an optional replacement `file`. Omitted fields keep their stored values.
+   */
+  if (request.method === 'PATCH' && id) {
+    if (!sameOrigin(request)) return json({ error: 'Please submit from this website.' }, 403);
+    if (Number(request.headers.get('Content-Length')) > MAX_FILE_BYTES + 65536) {
+      return json({ error: 'The maximum file size is 20 MB.' }, 413);
+    }
+    const stored = await bucket.get(`${RECORD_PREFIX}${id}.json`);
+    if (!stored) return json({ error: 'Resource not found.' }, 404);
+    const record = await stored.json<KnowledgeRecord>();
+    const form = await request.formData();
+    if (form.has('title')) {
+      const title = String(form.get('title') || '').trim();
+      if (!title || title.length > TITLE_LIMIT) return json({ error: 'Add a title up to 160 characters.' }, 400);
+      record.title = title;
+    }
+    if (form.has('folder')) {
+      const folder = String(form.get('folder') || '').trim();
+      if (!FOLDERS.has(folder)) return json({ error: 'Choose a folder in the library.' }, 400);
+      record.folder = folder;
+    }
+    const replacement = form.get('file');
+    if (replacement instanceof File && replacement.size) {
+      const upload = await readUpload(replacement);
+      if (upload instanceof Response) return upload;
+      await bucket.put(`${FILE_PREFIX}${id}`, upload.bytes, { httpMetadata: { contentType: upload.contentType } });
+      record.filename = upload.filename;
+      record.contentType = upload.contentType;
+      record.size = upload.bytes.length;
+      delete record.description;
+      delete record.tags;
+      delete record.searchText;
+      if (upload.contentType === 'text/markdown') Object.assign(record, inferMarkdownMetadata(new TextDecoder().decode(upload.bytes), record.title));
+    }
+    if (form.has('published')) {
+      const publish = form.get('published') === 'true';
+      if (publish && !isPublished(record)) record.publishedAt = new Date().toISOString();
+      if (!publish) delete record.publishedAt;
+      record.published = publish;
+    }
+    await bucket.put(`${RECORD_PREFIX}${id}.json`, JSON.stringify(record));
+    return json({ resource: record });
   }
 
   return json({ error: 'Method not allowed.' }, 405);

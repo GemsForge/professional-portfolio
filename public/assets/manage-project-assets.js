@@ -53,37 +53,128 @@ function setWikiMessage(text, isError = false) {
   wikiMessage.style.color = isError ? "#9b2c2c" : "";
 }
 
-/** Builds one saved-reference row with text nodes only, so filenames cannot inject markup. */
+/** Matches the server rule: records saved before publishing existed have no flag and are live. */
+const isLive = (resource) => resource.published !== false;
+const folderLabel = (path) => wikiFolders.find(([value]) => value === path)?.[1] ?? path;
+const publishedFormat = new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" });
+
+/** Creates a text-only element so filenames and titles can never inject markup. */
+function textElement(tag, text, className) {
+  const element = document.createElement(tag);
+  element.textContent = text;
+  if (className) element.className = className;
+  return element;
+}
+
+/** Sends a multipart PATCH for one reference and returns the updated record. */
+async function updateReference(id, fields) {
+  const body = new FormData();
+  Object.entries(fields).forEach(([key, value]) => body.append(key, value));
+  const response = await fetch(`/api/knowledge/${encodeURIComponent(id)}`, { method: "PATCH", body, cache: "no-store" });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.error || "Could not update this reference.");
+  return data.resource;
+}
+
+/** Builds the inline edit row: rename, move to another folder, or replace the stored file. */
+function editRow(resource, row) {
+  const editRowElement = document.createElement("tr");
+  editRowElement.className = "ws-edit-row";
+  const cell = document.createElement("td");
+  cell.colSpan = 6;
+  const form = document.createElement("form");
+  const prefix = `wiki-edit-${resource.id}`;
+  form.innerHTML = `
+    <div class="ws-form">
+      <div class="ws-field"><label for="${prefix}-title">Title <b>· required</b></label><input id="${prefix}-title" name="title" required maxlength="160"></div>
+      <div class="ws-field"><label for="${prefix}-folder">Library folder</label><select id="${prefix}-folder" name="folder" required></select></div>
+      <div class="ws-field full"><label for="${prefix}-file">Replace reference file · optional</label><input id="${prefix}-file" name="file" type="file" accept=".pdf,.docx,.md,.markdown,.html,.htm,.txt,image/png,image/jpeg,image/webp,image/tiff"></div>
+    </div>
+    <div class="ws-edit-actions"><button class="ws-btn-gold" type="submit">Save changes</button><button class="ws-link-btn" type="button" data-cancel>Cancel</button></div>`;
+  form.elements.title.value = resource.title;
+  wikiFolders.forEach(([path, label]) => form.elements.folder.append(new Option(label, path)));
+  form.elements.folder.value = resource.folder;
+  form.querySelector("[data-cancel]").addEventListener("click", () => {
+    editRowElement.remove();
+    row.querySelector("[data-edit]").setAttribute("aria-expanded", "false");
+    row.querySelector("[data-edit]").focus();
+  });
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const save = form.querySelector("button[type=submit]");
+    save.disabled = true;
+    try {
+      const fields = { title: form.elements.title.value, folder: form.elements.folder.value };
+      if (form.elements.file.files[0]) fields.file = form.elements.file.files[0];
+      const updated = await updateReference(resource.id, fields);
+      setWikiMessage(`${updated.title} saved.`);
+      await loadWikiReferences();
+    } catch (error) {
+      setWikiMessage(error.message, true);
+      save.disabled = false;
+    }
+  });
+  cell.append(form);
+  editRowElement.append(cell);
+  return editRowElement;
+}
+
+/** Builds one saved-reference row with status, publish time, and inline Publish/Unpublish and Edit. */
 function wikiRow(resource) {
+  const live = isLive(resource);
   const row = document.createElement("tr");
   const name = document.createElement("td");
-  const file = document.createElement("strong");
-  file.textContent = resource.filename;
-  const title = document.createElement("small");
-  title.textContent = resource.title;
-  title.style.display = "block";
-  name.append(file, title);
-  const type = document.createElement("td");
-  type.textContent = resource.contentType.replace("text/", "").replace("application/", "");
-  const area = document.createElement("td");
-  area.textContent = wikiFolders.find(([path]) => path === resource.folder)?.[1] ?? resource.folder;
+  name.append(textElement("strong", resource.filename), textElement("small", resource.title));
+  const type = textElement("td", resource.filename.split(".").pop().toUpperCase());
+  const area = textElement("td", folderLabel(resource.folder));
   const status = document.createElement("td");
-  const chip = document.createElement("span");
-  chip.className = "ws-chip pub";
-  chip.textContent = "Saved";
-  status.append(chip);
+  status.append(textElement("span", live ? "Live" : "Draft", `ws-chip ${live ? "pub" : "draft"}`));
+  const published = document.createElement("td");
+  // Legacy live records predate publish tracking, so their upload time stands in.
+  const publishedAt = live ? resource.publishedAt ?? resource.createdAt : null;
+  if (publishedAt) {
+    const time = textElement("time", publishedFormat.format(new Date(publishedAt)));
+    time.dateTime = publishedAt;
+    published.append(time);
+  } else published.append(textElement("span", "—", "muted"));
+
   const actions = document.createElement("td");
-  if (resource.contentType === "text/markdown" || resource.contentType === "text/html") {
-    const view = document.createElement("a");
-    view.href = `/knowledge/${encodeURIComponent(resource.id)}`;
-    view.textContent = "View";
-    actions.append(view, " · ");
-  }
-  const download = document.createElement("a");
-  download.href = `/api/knowledge/${encodeURIComponent(resource.id)}`;
-  download.textContent = "Download";
-  actions.append(download);
-  row.append(name, type, area, status, actions);
+  const actionGroup = document.createElement("div");
+  actionGroup.className = "ws-row-actions";
+  const toggle = textElement("button", live ? "Unpublish" : "Publish", "ws-link-btn");
+  toggle.type = "button";
+  toggle.setAttribute("aria-label", `${live ? "Unpublish" : "Publish"} ${resource.title}`);
+  toggle.addEventListener("click", async () => {
+    toggle.disabled = true;
+    try {
+      const updated = await updateReference(resource.id, { published: String(!live) });
+      setWikiMessage(`${updated.title} is now ${live ? "a draft" : "live in the Developer Wiki"}.`);
+      await loadWikiReferences();
+    } catch (error) {
+      setWikiMessage(error.message, true);
+      toggle.disabled = false;
+    }
+  });
+  const edit = textElement("button", "Edit", "ws-link-btn");
+  edit.type = "button";
+  edit.dataset.edit = "";
+  edit.setAttribute("aria-expanded", "false");
+  edit.setAttribute("aria-label", `Edit ${resource.title}`);
+  edit.addEventListener("click", () => {
+    const open = row.nextElementSibling?.classList.contains("ws-edit-row");
+    if (open) {
+      row.nextElementSibling.remove();
+      edit.setAttribute("aria-expanded", "false");
+      return;
+    }
+    const panel = editRow(resource, row);
+    row.after(panel);
+    edit.setAttribute("aria-expanded", "true");
+    panel.querySelector("input[name=title]").focus();
+  });
+  actionGroup.append(toggle, textElement("span", "·", "muted"), edit);
+  actions.append(actionGroup);
+  row.append(name, type, area, status, published, actions);
   return row;
 }
 
@@ -118,7 +209,7 @@ wikiForm.addEventListener("submit", async (event) => {
     const data = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(data.error || "Could not save this reference.");
     wikiForm.reset();
-    setWikiMessage(`${data.resource?.title ?? "Reference"} added to your Developer Wiki.`);
+    setWikiMessage(`${data.resource?.title ?? "Reference"} saved as a draft. Publish it to show it in the Developer Wiki.`);
     await loadWikiReferences();
   } catch (error) {
     setWikiMessage(error.message, true);
