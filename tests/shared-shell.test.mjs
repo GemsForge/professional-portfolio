@@ -20,7 +20,7 @@ test("the routed portfolio page owns the shared shell", () => {
   assert.equal((renderer.match(/<SiteHeader/g) ?? []).length, 1);
   assert.equal((renderer.match(/<SiteFooter/g) ?? []).length, 1);
   assert.match(renderer, /cleanPage\(page\)/);
-  assert.match(renderer, /replace\(\/<header>/);
+  assert.match(renderer, /replace\(\/<header/);
   assert.match(renderer, /replace\(\/<footer/);
 });
 

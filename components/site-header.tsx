@@ -1,11 +1,10 @@
 // Intentional: use browser navigation because client-side route transitions are failing.
 /* eslint-disable @next/next/no-html-link-for-pages */
-import Image from "next/image";
 
 const links = [
   ["/portfolio/projects/", "Projects"],
   ["/about/", "About"],
-  ["/assets/diamond-brown-resume.pdf", "Resume"],
+  ["/assets/diamond-brown-resume.pdf", "Résumé"],
   ["/contact/", "Contact"],
 ] as const;
 
@@ -30,23 +29,20 @@ export function SiteHeader({ pathname, handbookReader = false }: {
   return (
     <>
       <a className="skip" href="#main">Skip to content</a>
-      <header>
-        <div className="wrap nav">
-          <a className="brand" href="/" aria-label="Diamond Brown portfolio home">
-            <Image src="/assets/brandmark.png" alt="" width={66} height={66} />
-            <span>Diamond Brown<small>Software Development &amp; Systems</small></span>
-          </a>
-          <nav className="links" aria-label="Portfolio navigation">
+      <header className="sp-topbar">
+        <nav className="sp-topbar-inner" aria-label="Portfolio navigation">
+          <a className="sp-handle" href="/" aria-label="Diamond Brown portfolio home">diamond.brown</a>
+          <div className="sp-topbar-links">
             {links.map(([href, label]) => (
-                <a key={href} href={href} aria-current={isActive(href) ? "page" : undefined}>
+              <a key={href} href={href} aria-current={isActive(href) ? "page" : undefined}>
                 {label}
               </a>
             ))}
             <a href={handbookReader || pathname.startsWith("/knowledge") ? "/" : "/knowledge"}>
               {handbookReader || pathname.startsWith("/knowledge") ? "Portfolio" : "Dev Wiki"}
             </a>
-          </nav>
-        </div>
+          </div>
+        </nav>
       </header>
     </>
   );
