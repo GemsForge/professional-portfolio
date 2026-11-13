@@ -12,7 +12,7 @@ class Bucket {
 }
 const site='https://www.gemsforge.com';
 test('attachment project registry keeps the full project list independent of profile cards',()=>{
- assert.deepEqual(PROJECTS,['hair-log','75-hard-automation','auralogbook','apple-ecosystem','dynamic-folder-structures','notion-api-shortcuts']);
+ assert.deepEqual(PROJECTS,['hair-log','75-hard-automation','auralogbook','apple-ecosystem','dynamic-folder-structures','notion-api-shortcuts','dev-wiki']);
 });
 const headers={'oai-authenticated-user-id':'owner-site-id','oai-authenticated-user-email':'diamondbrown79@gmail.com',Origin:site};
 function req(path,method='GET',body,extra=headers){return new Request(site+path,{method,headers:extra,...(body?{body}:{})});}

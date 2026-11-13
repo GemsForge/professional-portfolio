@@ -149,6 +149,16 @@ test('public Wiki exposes document bodies through read-only routes, not its inde
   const created = await knowledgeRequest(request('/api/knowledge', 'POST', form), env);
   const { resource } = await created.json();
 
+  // New uploads are drafts: hidden from the public index and reader until the owner publishes them.
+  assert.equal(resource.published, false);
+  assert.equal((await (await publicKnowledgeRequest(request('/api/public/knowledge', 'GET', undefined, {}), env)).json()).resources.length, 0);
+  assert.equal((await publicKnowledgeRequest(request(`/api/public/knowledge/${resource.id}`, 'GET', undefined, {}), env)).status, 404);
+  const publish = new FormData();
+  publish.set('published', 'true');
+  const published = await (await knowledgeRequest(request(`/api/knowledge/${resource.id}`, 'PATCH', publish), env)).json();
+  assert.equal(published.resource.published, true);
+  assert.match(published.resource.publishedAt, /^\d{4}-\d{2}-\d{2}T/);
+
   const response = await publicKnowledgeRequest(request('/api/public/knowledge', 'GET', undefined, {}), env);
   const data = await response.json();
   const serialized = JSON.stringify(data);
@@ -319,7 +329,7 @@ test('public and owner directories share the existing reader while keeping owner
   assert.match(directory, /href=\{readerHref\(resource\.id, true\)\}[\s\S]*?target="_top"[\s\S]*?View/);
   assert.match(directory, /target\.location\.assign\(readerHref\(data\.resource\.id, true\)\)/);
   assert.doesNotMatch(directory, /id="saved-references"/);
-  assert.match(directory, /MY DEVELOPER NOTES/);
+  assert.match(reader, /MY DEVELOPER NOTES/);
   assert.match(directory, /Developer Wiki/);
   assert.match(directory, /<time dateTime=\{resource\.createdAt\}>/);
   assert.match(directory, /href="\/api\/knowledge\/export"[\s\S]*?Download document backup/);

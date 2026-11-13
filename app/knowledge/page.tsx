@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { KnowledgeDirectory } from "@/components/knowledge-directory";
-import "../admin/knowledge/knowledge-directory.css";
+import "@/app/knowledge/knowledge.css";
 
 export const metadata: Metadata = {
   title: "Developer Wiki · GemsForge",

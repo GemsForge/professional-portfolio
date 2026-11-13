@@ -6,200 +6,824 @@
     <meta name="robots" content="noindex,nofollow">
     <title>Manage Project Assets · GemsForge</title>
     <link rel="stylesheet" href="/assets/site.css">
+    <script src="/assets/theme.js"></script>
     <style>
-      form{max-width:720px}
-      label{display:block;font-weight:600;margin:18px 0 7px}
-      input,select,textarea{display:block;width:100%;font:inherit;padding:12px;border:1px solid #7a8a78;border-radius:4px;background:#fff;color:#1e2823}
-      textarea{min-height:100px}
-      #preview{max-width:360px;max-height:260px;object-fit:contain;margin-top:20px}
-      .managed-image{border:1px solid #aebbab;padding:24px;margin:25px 0;max-width:800px}
-      .managed-image>img{max-height:350px;object-fit:contain;width:auto}
-      button{cursor:pointer}
-      button:disabled{opacity:.6}
-      #message{min-height:2em;font-weight:600}
-      .admin-links{display:flex;gap:24px;flex-wrap:wrap}
-      .workspace-intro{padding-bottom:30px}
-      .workspace-intro h1{font-size:clamp(38px,5.5vw,68px);letter-spacing:-2.5px}
-      .workspace-intro .lead{max-width:760px}
-      .workspace-steps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:26px 0 34px}
-      .workspace-step{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:start;gap:12px;min-height:82px;padding:16px 18px;border:1px solid var(--line);border-radius:8px;background:rgba(255,255,255,.48);color:var(--ink);text-align:left;cursor:pointer;transition:background-color .15s ease,border-color .15s ease,box-shadow .15s ease}
-      .workspace-step:hover{border-color:#829b84;background:rgba(255,255,255,.78)}
-      .workspace-step[aria-current="step"]{border-color:var(--green);background:rgba(181,215,182,.3);box-shadow:inset 0 0 0 1px var(--green)}
-      .step-number{display:grid;place-items:center;width:32px;height:32px;border:1px solid currentColor;border-radius:50%;font-weight:700}
-      .step-copy{display:grid;gap:3px}
-      .step-copy strong{font-size:15px}
-      .step-copy span{font-size:13px;line-height:1.45;color:var(--muted)}
-      .workspace-panel{padding:clamp(20px,4vw,38px);border:1px solid var(--line);border-radius:12px;background:linear-gradient(145deg,rgba(255,255,255,.76),rgba(232,235,223,.7));box-shadow:0 10px 30px rgba(30,40,35,.06)}
-      .workspace-panel[hidden]{display:none}
-      .workspace-panel h2{margin:0 0 8px;font:clamp(25px,3vw,34px)/1.2 var(--serif);letter-spacing:-.4px}
-      .workspace-panel h3{margin:28px 0 10px;font-size:20px}
-      .workspace-panel>p{max-width:760px;color:var(--muted)}
-      .accepted-file-callout{display:grid;gap:2px;margin:14px 0 8px;padding:12px 16px;border-left:4px solid var(--green);border-radius:0 8px 8px 0;background:rgba(228,232,219,.78);color:var(--ink);font-size:14px;line-height:1.5}
-      .accepted-file-callout strong{font-size:12px;letter-spacing:.04em;text-transform:uppercase}
-      #project-assets-step form{max-width:720px}
-      #wiki-uploader-frame{display:block;width:100%;min-height:600px;border:0;background:transparent}
-      /* Walkthrough placement: a step picker plus a marker placed by clicking the image. */
-      fieldset.walkthrough-fields{margin:24px 0 8px;padding:16px 18px 18px;border:1px solid var(--line);border-radius:8px}
-      fieldset.walkthrough-fields legend{padding:0 6px;font-weight:700}
-      .walkthrough-fields p{margin:6px 0 0;font-size:14px;color:var(--muted)}
-      .marker-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px}
-      .marker-stage{position:relative;display:inline-block;max-width:100%;margin-top:20px;line-height:0;cursor:crosshair}
-      .marker-stage img{display:block;max-width:100%}
-      #preview{margin-top:0}
-      .marker-dot{position:absolute;display:grid;width:34px;height:34px;place-items:center;transform:translate(-50%,-50%);border:2px solid #fbfaf4;border-radius:50%;background:#2f4e39;color:#fff;font:700 20px/1 var(--font);box-shadow:0 2px 8px rgba(30,40,35,.3);pointer-events:none}
-      .marker-dot[hidden]{display:none}
-      .placement-status{font-weight:600}
-      @media(max-width:650px){
-        .marker-row{grid-template-columns:1fr}
-        .workspace-intro h1{font-size:clamp(36px,11vw,52px);letter-spacing:-1.8px}
-        .workspace-steps{grid-template-columns:1fr;gap:9px}
-        .workspace-step{min-height:72px;padding:13px 14px}
-        .workspace-panel{padding:20px 16px;border-radius:8px}
-        .accepted-file-callout{padding:11px 13px}
-        #wiki-uploader-frame{min-height:760px}
-        .admin-links{gap:12px}
+      /* ---- Design tokens (wireframe-exact set; fallback when site.css omits them) ---- */
+      :root{
+        --bg:#f4f2e8; --surface:#fbfaf4; --ink:#1e2823; --muted:#4d5d50; --line:#d9d6c8;
+        --forest:#1e2823; --forest-2:#2f4e39; --on-forest:#f4f2e8; --on-forest-muted:#b8cdb4;
+        --sage-soft:#dfe6dc; --gold:#e3c48a; --gold-ink:#8a6526;
+        --shadow:0 18px 45px rgba(30,40,35,.10);
+        --display:"Bricolage Grotesque","Avenir Next",Avenir,"Segoe UI",sans-serif;
+        --body:"Instrument Sans","Avenir Next",Avenir,"Segoe UI",Arial,sans-serif;
+        --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
       }
-      @media(prefers-reduced-motion:reduce){.workspace-step{transition:none}}
+      /* Admin-only extras; shared tokens (--bg, --surface, --ink, --muted, --line) take their dark values from site.css. */
+      :root{--draft-bg:#f3e8d2;--error:#9b2c2c}
+      @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--sage-soft:#28352e;--gold-ink:#e3c48a;--draft-bg:#3a3020;--error:#f2a7a0;--shadow:0 18px 45px rgba(0,0,0,.4)}}
+      :root[data-theme="dark"]{--sage-soft:#28352e;--gold-ink:#e3c48a;--draft-bg:#3a3020;--error:#f2a7a0;--shadow:0 18px 45px rgba(0,0,0,.4)}
+      *, *::before, *::after{box-sizing:border-box}
+      body{background:var(--bg);color:var(--ink);font:15px/1.6 var(--body,system-ui);margin:0}
+      a{color:inherit}
+      h1,h2,h3{font-family:var(--display);letter-spacing:-.02em;margin:0}
+      .skip{position:absolute;left:-9999px;top:auto}
+      .skip:focus{position:static;display:block;padding:12px}
+
+      /* ---- Page wrapper ---- */
+      .page-wrap{padding:clamp(20px,3vw,36px) clamp(16px,3vw,36px);max-width:1200px;margin:0 auto}
+
+      /* ======= .ws card — exact wireframe structure =======
+         border-radius:24px, border, box-shadow, overflow:hidden
+         Two-column grid: 220px sidebar | main area               */
+      .ws{
+        display:grid;
+        grid-template-columns:220px minmax(0,1fr);
+        min-height:640px;
+        border:1px solid var(--line);
+        border-radius:24px;
+        overflow:hidden;
+        box-shadow:var(--shadow);
+        background:var(--surface)}
+
+      /* ---- Forest sidebar ---- */
+      .ws-side{
+        background:var(--forest);color:var(--on-forest);
+        display:flex;flex-direction:column;gap:4px;padding:22px 14px}
+      .ws-brand{
+        display:flex;align-items:center;gap:10px;
+        font:600 16px var(--display);
+        padding:2px 10px 18px;
+        border-bottom:1px solid rgba(184,205,180,.22);
+        margin-bottom:12px;
+        text-decoration:none;color:inherit}
+      .ws-brand img{border-radius:5px;flex-shrink:0}
+      /* Tab switcher buttons and nav anchor links share identical visual treatment */
+      .ws-side button,.ws-side a.ws-link{
+        display:block;width:100%;text-align:left;text-decoration:none;
+        background:none;border:0;border-radius:8px;
+        padding:10px 12px;
+        font:400 14px var(--body);
+        color:var(--on-forest-muted);
+        cursor:pointer}
+      .ws-side button:hover,.ws-side a.ws-link:hover{color:var(--on-forest)}
+      .ws-side button[aria-current="step"]{
+        background:var(--forest-2);color:var(--on-forest);font-weight:600}
+      .ws-side button:focus-visible,.ws-side a.ws-link:focus-visible{
+        outline:3px solid var(--gold);outline-offset:2px;border-radius:8px}
+      .ws-out{
+        margin-top:auto;font:12px var(--mono);
+        color:var(--on-forest-muted);padding:10px 12px}
+
+      /* ---- Main workspace ---- */
+      .ws-main{min-width:0;padding:24px;background:var(--bg)}
+      /* .ws-top: title bar inside the card, matches wireframe exactly */
+      .ws-top{
+        display:flex;align-items:center;justify-content:space-between;gap:12px;
+        padding-bottom:14px;margin-bottom:20px;border-bottom:1px solid var(--line)}
+      .ws-top h1{font-size:26px;font-weight:800}
+      .ws-top .mono{
+        font-family:var(--mono);font-size:11px;letter-spacing:.12em;
+        text-transform:uppercase;color:var(--gold-ink)}
+      /* 2-col: main panels | right rail */
+      .ws-content{
+        display:grid;grid-template-columns:minmax(0,1fr) 240px;
+        gap:14px;align-items:start}
+
+      /* ---- Panel card ---- */
+      .ws-panel{
+        background:var(--surface);border:1px solid var(--line);
+        border-radius:16px;padding:18px}
+      .ws-panel[hidden]{display:none}
+      .ws-panel>h2{font-size:18px;font-weight:700;margin-bottom:2px}
+      .ws-panel>.sub{color:var(--muted);font-size:13.5px;margin:0 0 14px}
+
+      /* Callout strip (accepted types / file size) */
+      .ws-callout{
+        display:grid;gap:1px;padding:9px 13px;
+        border-left:4px solid var(--forest-2);border-radius:0 8px 8px 0;
+        background:var(--sage-soft);font-size:13.5px;
+        margin-bottom:14px}
+      .ws-callout strong{
+        font:600 10px var(--mono);letter-spacing:.08em;
+        text-transform:uppercase;color:var(--accent-text)}
+      /* Live status feedback */
+      #message{min-height:1.4em;font-weight:600;font-size:13px;color:var(--muted)}
+
+      /* ======= Form fields — compact sage-soft style matching wireframe =======
+         Two-column grid; .full spans both columns.
+         Inputs carry sage-soft background + 8px border-radius so they look like
+         the wireframe's display-mode spans, but remain real interactive controls. */
+      .ws-form{
+        display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+        gap:12px;margin-bottom:18px}
+      .ws-field{display:flex;flex-direction:column;gap:4px}
+      .ws-field.full{grid-column:1/-1}
+      /* 10px MONO UPPERCASE label */
+      /* Field captions are real <label for> elements so every control has an accessible name. */
+      .ws-field>label{
+        display:block;font:600 10px var(--mono);letter-spacing:.08em;
+        text-transform:uppercase;color:var(--muted);margin-bottom:1px}
+      .ws-field>label b{color:var(--gold-ink);font-weight:600}
+      .ws-field input,.ws-field select,.ws-field textarea{
+        display:block;width:100%;background:var(--sage-soft);
+        border:1px solid transparent;border-radius:8px;
+        padding:9px 10px;font:13px/1.4 var(--body);color:var(--ink);
+        transition:border-color .15s,box-shadow .15s}
+      .ws-field input:focus,.ws-field select:focus,.ws-field textarea:focus{
+        outline:0;border-color:var(--gold);
+        box-shadow:0 0 0 3px rgba(227,196,138,.25)}
+      .ws-field textarea{min-height:72px;resize:vertical}
+      .ws-field input[type=file]{cursor:pointer;font-size:12px}
+      .ws-help{font-size:12px;color:var(--muted);margin:3px 0 0}
+      /* Gold pill CTA */
+      .ws-btn-gold{
+        display:inline-flex;align-items:center;gap:8px;
+        padding:10px 20px;background:var(--gold);color:#1e2823;
+        border:0;border-radius:999px;
+        font:600 14px var(--body);cursor:pointer;
+        transition:background .15s}
+      .ws-btn-gold:hover{background:#d4b47a}
+      .ws-btn-gold:disabled{opacity:.6;cursor:not-allowed}
+
+      /* Walkthrough placement fieldset */
+      fieldset.walkthrough-fields{
+        grid-column:1/-1;margin:0;padding:12px 14px 14px;
+        border:1px solid var(--line);border-radius:8px}
+      fieldset.walkthrough-fields legend{
+        padding:0 6px;font:700 13px var(--body)}
+      .walkthrough-fields label{
+        display:block;font:600 10px var(--mono);letter-spacing:.08em;
+        text-transform:uppercase;color:var(--muted);margin-top:10px}
+      .walkthrough-fields select,.walkthrough-fields input{
+        display:block;width:100%;background:var(--sage-soft);border:1px solid transparent;
+        border-radius:6px;padding:8px 10px;font:13px var(--body);color:var(--ink);
+        margin-top:4px}
+      .walkthrough-fields select:focus,.walkthrough-fields input:focus{
+        outline:0;border-color:var(--gold)}
+      .marker-row{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+      .marker-stage{
+        position:relative;display:inline-block;line-height:0;cursor:crosshair}
+      .marker-stage img{display:block;max-width:100%}
+      .marker-dot{
+        position:absolute;display:grid;width:32px;height:32px;
+        place-items:center;transform:translate(-50%,-50%);
+        border:2px solid #fbfaf4;border-radius:50%;
+        background:var(--forest-2);color:#fff;
+        font:700 18px var(--body);box-shadow:0 2px 8px rgba(30,40,35,.3);
+        pointer-events:none}
+      .marker-dot[hidden]{display:none}
+      #preview{max-width:360px;max-height:260px;object-fit:contain;
+        margin-top:10px;display:block}
+      #preview[hidden]{display:none}
+
+      /* ======= Attachment list =======
+         image-manager.js populates #image-list with .managed-image articles.
+         The MutationObserver below restructures each into .ws-row grid divs. */
+      .ws-list-head{
+        display:flex;align-items:end;justify-content:space-between;
+        gap:12px;margin:20px 0 6px;flex-wrap:wrap}
+      .ws-list-head h3{font-size:15px;font-weight:600;margin:0}
+      .ws-list-head p{margin:2px 0 0;font-size:12.5px;color:var(--muted)}
+
+      /* .ws-row: 4-column grid matching wireframe exactly:
+         [52px thumb] [meta] [chip] [actions] */
+      .ws-row,.managed-image.ws-row{
+        display:grid;
+        grid-template-columns:52px minmax(0,1.3fr) 86px 118px;
+        gap:10px;align-items:center;
+        padding:11px 4px;border-top:1px solid var(--line);
+        font-size:13px;
+        /* reset article/div defaults */
+        background:transparent;border-radius:0;border-left:0;border-right:0;border-bottom:0;
+        margin:0;max-width:none}
+      .ws-row:first-child,.managed-image.ws-row:first-child{border-top:0}
+      .ws-row .ws-thumb,.managed-image .ws-thumb{
+        width:52px;height:38px;border-radius:6px;
+        object-fit:cover;object-position:top;
+        background:linear-gradient(145deg,var(--sage-soft),#b8cdb4);
+        border:1px solid var(--line);display:block;flex-shrink:0}
+      .ws-row b{font-weight:600}
+      .ws-row small{display:block;color:var(--muted)}
+      /* Status chip */
+      .ws-chip{
+        font:600 11px var(--mono);padding:4px 9px;
+        border-radius:999px;justify-self:start;white-space:nowrap}
+      .ws-chip.pub{background:var(--sage-soft);color:var(--accent-text)}
+      .ws-chip.draft{background:var(--draft-bg);color:var(--gold-ink)}
+      /* Actions column */
+      .ws-act{
+        font:600 12px var(--body);color:var(--gold-ink);
+        justify-self:end;white-space:nowrap;
+        display:flex;align-items:center;gap:0}
+      .ws-act-btn{
+        background:none;border:0;padding:0;cursor:pointer;
+        color:var(--gold-ink);font:600 12px var(--body)}
+      .ws-act-btn:hover{text-decoration:underline}
+      /* Collapsible edit panel (toggled by "Edit" button) */
+      .ws-edit-panel{
+        grid-column:1/-1;padding:12px 0 4px;
+        display:grid;grid-template-columns:repeat(2,1fr);gap:10px;
+        border-top:1px solid var(--line);margin-top:4px}
+      .ws-edit-panel[hidden]{display:none}
+      .ws-edit-panel label{
+        grid-column:1/-1;font:600 10px var(--mono);letter-spacing:.08em;
+        text-transform:uppercase;color:var(--muted);margin:0}
+      .ws-edit-panel input,.ws-edit-panel textarea{
+        grid-column:1/-1;display:block;width:100%;
+        background:var(--sage-soft);border:1px solid transparent;border-radius:6px;
+        padding:8px 10px;font:13px var(--body);color:var(--ink)}
+      .ws-edit-panel textarea{min-height:60px;resize:vertical}
+      .ws-edit-panel input:focus,.ws-edit-panel textarea:focus{
+        outline:0;border-color:var(--gold)}
+      .ws-edit-acts{
+        grid-column:1/-1;display:flex;gap:8px;padding-top:4px}
+      .ws-btn-save{
+        padding:7px 16px;background:var(--ink);color:var(--on-forest);
+        border:0;border-radius:999px;font:600 12px var(--body);cursor:pointer}
+      .ws-btn-delete{
+        padding:7px 14px;background:none;border:1px solid var(--line);
+        border-radius:999px;font:600 12px var(--body);
+        color:var(--muted);cursor:pointer}
+      .ws-btn-delete:hover{color:#c0392b;border-color:#c0392b}
+
+      /* Filter pill (wiki saved references) */
+      .ws-search{
+        background:var(--sage-soft);border-radius:999px;padding:8px 14px;
+        font:13px var(--body);color:var(--muted);min-width:170px;white-space:nowrap}
+      /* Utility */
+      .visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+
+      /* ======= Right rail — matches wireframe .ws-rail exactly ======= */
+      .ws-rail{display:flex;flex-direction:column;gap:14px;min-width:0}
+      .ws-rail-card{
+        background:var(--surface);border:1px solid var(--line);border-radius:16px}
+      .ws-rail-card h2{
+        font-size:15px;font-weight:600;padding:14px 16px 0;margin:0}
+      .ws-rail-card ul{
+        list-style:none;margin:10px 0 0;padding:0 16px 14px}
+      .ws-rail-card li{
+        border-top:1px solid var(--line);padding:10px 0;font-size:13px}
+      .ws-rail-card li:first-child{border-top:0;padding-top:0}
+      .ws-rail-card li b{display:block;font-weight:600}
+      .ws-rail-card li small{color:var(--muted)}
+      /* Activity dot indicators */
+      .ws-dot{
+        display:inline-block;width:8px;height:8px;
+        border-radius:50%;margin-right:7px;vertical-align:middle}
+      .ws-dot.g{background:var(--forest-2)}
+      .ws-dot.a{background:var(--gold-ink)}
+      .ws-wiki-btn{
+        display:block;margin:0 16px 16px;padding:9px 16px;
+        background:var(--gold);color:#1e2823;text-decoration:none;
+        border-radius:999px;font:600 13px var(--body);text-align:center}
+      .ws-wiki-btn:hover{background:#d4b47a}
+
+      /* ======= Responsive — sidebar collapses to horizontal bar at ≤900px =======
+         Buttons and links get width:auto so they flow inline in the horizontal bar. */
+      @media(max-width:900px){
+        .ws{grid-template-columns:1fr}
+        .ws-side{flex-direction:row;flex-wrap:wrap;align-items:center;gap:2px 0;padding:12px}
+        .ws-side button,.ws-side a.ws-link{width:auto}
+        .ws-brand{padding-bottom:0;border-bottom:0;margin-bottom:0;margin-right:8px}
+        .ws-out{margin:0;margin-left:auto}
+        .ws-form{grid-template-columns:1fr}
+        .ws-content{grid-template-columns:1fr}
+      }
+      @media(max-width:600px){
+        .ws-row,.managed-image.ws-row{
+          grid-template-columns:44px minmax(0,1fr) 72px}
+        .ws-act{display:none}
+        .marker-row{grid-template-columns:1fr}
+      }
+      @media(prefers-reduced-motion:reduce){
+        .ws-side button,.ws-side a.ws-link,.ws-btn-gold{transition:none}
+      }
+      /* Wiki reference table: inline publish/edit actions and the expandable edit row. */
+      .ws-table{width:100%;border-collapse:collapse;font-size:13px}
+      .ws-table th{font:600 10px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+      .ws-table td{padding:11px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+      .ws-table td small{display:block;color:var(--muted)}
+      .ws-table .ws-ref-meta{font:600 10px var(--mono);letter-spacing:.06em;text-transform:uppercase;margin-top:2px}
+      /* Cells wrap instead of widening the table; the table scrolls inside the panel as a last resort. */
+      .ws-table-scroll{max-width:100%;overflow-x:auto;container-type:inline-size}
+      /* When the panel is narrow, each reference stacks as a card so its actions never leave the panel. */
+      @container (max-width:460px){
+        .ws-table thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+        .ws-table,.ws-table tbody,.ws-table tr,.ws-table td{display:block;width:100%}
+        .ws-table tr{padding:10px 0;border-bottom:1px solid var(--line)}
+        .ws-table td{padding:3px 4px;border:0}
+        .ws-table td[data-label]::before{content:attr(data-label);display:inline-block;min-width:84px;font:600 10px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+        .ws-row-actions{padding-top:4px}
+        .ws-edit-row td{padding:12px 4px}
+        .ws-edit-row .ws-form{grid-template-columns:1fr}
+      }
+      .ws-table td strong{overflow-wrap:anywhere}
+      .ws-table time{font-variant-numeric:tabular-nums}
+      .ws-row-actions{display:flex;flex-wrap:wrap;gap:0 6px;align-items:center}
+      .ws-link-btn{background:none;border:0;padding:4px 2px;font:600 13px var(--body);color:var(--gold-ink);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+      .ws-link-btn:disabled{opacity:.5;cursor:wait}
+      .ws-link-danger{color:var(--error)}
+      /* Icon-only row actions: 36px targets with a visible focus ring; the label lives in aria-label/title. */
+      .ws-icon-btn{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--accent-text);cursor:pointer}
+      .ws-icon-btn:hover{background:var(--sage-soft)}
+      .ws-icon-btn[aria-expanded="true"]{background:var(--sage-soft);border-color:var(--accent-text)}
+      .ws-icon-btn:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+      .ws-icon-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+      .ws-icon-danger{color:var(--error)}
+      .ws-row-actions{gap:6px;flex-wrap:nowrap}
+      .ws-link-btn:focus-visible{outline:3px solid var(--gold);outline-offset:2px;border-radius:4px}
+      .ws-edit-row td{background:var(--surface);padding:14px 10px 16px}
+      .ws-edit-row .ws-form{margin-bottom:10px}
+      .ws-edit-actions{display:flex;gap:12px;align-items:center}
     </style>
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
-    <header>
-      <div class="wrap nav">
-        <a class="brand" href="/" aria-label="Diamond Brown portfolio home">
-          <img src="/assets/brandmark.png" alt="" width="66" height="66">
-          <span>Diamond Brown<small>Software Development &amp; Systems</small></span>
-        </a>
-        <nav class="links" aria-label="Portfolio navigation">
+    <!-- Site header — matches the sp-topbar used on the main portfolio (index.html) -->
+    <header class="sp-topbar">
+      <nav class="sp-topbar-inner" aria-label="Portfolio navigation">
+        <a class="sp-handle" href="/" aria-label="Diamond Brown portfolio home">diamond.brown</a>
+        <div class="sp-topbar-links">
           <a href="/portfolio/projects/">Projects</a>
           <a href="/about/">About</a>
-          <a href="/assets/diamond-brown-resume.pdf">Resume</a>
+          <a href="/assets/diamond-brown-resume.pdf">Résumé</a>
           <a href="/contact/">Contact</a>
-        </nav>
-      </div>
-    </header>
-    <main id="main" class="wrap">
-      <div class="pagehero workspace-intro">
-        <div class="eyebrow">Admin - Owner Workspace</div>
-        <h1>Manage Project Assets</h1>
-        <p class="lead">Manage portfolio attachments and add reference documents to your Developer Wiki.</p>
-        <nav class="admin-links" aria-label="Owner workspace links">
-          <!-- The owner workspace opens the shared Developer Wiki. -->
-          <a href="/admin/knowledge/">Developer Wiki</a>
-          <a href="/portfolio/projects/">View portfolio</a>
-          <a href="/signout-with-chatgpt?return_to=%2F">Sign out</a>
-        </nav>
-      </div>
-
-      <!-- The two owner workflows stay separate while sharing one owner-gated page. -->
-      <nav id="workspace-steps" class="workspace-steps" aria-label="Manage Project Assets steps">
-        <button
-          class="workspace-step"
-          type="button"
-          data-workspace-step="project-assets"
-          aria-controls="project-assets-step"
-          aria-current="step">
-          <span class="step-number" aria-hidden="true">1</span>
-          <span class="step-copy">
-            <strong>Project Assets Manager</strong>
-          </span>
-        </button>
-        <button
-          class="workspace-step"
-          type="button"
-          data-workspace-step="wiki-uploader"
-          aria-controls="wiki-uploader-step">
-          <span class="step-number" aria-hidden="true">2</span>
-          <span class="step-copy">
-            <strong>Wiki Page Uploader</strong>
-          </span>
-        </button>
+        </div>
       </nav>
+    </header>
+    <div class="page-wrap">
+      <!-- .ws card: the owner workspace, displayed as a card matching the wireframe.
+           manage-project-assets.js drives tab switching via [data-workspace-step] buttons
+           and shows/hides [data-workspace-panel] sections. -->
+      <div class="ws">
 
-      <section
-        id="project-assets-step"
-        class="workspace-panel"
-        data-workspace-panel="project-assets"
-        aria-labelledby="project-assets-heading">
-        <h2 id="project-assets-heading">Project Assets Manager</h2>
-        <p id="project-assets-description">Upload, edit, publish, or remove portfolio attachments.</p>
-        <aside class="accepted-file-callout" id="media-uploader-help" role="note" aria-label="Accepted Media file types">
-          <strong>Attachment · up to 50 MB</strong>
-          <span>PNG, JPEG, WebP, PDF, MP4, WebM</span>
+        <!-- ---- Forest sidebar ---- -->
+        <aside class="ws-side" aria-label="Owner workspace navigation">
+          <a class="ws-brand" href="/" aria-label="GemsForge portfolio home">
+            <img src="/assets/gemsforge-crest.webp" alt="" width="40" height="40">
+            GemsForge
+          </a>
+          <button type="button" data-workspace-step="project-assets"
+            aria-controls="project-assets-step" aria-current="step">
+            Project assets
+          </button>
+          <button type="button" data-workspace-step="wiki-uploader"
+            aria-controls="wiki-uploader-step">
+            Wiki uploader
+          </button>
+          <button type="button" data-workspace-step="walkthrough-uploader"
+            aria-controls="walkthrough-uploader-step">
+            Walkthrough uploader
+          </button>
+          <a class="ws-link" href="/knowledge/">Handbooks</a>
+          <a class="ws-link" href="/portfolio/projects/">View portfolio ↗</a>
+          <a class="ws-link" href="/signout-with-chatgpt?return_to=%2F">Sign out</a>
+          <span class="ws-out">signed in · owner</span>
         </aside>
-        <!-- The media uploader reports file selection, progress, and errors here. -->
-        <p id="message" role="status" aria-live="polite"></p>
-        <form id="upload-form">
-          <label for="project">Project</label>
-          <select id="project" name="project"><!--PROJECT_OPTIONS--></select>
-          <label for="image">Attachment</label>
-          <input type="file" id="image" name="file" accept="image/png,image/jpeg,image/webp,application/pdf,video/mp4,video/webm" required aria-describedby="media-uploader-help paste-help">
-          <p id="paste-help">Choose a file or paste one supported attachment while this page is open. Pasted files use the same upload form and are not uploaded until you submit.</p>
-          <!-- Clicking the preview places the walkthrough marker when a step is chosen. -->
-          <span class="marker-stage" data-marker-stage><img id="preview" alt="Selected image preview" hidden><span class="marker-dot" data-marker-dot aria-hidden="true" hidden>+</span></span>
-          <label for="alt">Alt text (required)</label>
-          <input id="alt" name="alt" maxlength="500" required aria-describedby="alt-help">
-          <p id="alt-help">Describe what the screenshot demonstrates. Do not include private information.</p>
-          <label for="caption">Caption (optional)</label>
-          <textarea id="caption" name="caption" maxlength="2000"></textarea>
-          <fieldset class="walkthrough-fields" data-walkthrough-fields>
-            <legend>Walkthrough (optional, images only)</legend>
-            <label for="step">Walkthrough step</label>
-            <select id="step" name="step" data-step-select aria-describedby="step-help"><option value="">Not in the walkthrough</option></select>
-            <p id="step-help">Once published, this image replaces the illustration for that step in the project pop-up. The newest published image wins if two share a step.</p>
-            <div data-marker-fields hidden>
-              <p id="marker-help">Click the preview where the step's marker should point, or type the position. Leave both blank for no marker.</p>
-              <div class="marker-row">
-                <div><label for="markerX">Marker across (%)</label><input id="markerX" name="markerX" type="number" min="0" max="100" step="0.1" inputmode="decimal" data-marker-x aria-describedby="marker-help"></div>
-                <div><label for="markerY">Marker down (%)</label><input id="markerY" name="markerY" type="number" min="0" max="100" step="0.1" inputmode="decimal" data-marker-y aria-describedby="marker-help"></div>
-              </div>
-              <label for="markerLabel">Marker label</label>
-              <input id="markerLabel" name="markerLabel" maxlength="80" placeholder="Highlight" data-marker-label>
+
+        <!-- ---- Main workspace ---- -->
+        <main id="main" class="ws-main">
+
+          <!-- ws-top: card header matching wireframe; the title is the page h1. -->
+          <div class="ws-top">
+            <h1>Manage Project Assets</h1>
+            <span class="mono">screenshots · wiki documents</span>
+          </div>
+
+          <div class="ws-content">
+            <div style="min-width:0">
+
+              <!-- ======= Panel 1: Project Assets Manager ======= -->
+              <!-- manage-project-assets.js shows/hides panels via data-workspace-panel.
+                   image-manager.js reads #upload-form and renders into #image-list. -->
+              <section id="project-assets-step" class="ws-panel"
+                data-workspace-panel="project-assets"
+                aria-labelledby="project-assets-heading">
+                <h2 id="project-assets-heading">Project Assets Manager</h2>
+                <p class="sub" id="project-assets-description">Upload, edit, publish, or remove portfolio attachments.</p>
+                <aside class="ws-callout" id="media-uploader-help" role="note"
+                  aria-label="Accepted media file types">
+                  <strong>Attachment · up to 50 MB</strong>
+                  <span>PNG, JPEG, WebP, PDF, MP4, WebM</span>
+                </aside>
+                <p id="message" role="status" aria-live="polite"></p>
+
+                <!-- Form: ws-field inputs styled as compact sage-soft fields (wireframe). -->
+                <form id="upload-form">
+                  <div class="ws-form">
+                    <div class="ws-field">
+                      <label for="project">Project</label>
+                      <select id="project" name="project"><!--PROJECT_OPTIONS--></select>
+                    </div>
+                    <div class="ws-field">
+                      <label for="image">Attachment file</label>
+                      <input type="file" id="image" name="file"
+                        accept="image/png,image/jpeg,image/webp,application/pdf,video/mp4,video/webm"
+                        required aria-describedby="media-uploader-help paste-help">
+                    </div>
+                    <div class="ws-field full">
+                      <p id="paste-help" class="ws-help">Choose a file or paste a supported attachment while this page is open — it goes into the form above and is not uploaded until you submit.</p>
+                      <span class="marker-stage" data-marker-stage>
+                        <img id="preview" alt="Selected image preview" hidden>
+                        <span class="marker-dot" data-marker-dot aria-hidden="true" hidden>+</span>
+                      </span>
+                    </div>
+                    <div class="ws-field full">
+                      <label for="alt">Alt text <b>· required</b></label>
+                      <input id="alt" name="alt" maxlength="500" required
+                        aria-describedby="alt-help">
+                      <p id="alt-help" class="ws-help">Describe what the screenshot demonstrates. Do not include private information.</p>
+                    </div>
+                    <div class="ws-field full">
+                      <label for="caption">Caption <span style="font-weight:400;opacity:.75">· optional</span></label>
+                      <textarea id="caption" name="caption" maxlength="2000"></textarea>
+                    </div>
+                    <fieldset class="walkthrough-fields" data-walkthrough-fields>
+                      <legend>Walkthrough placement</legend>
+                      <label for="step">Walkthrough step</label>
+                      <select id="step" name="step" data-step-select
+                        aria-describedby="step-help">
+                        <option value="">Not in the walkthrough</option>
+                      </select>
+                      <p id="step-help" class="ws-help">Once published, this image replaces the illustration for that step in the project pop-up.</p>
+                      <div data-marker-fields hidden>
+                        <p id="marker-help" class="ws-help">Click the preview above where the step's marker should point, or enter the position manually.</p>
+                        <div class="marker-row">
+                          <div>
+                            <label for="markerX">Marker across (%)</label>
+                            <input id="markerX" name="markerX" type="number" min="0"
+                              max="100" step="0.1" inputmode="decimal"
+                              data-marker-x aria-describedby="marker-help">
+                          </div>
+                          <div>
+                            <label for="markerY">Marker down (%)</label>
+                            <input id="markerY" name="markerY" type="number" min="0"
+                              max="100" step="0.1" inputmode="decimal"
+                              data-marker-y aria-describedby="marker-help">
+                          </div>
+                        </div>
+                        <label for="markerLabel">Marker label</label>
+                        <input id="markerLabel" name="markerLabel" maxlength="80"
+                          placeholder="Highlight" data-marker-label>
+                      </div>
+                    </fieldset>
+                    <div class="ws-field full" style="margin-top:4px">
+                      <button class="ws-btn-gold" type="submit">Upload as draft</button>
+                    </div>
+                  </div>
+                </form>
+
+                <!-- Attachment list: image-manager.js populates #image-list;
+                     MutationObserver below restructures each .managed-image article
+                     into a .ws-row grid with DRAFT/LIVE chip and inline edit panel. -->
+                <div class="ws-list-head">
+                  <div>
+                    <h3 id="attachments-heading">Attachments in this project</h3>
+                    <p>Drafts stay private until you publish them.</p>
+                  </div>
+                </div>
+                <div id="image-list" role="list"
+                  aria-labelledby="attachments-heading"></div>
+              </section>
+
+              <!-- ======= Panel 2: Wiki Page Uploader =======
+                   Inline form matching the wireframe; manage-project-assets.js fills the
+                   folder list, uploads to /api/knowledge, and renders saved references. -->
+              <section id="wiki-uploader-step" class="ws-panel"
+                data-workspace-panel="wiki-uploader"
+                aria-labelledby="wiki-uploader-heading" hidden>
+                <h2 id="wiki-uploader-heading">Wiki Page Uploader</h2>
+                <p class="sub" id="wiki-uploader-description">Uploads are saved to your owner-only Developer Wiki.</p>
+                <aside class="ws-callout" id="wiki-uploader-help" role="note"
+                  aria-label="Accepted wiki file types">
+                  <strong>Accepted files · up to 20 MB</strong>
+                  <span>PDF, DOCX, Markdown, HTML, text, PNG, JPEG, WebP, or TIFF</span>
+                </aside>
+                <p id="wiki-message" role="status" aria-live="polite" style="min-height:1.4em;font-weight:600;font-size:13px;color:var(--muted)"></p>
+                <!-- Form fields styled to match ws-form/ws-field compact sage-soft treatment.
+                     manage-project-assets.js submits it to /api/knowledge; the action is the no-script fallback. -->
+                <form id="wiki-upload-form"
+                  action="/api/knowledge" method="post"
+                  enctype="multipart/form-data">
+                  <div class="ws-form">
+                    <div class="ws-field full">
+                      <label for="wiki-title">Title <b>· required</b></label>
+                      <input id="wiki-title" name="title" required maxlength="160"
+                        aria-describedby="wiki-uploader-description wiki-uploader-help">
+                    </div>
+                    <div class="ws-field">
+                      <label for="wiki-folder">Library folder <b>· required</b></label>
+                      <select id="wiki-folder" name="folder" required data-wiki-folder>
+                        <option value="">Select a folder…</option>
+                      </select>
+                    </div>
+                    <div class="ws-field">
+                      <label for="wiki-area">Area</label>
+                      <select id="wiki-area" name="area">
+                        <option value="">Select an area…</option>
+                        <option>Frontend</option>
+                        <option>Backend</option>
+                        <option>Data</option>
+                        <option>Accessibility</option>
+                        <option>Operations</option>
+                        <option>General</option>
+                      </select>
+                    </div>
+                    <div class="ws-field full">
+                      <label for="wiki-file">Reference file <b>· required</b></label>
+                      <input type="file" id="wiki-file" name="file" required
+                        accept=".pdf,.docx,.md,.html,.txt,image/png,image/jpeg,image/webp,image/tiff"
+                        aria-describedby="wiki-uploader-help">
+                    </div>
+                    <div class="ws-field full" style="margin-top:4px">
+                      <button class="ws-btn-gold" type="submit">Add to directory</button>
+                    </div>
+                  </div>
+                </form>
+
+                <!-- Saved references list -->
+                <div class="ws-list-head">
+                  <div>
+                    <h3 id="wiki-refs-heading">Saved references</h3>
+                    <p id="wiki-refs-status">Loading saved references…</p>
+                  </div>
+                  <span class="ws-search" role="search" aria-label="Filter references">Filter references…</span>
+                </div>
+                <div class="ws-table-scroll">
+                <table class="ws-table" aria-labelledby="wiki-refs-heading">
+                  <thead>
+                    <tr>
+                      <th scope="col">Reference</th>
+                      <th scope="col">Status</th>
+                      <th scope="col">Published</th>
+                      <th scope="col"><span class="visually-hidden">Actions</span></th>
+                    </tr>
+                  </thead>
+                  <tbody id="wiki-refs-body">
+                    <tr>
+                      <td colspan="4" style="color:var(--muted);font-size:13px;padding:16px 10px">
+                        No references yet. Upload a file above to add your first entry.
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                </div>
+              </section>
+
+              <!-- ======= Panel 3: Walkthrough Uploader =======
+                   Inline form matching the wireframe; no iframe needed since
+                   walkthrough step uploads use the same /admin/assets endpoint
+                   as the Project Assets form. -->
+              <section id="walkthrough-uploader-step" class="ws-panel"
+                data-workspace-panel="walkthrough-uploader"
+                aria-labelledby="walkthrough-uploader-heading" hidden>
+                <h2 id="walkthrough-uploader-heading">Walkthrough Uploader</h2>
+                <p class="sub">Add or update a step image in a project's portfolio walkthrough carousel.</p>
+                <aside class="ws-callout" id="wt-uploader-help" role="note"
+                  aria-label="Accepted walkthrough file types">
+                  <strong>Images only · up to 50 MB</strong>
+                  <span>PNG, JPEG, or WebP — portrait orientation recommended</span>
+                </aside>
+                <p id="wt-message" role="status" aria-live="polite" style="min-height:1.4em;font-weight:600;font-size:13px;color:var(--muted)"></p>
+                <form id="walkthrough-form">
+                  <div class="ws-form">
+                    <div class="ws-field">
+                      <label for="wt-project">Project</label>
+                      <select id="wt-project" name="project"><!--PROJECT_OPTIONS--></select>
+                    </div>
+                    <div class="ws-field">
+                      <label for="wt-step">Step number</label>
+                      <select id="wt-step" name="step">
+                        <option value="">Select a step…</option>
+                      </select>
+                    </div>
+                    <div class="ws-field full">
+                      <label for="wt-label">Step label <span style="font-weight:400;opacity:.75">· optional</span></label>
+                      <input id="wt-label" name="stepLabel" maxlength="120"
+                        placeholder="e.g. Check-In Detail">
+                    </div>
+                    <div class="ws-field full">
+                      <label for="wt-image">Image file</label>
+                      <input type="file" id="wt-image" name="file"
+                        accept="image/png,image/jpeg,image/webp"
+                        required aria-describedby="wt-uploader-help">
+                    </div>
+                    <div class="ws-field full">
+                      <label for="wt-alt">Alt text <b>· required</b></label>
+                      <input id="wt-alt" name="alt" maxlength="500" required
+                        aria-describedby="wt-alt-help">
+                      <p id="wt-alt-help" class="ws-help">Describe the step image. Used by screen readers and search engines.</p>
+                    </div>
+                    <div class="ws-field full" style="margin-top:4px">
+                      <button class="ws-btn-gold" type="submit">Upload step as draft</button>
+                    </div>
+                  </div>
+                </form>
+                <div class="ws-list-head">
+                  <div>
+                    <h3 id="wt-steps-heading">Walkthrough steps</h3>
+                    <p>Select a project above to see its current walkthrough steps.</p>
+                  </div>
+                </div>
+                <div id="wt-step-list" role="list"
+                  aria-labelledby="wt-steps-heading"></div>
+              </section>
+
             </div>
-          </fieldset>
-          <button class="button" type="submit">Upload as draft</button>
-        </form>
-        <section aria-labelledby="attachments-heading">
-          <h3 id="attachments-heading">Attachments in this project</h3>
-          <div id="image-list"></div>
-        </section>
-      </section>
 
-      <section
-        id="wiki-uploader-step"
-        class="workspace-panel"
-        data-workspace-panel="wiki-uploader"
-        aria-labelledby="wiki-uploader-heading"
-        hidden>
-        <h2 id="wiki-uploader-heading">Wiki Page Uploader</h2>
-        <p id="wiki-uploader-description">Uploads are saved to your owner-only Developer Wiki.</p>
-        <aside class="accepted-file-callout" id="wiki-uploader-help" role="note" aria-label="Accepted Wiki file types">
-          <strong>Accepted files · Up to 20 MB</strong>
-          <span>PDF, DOCX, Markdown, HTML, UTF-8 text, PNG, JPEG, WebP, or TIFF. HTML previews are isolated, and Markdown files are formatted for reading.</span>
-        </aside>
-        <iframe
-          id="wiki-uploader-frame"
-          title="Wiki Page Uploader form and saved references"
-          aria-describedby="wiki-uploader-description wiki-uploader-help"
-          loading="lazy"></iframe>
-      </section>
-    </main>
-    <footer class="footer">
+            <!-- ---- Right rail — matches wireframe .ws-rail exactly ----
+                 ul/li with .ws-dot activity indicators, not generic cards. -->
+            <aside class="ws-rail" aria-label="Workspace quick access">
+              <div class="ws-rail-card">
+                <h2>Recent activity</h2>
+                <ul id="ws-recent-activity">
+                  <li>
+                    <b>Upload an asset to see activity</b>
+                    <small>Select a project and submit the form</small>
+                  </li>
+                </ul>
+              </div>
+              <div class="ws-rail-card">
+                <h2>Dev Wiki</h2>
+                <ul>
+                  <li>
+                    <b>Your personal reference</b>
+                    <small>Patterns · Guides · Checklists</small>
+                  </li>
+                </ul>
+                <a class="ws-wiki-btn" href="/knowledge/">Open the wiki →</a>
+              </div>
+            </aside>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- Site footer — matches the creator-footer used on the main portfolio (index.html) -->
+    <footer class="footer creator-footer">
       <div class="wrap">
         <div class="footer-brand">
           <img src="/assets/brandmark.png" alt="" width="45" height="45">
           <span>© 2026 Diamond Brown · GemsForge</span>
         </div>
         <nav aria-label="Footer navigation">
-          <a href="/portfolio/projects/">Projects</a>
-          <a href="/assets/diamond-brown-resume.pdf">Resume</a>
-          <a href="/contact/">Contact</a>
-          <a href="#main">Back to top ↑</a>
+          <a href="/portfolio/projects/">All project stories</a>
+          <a href="/about/">About</a>
+          <a href="/assets/diamond-brown-resume.pdf">Résumé</a>
         </nav>
       </div>
     </footer>
+
     <!--WALKTHROUGH_STEPS-->
     <script type="module" src="/assets/image-manager.js"></script>
     <script type="module" src="/assets/manage-project-assets.js"></script>
+
+    <!-- Augments each .managed-image article rendered by image-manager.js into the
+         wireframe .ws-row grid:
+           [52px thumb] [meta: filename + placement text] [DRAFT/LIVE chip] [Pub · Edit]
+         with a collapsible .ws-edit-panel for the alt/caption form controls.
+         All DOM nodes are detached before the article is rebuilt so that
+         image-manager.js event listeners on Save, Publish/Unpublish, and Delete
+         buttons are preserved when those nodes are reinserted. -->
+    <script>
+    (function () {
+      var imageList = document.getElementById('image-list');
+      if (!imageList) return;
+
+      function augment(el) {
+        if (!el.classList.contains('managed-image') || el.dataset.augmented) return;
+        el.dataset.augmented = '1';
+
+        /* Snapshot every element needed before any DOM moves */
+        var img      = el.querySelector('img');
+        var allPs    = Array.prototype.slice.call(el.querySelectorAll(':scope > p'));
+        var statusP  = null, placementP = null;
+        allPs.forEach(function (p) {
+          if (!statusP && (p.textContent.indexOf('Published') >= 0 || p.textContent.indexOf('Draft') >= 0)) {
+            statusP = p;
+          } else if (!placementP) {
+            placementP = p;
+          }
+        });
+        if (!statusP) return; /* unexpected structure */
+
+        var altInput   = el.querySelector('input[name="alt"]');
+        var captionTA  = el.querySelector('textarea[name="caption"]');
+        var actionsDiv = el.querySelector('.actions');
+        var labels     = Array.prototype.slice.call(el.querySelectorAll(':scope > label'));
+
+        /* Find the three action buttons inside .actions */
+        var pubBtn = null, saveBtn = null, deleteBtn = null;
+        if (actionsDiv) {
+          Array.prototype.forEach.call(actionsDiv.querySelectorAll('button'), function (b) {
+            var t = b.textContent.trim().toLowerCase();
+            if (t.indexOf('save') >= 0) saveBtn = b;
+            else if (t.indexOf('delete') >= 0) deleteBtn = b;
+            else pubBtn = b; /* Publish or Unpublish */
+          });
+        }
+
+        /* Detach all reused nodes before clearing the article so event listeners survive */
+        if (img)      el.removeChild(img);
+        if (statusP)  el.removeChild(statusP);
+        if (placementP) el.removeChild(placementP);
+        labels.forEach(function (l) { if (l.parentNode === el) el.removeChild(l); });
+        if (altInput  && altInput.parentNode  === el) el.removeChild(altInput);
+        if (captionTA && captionTA.parentNode === el) el.removeChild(captionTA);
+        if (actionsDiv) {
+          if (pubBtn    && pubBtn.parentNode    === actionsDiv) actionsDiv.removeChild(pubBtn);
+          if (saveBtn   && saveBtn.parentNode   === actionsDiv) actionsDiv.removeChild(saveBtn);
+          if (deleteBtn && deleteBtn.parentNode === actionsDiv) actionsDiv.removeChild(deleteBtn);
+          if (actionsDiv.parentNode === el) el.removeChild(actionsDiv);
+        }
+
+        var isLive = statusP.textContent.indexOf('Published') >= 0;
+
+        /* Thumbnail */
+        var thumb;
+        if (img) {
+          thumb = img;
+          thumb.className = 'ws-thumb';
+          thumb.style.cssText = 'width:52px;height:38px;object-fit:cover;object-position:top;border-radius:6px;border:1px solid var(--line,#d9d6c8)';
+        } else {
+          thumb = document.createElement('span');
+          thumb.className = 'ws-thumb';
+        }
+
+        /* File name from img src */
+        var src   = img ? (img.getAttribute('src') || '') : '';
+        var fname = (src.split('/').pop() || '').split('?')[0] || 'attachment';
+
+        /* Meta col: b[filename] + small[placement text] */
+        var metaDiv   = document.createElement('div');
+        var nameEl    = document.createElement('b');
+        nameEl.textContent = fname;
+        metaDiv.appendChild(nameEl);
+        var metaText  = placementP ? placementP.textContent.trim() : '';
+        if (metaText) {
+          var metaSmall = document.createElement('small');
+          metaSmall.textContent = metaText;
+          metaDiv.appendChild(metaSmall);
+        }
+
+        /* Status chip */
+        var chip = document.createElement('span');
+        chip.className = 'ws-chip ' + (isLive ? 'pub' : 'draft');
+        chip.textContent = isLive ? 'LIVE' : 'DRAFT';
+
+        /* Actions col: [Publish|Unpublish] · Edit */
+        var actCol = document.createElement('div');
+        actCol.className = 'ws-act';
+        if (pubBtn) {
+          pubBtn.className = 'ws-act-btn';
+          actCol.appendChild(pubBtn);
+          actCol.appendChild(document.createTextNode(' · '));
+        }
+        var editToggle = document.createElement('button');
+        editToggle.type = 'button';
+        editToggle.className = 'ws-act-btn';
+        editToggle.textContent = 'Edit';
+        actCol.appendChild(editToggle);
+
+        /* Collapsible edit panel */
+        var editPanel = document.createElement('div');
+        editPanel.className = 'ws-edit-panel';
+        editPanel.hidden = true;
+        labels.forEach(function (l) { editPanel.appendChild(l); });
+        if (altInput)  editPanel.appendChild(altInput);
+        if (captionTA) editPanel.appendChild(captionTA);
+        var editActs = document.createElement('div');
+        editActs.className = 'ws-edit-acts';
+        if (saveBtn)   { saveBtn.className   = 'ws-btn-save';   editActs.appendChild(saveBtn); }
+        if (deleteBtn) { deleteBtn.className = 'ws-btn-delete'; editActs.appendChild(deleteBtn); }
+        editPanel.appendChild(editActs);
+
+        editToggle.addEventListener('click', function () {
+          var closing = !editPanel.hidden;
+          editPanel.hidden = closing;
+          editToggle.textContent = closing ? 'Edit' : 'Done';
+        });
+
+        /* Rebuild the article as a .ws-row */
+        el.classList.add('ws-row');
+        el.appendChild(thumb);
+        el.appendChild(metaDiv);
+        el.appendChild(chip);
+        el.appendChild(actCol);
+        el.appendChild(editPanel);
+      }
+
+      var obs = new MutationObserver(function (muts) {
+        muts.forEach(function (m) {
+          m.addedNodes.forEach(function (n) {
+            if (n.nodeType !== 1) return;
+            if (n.classList.contains('managed-image')) augment(n);
+            if (n.querySelectorAll) n.querySelectorAll('.managed-image').forEach(augment);
+          });
+        });
+      });
+      obs.observe(imageList, { childList: true, subtree: true });
+    })();
+    </script>
   </body>
 </html>

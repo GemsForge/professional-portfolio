@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { KnowledgeDirectory } from "@/components/knowledge-directory";
-import "../knowledge-directory.css";
+import "@/app/knowledge/knowledge.css";
 
 export const metadata: Metadata = {
   title: "Wiki Page Uploader · GemsForge",

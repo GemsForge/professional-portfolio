@@ -19,14 +19,20 @@ async function readGeneratedHome() {
 test("social profile shows the résumé-backed header, experience highlights, and a nine-tile grid", async () => {
   const html = await readGeneratedHome();
   const slugs = PORTFOLIO_POSTS.map(({ slug }) => slug);
-  assert.deepEqual(slugs.slice(0, 4), ["auralogbook", "notion-api-shortcuts", "portfolio-direction", "tech-stack"]);
-  assert.equal(PORTFOLIO_POSTS.filter(({ category }) => category === "project").length, 6);
+  assert.deepEqual(slugs.slice(0, 5), ["auralogbook", "notion-api-shortcuts", "dev-wiki", "portfolio-direction", "tech-stack"]);
+  assert.equal(PORTFOLIO_POSTS.filter(({ category }) => category === "project").length, 7);
 
   const profile = html.slice(html.indexOf('<section class="sp-profile"'), html.indexOf('<section id="highlights"'));
   assert.match(profile, /<h1 id="creator-name">Diamond Brown<\/h1>/);
-  assert.match(profile, /<a class="sp-button sp-button-primary" href="mailto:diamondbrown\.tech@gmail\.com">Contact<\/a>/);
-  assert.match(profile, /<a class="sp-button" href="\/assets\/diamond-brown-resume\.pdf">Résumé<\/a>/);
-  assert.match(profile, /<li><strong>6<\/strong> projects<\/li>\s*<li><strong>4<\/strong> roles<\/li>\s*<li><strong>13<\/strong> yrs Army Guard<\/li>/);
+  // Contact and Résumé live in the highlights row (#131), so the header has no duplicate buttons.
+  assert.doesNotMatch(profile, /class="sp-button/);
+  const highlightRow = html.slice(html.indexOf('<section id="highlights"'), html.indexOf('<nav class="sp-sections"'));
+  assert.match(highlightRow, /<li id="contact"><a href="mailto:diamondbrown\.tech@gmail\.com" aria-label="Contact Diamond by email">/);
+  assert.doesNotMatch(highlightRow, /mailto:[^"]*" data-highlight-link/, "Contact must stay a plain mailto link, not a story card");
+  assert.match(highlightRow, /href="\/assets\/diamond-brown-resume\.pdf"><span class="sp-highlight-ring[^"]*">[\s\S]*?Résumé/);
+  // Army service stays in the bio and the Army Guard highlight, so the stats row shows only portfolio and role counts.
+  assert.match(profile, /<li><strong>7<\/strong> projects<\/li>\s*<li><strong>4<\/strong> roles<\/li>\s*<\/ul>/);
+  assert.doesNotMatch(profile, /yrs Army Guard/);
   assert.doesNotMatch(html, /followers|likes|following/i, "stats must be résumé counts, not social engagement");
   for (const line of ["Software Engineer Analyst @ ADP", "U.S. Secret clearance · Army National Guard since 2013", "Cut dev onboarding from two weeks to three days.", "Atlanta · open to remote or hybrid"]) {
     assert.ok(profile.includes(line), `bio should include: ${line}`);
@@ -39,15 +45,20 @@ test("social profile shows the résumé-backed header, experience highlights, an
   const views = [...html.matchAll(/data-highlight-view="([a-z]+)"/g)].map((match) => match[1]);
   assert.deepEqual(views, ["adp", "gemsforge", "apprentice", "army"]);
   assert.match(html, /February 2023 – present[\s\S]*?2 weeks → 3 days/);
+  // The ADP story leads with both résumé-backed wins: onboarding as a new developer and the WCAG refactor (#131).
+  const adpStory = html.slice(html.indexOf('data-highlight-view="adp"'), html.indexOf('data-highlight-view="gemsforge"'));
+  assert.match(adpStory, /class="sp-story-metrics"[\s\S]*?2 weeks → 3 days[\s\S]*?as a new developer[\s\S]*?Led WCAG refactor[\s\S]*?toward WCAG/);
+  assert.match(adpStory, /semantic HTML, C#, and UI development process/);
+  assert.match(html, /<p>Led a frontend accessibility refactor toward WCAG\.<\/p>/);
   assert.match(html, /Since May 2013[\s\S]*?Army National Guard service since 2013/);
   assert.equal((html.match(/data-close-highlight aria-label="Close highlight"/g) ?? []).length, 4);
 
   const grid = html.slice(html.indexOf('id="creator-post-grid"'), html.indexOf("</section>", html.indexOf('id="creator-post-grid"')));
   const tiles = [...grid.matchAll(/<a class="(creator-post-tile tile-[a-z0-9-]+|sp-feature-tile sp-tile-[a-z]+)"/g)].map((match) => match[1].split(" ")[1]);
-  assert.deepEqual(tiles, ["tile-auralogbook", "sp-tile-quote", "tile-notion-api-shortcuts", "tile-75-hard-automation", "sp-tile-diagram", "sp-tile-text", "tile-hair-log", "tile-dynamic-folder-structures", "tile-apple-ecosystem"]);
+  assert.deepEqual(tiles, ["tile-auralogbook", "sp-tile-quote", "tile-notion-api-shortcuts", "tile-dev-wiki", "tile-75-hard-automation", "sp-tile-text", "tile-hair-log", "tile-dynamic-folder-structures", "tile-apple-ecosystem"]);
   const tileOrder = [...grid.matchAll(/class="creator-post-tile tile-[^"]+" href="[^"]+" data-post-link="([^"]+)"/g)].map((match) => match[1]);
   assert.deepEqual(tileOrder, slugs.filter((slug) => !["tech-stack", "portfolio-direction"].includes(slug)));
-  assert.equal((grid.match(/class="sp-tile-bar"/g) ?? []).length, 6, "every project tile has a title bar");
+  assert.equal((grid.match(/class="sp-tile-bar"/g) ?? []).length, 7, "every project tile has a title bar");
   assert.match(grid, /aria-label="Open post: Pinned\. Aura Logbook\./);
   assert.match(grid, /<span>POST \/v1\/pages<\/span><span class="sp-wide">Simplified<\/span>/);
   assert.match(grid, /src="\/assets\/75-days-shortcuts-overview\.png"/);
@@ -79,7 +90,7 @@ test("social profile uses a 935px centered column", async () => {
 
 test("project posts identify evidence and provide guided prototype steps", () => {
   const projects = PORTFOLIO_POSTS.filter(({ category }) => category === "project");
-  assert.equal(projects.length, 6);
+  assert.equal(projects.length, 7);
   for (const post of projects) {
     assert.ok(post.caseStudy, `${post.slug} should retain its full case-study route`);
     assert.ok(post.evidence.length > 30, `${post.slug} should explain evidence or current status`);
@@ -166,7 +177,7 @@ test("phones get a compact header, five fitting highlights, and short tile text"
   assert.match(css, /\.sp-profile\{display:grid;grid-template-columns:auto minmax\(0,1fr\)/);
   assert.match(css, /\.sp-profile-body,\.sp-name-row\{display:contents\}/);
   // Every feature tile and the Notion code tile carry a phone-length version of their text.
-  for (const short of ["ADP onboarding", "2 weeks <span aria-hidden=\"true\">→</span> 3 days", "Check-in flow", "Army since 2013"]) {
+  for (const short of ["ADP onboarding", "2 weeks <span aria-hidden=\"true\">→</span> 3 days", "Army since 2013"]) {
     assert.ok(html.includes(`<span class="sp-narrow">${short}</span>`), `missing phone text: ${short}`);
   }
   assert.match(html, /<span class="sp-narrow">\{\n  "parent": \{…\},\n  "properties": \{…\}\n\}<\/span>/);
@@ -202,7 +213,7 @@ test("pop-up keeps the walkthrough, swaps in real step screenshots, and meets ty
   assert.match(auraPost, /<button type="button" class="post-step-arrow post-step-next" data-step-next aria-label="Next step">Next →<\/button>/);
   assert.match(auraPost, /<button type="button" class="post-image-zoom" data-post-image-zoom/);
   assert.match(auraPost, /<p class="visually-hidden" data-step-announce aria-live="polite"><\/p>/);
-  assert.match(auraPost, /<span class="eyebrow">App tour<\/span>/, "real screens label the walkthrough as an app tour");
+  assert.doesNotMatch(auraPost, /<span class="eyebrow">App tour<\/span>/, "real-screenshot walkthrough has no redundant eyebrow");
   assert.match(auraPost, /<nav class="post-step-controls" aria-label="Walkthrough image controls">/);
   assert.match(auraPost, /View source <span class="visually-hidden">\(opens in a new tab\)<\/span>/);
   // A catalog step with `screenshot` shows that real screen and hides its hotspot.
@@ -219,7 +230,7 @@ test("pop-up keeps the walkthrough, swaps in real step screenshots, and meets ty
   assert.match(script, /imageDialog\?\.addEventListener\("close", \(\) => \{[\s\S]*?imageOpener\.focus/);
   assert.match(css, /#post-dialog \.post-story\{font-size:15px/);
   assert.match(css, /#post-dialog \.walkthrough-steps p,#post-dialog \.walkthrough-status\{font-size:15px/);
-  assert.match(css, /#post-dialog \.walkthrough-disclaimer\{font-size:13px;line-height:1\.45;color:#4d5d50\}/);
+  assert.match(css, /#post-dialog \.walkthrough-disclaimer\{font-size:13px;line-height:1\.45;color:var\(--muted\)\}/);
   assert.match(css, /#post-dialog \.visual-hotspot\{width:44px;height:44px\}/);
   assert.match(css, /#post-dialog \.post-close\{width:44px;height:44px/);
   assert.match(css, /#post-dialog \.post-sequence button\{min-height:44px/);
