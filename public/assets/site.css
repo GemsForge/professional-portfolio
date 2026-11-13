@@ -447,3 +447,30 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid #90
   .creator-page .sp-highlight-ring,.creator-page .creator-post-tile,.creator-page .sp-feature-tile{transition:none}
   .creator-page .sp-highlights a:hover .sp-highlight-ring,.creator-page .creator-post-tile:hover,.creator-page .sp-feature-tile:hover{transform:none}
 }
+/*
+ * Walkthrough modal depth (#131). The post viewer and highlight stories match
+ * the profile's layered look: a blurred backdrop, a rounded dialog that rises
+ * in, a forest media panel with the screenshot on a raised cream stage, and
+ * facts and walkthrough steps as soft cards. Phones keep the full-screen sheet.
+ */
+@keyframes sp-modal-rise{from{opacity:0;transform:translateY(18px) scale(.985)}to{opacity:1;transform:none}}
+.creator-page .post-dialog::backdrop,.creator-page .sp-story-dialog::backdrop{background:rgba(14,24,18,.62);backdrop-filter:blur(10px) saturate(1.1)}
+.creator-page .post-dialog[open],.creator-page .sp-story-dialog[open]{animation:sp-modal-rise .32s cubic-bezier(.2,.8,.2,1)}
+.creator-page .post-view-media{position:relative;background:radial-gradient(70% 60% at 50% 40%,#2f4e39,#1e2823 75%);border-right:0}
+.creator-page .post-view-media::after{content:"";position:absolute;inset:auto -20% -30% 20%;height:70%;background:radial-gradient(closest-side,rgba(227,196,138,.2),transparent);pointer-events:none}
+.creator-page .post-main-visual{position:relative;z-index:1}
+.creator-page .post-visual-stage{border:1px solid rgba(244,242,232,.5);border-radius:22px;background:linear-gradient(160deg,#fbfaf4,#ecebdf);box-shadow:0 34px 60px -24px rgba(0,0,0,.65),inset 0 1px 0 #fff}
+.creator-page .post-step-controls button{border-radius:999px;box-shadow:0 10px 22px -12px rgba(0,0,0,.55)}
+.creator-page .post-view-story{background:linear-gradient(180deg,#fcfbf6,#f1efe3)}
+.creator-page .post-close{box-shadow:0 8px 18px -10px rgba(30,40,35,.55)}
+.creator-page .post-facts{padding:14px 16px;border:1px solid rgba(47,78,57,.13);border-radius:16px;background:rgba(255,255,255,.65);box-shadow:0 12px 24px -20px rgba(30,40,35,.45)}
+.creator-page .walkthrough{border-radius:18px;background:linear-gradient(160deg,#eef0e6,#e4e7da);box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 14px 28px -22px rgba(30,40,35,.5)}
+.creator-page .walkthrough-steps li{padding:12px 14px;border-radius:12px;background:rgba(255,255,255,.7)}
+.creator-page .post-sequence button{border-radius:999px;box-shadow:0 6px 14px -10px rgba(30,40,35,.45)}
+.creator-page .post-action-primary{box-shadow:0 10px 20px -12px rgba(30,40,35,.6)}
+@media(min-width:651px){
+  .creator-page .post-dialog{border-color:rgba(47,78,57,.2);border-radius:28px;box-shadow:0 60px 120px -40px rgba(8,16,11,.7),0 20px 40px -24px rgba(8,16,11,.45)}
+  .creator-page .post-dialog-shell{overflow:hidden;border-radius:inherit}
+  .creator-page .sp-story-dialog{border-radius:26px;box-shadow:0 60px 120px -40px rgba(0,0,0,.7)}
+}
+@media(prefers-reduced-motion:reduce){.creator-page .post-dialog[open],.creator-page .sp-story-dialog[open]{animation:none}}
