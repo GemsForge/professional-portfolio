@@ -9,7 +9,7 @@
 <link rel="icon" type="image/png" href="/assets/brandmark.png">
 <link rel="canonical" href="https://www.gemsforge.com/">
 <!-- Version the stylesheet so browsers pick up the Direction D social-profile rules. -->
-<link rel="stylesheet" href="/assets/site.css?v=social-profile-d-20261110">
+<link rel="stylesheet" href="/assets/site.css?v=walkthrough-image-modal-20261112">
 </head>
 <body class="creator-page">
 <a class="skip" href="#main">Skip to content</a>
@@ -39,7 +39,7 @@
       <div class="sp-bio">
         <p class="sp-bio-role">Software Engineer Analyst @ ADP</p>
         <p class="sp-bio-muted">Full-stack · React · TypeScript · C#/.NET · SQL</p>
-        <p>U.S. Secret clearance · Army National Guard Staff Sergeant</p>
+        <p>U.S. Secret clearance · Army National Guard since 2013</p>
         <p>Cut dev onboarding from two weeks to three days.</p>
         <p class="sp-bio-muted">Atlanta · open to remote or hybrid</p>
         <p class="sp-bio-links"><a href="/assets/diamond-brown-resume.pdf">Résumé</a><a href="https://github.com/GemsForge" target="_blank" rel="noopener noreferrer">github.com/GemsForge</a><a href="https://www.linkedin.com/in/diamond-brown/" target="_blank" rel="noopener noreferrer">LinkedIn</a></p>
@@ -51,10 +51,10 @@
   <section id="highlights" class="sp-highlights" aria-label="Experience highlights">
     <ul>
       <li><a href="/work/enterprise-applications/" data-highlight-link="adp"><span class="sp-highlight-ring sp-highlight-dark">ADP</span><span class="sp-highlight-label">ADP</span></a></li>
-      <li><a href="/about/" data-highlight-link="army"><span class="sp-highlight-ring sp-highlight-sage">SSG</span><span class="sp-highlight-label">Army Guard</span></a></li>
       <li><a href="/work/gemsforge-business-systems/" data-highlight-link="gemsforge"><span class="sp-highlight-ring sp-highlight-light">GF</span><span class="sp-highlight-label">GemsForge</span></a></li>
       <li><a href="/assets/diamond-brown-resume.pdf" data-highlight-link="apprentice"><span class="sp-highlight-ring sp-highlight-quiet">Java</span><span class="sp-highlight-label">Apprentice</span></a></li>
       <li><a href="/assets/diamond-brown-resume.pdf"><span class="sp-highlight-ring sp-highlight-quiet"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"></path><path d="M14 3v5h5M9 13h6M9 17h6"></path></svg></span><span class="sp-highlight-label">Résumé</span></a></li>
+      <li><a href="/about/" data-highlight-link="army"><span class="sp-highlight-ring sp-highlight-sage">Army</span><span class="sp-highlight-label">Army Guard</span></a></li>
     </ul>
   </section>
 
@@ -69,7 +69,12 @@
 </main>
 <footer class="footer creator-footer"><div class="wrap"><div class="footer-brand"><img src="/assets/brandmark.png" alt="" width="45" height="45"><span>© 2026 Diamond Brown · GemsForge</span></div><nav aria-label="Footer navigation"><a href="/portfolio/projects/">All project stories</a><a href="/about/">About</a><a href="/assets/diamond-brown-resume.pdf">Résumé</a></nav></div></footer>
 <dialog id="post-dialog" class="post-dialog"><div class="post-dialog-shell"><button type="button" class="post-close" data-close-post aria-label="Close post">×</button><div class="post-view-media" id="post-media"></div><div class="post-view-story" id="post-story" tabindex="-1"><div id="post-stories"></div></div></div></dialog>
-<!-- Experience stories: one card per role, in highlight order. Facts match the résumé PDF. -->
+<dialog id="post-image-dialog" class="post-image-dialog" aria-labelledby="post-image-dialog-title" aria-describedby="post-image-dialog-help">
+  <div class="post-image-dialog-bar"><span id="post-image-dialog-title">Walkthrough image</span><button type="button" class="post-image-dialog-close" data-close-post-image>Close <kbd>Esc</kbd></button></div>
+  <p class="post-image-dialog-help" id="post-image-dialog-help">Enlarged walkthrough image. Scroll or pan to inspect the full screenshot.</p>
+  <div class="post-image-dialog-viewport" tabindex="0" aria-label="Enlarged walkthrough image viewport"><img id="post-image-dialog-preview" alt=""></div>
+</dialog>
+<!-- Experience stories follow the portfolio narrative, with Army Guard last; facts match the résumé PDF. -->
 <dialog id="highlight-dialog" class="sp-story-dialog" aria-label="Experience highlight">
   <article class="sp-story" data-highlight-view="adp" aria-labelledby="story-adp" hidden>
     <div class="sp-story-progress" aria-hidden="true"><span class="is-active"></span><span></span><span></span><span></span></div>
@@ -81,21 +86,10 @@
       <div class="sp-story-metric"><strong>2 weeks → 3 days</strong><span>Developer onboarding, after my Confluence setup guides</span></div>
       <ul><li>React, TypeScript, Redux, C#/.NET, PostgreSQL, SQL Server</li><li>Reusable Mabl, JavaScript, and NUnit regression tests</li><li>Production debugging with Splunk and SQL</li></ul>
     </div>
-    <footer class="sp-story-foot"><a class="sp-story-cta" href="/work/enterprise-applications/">Read about the enterprise apps work</a><button type="button" class="sp-story-next" data-highlight-next>Next: Army National Guard <span aria-hidden="true">›</span></button></footer>
-  </article>
-  <article class="sp-story" data-highlight-view="army" aria-labelledby="story-army" hidden>
-    <div class="sp-story-progress" aria-hidden="true"><span></span><span class="is-active"></span><span></span><span></span></div>
-    <header class="sp-story-head"><span class="sp-story-avatar">SSG</span><div><h2 id="story-army-org">Army National Guard</h2><p>May 2013 – present</p></div><button type="button" class="sp-story-close" data-close-highlight aria-label="Close highlight">×</button></header>
-    <div class="sp-story-body">
-      <p class="sp-story-eyebrow">Leadership</p>
-      <h3 id="story-army">Staff Sergeant and Squad Leader</h3>
-      <p>I lead training, personnel accountability, readiness, task coordination, and mission preparation.</p>
-      <div class="sp-story-metric"><strong>U.S. Secret clearance</strong><span>Held through the Army National Guard</span></div>
-    </div>
-    <footer class="sp-story-foot"><a class="sp-story-cta" href="/about/">Read more about me</a><button type="button" class="sp-story-next" data-highlight-next>Next: GemsForge <span aria-hidden="true">›</span></button></footer>
+    <footer class="sp-story-foot"><a class="sp-story-cta" href="/work/enterprise-applications/">Read about the enterprise apps work</a><button type="button" class="sp-story-next" data-highlight-next>Next: GemsForge <span aria-hidden="true">›</span></button></footer>
   </article>
   <article class="sp-story" data-highlight-view="gemsforge" aria-labelledby="story-gemsforge" hidden>
-    <div class="sp-story-progress" aria-hidden="true"><span></span><span></span><span class="is-active"></span><span></span></div>
+    <div class="sp-story-progress" aria-hidden="true"><span></span><span class="is-active"></span><span></span><span></span></div>
     <header class="sp-story-head"><span class="sp-story-avatar">GF</span><div><h2 id="story-gemsforge-org">GemsForge</h2><p>2024 – present</p></div><button type="button" class="sp-story-close" data-close-highlight aria-label="Close highlight">×</button></header>
     <div class="sp-story-body">
       <p class="sp-story-eyebrow">Founder</p>
@@ -106,7 +100,7 @@
     <footer class="sp-story-foot"><a class="sp-story-cta" href="/work/gemsforge-business-systems/">Read about the GemsForge work</a><button type="button" class="sp-story-next" data-highlight-next>Next: Apprenticeship <span aria-hidden="true">›</span></button></footer>
   </article>
   <article class="sp-story" data-highlight-view="apprentice" aria-labelledby="story-apprentice" hidden>
-    <div class="sp-story-progress" aria-hidden="true"><span></span><span></span><span></span><span class="is-active"></span></div>
+    <div class="sp-story-progress" aria-hidden="true"><span></span><span></span><span class="is-active"></span><span></span></div>
     <header class="sp-story-head"><span class="sp-story-avatar">Java</span><div><h2 id="story-apprentice-org">Xpanxion / UST Step IT Up</h2><p>September 2022 – February 2023</p></div><button type="button" class="sp-story-close" data-close-highlight aria-label="Close highlight">×</button></header>
     <div class="sp-story-body">
       <p class="sp-story-eyebrow">Apprenticeship</p>
@@ -114,7 +108,19 @@
       <p>Intensive Java full-stack training: object-oriented programming, Git, APIs, web development, and Agile workflows.</p>
       <ul><li>Built a Spring Boot REST API for online I-9 form completion</li><li>Elected team captain</li><li>U.S. Department of Labor apprenticeship certificate, 2023</li></ul>
     </div>
-    <footer class="sp-story-foot"><a class="sp-story-cta" href="/assets/diamond-brown-resume.pdf">Open the résumé</a><button type="button" class="sp-story-next" data-highlight-next>Back to the start <span aria-hidden="true">›</span></button></footer>
+    <footer class="sp-story-foot"><a class="sp-story-cta" href="/assets/diamond-brown-resume.pdf">Open the résumé</a><button type="button" class="sp-story-next" data-highlight-next>Next: Army National Guard <span aria-hidden="true">›</span></button></footer>
+  </article>
+  <article class="sp-story" data-highlight-view="army" aria-labelledby="story-army" hidden>
+    <div class="sp-story-progress" aria-hidden="true"><span></span><span></span><span></span><span class="is-active"></span></div>
+    <!-- Keep this service highlight last and describe the service period without implying the current rank dates to 2013. -->
+    <header class="sp-story-head"><span class="sp-story-avatar">Army</span><div><h2 id="story-army-org">Army National Guard</h2><p>Since May 2013</p></div><button type="button" class="sp-story-close" data-close-highlight aria-label="Close highlight">×</button></header>
+    <div class="sp-story-body">
+      <p class="sp-story-eyebrow">Military service</p>
+      <h3 id="story-army">Army National Guard service since 2013</h3>
+      <p>More than a decade of service has strengthened my discipline, adaptability, and ability to coordinate with a team.</p>
+      <div class="sp-story-metric"><strong>U.S. Secret clearance</strong><span>Held through the Army National Guard</span></div>
+    </div>
+    <footer class="sp-story-foot"><a class="sp-story-cta" href="/about/">Read more about me</a><button type="button" class="sp-story-next" data-highlight-next>Back to the start <span aria-hidden="true">›</span></button></footer>
   </article>
 </dialog>
 <!-- Keep primary destinations within thumb reach on phones; labels are exposed to assistive technology. -->
@@ -125,6 +131,6 @@
   <a href="#contact" aria-label="Contact"><svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m4 7 8 6 8-6"></path></svg></a>
 </nav>
 <!-- Version the profile script so browsers pick up new pop-up behavior after deploys. -->
-<script src="/assets/creator-profile.js?v=walkthrough-uploads-20261110" defer></script>
+<script src="/assets/creator-profile.js?v=walkthrough-image-modal-20261112" defer></script>
 </body>
 </html>
