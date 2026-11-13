@@ -54,7 +54,7 @@ test("site and owner navigation use native anchors for reliable full-page routin
   }
   assert.match(footer, /<a href="\/admin\/">Admin<\/a>/);
   assert.match(footer, /href=\{wikiMode \? "\/" : "\/knowledge\/"\}/);
-  assert.match(knowledgeDirectory, /!publicMode && <a href="\/admin\/handbooks">All handbooks →<\/a>/);
+  assert.doesNotMatch(knowledgeDirectory, /All handbooks →/);
   assert.doesNotMatch(knowledgeDirectory, /id="all-references"|aria-label="Developer Wiki documents"/);
 });
 

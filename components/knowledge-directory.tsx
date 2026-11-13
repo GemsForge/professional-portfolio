@@ -492,13 +492,14 @@ export function KnowledgeDirectory({
       if (!response.ok)
         throw new Error(data.error || "Could not save this reference.");
       form.reset();
-      await loadResources();
+      // Markdown opens in the reader right away, so only refresh the list when staying here.
       if (data.resource?.contentType === "text/markdown") {
         const target =
           uploaderOnly && window.parent !== window ? window.parent : window;
         target.location.assign(readerHref(data.resource.id, true));
         return;
       }
+      await loadResources();
       setMessage("Reference added to your library.");
     } catch (error) {
       setIsError(true);
@@ -780,11 +781,7 @@ export function KnowledgeDirectory({
                 <span className="wiki-result-count" aria-live="polite">
                   {visibleHandbooks.length} of {libraryHandbooks.length}
                 </span>
-                {/*TODO: Remove the "All handbooks" link and view */}
               </div>
-              {/* </div>
-                {!publicMode && <a href="/admin/handbooks">All handbooks →</a>}
-              </div> */}
               <label className="handbook-search">
                 <span className="sr-only">Search handbooks</span>
                 <input

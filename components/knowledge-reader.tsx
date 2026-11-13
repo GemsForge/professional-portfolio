@@ -86,12 +86,9 @@ export function KnowledgeReader({ id, publicMode = false }: {
   const pageSources = rawPageSources.length > 1 && /^#\s+(?!Page\b).+\s*$/s.test(rawPageSources[0].trim())
     ? [`${rawPageSources[0].trim()}\n\n${rawPageSources[1].trim()}`, ...rawPageSources.slice(2)]
     : rawPageSources;
-  const chapters = [{
-    title: chapterHeading ?? "Chapter 1",
-    pages: pageSources.length ? pageSources : [markdown],
-  }];
-  const currentChapter = chapters[0];
-  const pages = currentChapter.pages;
+  /** The handbook's single chapter title, shown in the page tabs and pagination. */
+  const chapterTitle = chapterHeading ?? "Chapter 1";
+  const pages = pageSources.length ? pageSources : [markdown];
   const pageSource = pages[page] ?? pages[0] ?? markdown;
   const pageTabs = pages.map((source, index) => ({
     index,
@@ -205,12 +202,12 @@ export function KnowledgeReader({ id, publicMode = false }: {
               </div>}
               <h2 id="toc-heading">Contents</h2>
               <ol>
-                {tableOfContents.map((entry, index) => <li key={`${page}-${index}`} className={activeContentsTitle === entry.title ? "is-active" : ""} style={{ paddingLeft: `${Math.max(0, entry.level - 2) * 12}px` }}><button type="button" onClick={() => { setActiveContentsTitle(entry.title); navigateToContents(entry.title); }}>{entry.title}</button></li>)}
+                {tableOfContents.map((entry, index) => <li key={`${page}-${index}`} className={activeContentsTitle === entry.title ? "is-active" : ""} data-level={entry.level}><button type="button" onClick={() => { setActiveContentsTitle(entry.title); navigateToContents(entry.title); }}>{entry.title}</button></li>)}
               </ol>
             </section>
           </aside>
           <section className="knowledge-reader-main">
-            <nav className="knowledge-page-tabs-header" aria-label={`${currentChapter.title} pages`}>
+            <nav className="knowledge-page-tabs-header" aria-label={`${chapterTitle} pages`}>
               <div role="tablist" aria-label="Handbook pages">
                 {pageTabs.map((tab) => <button
                   aria-controls="knowledge-page-panel"
@@ -228,7 +225,7 @@ export function KnowledgeReader({ id, publicMode = false }: {
               </div>
             </nav>
             <article aria-labelledby={`knowledge-page-tab-${page}`} className="knowledge-reader-content" id="knowledge-page-panel" role="tabpanel" tabIndex={0}><KnowledgeMarkdown source={pageSource} /></article>
-            <nav className="knowledge-pagination" aria-label={`${currentChapter.title} pages`}><button className="button secondary" type="button" onClick={() => navigateToPage(Math.max(0, page - 1))} disabled={page === 0}>Previous</button><span>{currentChapter.title} · Page {page + 1} of {Math.max(1, pages.length)}</span><button className="button secondary" type="button" onClick={() => navigateToPage(Math.min(pages.length - 1, page + 1))} disabled={page >= pages.length - 1}>Next</button></nav>
+            <nav className="knowledge-pagination" aria-label={`${chapterTitle} pages`}><button className="button secondary" type="button" onClick={() => navigateToPage(Math.max(0, page - 1))} disabled={page === 0}>Previous</button><span>{chapterTitle} · Page {page + 1} of {Math.max(1, pages.length)}</span><button className="button secondary" type="button" onClick={() => navigateToPage(Math.min(pages.length - 1, page + 1))} disabled={page >= pages.length - 1}>Next</button></nav>
           </section>
         </div>
         : <pre className="knowledge-source" tabIndex={0} aria-label="Markdown source"><code>{markdown}</code></pre>)}
