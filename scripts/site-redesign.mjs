@@ -37,6 +37,14 @@ export function renderTopBar(route) {
 }
 
 /**
+ * Renders the shared footer. Projects and Contact are omitted — the top bar
+ * covers primary nav. DevWiki and Résumé serve as utility/secondary links.
+ */
+export function renderFooter() {
+  return `<footer class="footer"><div class="wrap"><div class="footer-brand"><img src="/assets/brandmark.png" alt="" width="45" height="45"><span>© 2026 GemsForge</span></div><nav aria-label="Footer navigation"><a href="https://www.gemsforge.com/knowledge">DevWiki</a><a href="#main">Back to top ↑</a></nav></div></footer>`;
+}
+
+/**
  * Applies the redesign shell to one generated page. Idempotent: pages whose
  * source already links the stylesheet or script are not given duplicates.
  *
@@ -47,6 +55,7 @@ export function renderTopBar(route) {
 export function applySiteRedesign(html, route) {
   if (PROFILE_ROUTES.has(route)) return html;
   let text = html.replace(/<header>[\s\S]*?<\/header>/, renderTopBar(route));
+  text = text.replace(/<footer[\s\S]*?<\/footer>/, renderFooter());
   if (!text.includes("/assets/redesign.css")) {
     text = text.replace("</head>", '<link rel="stylesheet" href="/assets/redesign.css"></head>');
   }

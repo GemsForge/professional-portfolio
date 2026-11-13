@@ -11,7 +11,7 @@ const pages = JSON.parse(await readFile(new URL("../lib/static-pages.json", impo
 const css = await readFile(new URL("../static-source/assets/redesign.css", import.meta.url), "utf8");
 const script = await readFile(new URL("../static-source/assets/projects-redesign.js", import.meta.url), "utf8");
 const catalog = await readFile(new URL("../scripts/project-catalog.mts", import.meta.url), "utf8");
-const { applySiteRedesign, renderTopBar, PROFILE_ROUTES } = await import("../scripts/site-redesign.mjs");
+const { applySiteRedesign, renderTopBar, renderFooter, PROFILE_ROUTES } = await import("../scripts/site-redesign.mjs");
 const REDESIGNED = Object.keys(pages).filter((route) => !PROFILE_ROUTES.has(route));
 
 test("every non-profile page gets the redesign shell exactly once", () => {
@@ -23,6 +23,8 @@ test("every non-profile page gets the redesign shell exactly once", () => {
     assert.equal((html.match(/src="\/assets\/projects-redesign\.js"/g) ?? []).length, 1, `${route} script count`);
     assert.equal((html.match(/class="rd-topbar"/g) ?? []).length, 1, `${route} top bar count`);
     assert.doesNotMatch(html, /<div class="wrap nav">/, `${route} still has the old header`);
+    assert.match(html, /gemsforge\.com\/knowledge.*?DevWiki|DevWiki[\s\S]*?gemsforge\.com\/knowledge/, `${route} footer has DevWiki`);
+    assert.doesNotMatch(html, /<footer[\s\S]*?Diamond Brown/, `${route} footer brand is GemsForge only`);
   }
   for (const route of PROFILE_ROUTES) {
     assert.doesNotMatch(pages[route], /redesign\.css|class="rd-topbar"|<body class="rd/, `${route} must keep the profile design`);
@@ -40,11 +42,23 @@ test("the shared top bar marks the active section for each route", () => {
   assert.match(renderTopBar("/"), /class="rd-handle" href="\/"[\s\S]*?profile-avatar-320\.jpg/);
 });
 
+test("the shared footer has utility links and no primary nav duplicates", () => {
+  const footer = renderFooter();
+  assert.match(footer, /gemsforge\.com\/knowledge/);
+  assert.doesNotMatch(footer, /href="\/about\/"/);
+  assert.doesNotMatch(footer, /diamond-brown-resume\.pdf/);
+  assert.match(footer, /#main/);
+  assert.doesNotMatch(footer, /href="\/portfolio\/projects\//);
+  assert.doesNotMatch(footer, /href="\/contact\//);
+  assert.doesNotMatch(footer, /Diamond Brown/);
+});
+
 test("applying the shell is idempotent and leaves profile routes alone", () => {
-  const source = '<html><head><link rel="stylesheet" href="/assets/site.css"></head><body class="x"><header><div class="wrap nav">old</div></header><main></main></body></html>';
+  const source = '<html><head><link rel="stylesheet" href="/assets/site.css"></head><body class="x"><header><div class="wrap nav">old</div></header><main></main><footer class="footer"><div>old footer</div></footer></body></html>';
   const once = applySiteRedesign(source, "/about/");
   assert.equal(applySiteRedesign(once, "/about/"), once);
   assert.match(once, /<body class="x rd">/);
+  assert.match(once, /gemsforge\.com\/knowledge/);
   assert.equal(applySiteRedesign(source, "/"), source);
 });
 
