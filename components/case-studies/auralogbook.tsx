@@ -40,12 +40,13 @@ export function AuralogbookCaseStudy({ project, projects }: CaseStudyProps) {
                   <h1>{project.name}</h1>
                 </div>
                 <p className="lead">{project.description}</p>
-                <div className="facts">
-                  <div data-dependency-group="portfolioHighlights" />
-                </div>
+                {/* Actions precede the technology badges so keyboard users reach them without tabbing through 17 links. */}
                 <div className="actions case-project-actions">
                   <a className="button" href={hero.sourceLink.href}><RichText text={hero.sourceLink.text} /></a>{" "}
                   <a className="button secondary" href={hero.screensLink.href}><RichText text={hero.screensLink.text} /></a>
+                </div>
+                <div className="facts">
+                  <div data-dependency-group="portfolioHighlights" />
                 </div>
                 <dl className="rd-stats" aria-label={hero.statsLabel}>
                   {hero.stats.map((stat, index) => (
@@ -103,7 +104,7 @@ export function AuralogbookCaseStudy({ project, projects }: CaseStudyProps) {
                   </button>
                 </div>
                 <p className="aura-image-dialog-help" id={dialogHelpId}>{imageDialog.help}</p>
-                <div className="aura-image-dialog-viewport" tabIndex={0} aria-label={imageDialog.viewportLabel}>
+                <div className="aura-image-dialog-viewport" role="region" tabIndex={0} aria-label={imageDialog.viewportLabel}>
                   <img id={`${imageDialog.id}-preview`} alt="" width="1600" height="1100" />
                 </div>
               </dialog>

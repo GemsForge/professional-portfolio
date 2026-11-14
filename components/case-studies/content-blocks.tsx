@@ -160,7 +160,7 @@ export function ContentBlock({ block }: { block: Block }): ReactNode {
       );
     case "schema-map":
       return (
-        <div className="schema-map" aria-label={block.label}>
+        <div className="schema-map" role="group" aria-label={block.label}>
           {block.items.map((item, index) =>
             item.kind === "card" ? (
               <article key={index} className={`schema-card ${item.className}`}>
@@ -170,7 +170,8 @@ export function ContentBlock({ block }: { block: Block }): ReactNode {
                 {item.note ? <p><RichText text={item.note} /></p> : null}
               </article>
             ) : (
-              <p key={index} className="schema-relationship" aria-label={item.label}>
+              // role="img" announces the label as one phrase instead of "1 user, arrow, many entries".
+              <p key={index} className="schema-relationship" role="img" aria-label={item.label}>
                 <span>{item.from}</span>
                 <span aria-hidden="true">→</span>
                 <span>{item.to}</span>
@@ -244,7 +245,7 @@ export function ArchitectureFigure({ id, content }: { id: string; content: Archi
             Close <kbd>Esc</kbd>
           </button>
         </div>
-        <div className="architecture-zoom-area" tabIndex={0} aria-label={content.zoomHint}>
+        <div className="architecture-zoom-area" role="region" tabIndex={0} aria-label={content.zoomHint}>
           <ContentImage image={content.enlargedImage} />
         </div>
       </dialog>

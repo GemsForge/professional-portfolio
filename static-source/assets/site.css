@@ -29,7 +29,7 @@
 .case-content .architecture-image{display:block;width:100%;height:auto;border:0;border-radius:2px;cursor:zoom-in}
 .architecture-image:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
 .architecture-figure figcaption{font-size:13px;line-height:1.5;margin:8px 4px 0}
-.architecture-text-open{padding:0;border:0;background:none;color:var(--ink);font:inherit;font-weight:700;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.architecture-text-open{padding:3px 0;margin:-3px 0;border:0;background:none;color:var(--ink);font:inherit;font-weight:700;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
 .architecture-open{position:absolute;z-index:1;top:17px;right:17px;display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border:1px solid var(--line-strong);border-radius:4px;background:var(--surface);color:var(--ink);font-family:inherit;font-size:12px;font-weight:600;line-height:1.2;cursor:pointer;box-shadow:0 2px 8px #1e282322}
 .architecture-open svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .architecture-dialog{width:min(96vw,1500px);max-width:none;height:min(94vh,1000px);max-height:none;padding:0;border:1px solid var(--line-strong);border-radius:6px;background:var(--surface-2);color:var(--ink);box-shadow:0 20px 70px #0005}
