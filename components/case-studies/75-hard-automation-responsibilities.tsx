@@ -1,0 +1,135 @@
+/** Responsibility map that replaces the 75 Days of Discipline dependency list. */
+export function SeventyFiveHardAutomationResponsibilities() {
+  return (
+    <>
+    <section id="dependencies">
+      <h2>Application responsibilities</h2>
+      <p>The workflow separates the daily prompt and helper actions from the request builder and Notion record store.</p>
+      <div className="table-scroll" role="region" aria-label="75 Days of Discipline tool responsibility table" tabIndex={0}>
+        <table className="toolmap">
+          <caption>75 Days of Discipline system responsibilities</caption>
+          <thead>
+            <tr>
+              <th scope="col">Tool / component</th>
+              <th scope="col">Responsibility</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Apple Shortcuts</th>
+              <td>Runs the 13 workflows, collects daily responses, applies conditional logic, and assembles the record.</td>
+            </tr>
+            <tr>
+              <th scope="row">Log Discipline</th>
+              <td>Coordinates the daily date, completion signals, reflection text, and water-intake follow-up.</td>
+            </tr>
+            <tr>
+              <th scope="row">Response helper shortcuts</th>
+              <td>Supply disciplined / undisciplined, exercise, water, faith, and reflection values to the logging flow.</td>
+            </tr>
+            <tr>
+              <th scope="row">Discipline Http Request</th>
+              <td>Extracts the expected values from a dictionary and builds a consistent Notion page request.</td>
+            </tr>
+            <tr>
+              <th scope="row">Notion API</th>
+              <td>Receives the structured page request and creates the daily discipline record.</td>
+            </tr>
+            <tr>
+              <th scope="row">Discipline database + Goal Tracker relation</th>
+              <td>Store the daily properties and link the entry to its goal context; private database and relation IDs stay unpublished.</td>
+            </tr>
+            <tr>
+              <th scope="row">Date context</th>
+              <td>Supplies the log date used by the workflow and the Notion date property.</td>
+            </tr>
+            <tr>
+              <th scope="row">Finch companion workflow</th>
+              <td>Provides an adjacent accountability tool opened by the “Open Finch All” shortcut; it is not the Notion data store.</td>
+            </tr>
+            <tr>
+              <th scope="row">Integration permissions</th>
+              <td>Authorize the Notion integration to access the target database and relation.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <section id="challenge">
+      <h2>The challenge rules</h2>
+      <p>The daily experience is intentionally 75 Soft-style: discipline with grace, consistency over perfection, and a reset after missed days.</p>
+      <ul>
+        <li>
+          <strong>Disciplined Day</strong>
+          {" "}— choose{" "}
+          <code>Yes</code>
+          {" "}or{" "}
+          <code>No</code>
+          . A{" "}
+          <code>No</code>
+          {" "}response can include{" "}
+          <code>Distracted</code>
+          ,{" "}
+          <code>Half-Committed</code>
+          , or{" "}
+          <code>Discouraged</code>
+          {" "}as follow-up reasons.
+        </li>
+        <li>
+          <strong>Exercise</strong>
+          {" "}— choose{" "}
+          <code>Yes</code>
+          {" "}or{" "}
+          <code>No</code>
+          . A{" "}
+          <code>No</code>
+          {" "}response records{" "}
+          <code>Pain 🤕</code>
+          ,{" "}
+          <code>Almost! 20 mins minimum.</code>
+          , or{" "}
+          <code>Not in the mood… 😓</code>
+          .
+        </li>
+        <li>
+          <strong>Hydration</strong>
+          {" "}— choose 0, 40, 60, 70, or 80 fl oz. The selected value is stored as{" "}
+          <code>Water Intake Response</code>
+          ; 80 fl oz is the completion target, and any lower value sets{" "}
+          <code>Low Water Intake</code>
+          {" "}for the reflection record.
+        </li>
+        <li>
+          <strong>Mindful Content</strong>
+          {" "}— choose{" "}
+          <code>Read 2 pages</code>
+          ,{" "}
+          <code>Prayer ☀️</code>
+          ,{" "}
+          <code>Prayer 🌙</code>
+          ,{" "}
+          <code>Mindful content</code>
+          , or{" "}
+          <code>Did not make time 🚫</code>
+          {" "}through the{" "}
+          <code>Get Read Bible Prompt</code>
+          {" "}Shortcut.
+        </li>
+        <li>
+          <strong>Reflections</strong>
+          {" "}— choose{" "}
+          <code>Yes</code>
+          {" "}or{" "}
+          <code>No</code>
+          ;{" "}
+          <code>Yes</code>
+          {" "}opens free-text reflection input, while{" "}
+          <code>No</code>
+          {" "}leaves the reflection text empty.
+        </li>
+      </ul>
+      <p>Reflections, encouraging friends, and streak celebrations are optional but encouraged. Finch supplies the companion accountability layer, while the Shortcut and Notion workflow preserves the structured personal record.</p>
+    </section>
+    </>
+  );
+}

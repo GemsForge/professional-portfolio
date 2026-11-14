@@ -333,19 +333,3 @@ function iconPath(icon: string) {
   const icons = { apple: siApple, notion: siNotion, react: siReact, typescript: siTypescript, dotnet: siDotnet, mui: siMui, redux: siRedux };
   return icons[icon as keyof typeof icons]?.path ?? "";
 }
-
-/** Applies the same catalog values to a generated project detail page. */
-export function applyProjectPageMetadata(html: string, project: ProjectDefinition) {
-  return html
-    .replace(/(<title>)[^<]+( · Diamond Brown<\/title>)/, `$1${project.name}$2`)
-    .replace(/(<span aria-current="page">)[^<]+(<\/span>)/, `$1${project.name}$2`)
-    .replace(/(<div class="eyebrow">)[^<]+(<\/div>)/, `$1${project.preTitle}$2`)
-    .replace(/(<h1>)[^<]+(<\/h1>)/, `$1${project.name}$2`)
-    .replace(/(<p class="lead">)[^<]+(<\/p>)/, `$1${project.description}$2`)
-    .replace(/<span>Independent work<\/span>/, project.slug === "75-hard-automation" ? "<span>Independent project</span>" : "<span>Independent work</span>")
-    .replace(/<span>[^<]*Apple Shortcuts[^<]*<\/span>/, project.slug === "75-hard-automation"
-      ? `<div data-dependency-group="disciplineHighlights"></div>`
-      : `<span>${project.primaryTools}</span>`)
-    .replace(/<div class="case-banner-media">[\s\S]*?<\/div>/, `<div class="case-banner-media"><img src="${project.image}" alt="${project.imageAlt}" width="330" height="330"></div>`)
-    .replace(/(<div class="case-banner">[\s\S]*?)<img src="[^"]+"[^>]*>(<\/div>)/, `$1<img src="${project.image}" alt="${project.imageAlt}" width="330" height="330">$2`);
-}

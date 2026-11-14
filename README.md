@@ -5,8 +5,10 @@ Manage Project Assets: https://www.gemsforge.com/admin/
 
 ## Source
 
-- `static-source/`: editable HTML pages and shared CSS/brand assets.
-- `scripts/prepare-pages.mjs`: generates the server's HTML map and adds project gallery hooks.
+- `static-source/`: editable HTML for the home, Projects index, About, Contact, and career pages, plus shared CSS/brand assets.
+- `components/case-studies/`: React/TypeScript case study pages (`/portfolio/projects/<slug>/`), one component per project with shared hero, document, and project-navigation primitives. Project name, pre-title, description, and banner image come from `scripts/project-catalog.mts`.
+- `scripts/render-case-studies.mjs`: transpiles the case study components with TypeScript and renders them to static HTML at build time.
+- `scripts/prepare-pages.mjs`: generates the server's HTML map from both sources and applies the shared shell, metadata, and project gallery hooks.
 - `build/sites-worker.ts`: preserves Sites/Vinext hosting integration and serves the portfolio and owner workspace.
 - `lib/media-server.ts`: server-side owner authorization and persistent image APIs.
 - `lib/image-manager.html`: owner-only Manage Project Assets workflow shell.

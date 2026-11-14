@@ -5,7 +5,8 @@ import { siApple, siDotnet, siMui, siMoq, siOpenjdk, siPostgresql, siSpotify, si
 // transpiler or JSX dependency is needed for this build-time-only module.
 import { renderDependencyGroup } from "./auralogbook-dependencies.mts";
 import { applySocialMetadata, renderRobots, renderSitemap } from "./site-metadata.mjs";
-import { applyProjectPageMetadata, HOME_PROJECT_SLUGS, PORTFOLIO_POSTS, PROJECTS, renderProjectCard } from "./project-catalog.mts";
+import { HOME_PROJECT_SLUGS, PORTFOLIO_POSTS, PROJECTS, renderProjectCard } from "./project-catalog.mts";
+import { renderCaseStudyPages } from "./render-case-studies.mjs";
 import { applySiteRedesign } from "./site-redesign.mjs";
 
 const source = path.resolve("static-source");
@@ -202,9 +203,6 @@ async function visit(directory) {
     for (const route of baseRoute === "/" ? ["/", "/portfolio/"] : [baseRoute]) {
     let text = await readFile(file, "utf8");
 
-    const project = PROJECTS[route.split("/").filter(Boolean).at(-1) ?? ""];
-    if (project) text = applyProjectPageMetadata(text, project);
-
     if (route === "/" || route === "/portfolio/" || route === "/portfolio/projects/") {
       const projects = route === "/" || route === "/portfolio/"
         ? HOME_PROJECT_SLUGS.map((slug) => PROJECTS[slug])
@@ -230,99 +228,66 @@ async function visit(directory) {
       }
     }
 
-    // Keep the product name readable in user-facing portfolio copy while
-    // preserving AuraLogbook for technical identifiers and source links.
-    text = text
-      .replace(/>AuraLogbook</g, ">Aura Logbook<")
-      .replace(/Explore AuraLogbook/g, "Explore Aura Logbook")
-      .replace(/Next: AuraLogbook/g, "Next: Aura Logbook")
-      .replace(/AuraLogbook is/g, "Aura Logbook is")
-      .replace(/<title>AuraLogbook ·/g, "<title>Aura Logbook ·");
-
-    if (route === "/portfolio/projects/auralogbook/") {
-      const architecture = await readFile(
-        path.join(directory, "architecture.html"),
-        "utf8",
-      );
-      const schemas = await readFile(
-        path.join(directory, "schemas.html"),
-        "utf8",
-      );
-      text = text.replace(
-        '<div id="auralogbook-architecture-slot"></div>',
-        `${architecture}${schemas}`,
-      );
-      text = text.replace(
-        /<div data-dependency-group="([a-zA-Z0-9-]+)"><\/div>/g,
-        (_match, groupId) => renderDependencyGroup(groupId),
-      );
-      if (text.includes("data-dependency-group=")) {
-        throw new Error("An AuraLogbook dependency group was not rendered.");
-      }
-    }
-
-    if (route === "/portfolio/projects/75-hard-automation/") {
-      text = text.replace(
-        /<div data-dependency-group="([a-zA-Z0-9-]+)"><\/div>/g,
-        (_match, groupId) => renderDependencyGroup(groupId),
-      );
-    }
-
-    if (
-      route === "/portfolio/projects/hair-log/" ||
-      route === "/portfolio/projects/75-hard-automation/"
-    ) {
-      const slug = route.split("/").filter(Boolean).at(-1);
-      const responsibilities = await readFile(
-        path.join(source, "portfolio", "projects", slug, "responsibilities.html"),
-        "utf8",
-      );
-      const sectionStart = text.indexOf('<section id="dependencies">');
-      const sectionEnd = text.indexOf("</section>", sectionStart);
-      if (sectionStart < 0 || sectionEnd < 0) {
-        throw new Error(`Missing dependencies section in ${route}`);
-      }
-      text =
-        text.slice(0, sectionStart) +
-        responsibilities +
-        text.slice(sectionEnd + "</section>".length);
-    }
-
-    if (route.startsWith("/portfolio/projects/") && route !== "/portfolio/projects/") {
-      const slug = route.split("/").filter(Boolean).at(-1);
-      text = text.replace(
-        '<nav class="next-project"',
-        `<section data-project-gallery="${slug}" hidden></section><nav class="next-project"`,
-      );
-      text = text.replace(
-        "</body>",
-        '<script src="/assets/gallery.js" defer></script></body>',
-      );
-    }
-
-    if (text.includes('<nav aria-label="Footer navigation">')) {
-      text = text.replace(
-        '<nav aria-label="Footer navigation">',
-        // Keep the owner tools and public Wiki reachable from every generated portfolio footer.
-        '<nav aria-label="Footer navigation"><a href="/admin/">Admin</a><a href="/knowledge/">Dev Wiki</a>',
-      );
-    }
-
-    // Every page except the social-profile home gets the shared redesign shell (#131).
-    text = applySiteRedesign(text, route);
-
-    // Social previews run last so they read the final title and description.
-    text = applySocialMetadata(text, route);
-
-    // Theme boot + toggle for static pages; it must run in <head> so a stored choice applies before paint.
-    if (!text.includes("/assets/theme.js")) text = text.replace("</head>", '<script src="/assets/theme.js"></script></head>');
-
-    pages[route] = text;
+    finalizePage(route, text);
     }
   }
 }
 
+/**
+ * Applies the transforms every generated page shares, then registers it.
+ * Case study pages arrive here already rendered from React components, so
+ * only shared-shell, dependency-group, metadata, and theme work happens here.
+ *
+ * @param {string} route Route the page is served at.
+ * @param {string} html Page HTML before the shared transforms.
+ */
+function finalizePage(route, html) {
+  let text = html;
+
+  // Keep the product name readable in user-facing portfolio copy while
+  // preserving AuraLogbook for technical identifiers and source links.
+  text = text
+    .replace(/>AuraLogbook</g, ">Aura Logbook<")
+    .replace(/Explore AuraLogbook/g, "Explore Aura Logbook")
+    .replace(/Next: AuraLogbook/g, "Next: Aura Logbook")
+    .replace(/AuraLogbook is/g, "Aura Logbook is")
+    .replace(/<title>AuraLogbook ·/g, "<title>Aura Logbook ·");
+
+  // Dependency-group slots (Aura Logbook and 75 Days of Discipline) expand into technology badges.
+  text = text.replace(
+    /<div data-dependency-group="([a-zA-Z0-9-]+)"><\/div>/g,
+    (_match, groupId) => renderDependencyGroup(groupId),
+  );
+  if (text.includes("data-dependency-group=")) {
+    throw new Error(`A dependency group was not rendered in ${route}.`);
+  }
+
+  if (text.includes('<nav aria-label="Footer navigation">')) {
+    text = text.replace(
+      '<nav aria-label="Footer navigation">',
+      // Keep the owner tools and public Wiki reachable from every generated portfolio footer.
+      '<nav aria-label="Footer navigation"><a href="/admin/">Admin</a><a href="/knowledge/">Dev Wiki</a>',
+    );
+  }
+
+  // Every page except the social-profile home gets the shared redesign shell (#131).
+  text = applySiteRedesign(text, route);
+
+  // Social previews run last so they read the final title and description.
+  text = applySocialMetadata(text, route);
+
+  // Theme boot + toggle for static pages; it must run in <head> so a stored choice applies before paint.
+  if (!text.includes("/assets/theme.js")) text = text.replace("</head>", '<script src="/assets/theme.js"></script></head>');
+
+  pages[route] = text;
+}
+
 await visit(source);
+// Case studies are React components (components/case-studies/, #132), rendered to static HTML here.
+for (const [route, html] of await renderCaseStudyPages(PROJECTS)) {
+  if (pages[route]) throw new Error(`${route} has both a static-source page and a case study component.`);
+  finalizePage(route, html);
+}
 await writeFile("lib/static-pages.json", JSON.stringify(pages));
 // The owner asset manager lists these step titles so an upload can target a walkthrough step.
 const walkthroughSteps = Object.fromEntries(GRID_POSTS.filter((post) => post.walkthrough?.length).map((post) => [post.slug, post.walkthrough.map((step) => step.title)]));

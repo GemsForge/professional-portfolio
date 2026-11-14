@@ -80,9 +80,10 @@ test("projects index renders the featured band, filters, and filterable cards", 
 
 test("case study leads with a pausable story carousel and keeps its evidence", () => {
   const html = pages["/portfolio/projects/auralogbook/"];
-  assert.match(html, /<section class="rd-hero">[\s\S]*?<h1>Aura Logbook<\/h1>[\s\S]*?data-story aria-roledescription="carousel"/);
-  assert.equal((html.match(/data-story-slide /g) ?? []).length, 4);
-  assert.match(html, /data-story-toggle hidden>Pause<\/button>/);
+  // The page is rendered from React (#132), which serializes valueless attributes as `=""`.
+  assert.match(html, /<section class="rd-hero">[\s\S]*?<h1>Aura Logbook<\/h1>[\s\S]*?data-story(?:="")? aria-roledescription="carousel"/);
+  assert.equal((html.match(/data-story-slide(?:="")? /g) ?? []).length, 4);
+  assert.match(html, /data-story-toggle(?:="")? hidden(?:="")?>Pause<\/button>/);
   assert.match(html, /class="rd-stats"/);
   for (const id of ["problem", "implementation", "architecture", "screens", "journey", "evidence"]) {
     assert.match(html, new RegExp(`<section id="${id}"`), `missing case-study section ${id}`);
