@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { ProjectDefinition } from "../../scripts/project-catalog.mts";
+import type { ProjectDefinition, PROJECTS } from "../../scripts/project-catalog.mts";
 
 /**
  * Shared building blocks for the portfolio case study pages (#132).
@@ -15,8 +15,8 @@ import type { ProjectDefinition } from "../../scripts/project-catalog.mts";
  * this folder on its own and resolves the emitted relative imports as-is.
  */
 
-/** Canonical origin for case study URLs; matches `SITE_ORIGIN` in scripts/site-metadata.mjs. */
-const SITE_ORIGIN = "https://www.gemsforge.com";
+/** A catalog project slug; type checking rejects misspelled navigation targets. */
+export type ProjectSlug = keyof typeof PROJECTS;
 
 /** Catalog data every case study page receives from scripts/project-catalog.mts. */
 export interface CaseStudyProps {
@@ -47,7 +47,8 @@ interface CaseStudyDocumentProps {
  *
  * The empty <header> and <footer> are placeholders: `applySiteRedesign` swaps
  * them for the shared top bar and footer so navigation cannot drift between
- * pages. The title always comes from the catalog project name.
+ * pages. The title always comes from the catalog project name; the canonical
+ * link is added from the route by `applySocialMetadata` (scripts/site-metadata.mjs).
  */
 export function CaseStudyDocument({
   project,
@@ -67,7 +68,6 @@ export function CaseStudyDocument({
         <meta name="theme-color" content="#1e2823" />
         <title>{`${project.name} · Diamond Brown`}</title>
         <link rel="icon" type="image/png" href="/assets/brandmark.png" />
-        <link rel="canonical" href={`${SITE_ORIGIN}/portfolio/projects/${project.slug}/`} />
         {[siteStylesheet, ...stylesheets].map((href) => (
           <link key={href} rel="stylesheet" href={href} />
         ))}
@@ -145,9 +145,9 @@ interface ProjectSequenceNavProps {
   /** Slug of the current page; names its owner-managed gallery slot. */
   slug: string;
   /** Renders "← All projects / Next: <name> →". */
-  next?: string;
+  next?: ProjectSlug;
   /** Renders "← <name> / All projects →" when the page links backwards instead. */
-  previous?: string;
+  previous?: ProjectSlug;
 }
 
 /**
@@ -157,6 +157,9 @@ interface ProjectSequenceNavProps {
  */
 export function ProjectSequenceNav({ projects, slug, next, previous }: ProjectSequenceNavProps) {
   const allProjects = "/portfolio/projects/";
+  for (const target of [next, previous]) {
+    if (target && !projects[target]) throw new Error(`${slug} links to unknown project "${target}".`);
+  }
   return (
     <>
       <section data-project-gallery={slug} hidden />

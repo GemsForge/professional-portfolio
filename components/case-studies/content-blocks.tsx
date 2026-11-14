@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { Fragment, type ReactNode } from "react";
 import type { ArchitectureContent, Block, Fact, ImageContent, Inline, Section } from "../../content/case-studies/types.ts";
 import { parseInline, type InlineNode } from "./inline-markup.ts";
 
@@ -36,7 +36,8 @@ export function ContentImage({ image }: { image: ImageContent }) {
   return <img src={image.src} alt={image.alt} width={image.width} height={image.height} loading={image.loading} />;
 }
 
-function FactList({ facts, className }: { facts: Fact[]; className?: string }) {
+/** Renders facts as a `<dl>`; shared by schema cards and the Aura snapshot. */
+export function FactList({ facts, className }: { facts: Fact[]; className?: string }) {
   return (
     <dl className={className}>
       {facts.map((fact, index) => (
@@ -186,9 +187,6 @@ export function ContentBlocks({ blocks }: { blocks: Block[] }) {
   return <>{blocks.map((block, index) => <ContentBlock key={index} block={block} />)}</>;
 }
 
-/** Shared fact list for snapshot-style summaries. */
-export { FactList };
-
 /**
  * Architecture diagram with an enlarge dialog. `/assets/architecture-diagram.js`
  * wires the zoom buttons, the clickable image, and the dialog by these classes.
@@ -264,7 +262,7 @@ export function CaseStudySection({ section }: { section: Section }) {
 
 interface CaseStudyArticleProps {
   sections: Section[];
-  /** Extra content rendered right after the section with the given id. */
+  /** Extra content rendered right after the section with the given id; an unknown id fails the build. */
   afterSection?: Record<string, ReactNode>;
   /** Closing content inside the article, typically ProjectSequenceNav. */
   children?: ReactNode;
@@ -275,6 +273,9 @@ interface CaseStudyArticleProps {
  * each section's `nav` label, and the article with every section in order.
  */
 export function CaseStudyArticle({ sections, afterSection = {}, children }: CaseStudyArticleProps) {
+  // A misspelled id would otherwise drop the extra content (e.g. the Aura image dialog) without an error.
+  const unknownIds = Object.keys(afterSection).filter((id) => !sections.some((section) => section.id === id));
+  if (unknownIds.length) throw new Error(`afterSection names unknown section id(s): ${unknownIds.join(", ")}`);
   return (
     <div className="case-layout">
       <aside className="case-nav">
@@ -287,19 +288,13 @@ export function CaseStudyArticle({ sections, afterSection = {}, children }: Case
       </aside>
       <article className="case-content">
         {sections.map((section) => (
-          <SectionWithExtras key={section.id} section={section} extra={afterSection[section.id]} />
+          <Fragment key={section.id}>
+            <CaseStudySection section={section} />
+            {afterSection[section.id]}
+          </Fragment>
         ))}
         {children}
       </article>
     </div>
-  );
-}
-
-function SectionWithExtras({ section, extra }: { section: Section; extra?: ReactNode }) {
-  return (
-    <>
-      <CaseStudySection section={section} />
-      {extra}
-    </>
   );
 }

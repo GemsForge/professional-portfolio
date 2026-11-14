@@ -228,6 +228,16 @@ async function visit(directory) {
       }
     }
 
+    // Keep the product name readable in static-source copy while preserving
+    // AuraLogbook for technical identifiers and source links. Case study
+    // content files already use the display name, so they are not rewritten.
+    text = text
+      .replace(/>AuraLogbook</g, ">Aura Logbook<")
+      .replace(/Explore AuraLogbook/g, "Explore Aura Logbook")
+      .replace(/Next: AuraLogbook/g, "Next: Aura Logbook")
+      .replace(/AuraLogbook is/g, "Aura Logbook is")
+      .replace(/<title>AuraLogbook ·/g, "<title>Aura Logbook ·");
+
     finalizePage(route, text);
     }
   }
@@ -236,22 +246,13 @@ async function visit(directory) {
 /**
  * Applies the transforms every generated page shares, then registers it.
  * Case study pages arrive here already rendered from React components, so
- * only shared-shell, dependency-group, metadata, and theme work happens here.
+ * only dependency-group, shared-shell, metadata, and theme work happens here.
  *
  * @param {string} route Route the page is served at.
  * @param {string} html Page HTML before the shared transforms.
  */
 function finalizePage(route, html) {
   let text = html;
-
-  // Keep the product name readable in user-facing portfolio copy while
-  // preserving AuraLogbook for technical identifiers and source links.
-  text = text
-    .replace(/>AuraLogbook</g, ">Aura Logbook<")
-    .replace(/Explore AuraLogbook/g, "Explore Aura Logbook")
-    .replace(/Next: AuraLogbook/g, "Next: Aura Logbook")
-    .replace(/AuraLogbook is/g, "Aura Logbook is")
-    .replace(/<title>AuraLogbook ·/g, "<title>Aura Logbook ·");
 
   // Dependency-group slots (Aura Logbook and 75 Days of Discipline) expand into technology badges.
   text = text.replace(

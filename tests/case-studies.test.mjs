@@ -85,3 +85,26 @@ test("every case study has a content file and components hold no page prose", as
     assert.doesNotMatch(component, /<p>[A-Z][^<{]{20,}/, `${slug} component still hard-codes a paragraph`);
   }
 });
+
+test("the build's case study compile step rejects mistyped content with its location", async () => {
+  const { mkdir, mkdtemp, rm, writeFile } = await import("node:fs/promises");
+  const path = await import("node:path");
+  const { compileCaseStudies } = await import("../scripts/render-case-studies.mjs");
+  // Inside the repo so the relative import resolves like a real content file's.
+  await mkdir("node_modules/.cache", { recursive: true });
+  const dir = await mkdtemp(path.resolve("node_modules/.cache/case-study-content-"));
+  const types = path.relative(dir, path.resolve("content/case-studies/types.ts"));
+  const write = async (name, block) => {
+    const file = path.join(dir, name);
+    await writeFile(file, `import type { CaseStudyContent } from ${JSON.stringify(types)};\nexport const content: CaseStudyContent = { description: "", sections: [{ id: "a", title: "A", blocks: [${block}] }] };\n`);
+    return file;
+  };
+  try {
+    // A valid file type-checks; a misspelled block type fails instead of rendering nothing.
+    compileCaseStudies([await write("valid.ts", '"A paragraph."')]);
+    const bad = await write("bad.ts", '{ type: "paragrph", text: "lost" }');
+    assert.throws(() => compileCaseStudies([bad]), /bad\.ts\(\d+,\d+\): error TS2820/);
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});

@@ -62,12 +62,10 @@ function parseUntil(source: string, start: number, stop: "**" | "*" | "]" | null
       i = end + marker.length;
     } else if (char === "[") {
       const [children, end] = parseUntil(source, i + 1, "]");
-      const target = /^\]\(([^\s)]+)(?: +([^\s)]+))?\)/.exec(source.slice(end));
-      if (!target) throw new Error(`Malformed link in: ${source}`);
-      if (target[2] !== undefined && target[2] !== NEW_TAB) throw new Error(`Unknown link option "${target[2]}" in: ${source}`);
+      const target = parseLinkTarget(source, end);
       flush();
-      nodes.push({ kind: "link", href: target[1], newTab: target[2] === NEW_TAB, children });
-      i = end + target[0].length;
+      nodes.push({ kind: "link", href: target.href, newTab: target.newTab, children });
+      i = target.end;
     } else {
       text += char;
       i += 1;
@@ -76,4 +74,29 @@ function parseUntil(source: string, start: number, stop: "**" | "*" | "]" | null
   if (stop) throw new Error(`Unclosed ${stop === "]" ? "[" : stop} in: ${source}`);
   flush();
   return [nodes, i];
+}
+
+/**
+ * Reads `](url)` or `](url new-tab)` starting at `start` (the closing `]`).
+ * Balanced parentheses stay part of the URL, so links such as
+ * `https://en.wikipedia.org/wiki/Shortcuts_(Apple)` work without escaping.
+ *
+ * @returns The URL, whether it opens in a new tab, and the index after `)`.
+ */
+function parseLinkTarget(source: string, start: number): { href: string; newTab: boolean; end: number } {
+  if (!source.startsWith("](", start)) throw new Error(`Malformed link in: ${source}`);
+  let i = start + 2;
+  let depth = 0;
+  let href = "";
+  while (i < source.length && !/\s/.test(source[i]) && !(source[i] === ")" && depth === 0)) {
+    if (source[i] === "(") depth += 1;
+    if (source[i] === ")") depth -= 1;
+    href += source[i];
+    i += 1;
+  }
+  const option = /^ +([^\s)]+)/.exec(source.slice(i));
+  if (option) i += option[0].length;
+  if (!href || source[i] !== ")") throw new Error(`Malformed link in: ${source}`);
+  if (option && option[1] !== NEW_TAB) throw new Error(`Unknown link option "${option[1]}" in: ${source}`);
+  return { href, newTab: Boolean(option), end: i + 1 };
 }

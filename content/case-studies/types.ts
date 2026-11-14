@@ -151,6 +151,13 @@ export interface CaseStudyContent {
   sections: Section[];
 }
 
+/** One phone screen in the Aura Logbook story carousel. */
+export interface StorySlide {
+  image: ImageContent;
+  title: string;
+  detail: string;
+}
+
 /** Aura Logbook adds a story hero, a snapshot, and an image dialog to the standard page. */
 export interface AuralogbookContent extends CaseStudyContent {
   hero: {
@@ -162,7 +169,8 @@ export interface AuralogbookContent extends CaseStudyContent {
   };
   story: {
     label: string;
-    slides: { image: ImageContent; title: string; detail: string }[];
+    /** At least one slide; the first is shown before the carousel script runs. */
+    slides: [StorySlide, ...StorySlide[]];
   };
   snapshot: {
     title: string;
