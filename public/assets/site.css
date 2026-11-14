@@ -418,6 +418,9 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var
 .case-project-actions{margin-top:20px}
 .case-project-actions .button{white-space:nowrap}
 .project-boundary{padding:13px 16px;border-left:3px solid var(--forest);background:rgba(228,232,219,.62)}
+/* Dark theme: a dark surface keeps the muted boundary note above 4.5:1 (WCAG 1.4.3). */
+:root[data-theme="dark"] .project-boundary{background:var(--surface-2)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .project-boundary{background:var(--surface-2)}}
 .engineering-highlights{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 32px;margin-top:4px}
 .engineering-highlights article{padding:14px 0 18px;border-top:1px solid rgba(41,77,56,.2)}
 .case-content .engineering-highlights h3{margin:0 0 7px;font-size:18px}

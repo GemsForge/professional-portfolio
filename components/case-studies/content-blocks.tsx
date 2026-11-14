@@ -85,7 +85,12 @@ export function ContentBlock({ block }: { block: Block }): ReactNode {
       );
     }
     case "code":
-      return <pre className="code"><code>{block.code}</code></pre>;
+      // Code scrolls sideways on phones; a named, focusable region lets keyboard users scroll it (WCAG 2.1.1).
+      return (
+        <pre className="code" role="region" tabIndex={0} aria-label={block.label ?? "Code example"}>
+          <code>{block.code}</code>
+        </pre>
+      );
     case "note": {
       const children = <ContentBlocks blocks={block.blocks} />;
       const className = block.className ?? "note";
@@ -193,6 +198,9 @@ export function ContentBlocks({ blocks }: { blocks: Block[] }) {
  */
 export function ArchitectureFigure({ id, content }: { id: string; content: ArchitectureContent }) {
   const techListId = content.techList ? `${id}-tech-list` : undefined;
+  // The image's accessible name is the zoom action, which would hide its alt text from
+  // screen readers, so the diagram description is also exposed as an accessible description (WCAG 1.1.1).
+  const descriptionId = `${id}-description`;
   return (
     <section id={id} className="architecture architecture-component" aria-label={content.ariaLabel}>
       {content.title ? <h2><RichText text={content.title} /></h2> : null}
@@ -209,7 +217,7 @@ export function ArchitectureFigure({ id, content }: { id: string; content: Archi
           className="architecture-image"
           src={content.image.src}
           alt={content.image.alt}
-          aria-describedby={techListId}
+          aria-describedby={[descriptionId, techListId].filter(Boolean).join(" ")}
           width={content.image.width}
           height={content.image.height}
           loading="lazy"
@@ -218,6 +226,7 @@ export function ArchitectureFigure({ id, content }: { id: string; content: Archi
           aria-haspopup="dialog"
           aria-label={content.imageLabel}
         />
+        <p className="sr-only" id={descriptionId}>{content.image.alt}</p>
         {content.techList ? (
           <ul className="sr-only" id={techListId} aria-label="Technology dependency labels">
             {content.techList.map((item, index) => <li key={index}>{item}</li>)}

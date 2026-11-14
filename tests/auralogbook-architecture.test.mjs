@@ -42,7 +42,7 @@ test("AuraLogbook page includes one accessible data-to-API-to-UI architecture di
   assert.match(page, /aria-label="Click to zoom the Aura Logbook architecture diagram"/);
   assert.match(page, /id="architecture-dialog"/);
   assert.match(page, /class="architecture-zoom-area"/);
-  assert.match(page, /aria-describedby="architecture-tech-list"/);
+  assert.match(page, /aria-describedby="architecture-description architecture-tech-list"/);
   assert.match(page, /id="data-sources"/);
   assert.match(page, /src="\/assets\/auralogbook-tour\/aura-logbook-approved\.webp" alt=""/);
   assert.equal((page.match(/data-aura-image-trigger/g) ?? []).length, 10, "the hero and nine screen captures open in the closer-look dialog");

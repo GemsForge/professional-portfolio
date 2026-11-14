@@ -51,8 +51,11 @@ export type Block =
    * named region; the first cell of each row is its row header.
    */
   | { type: "table"; label?: string; caption?: Inline; columns: Inline[]; rows: Inline[][] }
-  /** Preformatted code; whitespace is kept exactly. */
-  | { type: "code"; code: string }
+  /**
+   * Preformatted code; whitespace is kept exactly. It renders as a focusable,
+   * named region so keyboard users can scroll it; `label` defaults to "Code example".
+   */
+  | { type: "code"; code: string; label?: string }
   /** A callout box; `aside` renders it as complementary content. */
   | { type: "note"; blocks: Block[]; aside?: boolean; className?: string }
   | { type: "figure"; image: ImageContent; caption: Inline }
