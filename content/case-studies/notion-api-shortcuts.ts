@@ -4,7 +4,7 @@ import type { CaseStudyContent } from "./types.ts";
  * Words on the notion-api-shortcuts case study (/portfolio/projects/notion-api-shortcuts/).
  * Edit text here; layout lives in components/case-studies/notion-api-shortcuts.tsx and the
  * project name, pre-title, lead, and banner image live in scripts/project-catalog.mts.
- * Inline formatting: **bold**, *emphasis*, `code`, [label](url), [label](url "new-tab").
+ * Inline formatting: **bold**, *emphasis*, `code`, [label](url), [label](url new-tab).
  */
 export const notionApiShortcutsContent: CaseStudyContent = {
   description: "Reducing repetitive setup for service-account pages and databases in Notion—while keeping the custom icons, banners, and structure I wanted.",
@@ -25,7 +25,7 @@ export const notionApiShortcutsContent: CaseStudyContent = {
       blocks: [
         "I separated recurring work into 14 Shortcuts: URL intake and ID extraction, authentication preparation, database and page operations, and reusable property formatters. The design favors reusable components and standardized inputs instead of one-off workflows for each task.",
         { type: "heading", level: 3, text: "From a shared link to an API target" },
-        "The parsing feeds the identifiers used by the [Notion API](https://developers.notion.com/reference/intro \"new-tab\"); the workflow separates link normalization from the schema-specific request payload.",
+        "The parsing feeds the identifiers used by the [Notion API](https://developers.notion.com/reference/intro new-tab); the workflow separates link normalization from the schema-specific request payload.",
         "**Get DB or Page ID** accepts Apps and URLs through the Share Sheet, then branches between page and database share links. The page path splits on hyphens and takes the final segment; the database path splits on `gemsforge/` and takes the second item. A replacement step removes query-string content.",
         "This makes shared links usable as API targets without manually copying identifiers. The parsing is tailored to the URL formats used in this implementation.",
         { type: "heading", level: 3, text: "Reuse authentication preparation" },
@@ -115,7 +115,7 @@ export const notionApiShortcutsContent: CaseStudyContent = {
         },
         "**Format Multi Select Property W/Color** initializes an array, loops through selected values, extracts each name, checks for a color, calls **Get Color** when needed, and builds the final JSON-ready objects.",
         { type: "heading", level: 4, text: "Other typed mappings" },
-        "These dictionaries follow Notion’s [property object schema](https://developers.notion.com/reference/property-object \"new-tab\"), which I used as the reference while designing the Shortcut mappings.",
+        "These dictionaries follow Notion’s [property object schema](https://developers.notion.com/reference/property-object new-tab), which I used as the reference while designing the Shortcut mappings.",
         {
           type: "code",
           code: `// Select

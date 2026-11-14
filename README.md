@@ -27,7 +27,7 @@ list of `sections`. Each section has an `id`, an optional `nav` label for the
 paragraph; other blocks (lists, tables, code, notes, figures) use the shapes in
 `content/case-studies/types.ts`, which TypeScript checks during the build.
 Inline text supports `**bold**`, `*emphasis*`, `` `code` ``, `[label](url)`,
-and `[label](url "new-tab")`. Run `npm run build` (or
+and `[label](url new-tab)`. Run `npm run build` (or
 `node scripts/prepare-pages.mjs`) to regenerate the pages, then deploy.
 The project name, pre-title, lead, and banner image are shared with project
 cards and stay in `scripts/project-catalog.mts`.

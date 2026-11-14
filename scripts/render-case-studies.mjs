@@ -14,6 +14,36 @@ const SOURCE_DIRS = ["components/case-studies", "content/case-studies"];
 /** Build cache for the transpiled modules; inside the repo so `react` resolves from node_modules. */
 const OUT_DIR = path.resolve("node_modules/.cache/case-studies");
 
+/** Formats diagnostics as `path(line,col): error TSxxxx: message`, relative to the repo. */
+function formatDiagnostics(diagnostics) {
+  return ts.formatDiagnostics(diagnostics, {
+    getCanonicalFileName: (fileName) => fileName,
+    getCurrentDirectory: () => process.cwd(),
+    getNewLine: () => "\n",
+  });
+}
+
+/**
+ * Type-checks the case study components and content with the project's
+ * tsconfig before rendering. Transpiling alone strips types, so without this a
+ * mistyped field (e.g. `type: "paragrph"`) would build and silently drop text.
+ *
+ * @throws With every diagnostic and its file location when any check fails.
+ */
+async function typeCheckCaseStudies() {
+  const configPath = ts.findConfigFile(process.cwd(), ts.sys.fileExists, "tsconfig.json");
+  const { config, error } = ts.readConfigFile(configPath, ts.sys.readFile);
+  if (error) throw new Error(formatDiagnostics([error]));
+  const { options } = ts.parseJsonConfigFileContent(config, ts.sys, path.dirname(configPath));
+  const rootNames = [];
+  for (const dir of SOURCE_DIRS) {
+    for (const name of await readdir(dir)) if (/\.tsx?$/.test(name)) rootNames.push(path.resolve(dir, name));
+  }
+  const program = ts.createProgram({ rootNames, options: { ...options, noEmit: true, incremental: false } });
+  const diagnostics = ts.getPreEmitDiagnostics(program);
+  if (diagnostics.length) throw new Error(`Case study content or components failed type checking:\n${formatDiagnostics(diagnostics)}`);
+}
+
 /**
  * Transpiles the case study components and content to ES modules with
  * TypeScript's single-file transpiler. No bundler or JSX loader is involved,
@@ -30,7 +60,7 @@ async function transpileCaseStudies() {
       if (!/\.tsx?$/.test(name)) continue;
       const source = await readFile(path.join(dir, name), "utf8");
       const { outputText, diagnostics } = ts.transpileModule(source, {
-        fileName: name,
+        fileName: path.join(dir, name),
         reportDiagnostics: true,
         compilerOptions: {
           module: ts.ModuleKind.ESNext,
@@ -41,7 +71,7 @@ async function transpileCaseStudies() {
         },
       });
       if (diagnostics?.length) {
-        throw new Error(`Cannot transpile ${name}: ${ts.flattenDiagnosticMessageText(diagnostics[0].messageText, "\n")}`);
+        throw new Error(`Cannot transpile ${path.join(dir, name)}:\n${formatDiagnostics(diagnostics)}`);
       }
       await writeFile(path.join(OUT_DIR, dir, name.replace(/\.tsx?$/, ".js")), outputText);
     }
@@ -49,12 +79,14 @@ async function transpileCaseStudies() {
 }
 
 /**
- * Renders every registered case study to a complete HTML document.
+ * Renders every registered case study to a complete HTML document, after
+ * type-checking the components and content.
  *
  * @param {Record<string, import("./project-catalog.mts").ProjectDefinition>} projects Catalog projects keyed by slug.
  * @returns {Promise<Map<string, string>>} Document HTML keyed by route, e.g. `/portfolio/projects/dev-wiki/`.
  */
 export async function renderCaseStudyPages(projects) {
+  await typeCheckCaseStudies();
   await transpileCaseStudies();
   const { CASE_STUDIES } = await import(pathToFileURL(path.join(OUT_DIR, "components/case-studies/index.js")).href);
   const pages = new Map();

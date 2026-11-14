@@ -12,7 +12,7 @@
 /**
  * Inline text with a small Markdown subset, rendered without raw HTML:
  * `**bold**`, `*emphasis*`, `` `code` ``, `[label](url)`, and
- * `[label](url "new-tab")` for links that open in a new tab.
+ * `[label](url new-tab)` for links that open in a new tab.
  * Escape a literal `*`, `` ` ``, `[`, `]`, or `\` with a backslash.
  * An unclosed marker fails the build.
  */

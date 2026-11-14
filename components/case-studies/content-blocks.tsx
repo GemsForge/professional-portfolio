@@ -173,6 +173,11 @@ export function ContentBlock({ block }: { block: Block }): ReactNode {
           )}
         </div>
       );
+    default: {
+      // Type checking rejects unknown block types; this guards content that slips past it.
+      const unknown: never = block;
+      throw new Error(`Unknown case study content block: ${JSON.stringify(unknown)}`);
+    }
   }
 }
 

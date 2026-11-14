@@ -10,13 +10,16 @@ export type InlineNode =
   | { kind: "code"; text: string }
   | { kind: "link"; href: string; newTab: boolean; children: InlineNode[] };
 
-/** Link title that marks a link to open in a new tab. */
+/**
+ * Option word after a link URL that opens it in a new tab: `[label](url new-tab)`.
+ * It needs no quotes, so it can be typed inside a double-quoted content string.
+ */
 const NEW_TAB = "new-tab";
 
 /**
  * Parses inline content.
  *
- * @param source Content string, e.g. `See **the** [docs](https://example.com "new-tab").`
+ * @param source Content string, e.g. `See **the** [docs](https://example.com new-tab).`
  * @returns Text and formatting nodes in reading order.
  * @throws When a marker is left open or a link is malformed, so bad content fails the build.
  */
@@ -59,7 +62,7 @@ function parseUntil(source: string, start: number, stop: "**" | "*" | "]" | null
       i = end + marker.length;
     } else if (char === "[") {
       const [children, end] = parseUntil(source, i + 1, "]");
-      const target = /^\]\(([^\s)]+)(?: "([^"]*)")?\)/.exec(source.slice(end));
+      const target = /^\]\(([^\s)]+)(?: +([^\s)]+))?\)/.exec(source.slice(end));
       if (!target) throw new Error(`Malformed link in: ${source}`);
       if (target[2] !== undefined && target[2] !== NEW_TAB) throw new Error(`Unknown link option "${target[2]}" in: ${source}`);
       flush();

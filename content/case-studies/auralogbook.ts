@@ -4,7 +4,7 @@ import type { AuralogbookContent } from "./types.ts";
  * Words on the auralogbook case study (/portfolio/projects/auralogbook/).
  * Edit text here; layout lives in components/case-studies/auralogbook.tsx and the
  * project name, pre-title, lead, and banner image live in scripts/project-catalog.mts.
- * Inline formatting: **bold**, *emphasis*, `code`, [label](url), [label](url "new-tab").
+ * Inline formatting: **bold**, *emphasis*, `code`, [label](url), [label](url new-tab).
  */
 export const auralogbookContent: AuralogbookContent = {
   description: "Full-stack Aura Logbook case study by Diamond Brown. Explore the React and TypeScript client, React Native shell, .NET API, SQLite data layer, architecture, and source code.",

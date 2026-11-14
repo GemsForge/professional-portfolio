@@ -4,7 +4,7 @@ import type { CaseStudyContent } from "./types.ts";
  * Words on the 75-hard-automation case study (/portfolio/projects/75-hard-automation/).
  * Edit text here; layout lives in components/case-studies/75-hard-automation.tsx and the
  * project name, pre-title, lead, and banner image live in scripts/project-catalog.mts.
- * Inline formatting: **bold**, *emphasis*, `code`, [label](url), [label](url "new-tab").
+ * Inline formatting: **bold**, *emphasis*, `code`, [label](url), [label](url new-tab).
  */
 export const seventyFiveHardAutomationContent: CaseStudyContent = {
   description: "A 13-Shortcut Apple and Notion system for practicing daily consistency through the 75 Soft Challenge and preparing for the Murph Challenge.",

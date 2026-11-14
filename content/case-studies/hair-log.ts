@@ -4,7 +4,7 @@ import type { CaseStudyContent } from "./types.ts";
  * Words on the hair-log case study (/portfolio/projects/hair-log/).
  * Edit text here; layout lives in components/case-studies/hair-log.tsx and the
  * project name, pre-title, lead, and banner image live in scripts/project-catalog.mts.
- * Inline formatting: **bold**, *emphasis*, `code`, [label](url), [label](url "new-tab").
+ * Inline formatting: **bold**, *emphasis*, `code`, [label](url), [label](url new-tab).
  */
 export const hairLogContent: CaseStudyContent = {
   description: "An 18-Shortcut hair-care tracking system using Apple Shortcuts, Apple Calendar, and the Notion API.",

@@ -4,7 +4,7 @@ import type { CaseStudyContent } from "./types.ts";
  * Words on the dev-wiki case study (/portfolio/projects/dev-wiki/).
  * Edit text here; layout lives in components/case-studies/dev-wiki.tsx and the
  * project name, pre-title, lead, and banner image live in scripts/project-catalog.mts.
- * Inline formatting: **bold**, *emphasis*, `code`, [label](url), [label](url "new-tab").
+ * Inline formatting: **bold**, *emphasis*, `code`, [label](url), [label](url new-tab).
  */
 export const devWikiContent: CaseStudyContent = {
   description: "GemsForge DevWiki — a personal technical knowledge base Diamond Brown built to centralize full-stack development patterns, best practices, and guides.",

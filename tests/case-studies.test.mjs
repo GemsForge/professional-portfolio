@@ -61,7 +61,7 @@ test("inline markup parses formatting and links without HTML", () => {
     " and ",
     { kind: "code", text: "code" },
   ]);
-  assert.deepEqual(parseInline('[Docs](https://example.com "new-tab") and [home](/)'), [
+  assert.deepEqual(parseInline("[Docs](https://example.com new-tab) and [home](/)"), [
     { kind: "link", href: "https://example.com", newTab: true, children: ["Docs"] },
     " and ",
     { kind: "link", href: "/", newTab: false, children: ["home"] },
@@ -70,7 +70,7 @@ test("inline markup parses formatting and links without HTML", () => {
 });
 
 test("inline markup rejects unclosed markers so bad content fails the build", () => {
-  for (const bad of ["**open", "*open", "`open", "[label](", "[label](/x \"unknown\")"]) {
+  for (const bad of ["**open", "*open", "`open", "[label](", "[label](/x unknown)"]) {
     assert.throws(() => parseInline(bad), undefined, bad);
   }
 });

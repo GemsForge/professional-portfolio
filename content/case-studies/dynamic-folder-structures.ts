@@ -4,7 +4,7 @@ import type { CaseStudyContent } from "./types.ts";
  * Words on the dynamic-folder-structures case study (/portfolio/projects/dynamic-folder-structures/).
  * Edit text here; layout lives in components/case-studies/dynamic-folder-structures.tsx and the
  * project name, pre-title, lead, and banner image live in scripts/project-catalog.mts.
- * Inline formatting: **bold**, *emphasis*, `code`, [label](url), [label](url "new-tab").
+ * Inline formatting: **bold**, *emphasis*, `code`, [label](url), [label](url new-tab).
  */
 export const dynamicFolderStructuresContent: CaseStudyContent = {
   description: "An interactive Apple Shortcut that creates a parent folder and a user-defined set of subfolders.",

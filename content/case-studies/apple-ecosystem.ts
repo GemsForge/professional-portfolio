@@ -4,7 +4,7 @@ import type { CaseStudyContent } from "./types.ts";
  * Words on the apple-ecosystem case study (/portfolio/projects/apple-ecosystem/).
  * Edit text here; layout lives in components/case-studies/apple-ecosystem.tsx and the
  * project name, pre-title, lead, and banner image live in scripts/project-catalog.mts.
- * Inline formatting: **bold**, *emphasis*, `code`, [label](url), [label](url "new-tab").
+ * Inline formatting: **bold**, *emphasis*, `code`, [label](url), [label](url new-tab).
  */
 export const appleEcosystemContent: CaseStudyContent = {
   description: "Redesigning a mixed productivity setup into a coordinated Apple-native system for knowledge, data, tasks, and automation.",
