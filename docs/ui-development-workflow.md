@@ -16,6 +16,32 @@ Gem Life UI architecture notes.
 - `scripts/` owns build, installation, and source-generation tooling.
 - `tests/` owns automated tests.
 
+## Rendering model
+
+Public portfolio pages are built once and served as finished HTML. This is a
+deliberate choice, not a limitation of the stack.
+
+- **Build time (`npm run build`, runs once):** `scripts/prepare-pages.mjs`
+  reads `static-source/` pages and renders the case study components in
+  `components/case-studies/` (via `scripts/render-case-studies.mjs`), applies
+  the shared shell and metadata, and writes the result to
+  `lib/static-pages.json`.
+- **Request time (every visitor):** `build/sites-worker.ts` looks up the route
+  in `lib/static-pages.json` and returns the stored HTML before any React route
+  runs. Small scripts in `public/assets/` add interactivity in the browser.
+
+Why: portfolio content changes only when the site is deployed, so rendering it
+once makes pages load faster, gives search engines finished HTML, and needs no
+API. A client-rendered app that calls a server for data on every visit (for
+example, Aura Logbook's React client with its .NET API) is the right choice
+when data changes per user or per request, such as a signed-in user's journal
+entries. Owner tools that do need live data (`/admin/`, the Dev Wiki) use the
+React routes in `app/` and the storage APIs in `lib/`.
+
+Files ending in `.mjs` are build-time Node scripts and tests, not server code.
+`.mts` files are TypeScript without JSX that Node runs directly by stripping
+types; `.tsx` files hold React components.
+
 ## Implementation sequence
 
 1. Identify the user-facing screen and its feature boundary.
