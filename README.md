@@ -6,7 +6,8 @@ Manage Project Assets: https://www.gemsforge.com/admin/
 ## Source
 
 - `static-source/`: editable HTML for the home, Projects index, About, Contact, and career pages, plus shared CSS/brand assets.
-- `components/case-studies/`: React/TypeScript case study pages (`/portfolio/projects/<slug>/`), one component per project with shared hero, document, and project-navigation primitives. Project name, pre-title, description, and banner image come from `scripts/project-catalog.mts`.
+- `content/case-studies/`: the words on each case study page (`/portfolio/projects/<slug>/`), one typed file per project. Edit text here; see "Editing case study content" below.
+- `components/case-studies/`: React/TypeScript layouts for the case study pages, built from shared document, hero, section, and project-navigation primitives. Project name, pre-title, description, and banner image come from `scripts/project-catalog.mts`.
 - `scripts/render-case-studies.mjs`: transpiles the case study components with TypeScript and renders them to static HTML at build time.
 - `scripts/prepare-pages.mjs`: generates the server's HTML map from both sources and applies the shared shell, metadata, and project gallery hooks.
 - `build/sites-worker.ts`: preserves Sites/Vinext hosting integration and serves the portfolio and owner workspace.
@@ -17,6 +18,19 @@ Manage Project Assets: https://www.gemsforge.com/admin/
 - `public/assets/image-manager.js`: owner image actions.
 - `public/assets/gallery.js`: public project galleries.
 - `tests/media.test.mjs`: authorization and draft/publish lifecycle tests.
+
+## Editing case study content
+
+Each case study's text lives in `content/case-studies/<slug>.ts` as an ordered
+list of `sections`. Each section has an `id`, an optional `nav` label for the
+"On this page" menu, a `title`, and `blocks`. A plain string block is a
+paragraph; other blocks (lists, tables, code, notes, figures) use the shapes in
+`content/case-studies/types.ts`, which TypeScript checks during the build.
+Inline text supports `**bold**`, `*emphasis*`, `` `code` ``, `[label](url)`,
+and `[label](url "new-tab")`. Run `npm run build` (or
+`node scripts/prepare-pages.mjs`) to regenerate the pages, then deploy.
+The project name, pre-title, lead, and banner image are shared with project
+cards and stay in `scripts/project-catalog.mts`.
 
 ## Image workflow
 

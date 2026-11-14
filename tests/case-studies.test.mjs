@@ -49,3 +49,39 @@ test("generated case studies carry catalog content and the shared shell", () => 
     assert.doesNotMatch(html, /data-dependency-group=/, `${project.slug} left a dependency slot unrendered`);
   }
 });
+
+/* Content files (#136): page text lives in content/case-studies/, not in components. */
+const { parseInline } = await import("../components/case-studies/inline-markup.ts");
+
+test("inline markup parses formatting and links without HTML", () => {
+  assert.deepEqual(parseInline("Plain text"), ["Plain text"]);
+  assert.deepEqual(parseInline("A **bold *nested* word** and `code`"), [
+    "A ",
+    { kind: "strong", children: ["bold ", { kind: "em", children: ["nested"] }, " word"] },
+    " and ",
+    { kind: "code", text: "code" },
+  ]);
+  assert.deepEqual(parseInline('[Docs](https://example.com "new-tab") and [home](/)'), [
+    { kind: "link", href: "https://example.com", newTab: true, children: ["Docs"] },
+    " and ",
+    { kind: "link", href: "/", newTab: false, children: ["home"] },
+  ]);
+  assert.deepEqual(parseInline("A literal \\* star"), ["A literal * star"]);
+});
+
+test("inline markup rejects unclosed markers so bad content fails the build", () => {
+  for (const bad of ["**open", "*open", "`open", "[label](", "[label](/x \"unknown\")"]) {
+    assert.throws(() => parseInline(bad), undefined, bad);
+  }
+});
+
+test("every case study has a content file and components hold no page prose", async () => {
+  for (const slug of Object.keys(PROJECTS)) {
+    const content = await readFile(`content/case-studies/${slug}.ts`, "utf8");
+    assert.match(content, /export const \w+Content: \w+Content = \{/, `${slug} content export`);
+    assert.doesNotMatch(content, /<\/?(p|strong|em|a|code|div|span)\b/, `${slug} content contains raw HTML`);
+    const component = await readFile(`components/case-studies/${slug}.tsx`, "utf8");
+    assert.match(component, new RegExp(`from "\\.\\./\\.\\./content/case-studies/${slug}\\.ts"`), `${slug} reads its content file`);
+    assert.doesNotMatch(component, /<p>[A-Z][^<{]{20,}/, `${slug} component still hard-codes a paragraph`);
+  }
+});
