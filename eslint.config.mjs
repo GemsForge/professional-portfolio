@@ -23,6 +23,17 @@ const eslintConfig = defineConfig([
       "react-hooks/set-state-in-effect": "off",
     },
   },
+  {
+    // Case studies are rendered to standalone static HTML at build time (#132),
+    // never mounted by the Next router, so next/link, next/image, and next/head
+    // do not apply; plain document elements are the intended output.
+    files: ["components/case-studies/**/*.{ts,tsx}"],
+    rules: {
+      "@next/next/no-html-link-for-pages": "off",
+      "@next/next/no-img-element": "off",
+      "@next/next/no-head-element": "off",
+    },
+  },
 ]);
 
 export default eslintConfig;

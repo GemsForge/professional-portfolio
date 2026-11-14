@@ -11,7 +11,8 @@ Gem Life UI architecture notes.
 - `hooks/` owns reusable client-side state and browser interaction logic.
 - `lib/` owns data access, server integration, validation, and non-visual helpers.
 - `public/` owns files served directly to the browser.
-- `static-source/` owns editable source pages and brand assets used by the site generator.
+- `components/case-studies/` owns the portfolio case study pages. They are React components rendered to static HTML at build time (`scripts/render-case-studies.mjs`), so they may import only `react`, sibling files with explicit `.tsx` extensions, and types from elsewhere; catalog data arrives as props.
+- `static-source/` owns the remaining editable HTML pages and brand assets used by the site generator.
 - `scripts/` owns build, installation, and source-generation tooling.
 - `tests/` owns automated tests.
 
