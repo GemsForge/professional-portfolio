@@ -11,7 +11,8 @@ Gem Life UI architecture notes.
 - `hooks/` owns reusable client-side state and browser interaction logic.
 - `lib/` owns data access, server integration, validation, and non-visual helpers.
 - `public/` owns files served directly to the browser.
-- `components/case-studies/` owns the portfolio case study pages. They are React components rendered to static HTML at build time (`scripts/render-case-studies.mjs`), so they may import only `react`, sibling files with explicit `.tsx` extensions, and types from elsewhere; catalog data arrives as props.
+- `content/case-studies/` owns the text of each case study as typed data (`types.ts` defines the shapes). It holds no markup; inline formatting uses the small Markdown subset documented in `types.ts`.
+- `components/case-studies/` owns the case study layouts. They are React components rendered to static HTML at build time (`scripts/render-case-studies.mjs`), so they may import only `react`, each other and `content/case-studies/` by relative path with explicit `.ts`/`.tsx` extensions, and types from elsewhere; catalog data arrives as props.
 - `static-source/` owns the remaining editable HTML pages and brand assets used by the site generator.
 - `scripts/` owns build, installation, and source-generation tooling.
 - `tests/` owns automated tests.

@@ -49,3 +49,62 @@ test("generated case studies carry catalog content and the shared shell", () => 
     assert.doesNotMatch(html, /data-dependency-group=/, `${project.slug} left a dependency slot unrendered`);
   }
 });
+
+/* Content files (#136): page text lives in content/case-studies/, not in components. */
+const { parseInline } = await import("../components/case-studies/inline-markup.ts");
+
+test("inline markup parses formatting and links without HTML", () => {
+  assert.deepEqual(parseInline("Plain text"), ["Plain text"]);
+  assert.deepEqual(parseInline("A **bold *nested* word** and `code`"), [
+    "A ",
+    { kind: "strong", children: ["bold ", { kind: "em", children: ["nested"] }, " word"] },
+    " and ",
+    { kind: "code", text: "code" },
+  ]);
+  assert.deepEqual(parseInline("[Docs](https://example.com new-tab) and [home](/)"), [
+    { kind: "link", href: "https://example.com", newTab: true, children: ["Docs"] },
+    " and ",
+    { kind: "link", href: "/", newTab: false, children: ["home"] },
+  ]);
+  assert.deepEqual(parseInline("A literal \\* star"), ["A literal * star"]);
+});
+
+test("inline markup rejects unclosed markers so bad content fails the build", () => {
+  for (const bad of ["**open", "*open", "`open", "[label](", "[label](/x unknown)"]) {
+    assert.throws(() => parseInline(bad), undefined, bad);
+  }
+});
+
+test("every case study has a content file and components hold no page prose", async () => {
+  for (const slug of Object.keys(PROJECTS)) {
+    const content = await readFile(`content/case-studies/${slug}.ts`, "utf8");
+    assert.match(content, /export const \w+Content: \w+Content = \{/, `${slug} content export`);
+    assert.doesNotMatch(content, /<\/?(p|strong|em|a|code|div|span)\b/, `${slug} content contains raw HTML`);
+    const component = await readFile(`components/case-studies/${slug}.tsx`, "utf8");
+    assert.match(component, new RegExp(`from "\\.\\./\\.\\./content/case-studies/${slug}\\.ts"`), `${slug} reads its content file`);
+    assert.doesNotMatch(component, /<p>[A-Z][^<{]{20,}/, `${slug} component still hard-codes a paragraph`);
+  }
+});
+
+test("the build's case study compile step rejects mistyped content with its location", async () => {
+  const { mkdir, mkdtemp, rm, writeFile } = await import("node:fs/promises");
+  const path = await import("node:path");
+  const { compileCaseStudies } = await import("../scripts/render-case-studies.mjs");
+  // Inside the repo so the relative import resolves like a real content file's.
+  await mkdir("node_modules/.cache", { recursive: true });
+  const dir = await mkdtemp(path.resolve("node_modules/.cache/case-study-content-"));
+  const types = path.relative(dir, path.resolve("content/case-studies/types.ts"));
+  const write = async (name, block) => {
+    const file = path.join(dir, name);
+    await writeFile(file, `import type { CaseStudyContent } from ${JSON.stringify(types)};\nexport const content: CaseStudyContent = { description: "", sections: [{ id: "a", title: "A", blocks: [${block}] }] };\n`);
+    return file;
+  };
+  try {
+    // A valid file type-checks; a misspelled block type fails instead of rendering nothing.
+    compileCaseStudies([await write("valid.ts", '"A paragraph."')]);
+    const bad = await write("bad.ts", '{ type: "paragrph", text: "lost" }');
+    assert.throws(() => compileCaseStudies([bad]), /bad\.ts\(\d+,\d+\): error TS2820/);
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});

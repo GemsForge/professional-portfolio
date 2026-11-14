@@ -17,7 +17,7 @@ test("Aura Logbook architecture identifies implemented SQLite and Dapper persist
   assert.match(svg, /aria-labelledby="title desc"/);
   assert.match(architecturePage, /SQLite persistence through Dapper repositories and versioned SQL migrations/);
   assert.match(architecturePage, /Open-Meteo REST API for contextual weather/);
-  assert.match(architecturePage, /aria-describedby="architecture-tech-list"/);
+  assert.match(architecturePage, /aria-describedby="architecture-description architecture-tech-list"/);
   assert.match(architecturePage, /id="architecture-tech-list"/);
   for (const technology of ["React and TypeScript", "React Native and Expo", "Material UI", "Redux Toolkit", "Axios", ".NET 9", "SQLite persistence", "Open-Meteo"]) {
     assert.ok(architecturePage.includes(technology), `missing accessible dependency label: ${technology}`);

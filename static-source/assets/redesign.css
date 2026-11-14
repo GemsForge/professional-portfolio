@@ -23,6 +23,8 @@ body.rd{
 :root[data-theme="dark"] body.rd{--rd-bg:#121915;--rd-surface:#1b241f;--rd-ink:#e8e5da;--rd-muted:#a3b1a7;--rd-line:#2c3832;--rd-sage-soft:#28352e;--rd-gold-ink:#e3c48a;--rd-shadow:0 18px 45px rgba(0,0,0,.35)}
 body.rd h1,body.rd h2,body.rd h3{font-family:var(--rd-display);text-wrap:balance}
 body.rd :focus-visible{outline:3px solid var(--rd-gold-ink);outline-offset:3px}
+/* The story hero is dark in both themes, so its focus ring uses the light gold (>=3:1, WCAG 1.4.11). */
+body.rd .rd-hero :focus-visible{outline-color:#e3c48a}
 body.rd .rd-eyebrow,body.rd .eyebrow{font:600 11px/1.4 var(--rd-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--rd-gold-ink)}
 
 /* Shared top bar: the same handle and avatar ring as the profile page. */
@@ -110,6 +112,8 @@ body.rd .rd-hero .button.secondary{border-color:rgba(244,242,232,.4);background:
 body.rd .rd-hero .button:hover{border-color:var(--rd-on-forest);background:var(--rd-on-forest);color:#1e2823}
 body.rd .rd-hero .breadcrumb{color:var(--rd-on-forest-muted);font:13px var(--rd-mono)}
 body.rd .rd-hero .breadcrumb a{color:var(--rd-on-forest)}
+/* Inline padding enlarges the breadcrumb tap area to 24px+ without changing line height. */
+.breadcrumb a{padding-block:5px}
 body.rd .rd-hero .eyebrow{color:var(--rd-gold)}
 body.rd .rd-hero h1{font-size:clamp(46px,7vw,92px);line-height:.95;font-weight:800;letter-spacing:-.04em;color:var(--rd-on-forest)}
 body.rd .rd-hero .case-brand-title img{border-radius:20px;background:rgba(244,242,232,.08)}
@@ -125,8 +129,9 @@ body.rd .rd-hero .facts .dependency-chip-logo{box-sizing:content-box;width:17px;
 .rd-stats dt{font-size:13px;color:var(--rd-on-forest-muted)}
 
 .rd-story{justify-self:center;width:min(300px,100%);margin:0 0 -64px}
-.rd-story-bars{display:flex;gap:4px;margin-bottom:10px}
-.rd-story-bars button{position:relative;flex:1;height:14px;padding:5px 0;border:0;background:none;cursor:pointer}
+/* Bars keep their 4px look; each button is 24px tall and absorbs the old bottom margin. */
+.rd-story-bars{display:flex;gap:4px;margin-bottom:0}
+.rd-story-bars button{position:relative;flex:1;height:24px;padding:5px 0;border:0;background:none;cursor:pointer}
 .rd-story-bars button::before,.rd-story-bars button::after{content:"";position:absolute;left:0;right:0;top:5px;height:4px;border-radius:4px}
 .rd-story-bars button::before{background:rgba(244,242,232,.25)}
 .rd-story-bars button::after{background:var(--rd-gold);transform-origin:left;transform:scaleX(0)}
