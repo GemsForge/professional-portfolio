@@ -1,16 +1,39 @@
+# Managed by GemsForge/.github — do not edit here. Change the shared workflows
+# instead: https://github.com/GemsForge/.github
+# Per-repository settings: repository variable PROJECT_NUMBER and secret
+# PROJECTS_TOKEN (both optional; without them the Project board is skipped).
 name: Sync issue and pull request metadata
 
 on:
+  create:
   issues:
-    types: [opened, reopened]
+    types: [opened, reopened, closed]
   pull_request:
-    types: [opened, reopened, edited, synchronize, ready_for_review]
+    types: [opened, reopened, edited, synchronize, ready_for_review, closed]
+  pull_request_review:
+    types: [submitted, edited, dismissed]
   workflow_dispatch:
     inputs:
       pr_number:
         description: Pull request number to synchronize
-        required: true
-        type: number
+        required: false
+        type: string
+      issue_number:
+        description: Working issue number (required when no PR is supplied)
+        required: false
+        type: string
+      parent_issue:
+        description: Parent issue number (blank preserves current parent)
+        required: false
+        type: string
+      blocked_by:
+        description: Issues blocking this issue (comma-separated numbers)
+        required: false
+        type: string
+      blocking:
+        description: Issues this issue blocks (comma-separated numbers)
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -19,44 +42,12 @@ permissions:
 
 jobs:
   sync:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Copy working issue metadata to the pull request
-        uses: actions/github-script@v7
-        env:
-          MANUAL_PR: ${{ inputs.pr_number || '' }}
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const manual = Number(process.env.MANUAL_PR) || undefined;
-            const pr = context.payload.pull_request || (manual
-              ? (await github.rest.pulls.get({ ...context.repo, pull_number: manual })).data
-              : null);
-            const branchIssue = (ref) => Number(ref?.match(/^(?:feat|fix|docs|refactor|test|chore|ci|build|perf|style)\/(\d+)(?:-|$)/i)?.[1]) || undefined;
-            const referencedIssue = (text) => Number(text?.match(/(?:^|\s)#(\d+)\b/)?.[1]) || undefined;
-            const issueNumber = context.payload.issue?.number
-              || branchIssue(pr?.head.ref)
-              || referencedIssue(pr?.title)
-              || referencedIssue(pr?.body);
-            if (!issueNumber) throw new Error('No issue number found in the event or branch name.');
-            const issue = (await github.rest.issues.get({ ...context.repo, issue_number: issueNumber })).data;
-            if (issue.pull_request) throw new Error('The linked item must be an issue, not a pull request.');
-            if (!pr) {
-              core.notice(`Issue #${issueNumber} opened; metadata will be copied when its PR opens.`);
-              return;
-            }
-            await github.rest.issues.setLabels({
-              ...context.repo, issue_number: pr.number,
-              labels: issue.labels.map((label) => typeof label === 'string' ? label : label.name),
-            });
-            const desiredAssignees = issue.assignees.map(({ login }) => login);
-            const currentAssignees = pr.assignees.map(({ login }) => login);
-            const stale = currentAssignees.filter((login) => !desiredAssignees.includes(login));
-            const added = desiredAssignees.filter((login) => !currentAssignees.includes(login));
-            if (stale.length) await github.rest.issues.removeAssignees({ ...context.repo, issue_number: pr.number, assignees: stale });
-            if (added.length) await github.rest.issues.addAssignees({ ...context.repo, issue_number: pr.number, assignees: added });
-            await github.rest.issues.update({
-              ...context.repo, issue_number: pr.number,
-              milestone: issue.milestone?.number ?? null,
-            });
-            core.notice(`Synchronized PR #${pr.number} from issue #${issueNumber}.`);
+    uses: GemsForge/.github/.github/workflows/sync-issue-metadata.yml@v1
+    with:
+      pr_number: ${{ inputs.pr_number || '' }}
+      issue_number: ${{ inputs.issue_number || '' }}
+      parent_issue: ${{ inputs.parent_issue || '' }}
+      blocked_by: ${{ inputs.blocked_by || '' }}
+      blocking: ${{ inputs.blocking || '' }}
+      project-number: ${{ vars.PROJECT_NUMBER || '' }}
+    secrets: inherit
