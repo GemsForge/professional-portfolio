@@ -1,8 +1,6 @@
+# Managed by GemsForge/.github — do not edit here. Change the shared workflows
+# instead: https://github.com/GemsForge/.github
 name: Commit policy
-
-# Policy: type(scope): #issue short imperative description.
-# The documented initial commit is grandfathered by scripts/commit-policy.json.
-# The PR title is validated because it becomes the proposed squash subject.
 
 on:
   push:
@@ -14,20 +12,5 @@ permissions:
   contents: read
 
 jobs:
-  commit-policy:
-    name: Commit policy
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          package-manager-cache: false
-      - name: Test validator
-        run: node --test scripts/commit-policy.test.mjs
-      - name: Validate commits and proposed squash subject
-        run: node scripts/commit-policy.mjs github
+  commits:
+    uses: GemsForge/.github/.github/workflows/commit-policy.yml@v1
