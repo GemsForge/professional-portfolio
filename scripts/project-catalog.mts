@@ -222,10 +222,10 @@ export const PORTFOLIO_POSTS: PortfolioPostDefinition[] = [
     evidence: "Rebuilt and retested end to end in 2026: the Electron app and iPhone Shortcuts both created branded monthly pages through the API.",
     tools: NOTION_STACK, caseStudy: "/portfolio/projects/notion-api-shortcuts/",
     walkthrough: [
-      { title: "Brand it once", detail: "Set a service's logo, banner, cadence, and a {month} — {service} title in one reusable template.", screenshot: { src: "/assets/notion-utility-template-builder.png", alt: "Template builder with the Kroger logo icon, Boost cover banner, monthly cadence, and title pattern", hotspot: { x: 78, y: 12, label: "Logo and banner" } } },
-      { title: "Preview before writing", detail: "See every planned page and which titles already exist before anything reaches Notion.", screenshot: { src: "/assets/notion-utility-workflow-preview.png", alt: "Preview listing six monthly Kroger Boost pages marked new", hotspot: { x: 30, y: 78, label: "Planned pages" } } },
-      { title: "Generated in Notion", detail: "One branded page per month lands in the service's database.", screenshot: { src: "/assets/notion-utility-kroger-boost-table.png", alt: "Kroger Boost Notion database listing January through June — Kroger Boost pages with the Kroger icon", hotspot: { x: 22, y: 70, label: "Monthly pages" } } },
-      { title: "Run it from my phone", detail: "My original Shortcuts now call the same API, picking the home Wi-Fi or hotspot address automatically.", screenshot: { src: "/assets/notion-shortcuts-library.jpg", alt: "Budget Database Shortcuts on iPhone: Create Budget Database, Create Annual Log Pages, and List of Months", hotspot: { x: 72, y: 20, label: "Budget Shortcuts" } } },
+      { title: "Brand it once", detail: "Set a service's logo, banner, cadence, and a {month} — {service} title in one reusable template.", screenshot: { src: "/assets/notion-utility-template-builder.png", alt: "Template builder with the Kroger logo icon, Boost cover banner, monthly cadence, and title pattern" } },
+      { title: "Preview before writing", detail: "See every planned page and which titles already exist before anything reaches Notion.", screenshot: { src: "/assets/notion-utility-workflow-preview.png", alt: "Preview listing six monthly Kroger Boost pages marked new" } },
+      { title: "Generated in Notion", detail: "One branded page per month lands in the service's database.", screenshot: { src: "/assets/notion-utility-kroger-boost-table.png", alt: "Kroger Boost Notion database listing January through June — Kroger Boost pages with the Kroger icon" } },
+      { title: "Run it from my phone", detail: "My original Shortcuts now call the same API, picking the home Wi-Fi or hotspot address automatically.", screenshot: { src: "/assets/notion-shortcuts-library.jpg", alt: "Budget Database Shortcuts on iPhone: Create Budget Database, Create Annual Log Pages, and List of Months" } },
     ],
   },
   {

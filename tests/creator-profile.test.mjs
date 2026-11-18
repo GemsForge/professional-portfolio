@@ -94,9 +94,11 @@ test("project posts identify evidence and provide guided prototype steps", () =>
   for (const post of projects) {
     assert.ok(post.caseStudy, `${post.slug} should retain its full case-study route`);
     assert.ok(post.evidence.length > 30, `${post.slug} should explain evidence or current status`);
-    assert.equal(post.walkthrough?.length, post.slug === "auralogbook" ? 10 : 3, `${post.slug} should have the expected number of guided steps`);
-    if (post.slug === "auralogbook") {
-      assert.ok(post.walkthrough.every(({ hotspot, screenshot }) => !hotspot && !screenshot?.hotspot), "Aura Logbook's app tour does not add unused plus markers");
+    const expectedSteps = { auralogbook: 10, "notion-api-shortcuts": 4 }[post.slug] ?? 3;
+    assert.equal(post.walkthrough?.length, expectedSteps, `${post.slug} should have the expected number of guided steps`);
+    // App tours (every step has a real screenshot) do not add unused plus markers.
+    if (post.walkthrough.every(({ screenshot }) => screenshot)) {
+      assert.ok(post.walkthrough.every(({ hotspot, screenshot }) => !hotspot && !screenshot?.hotspot), `${post.slug}'s app tour does not add unused plus markers`);
     } else {
       assert.ok(post.walkthrough.every(({ hotspot }) => hotspot.label), `${post.slug} should label every hotspot`);
     }
