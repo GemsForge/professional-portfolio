@@ -74,4 +74,7 @@ For example, `PORT=5199 npm run dev` serves the app at
 
 Use the current Sites skill for installation, build, preview, source synchronization, and publishing to the existing project. Node.js 22.13+ is required. `npm run build` prepares static content then builds the server through the retained Sites integration. `npm run test:media` checks core storage and authorization behavior.
 
+For the production publishing sequence, source-of-truth rules, and post-deploy
+verification, see [the Sites deployment runbook](docs/sites-deployment.md).
+
 No application credentials belong in source. Hosted sign-in and identity headers are provided by Sites. Only the owner workspace requires sign-in. Browser-level visual/accessibility and hosted owner-login walkthroughs remain to be verified.
