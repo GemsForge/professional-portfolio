@@ -216,19 +216,18 @@ export const notionApiShortcutsContent: CaseStudyContent = {
       nav: "Setup & permissions",
       title: "Integration setup & permissions",
       blocks: [
-        "The workflow requires a task-specific Notion integration, its integration secret, and explicit access to the target page or database. The target must be shared with the relevant integration; a URL or identifier alone does not grant access.",
-        "The secret must be supplied securely and excluded from shared workflow artifacts, screenshots, and source examples. This portfolio describes the authentication dependency without exposing credential values.",
+        "Notion only lets an integration work with pages and databases that have been shared with it. So before any of this runs, I create an integration in Notion, keep its secret, and share each service page with that integration—pasting a page link alone doesn't grant access.",
+        "I keep that secret out of everything I share. Shortcut exports, screenshots, and the code samples on this page never include a real key.",
         "Since Phase 2, the Notion secret stays on my laptop in the API's user secrets. My phone only holds the Notion Utility API key, so a Shortcut never sees the integration secret.",
       ],
     },
     {
       id: "tradeoffs",
-      nav: "Parsing & portability",
-      title: "Parsing decisions & portability",
+      nav: "Turning a link into an ID",
+      title: "Turning a Notion link into an ID",
       blocks: [
-        "The database-ID parser depends on a `gemsforge/` URL segment, while the page parser uses a more general final-segment approach. Supporting other workspaces or link formats would require reviewing that assumption.",
-        "The Shortcut explicitly notes unreliable regex behavior in its fallback path. The implementation combines branching, string splitting, and replacement rather than assuming one expression handles every link.",
-        "These are documented limitations, not claims of universal URL support. A fresh compatibility check should cover current link formats, query parameters, and the applicable Notion API version.",
+        "**Get DB or Page ID** turns a Notion share link into the ID the API needs. For a page, it takes the last part of the link. For a database, it splits the link on my workspace name (`gemsforge/`), so it works with links from my workspace.",
+        "It handles the link formats I actually use, not every Notion URL. Pointing it at another workspace would mean updating that split.",
       ],
     },
     {
