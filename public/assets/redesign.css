@@ -265,3 +265,13 @@ body.rd .footer a:hover{color:var(--rd-ink);text-decoration:underline}
 @media (prefers-reduced-motion:reduce){
   body.rd *{transition:none!important;animation:none!important}
 }
+
+/* Wide frame for desktop/laptop screenshots in the story carousel (Notion case study). */
+.rd-story.rd-story--desktop{width:min(560px,100%);align-self:center;margin-bottom:0}
+.rd-story--desktop .rd-story-frame{aspect-ratio:16/10;border-width:6px;border-radius:16px}
+.rd-story--desktop .rd-story-frame img{object-fit:contain;object-position:center;background:#0b110d}
+
+/* Side-by-side narrow figures (phone screenshots) in case study content. */
+.case-figure-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin:24px 0}
+.case-figure-row .case-figure{margin:0}
+.case-figure-row img{display:block;width:100%;max-width:280px;height:auto;margin:0 auto;border-radius:18px}

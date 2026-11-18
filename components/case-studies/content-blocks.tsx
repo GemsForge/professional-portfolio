@@ -103,6 +103,17 @@ export function ContentBlock({ block }: { block: Block }): ReactNode {
           <figcaption><RichText text={block.caption} /></figcaption>
         </figure>
       );
+    case "figure-row":
+      return (
+        <div className="case-figure-row" role="group" aria-label={block.label}>
+          {block.items.map((item, index) => (
+            <figure className="case-figure" key={index}>
+              <ContentImage image={item.image} />
+              <figcaption><RichText text={item.caption} /></figcaption>
+            </figure>
+          ))}
+        </div>
+      );
     case "button":
       return <a className="button secondary" href={block.href}><RichText text={block.text} /></a>;
     case "details":

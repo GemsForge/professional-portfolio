@@ -17,8 +17,8 @@ export type DependencyId =
   | "dapper" | "sqlite" | "swagger" | "csharp" | "bcrypt" | "jwt_bearer"
   | "notion" | "apple_shortcuts" | "apple_numbers" | "apple_notes"
   | "apple_freeform" | "apple_reminders" | "apple_calendar" | "apple_siri"
-  | "apple_icloud";
-export type DependencyGroupId = "portfolioHighlights" | "workflowTools" | "disciplineHighlights";
+  | "apple_icloud" | "electron" | "tanstack_query" | "dotnet8";
+export type DependencyGroupId = "portfolioHighlights" | "workflowTools" | "disciplineHighlights" | "notionHighlights";
 export type DependencyCategory = "frontend" | "backend" | "language" | "productivity";
 export type DependencyStatus = "active" | "declared-not-wired";
 
@@ -276,6 +276,30 @@ export const AURALOGBOOK_DEPENDENCIES = Object.freeze({
     logo: { kind: DEPENDENCY_LOGO_KIND.SPRITE, symbolId: "brand-apple", description: "Apple brand logo" },
     sourceUrl: "https://developer.apple.com/",
   },
+  dotnet8: {
+    id: "dotnet8",
+    label: ".NET 8 API",
+    category: DEPENDENCY_CATEGORY.BACKEND,
+    status: DEPENDENCY_STATUS.ACTIVE,
+    logo: { kind: DEPENDENCY_LOGO_KIND.SPRITE, symbolId: "brand-dotnet", description: ".NET logo" },
+    sourceUrl: "https://dotnet.microsoft.com/",
+  },
+  electron: {
+    id: "electron",
+    label: "Electron",
+    category: DEPENDENCY_CATEGORY.FRONTEND,
+    status: DEPENDENCY_STATUS.ACTIVE,
+    logo: { kind: DEPENDENCY_LOGO_KIND.FILE, symbolId: "electron", description: "Electron logo", src: "/assets/auralogbook-stack/electron.svg" },
+    sourceUrl: "https://www.electronjs.org/",
+  },
+  tanstack_query: {
+    id: "tanstack_query",
+    label: "TanStack Query",
+    category: DEPENDENCY_CATEGORY.FRONTEND,
+    status: DEPENDENCY_STATUS.ACTIVE,
+    logo: { kind: DEPENDENCY_LOGO_KIND.FILE, symbolId: "tanstack-query", description: "TanStack Query logo", src: "/assets/auralogbook-stack/tanstack-query.svg" },
+    sourceUrl: "https://tanstack.com/query/latest",
+  },
 }) satisfies Readonly<Record<DependencyId, Dependency>>;
 
 export const AURALOGBOOK_DEPENDENCY_GROUPS = Object.freeze({
@@ -290,6 +314,10 @@ export const AURALOGBOOK_DEPENDENCY_GROUPS = Object.freeze({
   disciplineHighlights: {
     label: "75 Days of Discipline technology highlights",
     ids: ["notion", "apple_shortcuts"],
+  },
+  notionHighlights: {
+    label: "Notion API integration technology highlights",
+    ids: ["csharp", "dotnet8", "apple_shortcuts", "notion", "react", "typescript", "electron", "vite", "tanstack_query", "sqlite", "swagger"],
   },
 }) satisfies Readonly<Record<DependencyGroupId, DependencyGroup>>;
 
