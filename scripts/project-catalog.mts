@@ -1,3 +1,4 @@
+import { dependencyLabels } from "./auralogbook-dependencies.mts";
 import { siApple, siDotnet, siMui, siNotion, siReact, siRedux, siTypescript } from "simple-icons";
 
 /**
@@ -22,6 +23,9 @@ export interface ProjectDefinition {
 }
 
 /** Focus areas shown as story-highlight filters on the Projects index, with their card labels. */
+/** The Notion case study badges are the source of truth for its stack everywhere else. */
+const NOTION_STACK = dependencyLabels("notionHighlights");
+
 export const PROJECT_FOCUS_LABELS = {
   fullstack: "Full-stack",
   integration: "Integration",
@@ -151,14 +155,14 @@ export const PROJECTS = {
   "notion-api-shortcuts": {
     slug: "notion-api-shortcuts",
     name: "Notion API integration",
-    description: "Reducing repetitive setup for service-account pages and databases in Notion—while keeping the custom icons, banners, and structure I wanted.",
-    preTitle: "API integration · Documented in 2024",
-    primaryTools: "REST APIs · JSON · Dictionaries · Technical documentation",
-    image: "/assets/notion-api-integration.png",
-    imageAlt: "Transparent illustration of structured database records connected through an API bridge",
+    description: "A full-stack Notion utility: Apple Shortcuts on my phone and a React + Electron app on my laptop, both calling my own .NET API to generate branded, month-by-month Notion pages.",
+    preTitle: "API integration",
+    primaryTools: NOTION_STACK.join(" · "),
+    image: "/assets/notion-utility-template-builder.png",
+    imageAlt: "Notion Utility template builder with a Kroger logo icon, Boost cover banner, monthly cadence, and {month} — {service} title",
     cardTitle: "Custom setup, without the repetitive setup.",
     cardLinkLabel: "Explore Notion API integration",
-    technologies: [{ label: "REST APIs" }, { label: "JSON" }, { label: "Dictionaries" }, { label: "Technical documentation" }],
+    technologies: NOTION_STACK.map((label) => ({ label })),
     focus: "integration",
   },
 } satisfies Record<string, ProjectDefinition>;
@@ -211,16 +215,17 @@ export const PORTFOLIO_POSTS: PortfolioPostDefinition[] = [
     ],
   },
   {
-    slug: "notion-api-shortcuts", title: "Notion API Integrations", category: "project", eyebrow: "API integration · Documented in 2024",
-    caption: "Reusable Shortcuts turned repeated Notion setup into a modular API toolkit.", image: "/assets/notion-api-integration.png", imageAlt: "Database records connected through an API bridge",
-    role: "Designed and built reusable Apple Shortcuts for Notion API workflows.",
-    decisions: ["Separate link intake, authentication, formatting, and API actions.", "Document parsing assumptions and credential boundaries."],
-    evidence: "14 Shortcuts and sample payloads are documented; current API behavior needs retesting.",
-    tools: ["Apple Shortcuts", "Notion API", "REST", "JSON", "Technical documentation"], caseStudy: "/portfolio/projects/notion-api-shortcuts/",
+    slug: "notion-api-shortcuts", title: "Notion API integration", category: "project", eyebrow: "API integration",
+    caption: "Apple Shortcuts and a React + Electron app share my own .NET API to generate branded Notion pages.", image: "/assets/notion-utility-template-builder.png", imageAlt: "Notion Utility template builder with a Kroger logo icon and Boost cover banner",
+    role: "Designed and built the C# .NET API and Notion client library, the React + TypeScript Electron app, and the Apple Shortcuts that call it.",
+    decisions: ["Wrap Notion's REST API in my own client library and return flat, Shortcut-friendly responses.", "Preview every generated page and skip existing titles so template runs are safe to repeat.", "Keep the Notion secret on the laptop; the phone reaches the API with its own key over Wi-Fi or hotspot."],
+    evidence: "Rebuilt and retested end to end in 2026: the Electron app and iPhone Shortcuts both created branded monthly pages through the API.",
+    tools: NOTION_STACK, caseStudy: "/portfolio/projects/notion-api-shortcuts/",
     walkthrough: [
-      { title: "Start with a link", detail: "Pass a Notion page or database link to the Shortcut.", hotspot: { x: 42, y: 28, label: "Link intake" } },
-      { title: "Prepare the request", detail: "Extract the target ID and prepare authentication.", hotspot: { x: 60, y: 48, label: "Target and auth" } },
-      { title: "Map the properties", detail: "Format typed values before sending the API request.", hotspot: { x: 47, y: 71, label: "Property mapping" } },
+      { title: "Brand it once", detail: "Set a service's logo, banner, cadence, and a {month} — {service} title in one reusable template.", screenshot: { src: "/assets/notion-utility-template-builder.png", alt: "Template builder with the Kroger logo icon, Boost cover banner, monthly cadence, and title pattern" } },
+      { title: "Preview before writing", detail: "See every planned page and which titles already exist before anything reaches Notion.", screenshot: { src: "/assets/notion-utility-workflow-preview.png", alt: "Preview listing six monthly Kroger Boost pages marked new" } },
+      { title: "Generated in Notion", detail: "One branded page per month lands in the service's database.", screenshot: { src: "/assets/notion-utility-kroger-boost-table.png", alt: "Kroger Boost Notion database listing January through June — Kroger Boost pages with the Kroger icon" } },
+      { title: "Run it from my phone", detail: "My original Shortcuts now call the same API, picking the home Wi-Fi or hotspot address automatically.", screenshot: { src: "/assets/notion-shortcuts-library.jpg", alt: "Budget Database Shortcuts on iPhone: Create Budget Database, Create Annual Log Pages, and List of Months" } },
     ],
   },
   {

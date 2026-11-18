@@ -59,6 +59,8 @@ export type Block =
   /** A callout box; `aside` renders it as complementary content. */
   | { type: "note"; blocks: Block[]; aside?: boolean; className?: string }
   | { type: "figure"; image: ImageContent; caption: Inline }
+  /** Narrow figures side by side, such as phone screenshots; stacks on small screens. */
+  | { type: "figure-row"; label: string; items: { image: ImageContent; caption: Inline }[] }
   | { type: "button"; text: Inline; href: string }
   | { type: "details"; summary: Inline; blocks: Block[] }
   /** Cards rendered as `<article>` elements inside a wrapper with `className`. */

@@ -126,11 +126,11 @@ test("AuraLogbook dependency badges come from the typed registry with inline bra
   assert.match(heroBadges, /data-dependency="csharp"/);
   assert.match(heroBadges, /C#<\/span>/);
   assert.match(heroBadges, /data-dependency="dotnet"/);
-  assert.match(heroBadges, /#brand-dotnet/);
+  assert.match(heroBadges, /auralogbook-stack\/dotnet\.svg/);
   assert.match(heroBadges, /data-dependency="mui"/);
-  assert.match(heroBadges, /#brand-mui/);
+  assert.match(heroBadges, /auralogbook-stack\/mui\.svg/);
   assert.match(heroBadges, /data-dependency="vite"/);
-  assert.match(heroBadges, /#brand-vite/);
+  assert.match(heroBadges, /auralogbook-stack\/vite\.svg/);
   assert.match(heroBadges, /data-dependency="redux"[^>]*>/);
   assert.match(heroBadges, /src="\/assets\/auralogbook-stack\/redux\.png"/);
   assert.match(heroBadges, /data-dependency="react_router"[^>]*>/);
@@ -158,7 +158,7 @@ test("AuraLogbook dependency badges come from the typed registry with inline bra
     assert.match(workflowTools, new RegExp(`data-dependency="${id}"`));
   }
   for (const id of ["apple_shortcuts", "apple_numbers", "apple_notes", "apple_freeform", "apple_reminders", "apple_calendar", "apple_siri", "apple_icloud"]) {
-    assert.match(workflowTools, new RegExp(`data-dependency="${id}"[^>]*><svg[^>]*data-logo-symbol="brand-apple"`));
+    assert.match(workflowTools, new RegExp(`data-dependency="${id}"[^>]*><img[^>]*src="/assets/auralogbook-stack/apple\\.svg"`));
   }
 
   const disciplineTools = renderDependencyGroup("disciplineHighlights");

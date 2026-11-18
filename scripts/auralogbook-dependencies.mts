@@ -17,8 +17,8 @@ export type DependencyId =
   | "dapper" | "sqlite" | "swagger" | "csharp" | "bcrypt" | "jwt_bearer"
   | "notion" | "apple_shortcuts" | "apple_numbers" | "apple_notes"
   | "apple_freeform" | "apple_reminders" | "apple_calendar" | "apple_siri"
-  | "apple_icloud";
-export type DependencyGroupId = "portfolioHighlights" | "workflowTools" | "disciplineHighlights";
+  | "apple_icloud" | "electron" | "tanstack_query" | "dotnet8" | "ef_core" | "restsharp";
+export type DependencyGroupId = "portfolioHighlights" | "workflowTools" | "disciplineHighlights" | "notionHighlights";
 export type DependencyCategory = "frontend" | "backend" | "language" | "productivity";
 export type DependencyStatus = "active" | "declared-not-wired";
 
@@ -89,7 +89,7 @@ export const AURALOGBOOK_DEPENDENCIES = Object.freeze({
     label: "Vite",
     category: DEPENDENCY_CATEGORY.FRONTEND,
     status: DEPENDENCY_STATUS.ACTIVE,
-    logo: { kind: DEPENDENCY_LOGO_KIND.SPRITE, symbolId: "brand-vite", description: "Vite logo" },
+    logo: { kind: DEPENDENCY_LOGO_KIND.FILE, symbolId: "vite", description: "Vite logo", src: "/assets/auralogbook-stack/vite.svg" },
     sourceUrl: "https://vite.dev/",
   },
   dotnet: {
@@ -97,7 +97,7 @@ export const AURALOGBOOK_DEPENDENCIES = Object.freeze({
     label: ".NET 9 API",
     category: DEPENDENCY_CATEGORY.BACKEND,
     status: DEPENDENCY_STATUS.ACTIVE,
-    logo: { kind: DEPENDENCY_LOGO_KIND.SPRITE, symbolId: "brand-dotnet", description: ".NET logo" },
+    logo: { kind: DEPENDENCY_LOGO_KIND.FILE, symbolId: "dotnet", description: ".NET logo", src: "/assets/auralogbook-stack/dotnet.svg" },
     sourceUrl: "https://dotnet.microsoft.com/en-us/apps/aspnet",
   },
   mui: {
@@ -105,7 +105,7 @@ export const AURALOGBOOK_DEPENDENCIES = Object.freeze({
     label: "MUI · Material + Joy",
     category: DEPENDENCY_CATEGORY.FRONTEND,
     status: DEPENDENCY_STATUS.ACTIVE,
-    logo: { kind: DEPENDENCY_LOGO_KIND.SPRITE, symbolId: "brand-mui", description: "MUI logo" },
+    logo: { kind: DEPENDENCY_LOGO_KIND.FILE, symbolId: "mui", description: "MUI logo", src: "/assets/auralogbook-stack/mui.svg" },
     sourceUrl: "https://mui.com/",
   },
   redux: {
@@ -217,7 +217,7 @@ export const AURALOGBOOK_DEPENDENCIES = Object.freeze({
     label: "Apple Shortcuts",
     category: DEPENDENCY_CATEGORY.PRODUCTIVITY,
     status: DEPENDENCY_STATUS.ACTIVE,
-    logo: { kind: DEPENDENCY_LOGO_KIND.SPRITE, symbolId: "brand-apple", description: "Apple brand logo" },
+    logo: { kind: DEPENDENCY_LOGO_KIND.FILE, symbolId: "apple", description: "Apple brand logo", src: "/assets/auralogbook-stack/apple.svg" },
     sourceUrl: "https://developer.apple.com/",
   },
   apple_numbers: {
@@ -225,7 +225,7 @@ export const AURALOGBOOK_DEPENDENCIES = Object.freeze({
     label: "Apple Numbers",
     category: DEPENDENCY_CATEGORY.PRODUCTIVITY,
     status: DEPENDENCY_STATUS.ACTIVE,
-    logo: { kind: DEPENDENCY_LOGO_KIND.SPRITE, symbolId: "brand-apple", description: "Apple brand logo" },
+    logo: { kind: DEPENDENCY_LOGO_KIND.FILE, symbolId: "apple", description: "Apple brand logo", src: "/assets/auralogbook-stack/apple.svg" },
     sourceUrl: "https://developer.apple.com/",
   },
   apple_notes: {
@@ -233,7 +233,7 @@ export const AURALOGBOOK_DEPENDENCIES = Object.freeze({
     label: "Apple Notes",
     category: DEPENDENCY_CATEGORY.PRODUCTIVITY,
     status: DEPENDENCY_STATUS.ACTIVE,
-    logo: { kind: DEPENDENCY_LOGO_KIND.SPRITE, symbolId: "brand-apple", description: "Apple brand logo" },
+    logo: { kind: DEPENDENCY_LOGO_KIND.FILE, symbolId: "apple", description: "Apple brand logo", src: "/assets/auralogbook-stack/apple.svg" },
     sourceUrl: "https://developer.apple.com/",
   },
   apple_freeform: {
@@ -241,7 +241,7 @@ export const AURALOGBOOK_DEPENDENCIES = Object.freeze({
     label: "Apple Freeform",
     category: DEPENDENCY_CATEGORY.PRODUCTIVITY,
     status: DEPENDENCY_STATUS.ACTIVE,
-    logo: { kind: DEPENDENCY_LOGO_KIND.SPRITE, symbolId: "brand-apple", description: "Apple brand logo" },
+    logo: { kind: DEPENDENCY_LOGO_KIND.FILE, symbolId: "apple", description: "Apple brand logo", src: "/assets/auralogbook-stack/apple.svg" },
     sourceUrl: "https://developer.apple.com/",
   },
   apple_reminders: {
@@ -249,7 +249,7 @@ export const AURALOGBOOK_DEPENDENCIES = Object.freeze({
     label: "Apple Reminders",
     category: DEPENDENCY_CATEGORY.PRODUCTIVITY,
     status: DEPENDENCY_STATUS.ACTIVE,
-    logo: { kind: DEPENDENCY_LOGO_KIND.SPRITE, symbolId: "brand-apple", description: "Apple brand logo" },
+    logo: { kind: DEPENDENCY_LOGO_KIND.FILE, symbolId: "apple", description: "Apple brand logo", src: "/assets/auralogbook-stack/apple.svg" },
     sourceUrl: "https://developer.apple.com/",
   },
   apple_calendar: {
@@ -257,7 +257,7 @@ export const AURALOGBOOK_DEPENDENCIES = Object.freeze({
     label: "Apple Calendar",
     category: DEPENDENCY_CATEGORY.PRODUCTIVITY,
     status: DEPENDENCY_STATUS.ACTIVE,
-    logo: { kind: DEPENDENCY_LOGO_KIND.SPRITE, symbolId: "brand-apple", description: "Apple brand logo" },
+    logo: { kind: DEPENDENCY_LOGO_KIND.FILE, symbolId: "apple", description: "Apple brand logo", src: "/assets/auralogbook-stack/apple.svg" },
     sourceUrl: "https://developer.apple.com/",
   },
   apple_siri: {
@@ -265,7 +265,7 @@ export const AURALOGBOOK_DEPENDENCIES = Object.freeze({
     label: "Siri",
     category: DEPENDENCY_CATEGORY.PRODUCTIVITY,
     status: DEPENDENCY_STATUS.ACTIVE,
-    logo: { kind: DEPENDENCY_LOGO_KIND.SPRITE, symbolId: "brand-apple", description: "Apple brand logo" },
+    logo: { kind: DEPENDENCY_LOGO_KIND.FILE, symbolId: "apple", description: "Apple brand logo", src: "/assets/auralogbook-stack/apple.svg" },
     sourceUrl: "https://developer.apple.com/",
   },
   apple_icloud: {
@@ -273,8 +273,48 @@ export const AURALOGBOOK_DEPENDENCIES = Object.freeze({
     label: "iCloud",
     category: DEPENDENCY_CATEGORY.PRODUCTIVITY,
     status: DEPENDENCY_STATUS.ACTIVE,
-    logo: { kind: DEPENDENCY_LOGO_KIND.SPRITE, symbolId: "brand-apple", description: "Apple brand logo" },
+    logo: { kind: DEPENDENCY_LOGO_KIND.FILE, symbolId: "apple", description: "Apple brand logo", src: "/assets/auralogbook-stack/apple.svg" },
     sourceUrl: "https://developer.apple.com/",
+  },
+  dotnet8: {
+    id: "dotnet8",
+    label: ".NET 8 API",
+    category: DEPENDENCY_CATEGORY.BACKEND,
+    status: DEPENDENCY_STATUS.ACTIVE,
+    logo: { kind: DEPENDENCY_LOGO_KIND.FILE, symbolId: "dotnet", description: ".NET logo", src: "/assets/auralogbook-stack/dotnet.svg" },
+    sourceUrl: "https://dotnet.microsoft.com/",
+  },
+  ef_core: {
+    id: "ef_core",
+    label: "Entity Framework Core",
+    category: DEPENDENCY_CATEGORY.BACKEND,
+    status: DEPENDENCY_STATUS.ACTIVE,
+    logo: { kind: DEPENDENCY_LOGO_KIND.FILE, symbolId: "dotnet", description: ".NET logo for Entity Framework Core", src: "/assets/auralogbook-stack/dotnet.svg" },
+    sourceUrl: "https://learn.microsoft.com/ef/core/",
+  },
+  restsharp: {
+    id: "restsharp",
+    label: "RestSharp",
+    category: DEPENDENCY_CATEGORY.BACKEND,
+    status: DEPENDENCY_STATUS.ACTIVE,
+    logo: { kind: DEPENDENCY_LOGO_KIND.GLYPH, symbolId: "restsharp", description: "RestSharp initials", text: "RS" },
+    sourceUrl: "https://restsharp.dev/",
+  },
+  electron: {
+    id: "electron",
+    label: "Electron",
+    category: DEPENDENCY_CATEGORY.FRONTEND,
+    status: DEPENDENCY_STATUS.ACTIVE,
+    logo: { kind: DEPENDENCY_LOGO_KIND.FILE, symbolId: "electron", description: "Electron logo", src: "/assets/auralogbook-stack/electron.svg" },
+    sourceUrl: "https://www.electronjs.org/",
+  },
+  tanstack_query: {
+    id: "tanstack_query",
+    label: "TanStack Query",
+    category: DEPENDENCY_CATEGORY.FRONTEND,
+    status: DEPENDENCY_STATUS.ACTIVE,
+    logo: { kind: DEPENDENCY_LOGO_KIND.FILE, symbolId: "tanstack-query", description: "TanStack Query logo", src: "/assets/auralogbook-stack/tanstack-query.svg" },
+    sourceUrl: "https://tanstack.com/query/latest",
   },
 }) satisfies Readonly<Record<DependencyId, Dependency>>;
 
@@ -291,7 +331,18 @@ export const AURALOGBOOK_DEPENDENCY_GROUPS = Object.freeze({
     label: "75 Days of Discipline technology highlights",
     ids: ["notion", "apple_shortcuts"],
   },
+  notionHighlights: {
+    label: "Notion API integration technology highlights",
+    ids: ["csharp", "dotnet8", "apple_shortcuts", "notion", "react", "typescript", "electron", "vite", "tanstack_query", "ef_core", "sqlite", "restsharp", "swagger"],
+  },
 }) satisfies Readonly<Record<DependencyGroupId, DependencyGroup>>;
+
+/** Labels of a dependency group, so cards and walkthroughs list the same stack as the badges. */
+export function dependencyLabels(groupId: DependencyGroupId): string[] {
+  const group = AURALOGBOOK_DEPENDENCY_GROUPS[groupId];
+  if (!group) throw new Error(`Unknown AuraLogbook dependency group: ${groupId}`);
+  return group.ids.map((id: DependencyId) => AURALOGBOOK_DEPENDENCIES[id].label);
+}
 
 function escapeHtml(value: string) {
   return String(value).replace(/[&<>"']/g, (character) => ({
