@@ -1,3 +1,4 @@
+import { dependencyLabels } from "./auralogbook-dependencies.mts";
 import { siApple, siDotnet, siMui, siNotion, siReact, siRedux, siTypescript } from "simple-icons";
 
 /**
@@ -22,6 +23,9 @@ export interface ProjectDefinition {
 }
 
 /** Focus areas shown as story-highlight filters on the Projects index, with their card labels. */
+/** The Notion case study badges are the source of truth for its stack everywhere else. */
+const NOTION_STACK = dependencyLabels("notionHighlights");
+
 export const PROJECT_FOCUS_LABELS = {
   fullstack: "Full-stack",
   integration: "Integration",
@@ -153,12 +157,12 @@ export const PROJECTS = {
     name: "Notion API integration",
     description: "A full-stack Notion utility: Apple Shortcuts on my phone and a React + Electron app on my laptop, both calling my own .NET API to generate branded, month-by-month Notion pages.",
     preTitle: "API integration",
-    primaryTools: "C# · .NET · Apple Shortcuts · Notion API · React · TypeScript · Electron",
+    primaryTools: NOTION_STACK.join(" · "),
     image: "/assets/notion-utility-template-builder.png",
     imageAlt: "Notion Utility template builder with a Kroger logo icon, Boost cover banner, monthly cadence, and {month} — {service} title",
     cardTitle: "Custom setup, without the repetitive setup.",
     cardLinkLabel: "Explore Notion API integration",
-    technologies: [{ label: "C#" }, { label: ".NET 8" }, { label: "ASP.NET Core" }, { label: "Apple Shortcuts" }, { label: "Notion API" }, { label: "Notion" }, { label: "React" }, { label: "TypeScript" }, { label: "Electron" }, { label: "Vite" }, { label: "TanStack Query" }, { label: "Entity Framework Core" }, { label: "SQLite" }, { label: "RestSharp" }, { label: "REST APIs" }, { label: "JSON" }],
+    technologies: NOTION_STACK.map((label) => ({ label })),
     focus: "integration",
   },
 } satisfies Record<string, ProjectDefinition>;
@@ -216,7 +220,7 @@ export const PORTFOLIO_POSTS: PortfolioPostDefinition[] = [
     role: "Designed and built the C# .NET API and Notion client library, the React + TypeScript Electron app, and the Apple Shortcuts that call it.",
     decisions: ["Wrap Notion's REST API in my own client library and return flat, Shortcut-friendly responses.", "Preview every generated page and skip existing titles so template runs are safe to repeat.", "Keep the Notion secret on the laptop; the phone reaches the API with its own key over Wi-Fi or hotspot."],
     evidence: "Rebuilt and retested end to end in 2026: the Electron app and iPhone Shortcuts both created branded monthly pages through the API.",
-    tools: ["C#", ".NET 8 · ASP.NET Core", "Apple Shortcuts", "Notion API", "Notion", "React", "TypeScript", "Electron", "Vite", "TanStack Query", "Entity Framework Core · SQLite", "RestSharp", "REST · JSON"], caseStudy: "/portfolio/projects/notion-api-shortcuts/",
+    tools: NOTION_STACK, caseStudy: "/portfolio/projects/notion-api-shortcuts/",
     walkthrough: [
       { title: "Brand it once", detail: "Set a service's logo, banner, cadence, and a {month} — {service} title in one reusable template.", screenshot: { src: "/assets/notion-utility-template-builder.png", alt: "Template builder with the Kroger logo icon, Boost cover banner, monthly cadence, and title pattern", hotspot: { x: 78, y: 12, label: "Logo and banner" } } },
       { title: "Preview before writing", detail: "See every planned page and which titles already exist before anything reaches Notion.", screenshot: { src: "/assets/notion-utility-workflow-preview.png", alt: "Preview listing six monthly Kroger Boost pages marked new", hotspot: { x: 30, y: 78, label: "Planned pages" } } },
