@@ -155,7 +155,7 @@ function renderPostViews() {
     const decisions = post.decisions.map((decision) => `<li>${decision}</li>`).join("");
     const links = [
       post.caseStudy ? `<a class="post-action-link post-action-primary" href="${post.caseStudy}">Read the case study</a>` : "",
-      post.source ? `<a class="post-action-link" href="${post.source}" target="_blank" rel="noopener noreferrer">View source <span class="visually-hidden">(opens in a new tab)</span><span aria-hidden="true">↗</span></a>` : "",
+      post.source ? `<a class="post-action-link" href="${post.source}" target="_blank" rel="noopener noreferrer">View source <span class="visually-hidden">(opens in a new tab)</span></a>` : "",
     ].filter(Boolean).join("");
     const actions = links ? `<nav class="post-actions" aria-label="Project links">${links}</nav>` : "";
     const facts = post.role && post.evidence ? `<dl class="post-facts"><div><dt>My role</dt><dd>${post.role}</dd></div><div><dt>${post.evidenceLabel ?? "Evidence &amp; status"}</dt><dd>${post.evidence}</dd></div></dl>` : "";
@@ -180,11 +180,11 @@ function renderPostViews() {
     // Only add a plus marker when a step defines a useful point to explore.
     const visualHotspots = steps.map((step, stepIndex) => step.hotspot ? `<button type="button" class="visual-hotspot" data-visual-hotspot="${stepIndex}" data-hotspot-label="${attr(step.hotspot.label)}" data-hotspot-detail="${attr(step.detail)}" style="--hotspot-x:${step.hotspot.x}%;--hotspot-y:${step.hotspot.y}%" aria-label="Explore: ${attr(step.hotspot.label)}"><span aria-hidden="true">+</span></button>` : "").join("");
     // Touch-friendly carousel controls sit below the image; dots communicate position without replacing labels.
-    const stepNav = steps.length > 1 ? `<nav class="post-step-controls" aria-label="Walkthrough image controls"><button type="button" class="post-step-arrow post-step-prev" data-step-prev aria-label="Previous step">← Previous</button><button type="button" class="post-step-arrow post-step-next" data-step-next aria-label="Next step">Next →</button></nav>` : "";
+    const stepNav = steps.length > 1 ? `<nav class="post-step-controls" aria-label="Walkthrough image controls"><button type="button" class="post-step-arrow post-step-prev" data-step-prev aria-label="Previous step">Previous</button><button type="button" class="post-step-arrow post-step-next" data-step-next aria-label="Next step">Next</button></nav>` : "";
     const opening = allReal ? { src: steps[0].screenshot.src, alt: steps[0].screenshot.alt } : { src: post.image, alt: post.imageAlt };
     const zoomLabel = `Open ${post.title} walkthrough image in the enlarged viewer`;
     const visual = `<figure class="post-main-visual${allReal ? " is-step-screenshot" : ""}"><div class="post-visual-stage"><button type="button" class="post-image-zoom" data-post-image-zoom aria-label="${attr(zoomLabel)}"><img src="${attr(opening.src)}" alt="${attr(opening.alt)}" width="960" height="960"></button>${visualHotspots}</div>${stepNav}</figure>`;
-    return `<article class="post-story" data-post-view="${post.slug}" aria-labelledby="post-title-${post.slug}" hidden><template class="post-visual-template">${visual}</template><div class="post-story-topline"><span>${post.eyebrow}</span></div><h2 id="post-title-${post.slug}">${post.title}</h2><p class="post-lead">${post.caption}</p>${actions}${facts}${decisionsSection}${techSection}${mobileVisualSlot}${walkthrough}<nav class="post-sequence" aria-label="Browse other posts"><button type="button" data-adjacent-post="previous">← Previous post</button><button type="button" data-adjacent-post="next">Next post →</button></nav></article>`;
+    return `<article class="post-story" data-post-view="${post.slug}" aria-labelledby="post-title-${post.slug}" hidden><template class="post-visual-template">${visual}</template><div class="post-story-topline"><span>${post.eyebrow}</span></div><h2 id="post-title-${post.slug}">${post.title}</h2><p class="post-lead">${post.caption}</p>${actions}${facts}${decisionsSection}${techSection}${mobileVisualSlot}${walkthrough}<nav class="post-sequence" aria-label="Browse other posts"><button type="button" data-adjacent-post="previous">Previous post</button><button type="button" data-adjacent-post="next">Next post</button></nav></article>`;
   }).join("");
 }
 

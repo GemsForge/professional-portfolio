@@ -121,7 +121,7 @@ test("generated post viewer retains project routes, source links, and the one-pa
   const order = ['class="post-lead"', 'class="post-actions"', '<dl class="post-facts">', '<section class="post-decisions">', '<section class="post-tools"><h3>Stack</h3>', 'data-mobile-visual', '<section class="walkthrough"', 'class="post-sequence"'].map((marker) => auraPost.indexOf(marker));
   assert.ok(order.every((position, index) => position >= 0 && (index === 0 || position > order[index - 1])), `pop-up sections are out of order: ${order}`);
   assert.match(auraPost, /<button type="button" class="post-image-zoom" data-post-image-zoom aria-label="Open Aura Logbook walkthrough image in the enlarged viewer"><img src="\/assets\/auralogbook-tour\/public-home-pair\.png" alt="Aura Logbook public landing page on a phone paired with its desktop layout"/);
-  assert.match(auraPost, /<nav class="post-step-controls" aria-label="Walkthrough image controls"><button type="button" class="post-step-arrow post-step-prev" data-step-prev aria-label="Previous step">← Previous<\/button><button type="button" class="post-step-arrow post-step-next" data-step-next aria-label="Next step">Next →<\/button><\/nav>/);
+  assert.match(auraPost, /<nav class="post-step-controls" aria-label="Walkthrough image controls"><button type="button" class="post-step-arrow post-step-prev" data-step-prev aria-label="Previous step">Previous<\/button><button type="button" class="post-step-arrow post-step-next" data-step-next aria-label="Next step">Next<\/button><\/nav>/);
   assert.match(auraPost, /class="tech-chip"/);
   assert.match(auraPost, /\/assets\/auralogbook-stack\/react\.png/);
   assert.match(auraPost, /<img src="\/assets\/auralogbook-stack\/react\.png" alt="" loading="lazy" decoding="async"><span>React Native · Expo<\/span>/, "React Native uses the same React logo");
@@ -211,8 +211,8 @@ test("pop-up keeps the walkthrough, swaps in real step screenshots, and meets ty
   assert.equal((auraPost.match(/data-walkthrough-step="\d"/g) ?? []).length, 10);
   assert.equal((auraPost.match(/class="visual-hotspot"/g) ?? []).length, 0, "Aura Logbook has no unused plus markers in its walkthrough");
   // Clearly labeled touch controls follow a zoomable image; a screen-reader announcer describes step changes.
-  assert.match(auraPost, /<button type="button" class="post-step-arrow post-step-prev" data-step-prev aria-label="Previous step">← Previous<\/button>/);
-  assert.match(auraPost, /<button type="button" class="post-step-arrow post-step-next" data-step-next aria-label="Next step">Next →<\/button>/);
+  assert.match(auraPost, /<button type="button" class="post-step-arrow post-step-prev" data-step-prev aria-label="Previous step">Previous<\/button>/);
+  assert.match(auraPost, /<button type="button" class="post-step-arrow post-step-next" data-step-next aria-label="Next step">Next<\/button>/);
   assert.match(auraPost, /<button type="button" class="post-image-zoom" data-post-image-zoom/);
   assert.match(auraPost, /<p class="visually-hidden" data-step-announce aria-live="polite"><\/p>/);
   assert.doesNotMatch(auraPost, /<span class="eyebrow">App tour<\/span>/, "real-screenshot walkthrough has no redundant eyebrow");

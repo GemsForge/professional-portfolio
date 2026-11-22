@@ -386,7 +386,7 @@ export const auralogbookContent: AuralogbookContent = {
       height: 88,
     },
     sourceLink: {
-      text: "View source on GitHub ↗",
+      text: "View source on GitHub",
       href: "https://github.com/GemsForge/aura-logbook-api",
     },
     screensLink: { text: "Browse app screens", href: "#screens" },

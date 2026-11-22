@@ -72,7 +72,7 @@ export function ProjectCardGrid({ slugs, showMoreLink = false }: { slugs?: strin
       {showMoreLink && (
         <div className="wrap project-grid-actions">
           <a className="button secondary" href="/portfolio/projects/">
-            Explore more projects ↗
+            Explore more projects
           </a>
         </div>
       )}

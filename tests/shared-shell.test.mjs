@@ -124,11 +124,31 @@ test("portfolio project cards render labeled technology marks in both page rende
   assert.match(css, /\.tech-chip\{[\s\S]*?font-size:12px/);
 });
 
-test("project-card labels leave their decorative arrow to the shared style", () => {
+test("project-card labels render without a decorative arrow", () => {
   assert.match(catalog, /cardLinkLabel: "Explore Aura Logbook"/);
   assert.doesNotMatch(catalog, /cardLinkLabel: "Explore Aura Logbook ↗"/);
-  assert.match(css, /\.worklink:after\{content:/);
+  // #100: the CSS-generated ↗ rendered as an emoji on Apple devices, so links carry no arrow.
+  assert.doesNotMatch(css, /\.worklink:after\{content:/);
   assert.match(projectCard, /project\.cardLinkLabel/);
+});
+
+/**
+ * #100: links and buttons carry no decorative arrow glyphs (↗ → ← ↑ ↓), which
+ * render as emoji on some platforms. Arrows inside explanatory text, such as
+ * "2 weeks → 3 days", are content and stay.
+ */
+test("generated pages have no decorative arrows in links or buttons", async () => {
+  const pages = JSON.parse(await readFile("lib/static-pages.json", "utf8"));
+  // A decorative arrow leads or trails the label ("← Back", "Explore ↗"), optionally in its own span.
+  const leading = /<(?:a|button)\b[^>]*>\s*(?:<span\b[^>]*>)?\s*[↗→←↑↓]/;
+  const trailing = /[↗→←↑↓]\s*(?:<\/span>)?\s*<\/(?:a|button)>/;
+  for (const [route, html] of Object.entries(pages)) {
+    assert.doesNotMatch(html, leading, `${route} has a leading arrow in a link or button`);
+    assert.doesNotMatch(html, trailing, `${route} has a trailing arrow in a link or button`);
+  }
+  for (const source of [caseStudyShell, projectCard, knowledgeDirectory, knowledgeReader]) {
+    assert.doesNotMatch(source, /[↗→←↑↓]\s*<\/a>|<a\b[^>]*>\s*[↗→←↑↓]/);
+  }
 });
 
 test("portfolio cards and actions use the shared glass and focus treatments", () => {

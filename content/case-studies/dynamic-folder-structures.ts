@@ -46,7 +46,7 @@ export const dynamicFolderStructuresContent: CaseStudyContent = {
         "The original guide includes action screenshots, a complete-flow overview, and a comparison of manual and automated setup.",
         {
           type: "button",
-          text: "Read the original illustrated guide ↗",
+          text: "Read the original illustrated guide",
           href: "https://gemsforge.notion.site/Guide-to-Creating-Dynamic-Folder-Structures-in-Apple-Shortcuts-13baeadaba7780d4a09eda95b61891b7",
         },
         {

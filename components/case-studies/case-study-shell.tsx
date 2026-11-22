@@ -144,9 +144,9 @@ interface ProjectSequenceNavProps {
   projects: Record<string, ProjectDefinition>;
   /** Slug of the current page; names its owner-managed gallery slot. */
   slug: string;
-  /** Renders "← All projects / Next: <name> →". */
+  /** Renders "All projects / Next: <name>". */
   next?: ProjectSlug;
-  /** Renders "← <name> / All projects →" when the page links backwards instead. */
+  /** Renders "Previous: <name> / All projects" when the page links backwards instead. */
   previous?: ProjectSlug;
 }
 
@@ -166,13 +166,13 @@ export function ProjectSequenceNav({ projects, slug, next, previous }: ProjectSe
       <nav className="next-project" aria-label="Project navigation">
         {previous ? (
           <>
-            <a href={`${allProjects}${previous}/`}>← {projects[previous].name}</a>
-            <a href={allProjects}>All projects →</a>
+            <a href={`${allProjects}${previous}/`}>Previous: {projects[previous].name}</a>
+            <a href={allProjects}>All projects</a>
           </>
         ) : (
           <>
-            <a href={allProjects}>← All projects</a>
-            {next ? <a href={`${allProjects}${next}/`}>Next: {projects[next].name} →</a> : null}
+            <a href={allProjects}>All projects</a>
+            {next ? <a href={`${allProjects}${next}/`}>Next: {projects[next].name}</a> : null}
           </>
         )}
       </nav>
