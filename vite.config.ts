@@ -17,6 +17,17 @@ const managedLinux = readExecutionProfile() === "managed-linux";
 
 const localBindingConfig = {
   main: "./build/sites-worker.ts",
+  // Cloudflare Access settings for the owner-only admin (non-secret identifiers).
+  vars: {
+    ACCESS_TEAM_DOMAIN: "https://gemsforge.cloudflareaccess.com",
+    ACCESS_AUD: "9ed3bdf469b8804850890ccc9723d3fabff2ffdf64d6ac7a69d71874011824ee",
+  },
+  workers_dev: true,
+  // Serve the portfolio on the owner's domain (bare and www) from this Worker.
+  routes: [
+    { pattern: "gemsforge.com", custom_domain: true },
+    { pattern: "www.gemsforge.com", custom_domain: true },
+  ],
   compatibility_flags: ["nodejs_compat"],
   d1_databases: d1
     ? [
@@ -31,7 +42,8 @@ const localBindingConfig = {
     ? [
         {
           binding: r2,
-          bucket_name: "site-creator-r2",
+          // Self-hosted bucket in the owner's Cloudflare account.
+          bucket_name: "gemsforge-portfolio",
         },
       ]
     : [],
