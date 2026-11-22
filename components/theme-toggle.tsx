@@ -1,9 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-
-/** The visitor's theme setting. `system` follows the OS and stores nothing. */
-type ThemeMode = "system" | "light" | "dark";
+import { nextMode, themeLabel, type ThemeMode } from "@/lib/theme-mode.mts";
 
 /** localStorage key shared with the pre-paint boot script in `app/layout.tsx`. */
 export const THEME_STORAGE_KEY = "gf-theme";
@@ -14,19 +12,6 @@ const DARK_QUERY = "(prefers-color-scheme: dark)";
 function currentMode(): ThemeMode {
   const chosen = document.documentElement.dataset.theme;
   return chosen === "light" || chosen === "dark" ? chosen : "system";
-}
-
-/**
- * Returns the setting a click moves to. The cycle always starts by flipping
- * the visible theme (system → opposite of the OS → same as the OS → system),
- * so the first click from the default never looks like a no-op.
- * Mirrored in `static-source/assets/theme.js`; keep both in step.
- */
-function nextMode(mode: ThemeMode, osDark: boolean): ThemeMode {
-  const opposite: ThemeMode = osDark ? "light" : "dark";
-  const matching: ThemeMode = osDark ? "dark" : "light";
-  if (mode === "system") return opposite;
-  return mode === opposite ? matching : "system";
 }
 
 /** Snapshot string so React re-renders when either the setting or the OS theme changes. */
@@ -45,20 +30,23 @@ function subscribe(onChange: () => void) {
   };
 }
 
-const LABELS: Record<ThemeMode, string> = { system: "System", light: "Light", dark: "Dark" };
-
 /**
  * Cycles the site theme between System (follow the OS, the default), Light and
  * Dark, and shows the current setting as its icon: a monitor for System, a sun
  * for Light, a moon for Dark. Light/Dark are stored and applied as `data-theme`
  * on `<html>`, which the theme tokens in `site.css` key off; System clears both.
- * Server render has no setting yet, so it shows the System icon until hydration.
+ *
+ * All three icons are always rendered and `site.css` shows the one matching
+ * `<html data-theme>`. The boot script sets that attribute before first paint,
+ * so the icon is right even before hydration, when React has no snapshot yet
+ * and the label falls back to a neutral "Change theme".
  */
 export function ThemeToggle() {
   const snap = useSyncExternalStore<string | null>(subscribe, snapshot, () => null);
-  const [mode, os] = (snap ?? "system:light").split(":") as [ThemeMode, "light" | "dark"];
-  const next = nextMode(mode, os === "dark");
-  const label = `Theme: ${LABELS[mode]}${mode === "system" ? ` (${os})` : ""}. Switch to ${LABELS[next]}`;
+  const [mode, os] = (snap?.split(":") ?? ["system", "light"]) as [ThemeMode, "light" | "dark"];
+  const osDark = os === "dark";
+  const next = nextMode(mode, osDark);
+  const label = snap ? themeLabel(mode, osDark) : "Change theme";
 
   const toggle = () => {
     const root = document.documentElement;
@@ -72,14 +60,10 @@ export function ThemeToggle() {
   };
 
   return (
-    <button className="sp-theme-toggle" type="button" onClick={toggle} aria-label={label} title={label} data-theme-mode={mode}>
-      {mode === "dark" ? (
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" /></svg>
-      ) : mode === "light" ? (
-        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></svg>
-      ) : (
-        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2" /><path d="M8 20h8M12 16v4" /></svg>
-      )}
+    <button className="sp-theme-toggle" type="button" onClick={toggle} aria-label={label} title={label} data-theme-mode={snap ? mode : undefined}>
+      <svg data-icon="system" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2" /><path d="M8 20h8M12 16v4" /></svg>
+      <svg data-icon="light" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></svg>
+      <svg data-icon="dark" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" /></svg>
     </button>
   );
 }

@@ -27,7 +27,7 @@
     return chosen === "light" || chosen === "dark" ? chosen : "system";
   }
 
-  /** Mirrors nextMode in theme-toggle.tsx: system → opposite of OS → same as OS → system. */
+  /** Copy of nextMode in lib/theme-mode.mts (system → opposite of OS → same as OS → system); tests/theme-toggle.test.mjs checks they agree. */
   function nextMode() {
     var opposite = media.matches ? "light" : "dark";
     var matching = media.matches ? "dark" : "light";

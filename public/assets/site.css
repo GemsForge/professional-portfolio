@@ -512,3 +512,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var
 .sp-theme-toggle:hover{background:var(--surface-3)}
 .sp-theme-toggle:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
 .sp-theme-toggle svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+/* The React ThemeToggle renders all three icons; show the one matching <html data-theme>
+   (set before first paint by the boot script) so the icon is right before hydration. */
+.sp-theme-toggle svg[data-icon]{display:none}
+:root:not([data-theme="light"]):not([data-theme="dark"]) .sp-theme-toggle svg[data-icon="system"],:root[data-theme="light"] .sp-theme-toggle svg[data-icon="light"],:root[data-theme="dark"] .sp-theme-toggle svg[data-icon="dark"]{display:block}
