@@ -1,23 +1,27 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-
-type Theme = "light" | "dark";
+import { nextMode, themeLabel, type ThemeMode } from "@/lib/theme-mode.mts";
 
 /** localStorage key shared with the pre-paint boot script in `app/layout.tsx`. */
 export const THEME_STORAGE_KEY = "gf-theme";
 const THEME_EVENT = "gf-theme-change";
+const DARK_QUERY = "(prefers-color-scheme: dark)";
 
-/** Reads the theme in effect: an explicit `data-theme` choice, else the OS preference. */
-function currentTheme(): Theme {
+/** Reads the current setting: an explicit `data-theme` choice, else `system`. */
+function currentMode(): ThemeMode {
   const chosen = document.documentElement.dataset.theme;
-  if (chosen === "light" || chosen === "dark") return chosen;
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  return chosen === "light" || chosen === "dark" ? chosen : "system";
+}
+
+/** Snapshot string so React re-renders when either the setting or the OS theme changes. */
+function snapshot(): string {
+  return `${currentMode()}:${window.matchMedia(DARK_QUERY).matches ? "dark" : "light"}`;
 }
 
 /** Re-renders on OS theme changes and on choices made by any toggle on the page. */
 function subscribe(onChange: () => void) {
-  const media = window.matchMedia("(prefers-color-scheme: dark)");
+  const media = window.matchMedia(DARK_QUERY);
   media.addEventListener("change", onChange);
   window.addEventListener(THEME_EVENT, onChange);
   return () => {
@@ -27,27 +31,39 @@ function subscribe(onChange: () => void) {
 }
 
 /**
- * Switches the site between light and dark themes. Until the visitor chooses,
- * the site follows the OS setting; a choice is stored and applied as
- * `data-theme` on `<html>`, which the theme tokens in `site.css` key off.
- * Server render has no theme yet, so it shows the moon icon until hydration.
+ * Cycles the site theme between System (follow the OS, the default), Light and
+ * Dark, and shows the current setting as its icon: a monitor for System, a sun
+ * for Light, a moon for Dark. Light/Dark are stored and applied as `data-theme`
+ * on `<html>`, which the theme tokens in `site.css` key off; System clears both.
+ *
+ * All three icons are always rendered and `site.css` shows the one matching
+ * `<html data-theme>`. The boot script sets that attribute before first paint,
+ * so the icon is right even before hydration, when React has no snapshot yet
+ * and the label falls back to a neutral "Change theme".
  */
 export function ThemeToggle() {
-  const theme = useSyncExternalStore<Theme | null>(subscribe, currentTheme, () => null);
-  const next: Theme = theme === "dark" ? "light" : "dark";
+  const snap = useSyncExternalStore<string | null>(subscribe, snapshot, () => null);
+  const [mode, os] = (snap?.split(":") ?? ["system", "light"]) as [ThemeMode, "light" | "dark"];
+  const osDark = os === "dark";
+  const next = nextMode(mode, osDark);
+  const label = snap ? themeLabel(mode, osDark) : "Change theme";
+
   const toggle = () => {
-    document.documentElement.dataset.theme = next;
-    try { localStorage.setItem(THEME_STORAGE_KEY, next); } catch { /* Storage can be blocked; the choice still applies to this page. */ }
+    const root = document.documentElement;
+    try {
+      if (next === "system") localStorage.removeItem(THEME_STORAGE_KEY);
+      else localStorage.setItem(THEME_STORAGE_KEY, next);
+    } catch { /* Storage can be blocked; the choice still applies to this page. */ }
+    if (next === "system") delete root.dataset.theme;
+    else root.dataset.theme = next;
     window.dispatchEvent(new Event(THEME_EVENT));
   };
 
   return (
-    <button className="sp-theme-toggle" type="button" onClick={toggle} aria-label={`Switch to ${next} mode`} title={`Switch to ${next} mode`}>
-      {theme === "dark" ? (
-        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></svg>
-      ) : (
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" /></svg>
-      )}
+    <button className="sp-theme-toggle" type="button" onClick={toggle} aria-label={label} title={label} data-theme-mode={snap ? mode : undefined}>
+      <svg data-icon="system" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2" /><path d="M8 20h8M12 16v4" /></svg>
+      <svg data-icon="light" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></svg>
+      <svg data-icon="dark" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" /></svg>
     </button>
   );
 }
