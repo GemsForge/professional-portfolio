@@ -711,7 +711,7 @@ export function KnowledgeDirectory({
           </p>
           {activeModule ? (
             <nav className="library-links" aria-label="Module navigation">
-              <a href="/admin/knowledge/">← All modules</a>
+              <a href="/admin/knowledge/">All modules</a>
               <a href="/admin/?step=wiki-uploader">Manage references</a>
             </nav>
           ) : (
@@ -891,7 +891,7 @@ export function KnowledgeDirectory({
                     <a
                       className="shelf-module-link"
                       href={`/admin/knowledge/${shelf.id}/`}>
-                      Open {shelf.id} module →
+                      Open {shelf.id} module
                     </a>
                   )}
                 </div>

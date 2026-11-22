@@ -176,10 +176,10 @@ export function KnowledgeReader({ id, publicMode = false }: {
             {resource.contentType === "text/markdown" && <>
               <button type="button" onClick={() => setView("rendered")} aria-pressed={view === "rendered"}>Render Markdown</button>
               <button type="button" onClick={() => setView("source")} aria-pressed={view === "source"}>Markdown source</button>
-              <a href={documentHref(resource.id, "?format=html")}>Download HTML ↗</a>
-              <a href={documentHref(resource.id)}>Download Markdown ↗</a>
+              <a href={documentHref(resource.id, "?format=html")}>Download HTML</a>
+              <a href={documentHref(resource.id)}>Download Markdown</a>
             </>}
-            {resource.contentType === "text/html" && <a href={documentHref(resource.id)}>Download HTML ↗</a>}
+            {resource.contentType === "text/html" && <a href={documentHref(resource.id)}>Download HTML</a>}
             {!['text/html', 'text/markdown'].includes(resource.contentType) && <a href={documentHref(resource.id)}>Download original</a>}
           </div>
         </details>}
