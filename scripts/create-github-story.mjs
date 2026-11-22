@@ -50,7 +50,18 @@ const parseArgs = (args) => {
   if (!options.repo || !/^[^/]+\/[^/]+$/.test(options.repo)) throw new Error("Set GITHUB_REPOSITORY or supply --repo OWNER/REPOSITORY.");
   return options;
 };
-const runGh = (args) => JSON.parse(execFileSync("gh", args, { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }));
+/**
+ * Runs a `gh` command and returns its output.
+ * @param {string[]} args - Arguments passed to `gh`.
+ * @param {{ json?: boolean }} [options] - `json: false` returns trimmed text for
+ *   commands that do not print JSON, such as `gh workflow run` (which prints the
+ *   dispatched run URL); otherwise the output is parsed as JSON.
+ * @returns {any} Parsed JSON, or the trimmed text output when `json` is false.
+ */
+export const runGh = (args, { json = true } = {}) => {
+  const output = execFileSync("gh", args, { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
+  return json ? JSON.parse(output) : output.trim();
+};
 export function createStory(options, run = runGh) {
   const labels = inferLabels(options.title, options.labels);
   // The metadata workflow has no inputs for relationships; fail before creating
@@ -66,10 +77,16 @@ export function createStory(options, run = runGh) {
   const issue = run(issueArgs);
   const numberedTitle = options.title.replace(/^([^:]+):\s+/, `$1: #${issue.number} `);
   run(["api", `repos/${options.repo}/issues/${issue.number}`, "--method", "PATCH", "-f", `title=${numberedTitle}`]);
-  // No manual dispatch: the workflow's `issues: opened` trigger syncs metadata
-  // automatically, and its workflow_dispatch only accepts a PR number.
   const metadataWorkflow = options.metadataWorkflow || process.env.GITHUB_METADATA_WORKFLOW || "sync-issue-metadata.yml";
-  return { issueNumber: issue.number, issueURL: issue.html_url, workflow: metadataWorkflow };
+  const defaultBranch = process.env.GITHUB_DEFAULT_BRANCH || run(["repo", "view", options.repo, "--json", "defaultBranchRef"]).defaultBranchRef?.name || "main";
+  const workflowArgs = ["workflow", "run", metadataWorkflow, "--repo", options.repo, "--ref", defaultBranch, "-f", `issue_number=${issue.number}`];
+  if (options.parentIssue) workflowArgs.push("-f", `parent_issue=${options.parentIssue}`);
+  if (options.blockedBy.length) workflowArgs.push("-f", `blocked_by=${options.blockedBy.join(",")}`);
+  if (options.blocking.length) workflowArgs.push("-f", `blocking=${options.blocking.join(",")}`);
+  // `gh workflow run` prints a run URL (or nothing on older gh), not JSON.
+  const workflowOutput = run(workflowArgs, { json: false });
+  const workflowRunURL = typeof workflowOutput === "string" ? workflowOutput.match(/https:\/\/\S+/)?.[0] : undefined;
+  return { issueNumber: issue.number, issueURL: issue.html_url, workflow: metadataWorkflow, ...(workflowRunURL && { workflowRunURL }) };
 }
 if (process.argv[1]?.endsWith("create-github-story.mjs")) {
   try { const options = parseArgs(process.argv.slice(2)); if (options.help) console.log(usage); else console.log(JSON.stringify(createStory(options), null, 2)); }
