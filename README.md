@@ -10,7 +10,7 @@ Manage Project Assets: https://www.gemsforge.com/admin/
 - `components/case-studies/`: React/TypeScript layouts for the case study pages, built from shared document, hero, section, and project-navigation primitives. Project name, pre-title, description, and banner image come from `scripts/project-catalog.mts`.
 - `scripts/render-case-studies.mjs`: transpiles the case study components with TypeScript and renders them to static HTML at build time.
 - `scripts/prepare-pages.mjs`: generates the server's HTML map from both sources and applies the shared shell, metadata, and project gallery hooks.
-- `build/sites-worker.ts`: preserves Sites/Vinext hosting integration and serves the portfolio and owner workspace.
+- `build/sites-worker.ts`: the Cloudflare Worker entry point (Vinext); serves the portfolio and owner workspace behind the Cloudflare Access bridge.
 - `lib/media-server.ts`: server-side owner authorization and persistent image APIs.
 - `lib/image-manager.html`: owner-only Manage Project Assets workflow shell.
 - `app/admin/knowledge/page.tsx` and `components/knowledge-directory.tsx`: React/TypeScript owner-only library homepage and reference controls.
@@ -63,8 +63,8 @@ This version adds a backend; the earlier Python static-server preview cannot run
 
 Local mock sign-in defaults to the portfolio owner email. Set
 `SITES_LOCAL_AUTH_EMAIL` before `npm run dev` only if you need to override it.
-The mock sign-in is loopback-only; production authorization continues to use
-the identity supplied by Sites.
+The mock sign-in is loopback-only; production authorization uses the identity
+verified by Cloudflare Access.
 
 Local development uses port `5173` by default. Both `npm run dev` and the local
 worker preview started by `npm run start` read the same override: set `PORT` (or
@@ -72,6 +72,9 @@ worker preview started by `npm run start` read the same override: set `PORT` (or
 For example, `PORT=5199 npm run dev` serves the app at
 `http://127.0.0.1:5199`. Hosted deployments retain their platform-assigned port.
 
-Use the current Sites skill for installation, build, preview, source synchronization, and publishing to the existing project. Node.js 22.13+ is required. `npm run build` prepares static content then builds the server through the retained Sites integration. `npm run test:media` checks core storage and authorization behavior.
+Node.js 22.13+ is required. `npm run build` prepares static content then builds the Cloudflare Worker into `dist/`, and `npx wrangler deploy` publishes it to the owner's Cloudflare account. `npm run test:media` checks core storage and authorization behavior.
 
-No application credentials belong in source. Hosted sign-in and identity headers are provided by Sites. Only the owner workspace requires sign-in. Browser-level visual/accessibility and hosted owner-login walkthroughs remain to be verified.
+For the production deployment sequence, source-of-truth rules, rollback, and
+post-deploy verification, see [the Cloudflare deployment runbook](docs/cloudflare-deployment.md).
+
+No application credentials belong in source. Hosted owner sign-in is provided by Cloudflare Access; `lib/cloudflare-access.ts` derives the identity headers from the verified Access token. Only the owner workspace requires sign-in. Browser-level visual/accessibility and hosted owner-login walkthroughs remain to be verified.
