@@ -8,6 +8,7 @@ import walkthroughSteps from "../lib/walkthrough-steps.json";
 import handler from "vinext/server/fetch-handler";
 import { runWithConnectorBinding } from "../lib/connector-context";
 import type { ConnectorBinding } from "../lib/connector-contract.mjs";
+import { accessAuthRedirect, withAccessIdentity } from "../lib/cloudflare-access";
 
 // Step titles come from the build; "<" is escaped so the JSON cannot close its script tag.
 const WALKTHROUGH_STEPS_JSON = JSON.stringify(walkthroughSteps).replace(/</g, "\\u003c");
@@ -23,7 +24,7 @@ function privateOwnerPage(response: Response) {
   return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
 }
 
-export default {
+const site = {
   fetch(request: Request, env: Cloudflare.Env, ctx: ExecutionContext<{ CONNECTORS?: ConnectorBinding }>) {
     const url = new URL(request.url);
     // Public Wiki reads share a read-only endpoint; uploads and mutations stay on the owner API.
@@ -103,5 +104,20 @@ export default {
       };
     }
     return runWithConnectorBinding(binding, () => handler.fetch(request, env, ctx));
+  },
+};
+
+/**
+ * Self-hosted entry point. Outside local dev (where the Sites Vite plugin mocks
+ * identity), every request passes through the Cloudflare Access bridge: spoofed
+ * `oai-authenticated-user-*` headers are stripped and trusted ones are derived
+ * from a verified Access JWT. ChatGPT sign-in/out paths map to Access.
+ */
+export default {
+  async fetch(request: Request, env: Cloudflare.Env, ctx: ExecutionContext<{ CONNECTORS?: ConnectorBinding }>) {
+    if (import.meta.env.DEV) return site.fetch(request, env, ctx);
+    const redirect = accessAuthRedirect(new URL(request.url));
+    if (redirect) return redirect;
+    return site.fetch(await withAccessIdentity(request, env), env, ctx);
   },
 };
